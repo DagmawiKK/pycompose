@@ -199,7 +199,7 @@ class ScopedCompositionTest {
              "root":{"id":"root","type":"CircularProgressIndicator","props":{
                "strokeWidth":4,
                "strokeCap":{"type":"StrokeCap","name":"Round"},
-               "trackColor":"#33000000"}}}
+               "trackColor":{"type":"Color","color":855638016}}}}
             """.trimIndent()
         compose.setContent { PyComposeTheme { renderer(debug = true).Render(parse(source)) } }
 

@@ -8,7 +8,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
@@ -17,9 +16,6 @@ import androidx.compose.ui.unit.dp
 
 /** All fallible conversions are values; malformed props never throw into Compose. */
 object PropResolver {
-    private const val HEX_RADIX = 16
-    private const val RGB_LENGTH = 7
-    private const val OPAQUE_ALPHA = 0xff000000L
     private val horizontalValues =
         mapOf(
             "start" to Alignment.Start,
@@ -59,15 +55,6 @@ object PropResolver {
             "circle" to CircleShape,
             "rounded" to RoundedCornerShape(8.dp),
         )
-
-    fun color(value: String): Result<Color> =
-        runCatching {
-            require(
-                Regex("#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?").matches(value),
-            ) { "Invalid color: $value" }
-            val bits = value.drop(1).toLong(HEX_RADIX)
-            Color(if (value.length == RGB_LENGTH) bits or OPAQUE_ALPHA else bits)
-        }
 
     fun dp(value: Double): Result<Dp> =
         runCatching {

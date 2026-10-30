@@ -2,7 +2,6 @@ package com.pycompose.renderer
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.json.Json
@@ -25,9 +24,6 @@ class ResolutionTest {
 
     @Test
     fun `props return failures rather than throwing`() {
-        assertEquals(Color(0xff123456), PropResolver.color("#123456").getOrThrow())
-        assertEquals(Color(0x80123456), PropResolver.color("#80123456").getOrThrow())
-        assertTrue(PropResolver.color("bad").isFailure)
         assertTrue(PropResolver.dp(Double.NaN).isFailure)
         assertTrue(PropResolver.dp(-1.0).isFailure)
         assertEquals(8.dp, PropResolver.dp(8.0).getOrThrow())

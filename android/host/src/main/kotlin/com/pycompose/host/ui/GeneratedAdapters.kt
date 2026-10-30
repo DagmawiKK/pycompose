@@ -301,24 +301,20 @@ object GeneratedAdapters {
                 val model = node as AlertDialogNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.AlertDialogDefaults.containerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.AlertDialogDefaults.containerColor)
                     else -> androidx.compose.material3.AlertDialogDefaults.containerColor
                 }
                 val iconContentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.iconContentColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.AlertDialogDefaults.iconContentColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.AlertDialogDefaults.iconContentColor)
                     else -> androidx.compose.material3.AlertDialogDefaults.iconContentColor
                 }
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.AlertDialogDefaults.shape
                 val textContentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.textContentColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.AlertDialogDefaults.textContentColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.AlertDialogDefaults.textContentColor)
                     else -> androidx.compose.material3.AlertDialogDefaults.textContentColor
                 }
                 val titleContentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.titleContentColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.AlertDialogDefaults.titleContentColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.AlertDialogDefaults.titleContentColor)
                     else -> androidx.compose.material3.AlertDialogDefaults.titleContentColor
                 }
                 val tonalElevationWire = model.props.tonalElevation
@@ -390,7 +386,6 @@ object GeneratedAdapters {
                 val model = node as BadgeNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.BadgeDefaults.containerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.BadgeDefaults.containerColor)
                     else -> androidx.compose.material3.BadgeDefaults.containerColor
                 }
                 Badge(
@@ -460,7 +455,6 @@ object GeneratedAdapters {
                 val model = node as BottomAppBarActionsNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.BottomAppBarDefaults.containerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.BottomAppBarDefaults.containerColor)
                     else -> androidx.compose.material3.BottomAppBarDefaults.containerColor
                 }
                 val contentPaddingWire = model.props.contentPadding
@@ -483,12 +477,10 @@ object GeneratedAdapters {
                 val model = node as BottomSheetScaffoldNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault((androidx.compose.material3.MaterialTheme.colorScheme).surface)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault((androidx.compose.material3.MaterialTheme.colorScheme).surface)
                     else -> (androidx.compose.material3.MaterialTheme.colorScheme).surface
                 }
                 val sheetContainerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.sheetContainerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.BottomSheetDefaults.ContainerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.BottomSheetDefaults.ContainerColor)
                     else -> androidx.compose.material3.BottomSheetDefaults.ContainerColor
                 }
                 val sheetMaxWidthWire = model.props.sheetMaxWidth
@@ -630,7 +622,6 @@ object GeneratedAdapters {
                 val model = node as CircularProgressIndicatorNode
                 val colorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.color) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.circularColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.circularColor)
                     else -> androidx.compose.material3.ProgressIndicatorDefaults.circularColor
                 }
                 val strokeCapWire = model.props.strokeCap
@@ -639,7 +630,6 @@ object GeneratedAdapters {
                 val strokeWidthValue = if (strokeWidthWire != null) strokeWidthWire.dp else androidx.compose.material3.ProgressIndicatorDefaults.CircularStrokeWidth
                 val trackColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.trackColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.circularIndeterminateTrackColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.circularIndeterminateTrackColor)
                     else -> androidx.compose.material3.ProgressIndicatorDefaults.circularIndeterminateTrackColor
                 }
                 CircularProgressIndicator(
@@ -654,7 +644,6 @@ object GeneratedAdapters {
                 val model = node as CircularProgressIndicatorProgressNode
                 val colorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.color) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.circularColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.circularColor)
                     else -> androidx.compose.material3.ProgressIndicatorDefaults.circularColor
                 }
                 val gapSizeWire = model.props.gapSize
@@ -666,7 +655,6 @@ object GeneratedAdapters {
                 val strokeWidthValue = if (strokeWidthWire != null) strokeWidthWire.dp else androidx.compose.material3.ProgressIndicatorDefaults.CircularStrokeWidth
                 val trackColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.trackColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.circularDeterminateTrackColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.circularDeterminateTrackColor)
                     else -> androidx.compose.material3.ProgressIndicatorDefaults.circularDeterminateTrackColor
                 }
                 CircularProgressIndicator(
@@ -747,7 +735,6 @@ object GeneratedAdapters {
                 val model = node as DismissibleDrawerSheetNode
                 val drawerContainerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.drawerContainerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.DrawerDefaults.standardContainerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.DrawerDefaults.standardContainerColor)
                     else -> androidx.compose.material3.DrawerDefaults.standardContainerColor
                 }
                 val drawerShapeWire = model.props.drawerShape
@@ -806,7 +793,6 @@ object GeneratedAdapters {
                 }
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.MenuDefaults.containerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.MenuDefaults.containerColor)
                     else -> androidx.compose.material3.MenuDefaults.containerColor
                 }
                 val shadowElevationWire = model.props.shadowElevation
@@ -1025,7 +1011,6 @@ object GeneratedAdapters {
                 }
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.MenuDefaults.containerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.MenuDefaults.containerColor)
                     else -> androidx.compose.material3.MenuDefaults.containerColor
                 }
                 val shadowElevationWire = model.props.shadowElevation
@@ -1063,7 +1048,6 @@ object GeneratedAdapters {
                 val model = node as ExtendedFloatingActionButtonNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.FloatingActionButtonDefaults.containerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.FloatingActionButtonDefaults.containerColor)
                     else -> androidx.compose.material3.FloatingActionButtonDefaults.containerColor
                 }
                 val elevationWire = model.props.elevation
@@ -1085,7 +1069,6 @@ object GeneratedAdapters {
                 val model = node as ExtendedFloatingActionButtonTextNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.FloatingActionButtonDefaults.containerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.FloatingActionButtonDefaults.containerColor)
                     else -> androidx.compose.material3.FloatingActionButtonDefaults.containerColor
                 }
                 val elevationWire = model.props.elevation
@@ -1234,7 +1217,6 @@ object GeneratedAdapters {
                 val model = node as FloatingActionButtonNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.FloatingActionButtonDefaults.containerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.FloatingActionButtonDefaults.containerColor)
                     else -> androidx.compose.material3.FloatingActionButtonDefaults.containerColor
                 }
                 val elevationWire = model.props.elevation
@@ -1276,7 +1258,6 @@ object GeneratedAdapters {
                 val model = node as HorizontalDividerNode
                 val colorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.color) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.DividerDefaults.color)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.DividerDefaults.color)
                     else -> androidx.compose.material3.DividerDefaults.color
                 }
                 val thicknessWire = model.props.thickness
@@ -1292,7 +1273,6 @@ object GeneratedAdapters {
                 val imageVectorValue = com.pycompose.renderer.generated.ValueResolver.imageVector(model.props.imageVector).getOrThrow()
                 val tintValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.tint) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.LocalContentColor.current)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.LocalContentColor.current)
                     else -> androidx.compose.material3.LocalContentColor.current
                 }
                 Icon(
@@ -1391,7 +1371,6 @@ object GeneratedAdapters {
                 val model = node as LargeFloatingActionButtonNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.FloatingActionButtonDefaults.containerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.FloatingActionButtonDefaults.containerColor)
                     else -> androidx.compose.material3.FloatingActionButtonDefaults.containerColor
                 }
                 val elevationWire = model.props.elevation
@@ -1456,7 +1435,6 @@ object GeneratedAdapters {
                 val model = node as LeadingIconTabNode
                 val selectedContentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.selectedContentColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault((androidx.compose.material3.LocalContentColor).current)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault((androidx.compose.material3.LocalContentColor).current)
                     else -> (androidx.compose.material3.LocalContentColor).current
                 }
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
@@ -1475,13 +1453,11 @@ object GeneratedAdapters {
                 val model = node as LinearProgressIndicatorNode
                 val colorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.color) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearColor)
                     else -> androidx.compose.material3.ProgressIndicatorDefaults.linearColor
                 }
                 val progressValue = model.props.progress
                 val trackColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.trackColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor)
                     else -> androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor
                 }
                 LinearProgressIndicator(
@@ -1495,7 +1471,6 @@ object GeneratedAdapters {
                 val model = node as LinearProgressIndicatorWithoutProgressNode
                 val colorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.color) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearColor)
                     else -> androidx.compose.material3.ProgressIndicatorDefaults.linearColor
                 }
                 val gapSizeWire = model.props.gapSize
@@ -1504,7 +1479,6 @@ object GeneratedAdapters {
                 val strokeCapValue = if (strokeCapWire != null) com.pycompose.renderer.generated.ValueResolver.strokeCap(strokeCapWire).getOrThrow() else androidx.compose.material3.ProgressIndicatorDefaults.LinearStrokeCap
                 val trackColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.trackColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor)
                     else -> androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor
                 }
                 LinearProgressIndicator(
@@ -1570,7 +1544,6 @@ object GeneratedAdapters {
                 val model = node as ModalDrawerSheetNode
                 val drawerContainerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.drawerContainerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.DrawerDefaults.modalContainerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.DrawerDefaults.modalContainerColor)
                     else -> androidx.compose.material3.DrawerDefaults.modalContainerColor
                 }
                 val drawerShapeWire = model.props.drawerShape
@@ -1592,7 +1565,6 @@ object GeneratedAdapters {
                 val model = node as ModalNavigationDrawerNode
                 val scrimColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.scrimColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.DrawerDefaults.scrimColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.DrawerDefaults.scrimColor)
                     else -> androidx.compose.material3.DrawerDefaults.scrimColor
                 }
                 val drawerStateValue = context.drawerState(model.props.open, model.props.onOpenChange)
@@ -1647,7 +1619,6 @@ object GeneratedAdapters {
                 val model = node as NavigationBarNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.NavigationBarDefaults.containerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.NavigationBarDefaults.containerColor)
                     else -> androidx.compose.material3.NavigationBarDefaults.containerColor
                 }
                 val tonalElevationWire = model.props.tonalElevation
@@ -1696,7 +1667,6 @@ object GeneratedAdapters {
                 val model = node as NavigationRailNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.NavigationRailDefaults.ContainerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.NavigationRailDefaults.ContainerColor)
                     else -> androidx.compose.material3.NavigationRailDefaults.ContainerColor
                 }
                 val windowInsetsWire = model.props.windowInsets
@@ -1948,7 +1918,6 @@ object GeneratedAdapters {
                 val model = node as PermanentDrawerSheetNode
                 val drawerContainerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.drawerContainerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.DrawerDefaults.standardContainerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.DrawerDefaults.standardContainerColor)
                     else -> androidx.compose.material3.DrawerDefaults.standardContainerColor
                 }
                 val drawerShapeWire = model.props.drawerShape
@@ -1978,12 +1947,10 @@ object GeneratedAdapters {
                 val model = node as PrimaryScrollableTabRowNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.TabRowDefaults.primaryContainerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.TabRowDefaults.primaryContainerColor)
                     else -> androidx.compose.material3.TabRowDefaults.primaryContainerColor
                 }
                 val contentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.contentColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.TabRowDefaults.primaryContentColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.TabRowDefaults.primaryContentColor)
                     else -> androidx.compose.material3.TabRowDefaults.primaryContentColor
                 }
                 val edgePaddingWire = model.props.edgePadding
@@ -2007,12 +1974,10 @@ object GeneratedAdapters {
                 val model = node as PrimaryTabRowNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.TabRowDefaults.primaryContainerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.TabRowDefaults.primaryContainerColor)
                     else -> androidx.compose.material3.TabRowDefaults.primaryContainerColor
                 }
                 val contentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.contentColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.TabRowDefaults.primaryContentColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.TabRowDefaults.primaryContentColor)
                     else -> androidx.compose.material3.TabRowDefaults.primaryContentColor
                 }
                 val selectedTabIndexValue = context.index(model.props.selectedTabIndex, model.children.inSlot("tabs"), node.id)
@@ -2064,7 +2029,6 @@ object GeneratedAdapters {
                 val model = node as ScaffoldNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.MaterialTheme.colorScheme.background)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.MaterialTheme.colorScheme.background)
                     else -> androidx.compose.material3.MaterialTheme.colorScheme.background
                 }
                 Scaffold(
@@ -2103,12 +2067,10 @@ object GeneratedAdapters {
                 val model = node as SecondaryScrollableTabRowNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.TabRowDefaults.secondaryContainerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.TabRowDefaults.secondaryContainerColor)
                     else -> androidx.compose.material3.TabRowDefaults.secondaryContainerColor
                 }
                 val contentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.contentColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.TabRowDefaults.secondaryContentColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.TabRowDefaults.secondaryContentColor)
                     else -> androidx.compose.material3.TabRowDefaults.secondaryContentColor
                 }
                 val edgePaddingWire = model.props.edgePadding
@@ -2132,12 +2094,10 @@ object GeneratedAdapters {
                 val model = node as SecondaryTabRowNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.TabRowDefaults.secondaryContainerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.TabRowDefaults.secondaryContainerColor)
                     else -> androidx.compose.material3.TabRowDefaults.secondaryContainerColor
                 }
                 val contentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.contentColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.TabRowDefaults.secondaryContentColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.TabRowDefaults.secondaryContentColor)
                     else -> androidx.compose.material3.TabRowDefaults.secondaryContentColor
                 }
                 val selectedTabIndexValue = context.index(model.props.selectedTabIndex, model.children.inSlot("tabs"), node.id)
@@ -2222,12 +2182,10 @@ object GeneratedAdapters {
                 val arrangementValue = if (arrangementWire != null) com.pycompose.renderer.generated.ValueResolver.shortNavigationBarArrangement(arrangementWire).getOrThrow() else androidx.compose.material3.ShortNavigationBarDefaults.arrangement
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ShortNavigationBarDefaults.containerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ShortNavigationBarDefaults.containerColor)
                     else -> androidx.compose.material3.ShortNavigationBarDefaults.containerColor
                 }
                 val contentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.contentColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.ShortNavigationBarDefaults.contentColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.ShortNavigationBarDefaults.contentColor)
                     else -> androidx.compose.material3.ShortNavigationBarDefaults.contentColor
                 }
                 val windowInsetsWire = model.props.windowInsets
@@ -2302,7 +2260,6 @@ object GeneratedAdapters {
                 val model = node as SmallFloatingActionButtonNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.FloatingActionButtonDefaults.containerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.FloatingActionButtonDefaults.containerColor)
                     else -> androidx.compose.material3.FloatingActionButtonDefaults.containerColor
                 }
                 val elevationWire = model.props.elevation
@@ -2324,22 +2281,18 @@ object GeneratedAdapters {
                 val model = node as SnackbarNode
                 val actionContentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.actionContentColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.SnackbarDefaults.actionContentColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.SnackbarDefaults.actionContentColor)
                     else -> androidx.compose.material3.SnackbarDefaults.actionContentColor
                 }
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.SnackbarDefaults.color)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.SnackbarDefaults.color)
                     else -> androidx.compose.material3.SnackbarDefaults.color
                 }
                 val contentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.contentColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.SnackbarDefaults.contentColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.SnackbarDefaults.contentColor)
                     else -> androidx.compose.material3.SnackbarDefaults.contentColor
                 }
                 val dismissActionContentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.dismissActionContentColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.SnackbarDefaults.dismissActionContentColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.SnackbarDefaults.dismissActionContentColor)
                     else -> androidx.compose.material3.SnackbarDefaults.dismissActionContentColor
                 }
                 val shapeWire = model.props.shape
@@ -2406,7 +2359,6 @@ object GeneratedAdapters {
                 }
                 val colorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.color) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault((androidx.compose.material3.MaterialTheme.colorScheme).surface)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault((androidx.compose.material3.MaterialTheme.colorScheme).surface)
                     else -> (androidx.compose.material3.MaterialTheme.colorScheme).surface
                 }
                 val shadowElevationWire = model.props.shadowElevation
@@ -2435,7 +2387,6 @@ object GeneratedAdapters {
                 }
                 val colorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.color) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault((androidx.compose.material3.MaterialTheme.colorScheme).surface)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault((androidx.compose.material3.MaterialTheme.colorScheme).surface)
                     else -> (androidx.compose.material3.MaterialTheme.colorScheme).surface
                 }
                 val shadowElevationWire = model.props.shadowElevation
@@ -2469,7 +2420,6 @@ object GeneratedAdapters {
                 }
                 val colorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.color) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault((androidx.compose.material3.MaterialTheme.colorScheme).surface)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault((androidx.compose.material3.MaterialTheme.colorScheme).surface)
                     else -> (androidx.compose.material3.MaterialTheme.colorScheme).surface
                 }
                 val shadowElevationWire = model.props.shadowElevation
@@ -2502,7 +2452,6 @@ object GeneratedAdapters {
                 }
                 val colorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.color) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault((androidx.compose.material3.MaterialTheme.colorScheme).surface)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault((androidx.compose.material3.MaterialTheme.colorScheme).surface)
                     else -> (androidx.compose.material3.MaterialTheme.colorScheme).surface
                 }
                 val shadowElevationWire = model.props.shadowElevation
@@ -2558,7 +2507,6 @@ object GeneratedAdapters {
                 val model = node as TabNode
                 val selectedContentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.selectedContentColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault((androidx.compose.material3.LocalContentColor).current)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault((androidx.compose.material3.LocalContentColor).current)
                     else -> (androidx.compose.material3.LocalContentColor).current
                 }
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
@@ -2577,7 +2525,6 @@ object GeneratedAdapters {
                 val model = node as TabContentNode
                 val selectedContentColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.selectedContentColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault((androidx.compose.material3.LocalContentColor).current)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault((androidx.compose.material3.LocalContentColor).current)
                     else -> (androidx.compose.material3.LocalContentColor).current
                 }
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
@@ -2595,7 +2542,6 @@ object GeneratedAdapters {
                 val model = node as TextAnnotatedStringNode
                 val colorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.color) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.ui.graphics.Color.Companion.Unspecified)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.ui.graphics.Color.Companion.Unspecified)
                     else -> androidx.compose.ui.graphics.Color.Companion.Unspecified
                 }
                 val fontFamilyWire = model.props.fontFamily
@@ -2712,7 +2658,6 @@ object GeneratedAdapters {
                 val model = node as TimePickerDialogNode
                 val containerColorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.containerColor) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.TimePickerDialogDefaults.containerColor)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.TimePickerDialogDefaults.containerColor)
                     else -> androidx.compose.material3.TimePickerDialogDefaults.containerColor
                 }
                 val shapeWire = model.props.shape
@@ -2766,7 +2711,6 @@ object GeneratedAdapters {
                 val model = node as VerticalDividerNode
                 val colorValue: androidx.compose.ui.graphics.Color = when (val wire = model.props.color) {
                     is JsonObject -> context.expressionColor(wire) ?: com.pycompose.renderer.generated.ValueResolver.color(wire).getOrDefault(androidx.compose.material3.DividerDefaults.color)
-                    is JsonPrimitive -> com.pycompose.renderer.PropResolver.color(wire.content).getOrDefault(androidx.compose.material3.DividerDefaults.color)
                     else -> androidx.compose.material3.DividerDefaults.color
                 }
                 val thicknessWire = model.props.thickness

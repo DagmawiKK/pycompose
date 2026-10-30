@@ -132,7 +132,7 @@ def test_the_tooltip_trio_shares_a_scope_and_one_visibility_state() -> None:
         for prop in components[name]["props"].values():
             if prop["type"] == "color":
                 assert prop["valueType"] == "Color"
-                assert prop["decode"] == "color"
+                assert "decode" not in prop
 
 
 def test_the_search_input_field_requires_the_callbacks_native_needs() -> None:

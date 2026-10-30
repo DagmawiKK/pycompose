@@ -293,9 +293,9 @@ def test_no_optional_prop_is_passed_through() -> None:
 
     ``Boolean?`` into a ``Boolean`` parameter does not compile. A prop may only
     be passed when the schema marks it required or gives it a default; anything
-    else is omitted so Compose's own default applies. A decoded prop is passed
-    all the same, because its resolver takes the nullable wire value and each
-    decoding path handles absence itself, and a prop a state declaration holds
+    else is omitted so Compose's own default applies. A decoded prop or a colour
+    is passed all the same, because its path reads the nullable wire value and
+    falls back itself when it is absent, and a prop a state declaration holds
     is passed to a host holder that takes it nullable by design: absent means
     the app said nothing about that half of the protocol.
     """
@@ -318,7 +318,7 @@ def test_no_optional_prop_is_passed_through() -> None:
             if referenced is None:
                 continue
             if (
-                spec["type"] in ("actionId", "modifier")
+                spec["type"] in ("actionId", "modifier", "color")
                 or spec.get("content")
                 or spec.get("decode")
             ):

@@ -165,6 +165,5 @@ object BuiltinComponents {
 internal fun nativeColor(value: JsonElement?): Color =
     when (value) {
         is JsonObject -> ValueResolver.color(value).getOrDefault(Color.Unspecified)
-        is JsonPrimitive -> PropResolver.color(value.content).getOrDefault(Color.Unspecified)
         else -> Color.Unspecified
     }

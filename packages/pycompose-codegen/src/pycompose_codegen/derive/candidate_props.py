@@ -295,7 +295,6 @@ def _color_prop(
     return {
         "type": "color",
         "valueType": "Color",
-        "decode": "color",
         "fallback": rendered,
     }
 

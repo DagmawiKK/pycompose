@@ -205,11 +205,11 @@ def _tagged(prop: dict[str, Any], value: dict[str, Any]) -> dict[str, Any]:
     tagged = parameter_schema({**prop, "type": "value", "nullable": False})
     if prop["type"] == "value":
         return tagged
-    forms = [value, tagged]
     if prop["type"] == "color":
-        # A colour may be an expression over holder streams.
-        forms.append({"$ref": "#/definitions/Expression"})
-    return {"anyOf": forms}
+        # One colour form crosses the wire, the tagged value, or an expression
+        # over holder streams that evaluates to one.
+        return {"anyOf": [tagged, {"$ref": "#/definitions/Expression"}]}
+    return {"anyOf": [value, tagged]}
 
 
 def action_schema(action_ids: list[str]) -> dict[str, Any]:

@@ -440,9 +440,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -452,9 +449,6 @@
             },
             "iconContentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -483,9 +477,6 @@
             "textContentColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -495,9 +486,6 @@
             },
             "titleContentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -726,9 +714,6 @@
           "properties": {
             "containerColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -996,9 +981,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -1075,9 +1057,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -1098,9 +1077,6 @@
             },
             "sheetContainerColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -1561,9 +1537,6 @@
             "color": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -1610,9 +1583,6 @@
             "trackColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -1637,9 +1607,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -1711,9 +1678,6 @@
             },
             "trackColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -1984,9 +1948,6 @@
             "drawerContainerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -2204,9 +2165,6 @@
             },
             "containerColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -2985,9 +2943,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -3133,9 +3088,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -3207,9 +3159,6 @@
           "properties": {
             "containerColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -3673,9 +3622,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -3819,9 +3765,6 @@
             "color": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -3903,9 +3846,6 @@
             },
             "tint": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -4285,9 +4225,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -4593,9 +4530,6 @@
             "selectedContentColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -4625,9 +4559,6 @@
             "color": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -4651,9 +4582,6 @@
             },
             "trackColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -4682,9 +4610,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -4731,9 +4656,6 @@
             },
             "trackColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -5000,9 +4922,6 @@
             "drawerContainerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -5098,9 +5017,6 @@
             },
             "scrimColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -5282,9 +5198,6 @@
           "properties": {
             "containerColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -5489,9 +5402,6 @@
           "properties": {
             "containerColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -6309,9 +6219,6 @@
             "drawerContainerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -6416,9 +6323,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -6428,9 +6332,6 @@
             },
             "contentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -6508,9 +6409,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -6520,9 +6418,6 @@
             },
             "contentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -6626,9 +6521,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -6638,9 +6530,6 @@
             },
             "contentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -6809,9 +6698,6 @@
             "actionContentColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -6822,9 +6708,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -6834,9 +6717,6 @@
             },
             "contentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -6884,9 +6764,6 @@
             },
             "titleContentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -6963,9 +6840,6 @@
           "properties": {
             "containerColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -7249,9 +7123,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -7261,9 +7132,6 @@
             },
             "contentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -7367,9 +7235,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -7379,9 +7244,6 @@
             },
             "contentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -7667,9 +7529,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -7679,9 +7538,6 @@
             },
             "contentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -7964,9 +7820,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -8036,9 +7889,6 @@
             "actionContentColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -8053,9 +7903,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -8066,9 +7913,6 @@
             "contentColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -8078,9 +7922,6 @@
             },
             "dismissActionContentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -8501,9 +8342,6 @@
             "color": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -8602,9 +8440,6 @@
             },
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -8722,9 +8557,6 @@
             "color": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -8839,9 +8671,6 @@
             },
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -9119,9 +8948,6 @@
             "selectedContentColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -9184,9 +9010,6 @@
             "selectedContentColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -9215,9 +9038,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -9290,9 +9110,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -9620,9 +9437,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -9859,9 +9673,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -14015,9 +13826,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -14079,9 +13887,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -15044,9 +14849,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -15108,9 +14910,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -16073,9 +15872,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -16137,9 +15933,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -17102,9 +16895,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -17166,9 +16956,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -18131,9 +17918,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -18195,9 +17979,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -19160,9 +18941,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -19224,9 +19002,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -20189,9 +19964,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -20253,9 +20025,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -20874,9 +20643,6 @@
             "scrimColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -21331,9 +21097,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -21395,9 +21158,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -22059,9 +21819,6 @@
             "scrimColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -22519,9 +22276,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -22583,9 +22337,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -23893,9 +23644,6 @@
             "color": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -23919,9 +23667,6 @@
             },
             "trackColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -24025,9 +23770,6 @@
             },
             "scrimColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -24489,9 +24231,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -24553,9 +24292,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -25066,9 +24802,6 @@
             "tint": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -25198,9 +24931,6 @@
             "color": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -25224,9 +24954,6 @@
             },
             "trackColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -25330,9 +25057,6 @@
             },
             "scrimColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -25797,9 +25521,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -25861,9 +25582,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -26256,9 +25974,6 @@
             "color": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -26304,9 +26019,6 @@
             },
             "trackColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -26381,9 +26093,6 @@
           "properties": {
             "drawerContainerColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -26567,9 +26276,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -26626,9 +26332,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -26711,9 +26414,6 @@
             },
             "tint": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -26895,9 +26595,6 @@
             "color": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -26921,9 +26618,6 @@
             },
             "trackColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -26998,9 +26692,6 @@
           "properties": {
             "drawerContainerColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -27097,9 +26788,6 @@
             },
             "scrimColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -27425,9 +27113,6 @@
           "properties": {
             "containerColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -27790,9 +27475,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -27920,9 +27602,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -28094,9 +27773,6 @@
             "color": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -28173,9 +27849,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -28185,9 +27858,6 @@
             },
             "iconContentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -28216,9 +27886,6 @@
             "textContentColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -28228,9 +27895,6 @@
             },
             "titleContentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -28459,9 +28123,6 @@
           "properties": {
             "containerColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -28729,9 +28390,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -28808,9 +28466,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -28831,9 +28486,6 @@
             },
             "sheetContainerColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -29294,9 +28946,6 @@
             "color": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -29343,9 +28992,6 @@
             "trackColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -29370,9 +29016,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -29444,9 +29087,6 @@
             },
             "trackColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -29717,9 +29357,6 @@
             "drawerContainerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -29937,9 +29574,6 @@
             },
             "containerColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -30718,9 +30352,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -30866,9 +30497,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -30940,9 +30568,6 @@
           "properties": {
             "containerColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -31406,9 +31031,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -31552,9 +31174,6 @@
             "color": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -31636,9 +31255,6 @@
             },
             "tint": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -32018,9 +31634,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -32326,9 +31939,6 @@
             "selectedContentColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -32358,9 +31968,6 @@
             "color": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -32384,9 +31991,6 @@
             },
             "trackColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -32415,9 +32019,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -32464,9 +32065,6 @@
             },
             "trackColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -32733,9 +32331,6 @@
             "drawerContainerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -32831,9 +32426,6 @@
             },
             "scrimColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -33597,9 +33189,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -33803,9 +33392,6 @@
           "properties": {
             "containerColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -35094,9 +34680,6 @@
             "drawerContainerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -35201,9 +34784,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -35213,9 +34793,6 @@
             },
             "contentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -35293,9 +34870,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -35305,9 +34879,6 @@
             },
             "contentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -35411,9 +34982,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -35423,9 +34991,6 @@
             },
             "contentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -35594,9 +35159,6 @@
             "actionContentColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -35607,9 +35169,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -35619,9 +35178,6 @@
             },
             "contentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -35669,9 +35225,6 @@
             },
             "titleContentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -35748,9 +35301,6 @@
           "properties": {
             "containerColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -36034,9 +35584,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -36046,9 +35593,6 @@
             },
             "contentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -36152,9 +35696,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -36164,9 +35705,6 @@
             },
             "contentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -36452,9 +35990,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -36464,9 +35999,6 @@
             },
             "contentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -36749,9 +36281,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -36821,9 +36350,6 @@
             "actionContentColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -36838,9 +36364,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -36851,9 +36374,6 @@
             "contentColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -36863,9 +36383,6 @@
             },
             "dismissActionContentColor": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -37286,9 +36803,6 @@
             "color": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -37387,9 +36901,6 @@
             },
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -37507,9 +37018,6 @@
             "color": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -37624,9 +37132,6 @@
             },
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -37904,9 +37409,6 @@
             "selectedContentColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -37969,9 +37471,6 @@
             "selectedContentColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -38000,9 +37499,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -38075,9 +37571,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },
@@ -38405,9 +37898,6 @@
             "containerColor": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
                   "$ref": "#/definitions/Family_Color"
                 },
                 {
@@ -38644,9 +38134,6 @@
           "properties": {
             "color": {
               "anyOf": [
-                {
-                  "type": "string"
-                },
                 {
                   "$ref": "#/definitions/Family_Color"
                 },

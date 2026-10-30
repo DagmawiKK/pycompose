@@ -16,7 +16,7 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
-import com.pycompose.renderer.PropResolver
+import com.pycompose.renderer.generated.ValueResolver
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -68,7 +68,13 @@ class NativeDefaultsProofTest {
                         "maxLines" to JsonPrimitive(1),
                         "minLines" to JsonPrimitive(1),
                         "softWrap" to JsonPrimitive(false),
-                        "color" to JsonPrimitive("#FF0000FF"),
+                        "color" to
+                            JsonObject(
+                                mapOf(
+                                    "type" to JsonPrimitive("Color"),
+                                    "color" to JsonPrimitive(0xFF0000FF),
+                                ),
+                            ),
                     ),
                 )
         }
@@ -139,9 +145,7 @@ private fun NativeTextDefaults(
                 requireNotNull(onLayout)
             }
         }
-    val color =
-        props["color"]?.jsonPrimitive?.content?.let { PropResolver.color(it).getOrThrow() }
-            ?: Color.Unspecified
+    val color = props["color"]?.let { ValueResolver.color(it).getOrThrow() } ?: Color.Unspecified
     Text(
         text = text,
         maxLines = props["maxLines"]?.jsonPrimitive?.int ?: Int.MAX_VALUE,

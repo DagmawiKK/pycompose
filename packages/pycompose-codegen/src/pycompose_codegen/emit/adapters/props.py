@@ -42,6 +42,8 @@ def render_prop(prop: str, spec: dict[str, Any], out: Fragments) -> bool:
         emitted = _render_provider(prop_name, spec, spec["provider"], out)
     elif prop_type == "value":
         emitted = render_value(prop_name, spec, out)
+    elif prop_type == "color" and "valueType" in spec:
+        emitted = out.add(_color(prop_name, spec))
     elif spec.get("decode") is not None:
         emitted = out.add(_decoded(prop_name, spec, spec["decode"]))
     elif spec.get("content") is not None:
@@ -264,24 +266,6 @@ def _decoded(
 
     resolver = qualify(RESOLVER_OWNER.get(decoder, "PropResolver"))
 
-    if decoder == "color" and "valueType" in spec:
-        # The wire carries either a tagged value (the app built a Color) or a
-        # legacy string, exactly as the hand-written helper read it. Tagged
-        # first: it is the form that could carry a theme reference.
-        tagged = resolver_call(spec["valueType"], "wire")
-        return (
-            f"val {value}: {returns} = when (val wire = {wire}) {{\n"
-            # An expression over holder streams is evaluated here, each frame
-            # its streams move; any other tagged object is a colour value.
-            "                    is JsonObject -> context.expressionColor(wire) "
-            f"?: {tagged}.getOrDefault({fallback})\n"
-            "                    is JsonPrimitive -> "
-            f"{resolver}.color(wire.content).getOrDefault({fallback})\n"
-            f"                    else -> {fallback}\n"
-            "                }",
-            f"{prop_name} = {value}",
-        )
-
     if decoder == "textStyle":
         # The adapter body is already composable, so a plain local is enough;
         # the resolver itself is what must run in composition.
@@ -291,6 +275,35 @@ def _decoded(
         )
     resolved = f"{resolver}.{decoder}({access}).getOrDefault({fallback})"
     return f"val {value}: {returns} = {resolved}", f"{prop_name} = {value}"
+
+
+def _color(prop_name: str, spec: dict[str, Any]) -> tuple[str, str]:
+    """Render a colour prop: its tagged value, or an expression over streams.
+
+    A colour crosses the wire only as its family's tagged object; an
+    expression over holder streams is an object too, evaluated here each frame
+    its streams move. Absent, the parameter takes the colour the hand-written
+    adapter chose for it.
+
+    Args:
+        prop_name: The camelCase Kotlin property name.
+        spec: The prop's schema entry.
+
+    Returns:
+        The local declaration and the argument naming it.
+    """
+    fallback = qualify(spec.get("fallback") or RESOLVER_FALLBACK["color"])
+    tagged = resolver_call(spec["valueType"], "wire")
+    value = f"{prop_name}Value"
+    return (
+        f"val {value}: {qualify(RESOLVER_RETURN['color'])} = "
+        f"when (val wire = model.props.{prop_name}) {{\n"
+        "                    is JsonObject -> context.expressionColor(wire) "
+        f"?: {tagged}.getOrDefault({fallback})\n"
+        f"                    else -> {fallback}\n"
+        "                }",
+        f"{prop_name} = {value}",
+    )
 
 
 def _callback(prop_name: str, spec: dict[str, Any]) -> str | None:

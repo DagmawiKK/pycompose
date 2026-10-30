@@ -59,7 +59,7 @@ def test_first_batch_maps_python_props_to_registry_valid_ir(
     component: type[Component], props: dict[str, JsonValue]
 ) -> None:
     node = component(id="root", **props)
-    candidate = emit_ir(State(root=node), "1.0.0")
+    candidate = emit_ir(State(root=node), SCHEMA_VERSION)
     assert validate_ir(candidate).snapshot is candidate
     assert node.type == component.component_type
     assert all("_" not in name for name in node.props)

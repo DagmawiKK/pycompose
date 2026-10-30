@@ -112,9 +112,9 @@ def _mechanical_prop(spec: dict[str, Any]) -> bool:
             spec.get("required") or "nativeDefault" in spec
         ):
             return True
-        # A colour prop takes a tagged value *or* the legacy string, and the
-        # adapter handles both explicitly; no other decoded family does.
-        return spec.get("type") == "color" and spec.get("decode") == "color"
+        # A colour prop takes its tagged value or an expression over streams,
+        # and falls back to its declared colour when absent.
+        return spec.get("type") == "color"
     if spec.get("type") in MECHANICAL:
         return True
     # A dp prop carries a plain number and needs no decoder, but only a prop

@@ -17,6 +17,7 @@ from pycompose.core.values import _Unset
 from pycompose.errors import IrValidationError
 from pycompose.ui.modifiers import Modifier
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json
+from pycompose.values import Color
 from pycompose.wire.validator import validate_component
 
 ActionTarget = str | Intent | type[Intent]
@@ -156,6 +157,11 @@ class Component(Node):
         wire = cast(
             "dict[str, JsonValue | FrozenJsonValue]", props_from_kwargs(**values)
         )
+        declared = REGISTRY.components.get(self.component_type)
+        for key, value in wire.items():
+            rule = declared.props.get(key) if declared is not None else None
+            if isinstance(value, str) and rule is not None and rule.type == "color":
+                wire[key] = _hex_color(value, id or "", key)
         if modifier is not None:
             wire["modifier"] = freeze_json(
                 modifier.values if isinstance(modifier, Modifier) else modifier
@@ -182,6 +188,44 @@ class Component(Node):
 
 
 _CONSTRUCTORS.add(Component.__init__.__code__)
+
+
+_HEX = "a colour is #RRGGBB, #AARRGGBB or a Color value"
+
+
+def _hex_color(text: str, node_id: str, prop: str) -> JsonValue:
+    """A colour written as ``#RRGGBB`` or ``#AARRGGBB``, as its tagged value.
+
+    The wire carries one colour form, the family's tagged object, so the hex
+    an app writes becomes it here.
+
+    Args:
+        text: The colour as written.
+        node_id: The node it belongs to, for the error.
+        prop: The prop it belongs to, for the error.
+
+    Returns:
+        The tagged ``Color``.
+
+    Raises:
+        IrValidationError: If the text is not such a hex colour.
+    """
+    digits = text[1:]
+    if not text.startswith("#") or len(digits) not in (6, 8):
+        raise IrValidationError(
+            "a colour is #RRGGBB, #AARRGGBB or a Color value",
+            node_id=node_id,
+            prop=prop,
+        )
+    try:
+        bits = int(digits, 16)
+    except ValueError:
+        raise IrValidationError(
+            "a colour is #RRGGBB, #AARRGGBB or a Color value",
+            node_id=node_id,
+            prop=prop,
+        ) from None
+    return Color(bits | 0xFF000000 if len(digits) == 6 else bits)
 
 
 def _refuse(error: IrValidationError, node: Component) -> NoReturn:

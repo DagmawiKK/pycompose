@@ -44,13 +44,11 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.AlertDialogDefaults.containerColor"
         },
         "iconContentColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.AlertDialogDefaults.iconContentColor"
         },
         "onDismissRequest": {
@@ -65,13 +63,11 @@
         "textContentColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.AlertDialogDefaults.textContentColor"
         },
         "titleContentColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.AlertDialogDefaults.titleContentColor"
         },
         "tonalElevation": {
@@ -307,7 +303,6 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.BadgeDefaults.containerColor"
         },
         "modifier": {
@@ -562,7 +557,6 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.BottomAppBarDefaults.containerColor"
         },
         "contentPadding": {
@@ -616,13 +610,11 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface"
         },
         "sheetContainerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.BottomSheetDefaults.ContainerColor"
         },
         "sheetMaxWidth": {
@@ -1078,7 +1070,6 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.circularColor"
         },
         "strokeCap": {
@@ -1093,7 +1084,6 @@
         "trackColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.circularIndeterminateTrackColor"
         },
         "modifier": {
@@ -1123,7 +1113,6 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.circularColor"
         },
         "gapSize": {
@@ -1150,7 +1139,6 @@
         "trackColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.circularDeterminateTrackColor"
         },
         "modifier": {
@@ -1418,7 +1406,6 @@
         "drawerContainerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.DrawerDefaults.standardContainerColor"
         },
         "drawerShape": {
@@ -1578,7 +1565,6 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.MenuDefaults.containerColor"
         },
         "expanded": {
@@ -2354,7 +2340,6 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.MenuDefaults.containerColor"
         },
         "expanded": {
@@ -2471,7 +2456,6 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor"
         },
         "elevation": {
@@ -2554,7 +2538,6 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor"
         },
         "elevation": {
@@ -3198,7 +3181,6 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor"
         },
         "elevation": {
@@ -3362,7 +3344,6 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.DividerDefaults.color"
         },
         "thickness": {
@@ -3403,7 +3384,6 @@
         "tint": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.LocalContentColor.current"
         },
         "modifier": {
@@ -3876,7 +3856,6 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor"
         },
         "elevation": {
@@ -4127,7 +4106,6 @@
         "selectedContentColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "(androidx.compose.material3.LocalContentColor).current"
         },
         "modifier": {
@@ -4205,7 +4183,6 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearColor"
         },
         "progress": {
@@ -4220,7 +4197,6 @@
         "trackColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor"
         },
         "modifier": {
@@ -4253,7 +4229,6 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearColor"
         },
         "gapSize": {
@@ -4268,7 +4243,6 @@
         "trackColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor"
         },
         "modifier": {
@@ -4482,7 +4456,6 @@
         "drawerContainerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.DrawerDefaults.modalContainerColor"
         },
         "drawerShape": {
@@ -4529,7 +4502,6 @@
         "scrimColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.DrawerDefaults.scrimColor"
         },
         "modifier": {
@@ -4732,7 +4704,6 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.NavigationBarDefaults.containerColor"
         },
         "tonalElevation": {
@@ -4944,7 +4915,6 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.NavigationRailDefaults.ContainerColor"
         },
         "windowInsets": {
@@ -5995,7 +5965,6 @@
         "drawerContainerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.DrawerDefaults.standardContainerColor"
         },
         "drawerShape": {
@@ -6067,13 +6036,11 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.TooltipDefaults.plainTooltipContainerColor"
         },
         "contentColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.TooltipDefaults.plainTooltipContentColor"
         },
         "maxWidth": {
@@ -6114,13 +6081,11 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.TabRowDefaults.primaryContainerColor"
         },
         "contentColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.TabRowDefaults.primaryContentColor"
         },
         "edgePadding": {
@@ -6168,13 +6133,11 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.TabRowDefaults.primaryContainerColor"
         },
         "contentColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.TabRowDefaults.primaryContentColor"
         },
         "selectedTabIndex": {
@@ -6358,25 +6321,21 @@
         },
         "containerColor": {
           "type": "color",
-          "decode": "color",
           "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
           "valueType": "Color"
         },
         "contentColor": {
           "type": "color",
-          "decode": "color",
           "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
           "valueType": "Color"
         },
         "titleContentColor": {
           "type": "color",
-          "decode": "color",
           "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
           "valueType": "Color"
         },
         "actionContentColor": {
           "type": "color",
-          "decode": "color",
           "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
           "valueType": "Color"
         }
@@ -6452,7 +6411,6 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.MaterialTheme.colorScheme.background"
         },
         "modifier": {
@@ -6719,13 +6677,11 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.TabRowDefaults.secondaryContainerColor"
         },
         "contentColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.TabRowDefaults.secondaryContentColor"
         },
         "edgePadding": {
@@ -6773,13 +6729,11 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.TabRowDefaults.secondaryContainerColor"
         },
         "contentColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.TabRowDefaults.secondaryContentColor"
         },
         "selectedTabIndex": {
@@ -7139,13 +7093,11 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.ShortNavigationBarDefaults.containerColor"
         },
         "contentColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.ShortNavigationBarDefaults.contentColor"
         },
         "windowInsets": {
@@ -7493,7 +7445,6 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor"
         },
         "elevation": {
@@ -7574,7 +7525,6 @@
         "actionContentColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.SnackbarDefaults.actionContentColor"
         },
         "actionOnNewLine": {
@@ -7584,19 +7534,16 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.SnackbarDefaults.color"
         },
         "contentColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.SnackbarDefaults.contentColor"
         },
         "dismissActionContentColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.SnackbarDefaults.dismissActionContentColor"
         },
         "shape": {
@@ -8083,7 +8030,6 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface"
         },
         "shadowElevation": {
@@ -8133,7 +8079,6 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface"
         },
         "enabled": {
@@ -8234,7 +8179,6 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface"
         },
         "enabled": {
@@ -8329,7 +8273,6 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface"
         },
         "enabled": {
@@ -8592,7 +8535,6 @@
         "selectedContentColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "(androidx.compose.material3.LocalContentColor).current"
         },
         "modifier": {
@@ -8681,7 +8623,6 @@
         "selectedContentColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "(androidx.compose.material3.LocalContentColor).current"
         },
         "modifier": {
@@ -8748,8 +8689,7 @@
       "props": {
         "color": {
           "type": "color",
-          "valueType": "Color",
-          "decode": "color"
+          "valueType": "Color"
         },
         "style": {
           "type": "enum",
@@ -8821,7 +8761,6 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.ui.graphics.Color.Companion.Unspecified"
         },
         "fontFamily": {
@@ -9260,7 +9199,6 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.TimePickerDialogDefaults.containerColor"
         },
         "onDismissRequest": {
@@ -9528,7 +9466,6 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "decode": "color",
           "fallback": "androidx.compose.material3.DividerDefaults.color"
         },
         "thickness": {

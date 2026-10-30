@@ -22,7 +22,7 @@ def test_color_is_data_and_reaches_canonical_ir() -> None:
     assert snapshot["root"]["props"]["color"] == color
 
 
-def test_tagged_values_require_new_schema_while_legacy_colors_still_work() -> None:
+def test_tagged_values_require_new_schema() -> None:
     from pycompose.values import Color
 
     tagged = emit_ir(
@@ -30,8 +30,17 @@ def test_tagged_values_require_new_schema_while_legacy_colors_still_work() -> No
     )
     with pytest.raises(IrValidationError, match="newer schema"):
         validate_ir(replace(tagged, schema_version="1.10.0"))
-    legacy = emit_ir(State(root=Text(id="t", text="Hi", color="#000000")), "1.0.0")
-    assert validate_ir(legacy).snapshot is legacy
+
+
+def test_a_hex_colour_is_written_as_its_tagged_value() -> None:
+    from pycompose.values import Color
+
+    assert Text(id="t", text="Hi", color="#000000").props["color"] == Color(0xFF000000)
+    assert Text(id="t", text="Hi", color="#80123456").props["color"] == Color(
+        0x80123456
+    )
+    with pytest.raises(IrValidationError, match="#RRGGBB"):
+        Text(id="t", text="Hi", color="primary")
 
 
 def test_text_style_keeps_unit_and_null_distinctions() -> None:

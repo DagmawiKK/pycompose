@@ -856,25 +856,21 @@
         },
         "containerColor": {
           "type": "color",
-          "decode": "color",
           "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
           "valueType": "Color"
         },
         "contentColor": {
           "type": "color",
-          "decode": "color",
           "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
           "valueType": "Color"
         },
         "titleContentColor": {
           "type": "color",
-          "decode": "color",
           "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
           "valueType": "Color"
         },
         "actionContentColor": {
           "type": "color",
-          "decode": "color",
           "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
           "valueType": "Color"
         }

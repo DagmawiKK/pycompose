@@ -73,9 +73,9 @@ class PropDef:
         native_type: The narrower native Kotlin type when the wire type is
             wider, as with ``Int`` integer props; None means the wire type is
             already native.
-        fallback: Native expression used in place of a decoded prop's per-decoder
-            default, for the parameters where the hand-written adapter read the
-            theme instead. Only valid together with ``decode``.
+        fallback: Native expression an absent decoded or colour prop takes, for
+            the parameters where the hand-written adapter read the theme instead
+            of a per-decoder default. Only valid with ``decode`` or a colour.
         nullable: Whether an explicit null is valid, distinct from absence.
         provider: Set when the prop reaches a native zero-arg lambda parameter.
             The app states a value; the host supplies the function, so the

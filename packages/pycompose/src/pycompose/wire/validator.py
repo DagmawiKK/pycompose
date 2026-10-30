@@ -56,7 +56,8 @@ def _is_long(value: object) -> bool:
 _TYPE_CHECKS: dict[str, Callable[[object, PropDef], bool]] = {
     "string": lambda value, _: isinstance(value, str),
     "resource": lambda value, prop: valid_resource(value, prop.values),
-    "color": lambda value, _: isinstance(value, str),
+    # A colour of a value family crosses the wire only as its tagged object.
+    "color": lambda value, prop: isinstance(value, str) and prop.value_type is None,
     "boolean": lambda value, _: isinstance(value, bool),
     "integer": lambda value, _: _is_long(value),
     "durationMs": lambda value, _: _is_long(value),

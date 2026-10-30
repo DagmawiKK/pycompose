@@ -184,10 +184,14 @@ def test_every_enum_color_and_resource_prop_declares_its_decoder() -> None:
         for prop, spec in entry["props"].items():
             if prop in held:
                 continue
-            if spec["type"] in {"enum", "color", "resource"}:
+            if spec["type"] in {"enum", "resource"}:
                 assert spec.get(
                     "decode"
                 ), f"{name}.{prop} is a {spec['type']} with no decoder"
+            if spec["type"] == "color":
+                # A colour is its family's tagged value: its resolver, not a decoder.
+                assert spec.get("valueType") == "Color", f"{name}.{prop}"
+                assert "decode" not in spec, f"{name}.{prop}"
 
 
 def test_a_decoder_binds_to_a_resolver_that_exists() -> None:

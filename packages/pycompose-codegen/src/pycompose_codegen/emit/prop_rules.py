@@ -235,8 +235,8 @@ def _validate_prop(
     if "minimum" in prop and "maximum" in prop and prop["minimum"] > prop["maximum"]:
         die(f"prop {name}.{prop_name} minimum exceeds maximum")
     if "fallback" in prop:
-        if prop.get("decode") is None:
-            die(f"prop {name}.{prop_name} 'fallback' needs a 'decode'")
+        if prop.get("decode") is None and ptype != "color":
+            die(f"prop {name}.{prop_name} 'fallback' needs a 'decode' or a colour")
         if not isinstance(prop["fallback"], str) or not prop["fallback"]:
             die(f"prop {name}.{prop_name} 'fallback' must be Kotlin source")
     _validate_defaults(name, prop_name, prop, ptype)
