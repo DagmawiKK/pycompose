@@ -9721,6 +9721,34 @@
           "required": true,
           "minimum": 0
         }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.padding",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.PaddingKt",
+          "name": "padding",
+          "jvmName": "padding",
+          "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/PaddingValues;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "value": {
+            "parameter": "paddingValues",
+            "type": "androidx.compose.foundation.layout.PaddingValues"
+          }
+        },
+        "bare": {
+          "value": {
+            "parameter": "all",
+            "source": {
+              "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+              "owner": "androidx.compose.foundation.layout.PaddingKt",
+              "name": "padding",
+              "jvmName": "padding-3ABfNKs",
+              "descriptor": "(Landroidx/compose/ui/Modifier;F)Landroidx/compose/ui/Modifier;"
+            }
+          }
+        }
       }
     },
     "fillMaxWidth": {
@@ -9730,6 +9758,22 @@
           "required": true,
           "minimum": 0,
           "maximum": 1
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.fillMaxWidth",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.SizeKt",
+          "name": "fillMaxWidth",
+          "jvmName": "fillMaxWidth",
+          "descriptor": "(Landroidx/compose/ui/Modifier;F)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "fraction": {
+            "parameter": "fraction",
+            "type": "kotlin.Float"
+          }
         }
       }
     },
@@ -9747,6 +9791,26 @@
           "required": true,
           "minimum": 0
         }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.size",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.SizeKt",
+          "name": "size",
+          "jvmName": "size-VpY3zN4",
+          "descriptor": "(Landroidx/compose/ui/Modifier;FF)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "width": {
+            "parameter": "width",
+            "type": "androidx.compose.ui.unit.Dp"
+          },
+          "height": {
+            "parameter": "height",
+            "type": "androidx.compose.ui.unit.Dp"
+          }
+        }
       }
     },
     "clip": {
@@ -9761,6 +9825,22 @@
             "rounded"
           ]
         }
+      },
+      "call": {
+        "function": "androidx.compose.ui.draw.clip",
+        "source": {
+          "artifact": "androidx.compose.ui:ui-android:1.12.1",
+          "owner": "androidx.compose.ui.draw.ClipKt",
+          "name": "clip",
+          "jvmName": "clip",
+          "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "shape": {
+            "parameter": "shape",
+            "type": "androidx.compose.ui.graphics.Shape"
+          }
+        }
       }
     },
     "background": {
@@ -9771,6 +9851,22 @@
           "required": true,
           "since": "1.11.0"
         }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.background",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+          "owner": "androidx.compose.foundation.BackgroundKt",
+          "name": "background",
+          "jvmName": "background",
+          "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Brush;Landroidx/compose/ui/graphics/Shape;F)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "brush": {
+            "parameter": "brush",
+            "type": "androidx.compose.ui.graphics.Brush"
+          }
+        }
       }
     },
     "windowInsetsPadding": {
@@ -9780,6 +9876,22 @@
           "valueType": "WindowInsets",
           "required": true,
           "since": "1.11.0"
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.layout.windowInsetsPadding",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+          "owner": "androidx.compose.foundation.layout.WindowInsetsPaddingKt",
+          "name": "windowInsetsPadding",
+          "jvmName": "windowInsetsPadding",
+          "descriptor": "(Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/WindowInsets;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "insets": {
+            "parameter": "insets",
+            "type": "androidx.compose.foundation.layout.WindowInsets"
+          }
         }
       }
     },
@@ -9792,6 +9904,26 @@
         "enabled": {
           "type": "boolean",
           "required": true
+        }
+      },
+      "call": {
+        "function": "androidx.compose.foundation.clickable",
+        "source": {
+          "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+          "owner": "androidx.compose.foundation.ClickableKt",
+          "name": "clickable",
+          "jvmName": "clickable-XHw0xAI",
+          "descriptor": "(Landroidx/compose/ui/Modifier;ZLjava/lang/String;Landroidx/compose/ui/semantics/Role;Lkotlin/jvm/functions/Function0;)Landroidx/compose/ui/Modifier;"
+        },
+        "arguments": {
+          "onClick": {
+            "parameter": "onClick",
+            "type": "kotlin.Function0"
+          },
+          "enabled": {
+            "parameter": "enabled",
+            "type": "kotlin.Boolean"
+          }
         }
       }
     },
@@ -9832,6 +9964,113 @@
         },
         "traversalIndex": {
           "type": "number"
+        }
+      },
+      "call": {
+        "function": "androidx.compose.ui.semantics.semantics",
+        "source": {
+          "artifact": "androidx.compose.ui:ui-android:1.12.1",
+          "owner": "androidx.compose.ui.semantics.SemanticsModifierKt",
+          "name": "semantics",
+          "jvmName": "semantics",
+          "descriptor": "(Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function1;)Landroidx/compose/ui/Modifier;"
+        },
+        "block": {
+          "parameter": "properties",
+          "receiver": "androidx.compose.ui.semantics.SemanticsPropertyReceiver"
+        },
+        "arguments": {
+          "contentDescription": {
+            "member": "property",
+            "type": "kotlin.String",
+            "source": {
+              "artifact": "androidx.compose.ui:ui-android:1.12.1",
+              "owner": "androidx.compose.ui.semantics.SemanticsPropertiesKt",
+              "name": "contentDescription",
+              "jvmName": "getContentDescription",
+              "descriptor": "(Landroidx/compose/ui/semantics/SemanticsPropertyReceiver;)Ljava/lang/String;"
+            }
+          },
+          "stateDescription": {
+            "member": "property",
+            "type": "kotlin.String",
+            "source": {
+              "artifact": "androidx.compose.ui:ui-android:1.12.1",
+              "owner": "androidx.compose.ui.semantics.SemanticsPropertiesKt",
+              "name": "stateDescription",
+              "jvmName": "getStateDescription",
+              "descriptor": "(Landroidx/compose/ui/semantics/SemanticsPropertyReceiver;)Ljava/lang/String;"
+            }
+          },
+          "role": {
+            "member": "property",
+            "type": "androidx.compose.ui.semantics.Role",
+            "source": {
+              "artifact": "androidx.compose.ui:ui-android:1.12.1",
+              "owner": "androidx.compose.ui.semantics.SemanticsPropertiesKt",
+              "name": "role",
+              "jvmName": "getRole",
+              "descriptor": "(Landroidx/compose/ui/semantics/SemanticsPropertyReceiver;)I"
+            },
+            "constants": {
+              "button": "Button",
+              "checkbox": "Checkbox",
+              "switch": "Switch",
+              "radioButton": "RadioButton",
+              "tab": "Tab",
+              "image": "Image",
+              "dropdownList": "DropdownList",
+              "valuePicker": "ValuePicker",
+              "carousel": "Carousel"
+            }
+          },
+          "heading": {
+            "member": "function",
+            "source": {
+              "artifact": "androidx.compose.ui:ui-android:1.12.1",
+              "owner": "androidx.compose.ui.semantics.SemanticsPropertiesKt",
+              "name": "heading",
+              "jvmName": "heading",
+              "descriptor": "(Landroidx/compose/ui/semantics/SemanticsPropertyReceiver;)V"
+            }
+          },
+          "liveRegion": {
+            "member": "property",
+            "type": "androidx.compose.ui.semantics.LiveRegionMode",
+            "source": {
+              "artifact": "androidx.compose.ui:ui-android:1.12.1",
+              "owner": "androidx.compose.ui.semantics.SemanticsPropertiesKt",
+              "name": "liveRegion",
+              "jvmName": "getLiveRegion",
+              "descriptor": "(Landroidx/compose/ui/semantics/SemanticsPropertyReceiver;)I"
+            },
+            "constants": {
+              "polite": "Polite",
+              "assertive": "Assertive"
+            }
+          },
+          "testTag": {
+            "member": "property",
+            "type": "kotlin.String",
+            "source": {
+              "artifact": "androidx.compose.ui:ui-android:1.12.1",
+              "owner": "androidx.compose.ui.semantics.SemanticsPropertiesKt",
+              "name": "testTag",
+              "jvmName": "getTestTag",
+              "descriptor": "(Landroidx/compose/ui/semantics/SemanticsPropertyReceiver;)Ljava/lang/String;"
+            }
+          },
+          "traversalIndex": {
+            "member": "property",
+            "type": "kotlin.Float",
+            "source": {
+              "artifact": "androidx.compose.ui:ui-android:1.12.1",
+              "owner": "androidx.compose.ui.semantics.SemanticsPropertiesKt",
+              "name": "traversalIndex",
+              "jvmName": "getTraversalIndex",
+              "descriptor": "(Landroidx/compose/ui/semantics/SemanticsPropertyReceiver;)F"
+            }
+          }
         }
       }
     },

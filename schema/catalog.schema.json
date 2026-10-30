@@ -141,7 +141,7 @@
     },
     "modifier": {
       "type": "object",
-      "description": "A modifier operation; one a composition scope declares (RowScope.weight) names each scope it applies in.",
+      "description": "A modifier operation and what it calls: one policy declares names the native call the pin resolves it to; one a composition scope declares (RowScope.weight) names each scope it applies in.",
       "required": ["props"],
       "additionalProperties": false,
       "properties": {
@@ -149,6 +149,38 @@
         "props": {
           "type": "object",
           "additionalProperties": { "$ref": "#/$defs/prop" }
+        },
+        "call": {
+          "type": "object",
+          "description": "The Modifier extension the operation calls, resolved in the pin: each prop's native parameter, the overload a bare dp calls, or the receiver block and members a block-taking call sets.",
+          "required": ["function", "source", "arguments"],
+          "additionalProperties": false,
+          "properties": {
+            "function": { "$ref": "#/$defs/dottedName" },
+            "source": { "type": "object" },
+            "arguments": { "type": "object", "additionalProperties": { "type": "object" } },
+            "bare": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "required": ["parameter", "source"],
+                "additionalProperties": false,
+                "properties": {
+                  "parameter": { "$ref": "#/$defs/identifier" },
+                  "source": { "type": "object" }
+                }
+              }
+            },
+            "block": {
+              "type": "object",
+              "required": ["parameter", "receiver"],
+              "additionalProperties": false,
+              "properties": {
+                "parameter": { "$ref": "#/$defs/identifier" },
+                "receiver": { "$ref": "#/$defs/dottedName" }
+              }
+            }
+          }
         },
         "scoped": {
           "type": "array",

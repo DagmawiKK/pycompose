@@ -47,28 +47,33 @@ def parse_modifiers(raw: object) -> Mapping[str, Mapping[str, PropDef]]:
 
 
 def derived_modifiers(raw: object) -> dict[str, Mapping[str, object]]:
-    """What each modifier derived from the pin carries besides its props.
+    """What each modifier carries besides its props: what the pin says it calls.
 
     Args:
         raw: The catalog's ``modifiers`` section, already parsed once.
 
     Returns:
-        Each derived operation's ``since`` and ``scoped`` declarations, by wire
-        name.
+        Each operation's ``since`` and its ``scoped`` declarations or ``call``,
+        by wire name.
 
     Raises:
         ComponentRegistryError: If a declaration does not name its scope.
     """
     derived: dict[str, Mapping[str, object]] = {}
     for name, body in (raw if isinstance(raw, Mapping) else {}).items():
-        if not isinstance(body, Mapping) or "scoped" not in body:
+        if not isinstance(body, Mapping) or not {"scoped", "call"} & set(body):
             continue
-        scoped = body["scoped"]
+        scoped = body.get("scoped", [])
         if not isinstance(scoped, list) or not all(
             isinstance(item, Mapping) and isinstance(item.get("scope"), str)
             for item in scoped
         ):
             raise ComponentRegistryError("'scoped' must name scopes", modifier=name)
+        call = body.get("call", {})
+        if not isinstance(call, Mapping) or (
+            call and not isinstance(call.get("function"), str)
+        ):
+            raise ComponentRegistryError("'call' must name its function", modifier=name)
         derived[name] = {key: value for key, value in body.items() if key != "props"}
     return derived
 

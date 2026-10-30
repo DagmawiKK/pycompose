@@ -28,6 +28,7 @@ from pycompose_codegen.derive.classpath_dump import (
 from pycompose_codegen.derive.component_binding import spell, stamped
 from pycompose_codegen.derive.components import propose_components
 from pycompose_codegen.derive.constant_families import constant_families
+from pycompose_codegen.derive.core_modifiers import core_modifiers
 from pycompose_codegen.derive.entry_candidates import derive, select
 from pycompose_codegen.derive.holders import derive as derive_holders
 from pycompose_codegen.derive.overloads import extras
@@ -212,7 +213,12 @@ def generate(
         frozenset(sections["modifiers"]),
         sections["schemaVersion"],
     )
-    lock["modifiers"] = {**sections["modifiers"], **modifiers}
+    # Policy states each modifier's wire contract; the pin says what it calls.
+    core, refused_core = core_modifiers(
+        found, sections["modifiers"], family_index(sections)
+    )
+    report.errors.extend(f"modifier {n}: {why}" for n, why in refused_core.items())
+    lock["modifiers"] = {**sections["modifiers"], **core, **modifiers}
     report.modifiers, report.families = sorted(modifiers), sorted(derived)
     holders, refused = derive_holders(found, source_drives(directory), lock)
     report.errors.extend(refused)
