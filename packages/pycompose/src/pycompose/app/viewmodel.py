@@ -13,7 +13,7 @@ from typing import Any, Generic, TypeVar
 from pycompose.app.effects import TypedEffect
 from pycompose.app.navigation import NavOp
 from pycompose.errors import StateError
-from pycompose.model.nodes.effect import Effect
+from pycompose.model.snapshot import Effect
 from pycompose.runtime.scope import Report, Scope
 from pycompose.state.app_state import AppState
 from pycompose.ui.intents import Intent

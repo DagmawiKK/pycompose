@@ -1,4 +1,4 @@
-"""Pure emission from the current State snapshot.
+"""Pure emission from the current snapshot.
 
 Traversal/reconstruction costs O(N + L), where L counts emitted id bytes. Full
 parent-path ids intrinsically make L quadratic for a chain; do not additionally
@@ -25,7 +25,7 @@ from pycompose.model.nodes.node import Node
 from pycompose.model.nodes.props import JsonValue
 from pycompose.model.nodes.reuse import Reuse, SubtreeMemo
 from pycompose.model.nodes.traversal import walk_nodes
-from pycompose.state.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.wire.bindings import lower_props, record
 from pycompose.wire.data import lower_data
 from pycompose.wire.echoes import lower_echoes
@@ -37,7 +37,7 @@ __all__ = ["emit_ir"]
 
 
 def emit_ir(
-    state: State,
+    state: Snapshot,
     schema_version: str,
     reuse: Reuse | None = None,
     *,
@@ -51,7 +51,7 @@ def emit_ir(
     before serialization; emission itself does not choose a validation mode.
 
     Args:
-        state: Frozen snapshot from the Store's current composition surface.
+        state: The frozen snapshot the store holds.
         schema_version: Requested wire contract version.
         reuse: The session's results from the previous publish, reused where
             a subtree is unchanged; None emits everything afresh.

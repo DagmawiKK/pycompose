@@ -6,7 +6,7 @@ from pycompose.errors import ComponentRegistryError, IrValidationError
 from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.catalog.registry_elements import SlotRule
 from pycompose.model.nodes.node import Node
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.values import Dp, RoundedCornerShape
 from pycompose.wire import emit_ir, to_dict, validate_ir
 
@@ -49,7 +49,7 @@ def test_owner_emits_distinct_collapsed_and_expanded_input_slots() -> None:
     )
 
     candidate = emit_ir(
-        State(
+        Snapshot(
             root=owner(
                 expanded_bar=ExpandedDockedSearchBar(
                     id="expanded",
@@ -101,7 +101,7 @@ def test_full_screen_surface_is_the_same_owner_contract() -> None:
     )
 
     candidate = emit_ir(
-        State(
+        Snapshot(
             root=owner(
                 expanded_bar=ExpandedFullScreenSearchBar(
                     id="expanded",
@@ -191,7 +191,7 @@ def test_out_of_range_owner_coordinates_are_rejected(prop: str, value: int) -> N
     with pytest.raises(IrValidationError):
         validate_ir(
             emit_ir(
-                State(root=Node(id="search", type="StatefulSearchBar", props=props)),
+                Snapshot(root=Node(id="search", type="StatefulSearchBar", props=props)),
                 "1.23.0",
             )
         )
@@ -202,7 +202,7 @@ def test_the_owner_requires_the_whole_editing_projection() -> None:
     with pytest.raises(IrValidationError):
         validate_ir(
             emit_ir(
-                State(
+                Snapshot(
                     root=Node(
                         id="search",
                         type="StatefulSearchBar",
@@ -222,7 +222,7 @@ def test_expansion_is_optional_so_native_gestures_can_own_it() -> None:
     from pycompose.material3 import SearchBarStateInputField, StatefulSearchBar
 
     candidate = emit_ir(
-        State(
+        Snapshot(
             root=StatefulSearchBar(
                 id="search",
                 text="compose",
@@ -249,7 +249,7 @@ def test_a_state_field_without_an_owner_still_emits_for_host_diagnosis() -> None
     from pycompose.material3 import SearchBarStateInputField
 
     candidate = emit_ir(
-        State(root=SearchBarStateInputField(id="orphan", on_search="submit")),
+        Snapshot(root=SearchBarStateInputField(id="orphan", on_search="submit")),
         "1.23.0",
     )
     assert validate_ir(candidate).snapshot is candidate

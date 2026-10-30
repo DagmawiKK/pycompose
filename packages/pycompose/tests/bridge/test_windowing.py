@@ -13,7 +13,7 @@ from pycompose.errors import IrValidationError
 from pycompose.foundation import Column, LazyColumn
 from pycompose.material3 import Text
 from pycompose.model.nodes.windows import DEFAULT_WINDOW, MAX_WINDOW
-from pycompose.state import State, Store
+from pycompose.model.snapshot import Snapshot, SnapshotStore
 
 ROWS = list(range(10_000))
 
@@ -24,8 +24,8 @@ def listed() -> LazyColumn:
     )
 
 
-def rows() -> State:
-    return State(root=listed())
+def rows() -> Snapshot:
+    return Snapshot(root=listed())
 
 
 @composable
@@ -51,7 +51,7 @@ def texts(node: dict[str, object]) -> list[str]:
 
 
 def test_a_list_of_ten_thousand_composes_only_its_first_window() -> None:
-    node = root(BridgeSurface(Store(rows()), Handlers()))
+    node = root(BridgeSurface(SnapshotStore(rows()), Handlers()))
 
     assert node["props"]["itemCount"] == 10_000  # type: ignore[index]
     assert node["props"]["itemOffset"] == 0  # type: ignore[index]
@@ -59,7 +59,7 @@ def test_a_list_of_ten_thousand_composes_only_its_first_window() -> None:
 
 
 def test_a_requested_window_is_composed_keyed_by_each_item() -> None:
-    bridge = BridgeSurface(Store(rows()), Handlers())
+    bridge = BridgeSurface(SnapshotStore(rows()), Handlers())
     key = root(bridge)["props"]["window"]  # type: ignore[index]
 
     bridge.request_window(str(key), 5_000, 5_009)
@@ -72,7 +72,7 @@ def test_a_requested_window_is_composed_keyed_by_each_item() -> None:
 
 
 def test_a_window_is_clamped_to_the_items_and_the_maximum() -> None:
-    bridge = BridgeSurface(Store(rows()), Handlers())
+    bridge = BridgeSurface(SnapshotStore(rows()), Handlers())
     key = str(root(bridge)["props"]["window"])  # type: ignore[index]
 
     bridge.request_window(key, 9_995, 20_000)
@@ -86,7 +86,9 @@ def test_a_list_inside_a_composable_follows_each_requested_window(
     debug: bool,
 ) -> None:
     bridge = BridgeSurface(
-        Store(State(root=titled(id="screen", title="Rows"))), Handlers(), debug=debug
+        SnapshotStore(Snapshot(root=titled(id="screen", title="Rows"))),
+        Handlers(),
+        debug=debug,
     )
     key = str(root(bridge)["children"][1]["props"]["window"])  # type: ignore[index]
 
@@ -108,8 +110,10 @@ def test_a_composable_beside_a_windowed_list_is_still_reused(
     # As an app runs it: no re-expansion to verify reuse, which would build it.
     monkeypatch.setattr(api, "VERIFY_EVERY", 0)
     BUILDS.clear()
-    state = State(root=Column(children=[header(id="header", title="Rows"), listed()]))
-    bridge = BridgeSurface(Store(state), Handlers(), debug=False)
+    state = Snapshot(
+        root=Column(children=[header(id="header", title="Rows"), listed()])
+    )
+    bridge = BridgeSurface(SnapshotStore(state), Handlers(), debug=False)
     key = str(root(bridge)["children"][1]["props"]["window"])  # type: ignore[index]
 
     for first in (100, 200, 300):

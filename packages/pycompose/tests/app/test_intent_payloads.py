@@ -13,7 +13,8 @@ from pycompose.bridge import BridgeSurface
 from pycompose.errors import IrValidationError
 from pycompose.foundation import Column
 from pycompose.material3 import Button, Text, TextField
-from pycompose.state import AppState, Store
+from pycompose.model.snapshot import SnapshotStore
+from pycompose.state import AppState
 
 
 class Note(AppState):
@@ -71,7 +72,7 @@ def bridge() -> BridgeSurface:
     session = NavigationSession(
         APP, None, "", "", report=lambda *_: None, signal=lambda: None
     )
-    return BridgeSurface(Store(session.snapshot_state(None)), session)
+    return BridgeSurface(SnapshotStore(session.snapshot_state(None)), session)
 
 
 def shown(bridge: BridgeSurface) -> str:

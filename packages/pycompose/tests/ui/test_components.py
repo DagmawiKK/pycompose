@@ -23,7 +23,7 @@ from pycompose.material3 import (
 )
 from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.nodes.props import JsonValue
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.ui import Modifier
 from pycompose.ui.base import Component
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
@@ -33,7 +33,7 @@ ROOT = Path(__file__).resolve().parents[4]
 
 def test_text_constructs_a_registry_valid_node() -> None:
     text = Text(id="title", text="Hello", style="titleLarge")
-    candidate = emit_ir(State(root=text), SCHEMA_VERSION)
+    candidate = emit_ir(Snapshot(root=text), SCHEMA_VERSION)
     assert validate_ir(candidate).snapshot is candidate
     assert to_json_bytes(candidate) == (
         b'{"root":{"id":"0","props":{"style":{"name":"titleLarge",'
@@ -60,7 +60,7 @@ def test_first_batch_maps_python_props_to_registry_valid_ir(
     component: type[Component], props: dict[str, JsonValue]
 ) -> None:
     node = component(id="root", **props)
-    candidate = emit_ir(State(root=node), SCHEMA_VERSION)
+    candidate = emit_ir(Snapshot(root=node), SCHEMA_VERSION)
     assert validate_ir(candidate).snapshot is candidate
     assert node.type == component.component_type
     assert all("_" not in name for name in node.props)
@@ -69,8 +69,8 @@ def test_first_batch_maps_python_props_to_registry_valid_ir(
 def test_lazy_items_keep_stable_keys_after_reordering() -> None:
     first = Text(id="first", text="one")
     second = Text(id="second", text="two")
-    a = readable(State(root=LazyColumn(id="list", items=(first, second))))
-    b = readable(State(root=LazyColumn(id="list", items=(second, first))))
+    a = readable(Snapshot(root=LazyColumn(id="list", items=(first, second))))
+    b = readable(Snapshot(root=LazyColumn(id="list", items=(second, first))))
     assert [child["id"] for child in a["root"]["children"]] == [
         "root.first",
         "root.second",
@@ -114,7 +114,7 @@ def test_modifier_chain_preserves_order_and_duplicates() -> None:
         ]
     }
     assert empty.to_wire() == {"operations": []}
-    candidate = emit_ir(State(root=node), SCHEMA_VERSION)
+    candidate = emit_ir(Snapshot(root=node), SCHEMA_VERSION)
     assert validate_ir(candidate).snapshot is candidate
 
 
@@ -201,7 +201,7 @@ def test_the_wire_padding_object_matches_the_bundled_schema() -> None:
     # Python refuses it at construction rather than rendering a blank frame.
     with pytest.raises(IrValidationError):
         Modifier().padding({"start": {"type": "Dp", "value": 16}})
-    candidate = emit_ir(State(root=padded), SCHEMA_VERSION)
+    candidate = emit_ir(Snapshot(root=padded), SCHEMA_VERSION)
     jsonschema.validate(
         json.loads(to_json_bytes(candidate)),
         json.loads(
@@ -313,7 +313,7 @@ def test_components_and_modifier_data_are_frozen() -> None:
 
 
 def test_component_screen_matches_golden_and_generated_schema() -> None:
-    candidate = emit_ir(State(root=component_screen()), SCHEMA_VERSION)
+    candidate = emit_ir(Snapshot(root=component_screen()), SCHEMA_VERSION)
     assert validate_ir(candidate).snapshot is candidate
     actual = to_json_bytes(candidate)
     expected = read_golden("component_screen.json")
@@ -336,7 +336,7 @@ def test_controls_added_in_1_3_0_map_python_props_to_registry_valid_ir(
     component: type[Component], props: dict[str, JsonValue]
 ) -> None:
     node = component(id="root", **props)
-    candidate = emit_ir(State(root=node), "1.3.0")
+    candidate = emit_ir(Snapshot(root=node), "1.3.0")
     assert validate_ir(candidate).snapshot is candidate
     assert node.type == component.component_type
     assert all("_" not in name for name in node.props)
@@ -354,6 +354,6 @@ def test_controls_added_after_1_3_0_need_that_schema(
     component: type[Component], props: dict[str, JsonValue]
 ) -> None:
     node = component(id="root", **props)
-    assert emit_ir(State(root=node), "1.3.0").schema_version == "1.3.0"
+    assert emit_ir(Snapshot(root=node), "1.3.0").schema_version == "1.3.0"
     with pytest.raises(IrValidationError, match="newer schema"):
-        validate_ir(emit_ir(State(root=node), "1.2.0"))
+        validate_ir(emit_ir(Snapshot(root=node), "1.2.0"))

@@ -23,8 +23,8 @@ from pycompose.model.nodes.expansion import ExpansionMemo
 from pycompose.model.nodes.ids import Handles
 from pycompose.model.nodes.reuse import Reuse
 from pycompose.model.nodes.windows import windows
+from pycompose.model.snapshot import Snapshot, SnapshotStore
 from pycompose.runtime.trace import tracing
-from pycompose.state import State, Store
 from pycompose.ui.intents import read_intents
 from pycompose.wire import emit_ir, to_json, validate_ir
 from pycompose.wire.echoes import ECHOES_SCHEMA, echo_key
@@ -64,7 +64,7 @@ class BridgeSurface:
 
     def __init__(
         self,
-        store: Store,
+        store: SnapshotStore,
         session: AppSession,
         *,
         schema_version: str = SCHEMA_VERSION,
@@ -146,7 +146,7 @@ class BridgeSurface:
         )
 
     def _snapshot(
-        self, state: State
+        self, state: Snapshot
     ) -> tuple[IRRoot, str, dict[str, Mapping[str, PropDef]]]:
         echoes = self._echoes if at_least(self._schema_version, ECHOES_SCHEMA) else None
         with hosted(self._host):
@@ -291,7 +291,7 @@ class BridgeSurface:
         self._require_worker()
         return self._stats.snapshot()
 
-    def _publish_state(self, state: State) -> None:
+    def _publish_state(self, state: Snapshot) -> None:
         """Publish ``state`` and make it the store's; an invalid one raises first.
 
         Args:

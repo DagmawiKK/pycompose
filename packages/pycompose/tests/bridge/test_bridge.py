@@ -15,14 +15,16 @@ from pycompose.errors import SchemaError
 from pycompose.model.canonical import FrozenJsonValue
 from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.nodes import Node, Props
-from pycompose.state import State, Store
+from pycompose.model.snapshot import Snapshot, SnapshotStore
 
 
 def test_action_handler_publishes_the_next_canonical_snapshot() -> None:
-    store = Store(State(root=Node(id="title", type="Text", props=Props({"text": "0"}))))
+    store = SnapshotStore(
+        Snapshot(root=Node(id="title", type="Text", props=Props({"text": "0"})))
+    )
     actions = Handlers()
 
-    def increment(state: State, payload: dict[str, int]) -> State:
+    def increment(state: Snapshot, payload: dict[str, int]) -> Snapshot:
         return replace(
             state,
             root=Node(
@@ -47,11 +49,13 @@ def test_action_handler_publishes_the_next_canonical_snapshot() -> None:
 
 
 def test_fifo_actions_apply_payload_defaults_and_preserve_order() -> None:
-    store = Store(State(root=Node(id="value", type="Text", props={"text": "start"})))
+    store = SnapshotStore(
+        Snapshot(root=Node(id="value", type="Text", props={"text": "start"}))
+    )
     actions = Handlers()
     calls: list[object] = []
 
-    def append(state: State, payload: Mapping[str, FrozenJsonValue]) -> State:
+    def append(state: Snapshot, payload: Mapping[str, FrozenJsonValue]) -> Snapshot:
         calls.append(payload["by"])
         return replace(
             state,
@@ -100,13 +104,13 @@ def test_fifo_actions_apply_payload_defaults_and_preserve_order() -> None:
 def test_bad_actions_are_ignored_with_debug_or_release_diagnostics(
     message: str, debug: bool, caplog: pytest.LogCaptureFixture
 ) -> None:
-    store = Store(
-        State(root=Node(id="value", type="Text", props={"text": "unchanged"}))
+    store = SnapshotStore(
+        Snapshot(root=Node(id="value", type="Text", props={"text": "unchanged"}))
     )
     actions = Handlers()
     calls: list[str] = []
 
-    def handler(state: State, _payload: object) -> State:
+    def handler(state: Snapshot, _payload: object) -> Snapshot:
         calls.append("called")
         return state
 
@@ -124,8 +128,8 @@ def test_bad_actions_are_ignored_with_debug_or_release_diagnostics(
 
 
 def test_no_op_preserves_snapshot_identity_and_store() -> None:
-    original = State(root=Node(id="value", type="Text", props={"text": "unchanged"}))
-    store = Store(original)
+    original = Snapshot(root=Node(id="value", type="Text", props={"text": "unchanged"}))
+    store = SnapshotStore(original)
     actions = Handlers()
     actions.register("increment", lambda state, _payload: replace(state))
     bridge = BridgeSurface(store, actions)
@@ -138,11 +142,13 @@ def test_no_op_preserves_snapshot_identity_and_store() -> None:
 def test_actions_from_another_thread_are_not_dispatched(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
-    store = Store(State(root=Node(id="value", type="Text", props={"text": "start"})))
+    store = SnapshotStore(
+        Snapshot(root=Node(id="value", type="Text", props={"text": "start"}))
+    )
     calls: list[str] = []
     actions = Handlers()
 
-    def handler(state: State, _payload: object) -> State:
+    def handler(state: Snapshot, _payload: object) -> Snapshot:
         calls.append("called")
         return state
 
@@ -161,14 +167,17 @@ def test_registry_generated_payload_contracts_work_through_the_bridge() -> None:
     seen: list[object] = []
     actions = Handlers()
 
-    def handler(state: State, payload: object) -> State:
+    def handler(state: Snapshot, payload: object) -> Snapshot:
         seen.append(payload)
         return state
 
     actions.register("increment", handler)
     actions.register("submit", handler)
     bridge = BridgeSurface(
-        Store(State(root=Node(id="text", type="Text", props={"text": "hi"}))), actions
+        SnapshotStore(
+            Snapshot(root=Node(id="text", type="Text", props={"text": "hi"}))
+        ),
+        actions,
     )
     bridge.accept_action(json.dumps({"intent": "increment", "payload": increment}))
     bridge.accept_action(json.dumps({"intent": "submit", "payload": submit}))
@@ -179,11 +188,11 @@ def test_registry_generated_payload_contracts_work_through_the_bridge() -> None:
 def test_handler_failure_preserves_state_and_allows_the_next_action(
     debug: bool, caplog: pytest.LogCaptureFixture
 ) -> None:
-    original = State(root=Node(id="value", type="Text", props={"text": "old"}))
-    store = Store(original)
+    original = Snapshot(root=Node(id="value", type="Text", props={"text": "old"}))
+    store = SnapshotStore(original)
     actions = Handlers()
 
-    def fail(_state: State, _payload: object) -> State:
+    def fail(_state: Snapshot, _payload: object) -> Snapshot:
         raise RuntimeError("handler failed")
 
     actions.register("increment", fail)
@@ -207,7 +216,9 @@ def test_handler_failure_preserves_state_and_allows_the_next_action(
 
 def test_release_leaves_the_check_to_the_hosts_parse() -> None:
     """Release publishes what it emitted; the host's typed parse refuses it."""
-    store = Store(State(root=Node(id="value", type="Text", props={"text": "old"})))
+    store = SnapshotStore(
+        Snapshot(root=Node(id="value", type="Text", props={"text": "old"}))
+    )
     actions = Handlers()
     actions.register(
         "increment",
@@ -220,8 +231,8 @@ def test_release_leaves_the_check_to_the_hosts_parse() -> None:
 
 @pytest.mark.parametrize("debug", [True])
 def test_invalid_next_snapshot_never_commits_partial_state(debug: bool) -> None:
-    original = State(root=Node(id="value", type="Text", props={"text": "old"}))
-    store = Store(original)
+    original = Snapshot(root=Node(id="value", type="Text", props={"text": "old"}))
+    store = SnapshotStore(original)
     actions = Handlers()
     actions.register(
         "increment",
@@ -239,9 +250,11 @@ def test_reentrant_action_is_rejected_without_disturbing_the_outer_transition(
 ) -> None:
     actions = Handlers()
     calls: list[str] = []
-    store = Store(State(root=Node(id="value", type="Text", props={"text": "old"})))
+    store = SnapshotStore(
+        Snapshot(root=Node(id="value", type="Text", props={"text": "old"}))
+    )
 
-    def handler(state: State, _payload: object) -> State:
+    def handler(state: Snapshot, _payload: object) -> Snapshot:
         calls.append("outer")
         bridge.accept_action('{"intent":"increment"}')
         return replace(
@@ -262,7 +275,7 @@ def test_handler_payload_is_immutable() -> None:
     actions = Handlers()
     seen: list[Mapping[str, FrozenJsonValue]] = []
 
-    def handler(state: State, payload: Mapping[str, FrozenJsonValue]) -> State:
+    def handler(state: Snapshot, payload: Mapping[str, FrozenJsonValue]) -> Snapshot:
         seen.append(payload)
         with pytest.raises(TypeError):
             payload["by"] = 5  # type: ignore[index]
@@ -270,7 +283,10 @@ def test_handler_payload_is_immutable() -> None:
 
     actions.register("increment", handler)
     bridge = BridgeSurface(
-        Store(State(root=Node(id="value", type="Text", props={"text": "hi"}))), actions
+        SnapshotStore(
+            Snapshot(root=Node(id="value", type="Text", props={"text": "hi"}))
+        ),
+        actions,
     )
     bridge.accept_action('{"intent":"increment"}')
     assert seen == [{"by": 1}]
@@ -283,7 +299,7 @@ def test_deep_snapshot_transition_is_not_limited_by_state_equality() -> None:
             node = Node(id="child", type="Column", children=(node,))
         return node
 
-    store = Store(State(root=nested("old")))
+    store = SnapshotStore(Snapshot(root=nested("old")))
     actions = Handlers()
     actions.register(
         "increment", lambda state, _payload: replace(state, root=nested("next"))
@@ -297,7 +313,9 @@ def test_deep_snapshot_transition_is_not_limited_by_state_equality() -> None:
 def test_version_mismatch_fails_at_bridge_configuration(debug: bool) -> None:
     with pytest.raises(SchemaError):
         BridgeSurface(
-            Store(State(root=Node(id="text", type="Text", props={"text": "hi"}))),
+            SnapshotStore(
+                Snapshot(root=Node(id="text", type="Text", props={"text": "hi"}))
+            ),
             Handlers(),
             schema_version="2.0.0",
             debug=debug,
@@ -309,7 +327,9 @@ def test_invalid_initial_snapshot_is_unavailable_and_logged_in_debug(
     debug: bool, caplog: pytest.LogCaptureFixture
 ) -> None:
     bridge = BridgeSurface(
-        Store(State(root=Node(id="text", type="Missing"))), Handlers(), debug=debug
+        SnapshotStore(Snapshot(root=Node(id="text", type="Missing"))),
+        Handlers(),
+        debug=debug,
     )
     assert bridge.expose_latest_snapshot() is None
     assert caplog.records
@@ -353,7 +373,9 @@ def _counter_bridge(*, debug: bool = True) -> BridgeSurface:
         "increment",
         lambda state, payload: replace(state, root=screen(str(payload["by"]))),
     )
-    return BridgeSurface(Store(State(root=screen("0"))), actions, debug=debug)
+    return BridgeSurface(
+        SnapshotStore(Snapshot(root=screen("0"))), actions, debug=debug
+    )
 
 
 def test_a_pull_from_a_known_base_is_a_patch_that_rebuilds_the_latest() -> None:
@@ -432,12 +454,13 @@ def test_a_report_that_changes_nothing_is_still_echoed() -> None:
 def test_a_report_whose_handler_fails_is_still_echoed() -> None:
     actions = Handlers()
 
-    def fail(_state: State, _payload: object) -> State:
+    def fail(_state: Snapshot, _payload: object) -> Snapshot:
         raise RuntimeError("refused")
 
     actions.register("increment", fail)
     bridge = BridgeSurface(
-        Store(State(root=Node(id="screen", type="Column", props=Props({})))), actions
+        SnapshotStore(Snapshot(root=Node(id="screen", type="Column", props=Props({})))),
+        actions,
     )
 
     bridge.accept_action('{"intent":"increment","payload":{"by":1},"seq":1}')
@@ -488,10 +511,12 @@ def test_a_pass_over_budget_is_reported_in_debug(
 
 
 def test_the_last_pass_reports_its_time_by_phase() -> None:
-    store = Store(State(root=Node(id="title", type="Text", props=Props({"text": "0"}))))
+    store = SnapshotStore(
+        Snapshot(root=Node(id="title", type="Text", props=Props({"text": "0"})))
+    )
     actions = Handlers()
 
-    def increment(state: State, payload: dict[str, int]) -> State:
+    def increment(state: Snapshot, payload: dict[str, int]) -> Snapshot:
         text = str(payload["by"])
         return replace(
             state, root=Node(id="title", type="Text", props=Props({"text": text}))
@@ -522,7 +547,9 @@ def test_the_last_pass_reports_its_time_by_phase() -> None:
 
 def test_actions_before_a_pull_are_drawn_once() -> None:
     """A text field reports its text and its caret; the host pulls once."""
-    store = Store(State(root=Node(id="title", type="Text", props=Props({"text": "0"}))))
+    store = SnapshotStore(
+        Snapshot(root=Node(id="title", type="Text", props=Props({"text": "0"})))
+    )
     actions = Handlers()
     actions.register(
         "increment",

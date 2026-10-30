@@ -8,7 +8,7 @@ import pytest
 from pycompose_codegen.emit.overloads import ambiguous, keywords, validate
 
 from pycompose.app import Intent
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 
 
 def _entry(*required: str, optional: tuple[str, ...] = (), children: bool = False):
@@ -93,7 +93,7 @@ def test_the_keywords_a_call_passes_choose_the_overload() -> None:
     assert type(plain) is CardWithoutOnClick
     # Every overload is still the name it was reached through.
     assert isinstance(plain, Card)
-    wire = to_json(emit_ir(State(root=plain), SCHEMA_VERSION))
+    wire = to_json(emit_ir(Snapshot(root=plain), SCHEMA_VERSION))
     assert '"type":"CardWithoutOnClick"' in wire.replace(" ", "")
     with pytest.raises(TypeError):
         Card(Text(text="x"), nope=1)  # type: ignore[call-overload]

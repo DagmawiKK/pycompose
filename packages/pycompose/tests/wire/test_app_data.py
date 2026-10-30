@@ -8,21 +8,21 @@ import pytest
 
 from pycompose.errors import IrValidationError
 from pycompose.material3 import Text
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.wire import emit_ir, to_json, validate_ir
 from pycompose.wire.data import read_data
 
 
-def _snapshot(state: State, version: str = "1.4.0") -> dict:
+def _snapshot(state: Snapshot, version: str = "1.4.0") -> dict:
     candidate = emit_ir(state, version)
     validate_ir(candidate)
     return json.loads(to_json(candidate))
 
 
 def test_app_data_travels_in_metadata_only_when_the_app_publishes_it() -> None:
-    assert "metadata" not in _snapshot(State(root=Text(id="t", text="ok")))
+    assert "metadata" not in _snapshot(Snapshot(root=Text(id="t", text="ok")))
     snapshot = _snapshot(
-        State(root=Text(id="t", text="ok"), data={"tasks": [], "draft": ""})
+        Snapshot(root=Text(id="t", text="ok"), data={"tasks": [], "draft": ""})
     )
     assert snapshot["metadata"]["data"] == {"tasks": [], "draft": ""}
     assert read_data(snapshot["metadata"]) == {"tasks": [], "draft": ""}
@@ -30,7 +30,7 @@ def test_app_data_travels_in_metadata_only_when_the_app_publishes_it() -> None:
 
 def test_app_data_is_copied_not_shared_with_the_snapshot() -> None:
     tasks = [{"id": 1, "title": "One", "done": False}]
-    state = State(root=Text(id="t", text="ok"), data={"tasks": tasks})
+    state = Snapshot(root=Text(id="t", text="ok"), data={"tasks": tasks})
     tasks.append({"id": 2, "title": "Two", "done": False})
     assert read_data(_snapshot(state)["metadata"]) == {
         "tasks": [{"id": 1, "title": "One", "done": False}]
@@ -38,10 +38,10 @@ def test_app_data_is_copied_not_shared_with_the_snapshot() -> None:
 
 
 def test_app_data_coexists_with_bindings_and_effects() -> None:
-    from pycompose.model.nodes.effect import Effect
+    from pycompose.model.snapshot import Effect
 
     snapshot = _snapshot(
-        State(
+        Snapshot(
             root=Text(id="t", text="ok"),
             effects=(Effect("finish"),),
             data={"draft": "hi"},
@@ -52,13 +52,13 @@ def test_app_data_coexists_with_bindings_and_effects() -> None:
 
 @pytest.mark.parametrize("version", ["1.0.0", "1.2.0", "1.3.0"])
 def test_app_data_requires_its_schema(version: str) -> None:
-    state = State(root=Text(id="t", text="ok"), data={"draft": "hi"})
+    state = Snapshot(root=Text(id="t", text="ok"), data={"draft": "hi"})
     with pytest.raises(IrValidationError, match="newer schema"):
         validate_ir(emit_ir(state, version))
 
 
 def test_malformed_metadata_data_is_rejected() -> None:
-    base = emit_ir(State(root=Text(id="t", text="ok")), "1.4.0")
+    base = emit_ir(Snapshot(root=Text(id="t", text="ok")), "1.4.0")
     broken = type(base)(
         root=base.root,
         schema_version=base.schema_version,

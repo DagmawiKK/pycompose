@@ -24,11 +24,10 @@ from pycompose.errors import StateError
 from pycompose.model.canonical import canonical_json
 from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.catalog.registry_types import PropDef
-from pycompose.model.nodes.effect import Effect
 from pycompose.model.nodes.props import JsonValue
+from pycompose.model.snapshot import Effect, Snapshot
 from pycompose.runtime import signal
 from pycompose.runtime.scope import Report, Scope
-from pycompose.state.state import State
 from pycompose.ui.intents import IntentSpec, check_payload, intent_class
 
 __all__ = ["REFRESH", "NavigationSession"]
@@ -250,7 +249,7 @@ class NavigationSession:
             self._close(entry)
         self.entries = []
 
-    def snapshot_state(self, previous: State | None) -> State:
+    def snapshot_state(self, previous: Snapshot | None) -> Snapshot:
         """Return the state the top screen draws now, as the next snapshot's source.
 
         Args:
@@ -262,7 +261,7 @@ class NavigationSession:
         top = self.entries[-1]
         self._take_effects()
         effects, self._effects = self._effects, []
-        return State(
+        return Snapshot(
             root=top.destination.screen(top.view_model.state),
             version=previous.version + 1 if previous is not None else 0,
             data=self._stack(),
@@ -282,7 +281,7 @@ class NavigationSession:
             if self.contract(name) != dict(payload):
                 raise StateError("undefined or mismatched intent", intent=name)
 
-    def snapshot_below(self) -> State | None:
+    def snapshot_below(self) -> Snapshot | None:
         """Return the screen a back gesture leads to, drawn from its state now.
 
         Returns:
@@ -291,7 +290,7 @@ class NavigationSession:
         if len(self.entries) < 2:
             return None
         below = self.entries[-2]
-        return State(root=below.destination.screen(below.view_model.state))
+        return Snapshot(root=below.destination.screen(below.view_model.state))
 
     def contract(self, action_id: str) -> Mapping[str, PropDef] | None:
         """Return the fields of the intent class a wire name names.
@@ -332,7 +331,7 @@ class NavigationSession:
         return payload
 
     def dispatch_binding(
-        self, spec: IntentSpec, state: State, payload: Mapping[str, object]
+        self, spec: IntentSpec, state: Snapshot, payload: Mapping[str, object]
     ) -> bool:
         """Run one intent on the top screen's view model.
 
@@ -370,7 +369,7 @@ class NavigationSession:
             self._dispatching = False
         return True
 
-    def dispatch(self, action_id: str, state: State, payload: Any = None) -> bool:
+    def dispatch(self, action_id: str, state: Snapshot, payload: Any = None) -> bool:
         """Handle the refresh signal and the host's lifecycle events.
 
         Args:

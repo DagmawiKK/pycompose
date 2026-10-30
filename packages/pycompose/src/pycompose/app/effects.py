@@ -9,8 +9,8 @@ from __future__ import annotations
 
 from typing import ClassVar
 
-from pycompose.model.nodes.effect import Effect
 from pycompose.model.nodes.props import to_camel_case
+from pycompose.model.snapshot import Effect
 
 __all__ = ["TypedEffect"]
 

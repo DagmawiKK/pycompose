@@ -1,4 +1,4 @@
-"""Device entrypoint: Python owns app modules, handlers, Store and composition."""
+"""Device entrypoint: Python owns app modules, handlers, snapshots and composition."""
 
 from __future__ import annotations
 

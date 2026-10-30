@@ -15,7 +15,7 @@ from pycompose.material3 import Button, Text, TextField
 from pycompose.model.canonical import canonical_json_bytes
 from pycompose.model.catalog.lock import REGISTRY, SCHEMA_VERSION
 from pycompose.model.nodes import Node
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.ui import Modifier
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
@@ -23,7 +23,7 @@ from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 def test_golden_screen_rebuilds_match_packaged_fixture_exactly() -> None:
     expected = read_golden("component_screen.json")
     for _ in range(2):
-        snapshot = emit_ir(State(root=component_screen()), SCHEMA_VERSION)
+        snapshot = emit_ir(Snapshot(root=component_screen()), SCHEMA_VERSION)
         assert validate_ir(snapshot).snapshot is snapshot
         assert to_json_bytes(snapshot) == expected
 
@@ -89,8 +89,8 @@ def _rebuild(node: Node) -> Node:
 
 @given(TREES)
 def test_golden_property_independent_rebuilds_are_deterministic(root: Node) -> None:
-    first = emit_ir(State(root=root), "1.0.0")
-    second = emit_ir(State(root=_rebuild(root)), "1.0.0")
+    first = emit_ir(Snapshot(root=root), "1.0.0")
+    second = emit_ir(Snapshot(root=_rebuild(root)), "1.0.0")
     assert validate_ir(first).snapshot is first
     assert validate_ir(second).snapshot is second
     assert to_json_bytes(first) == to_json_bytes(second)
@@ -101,7 +101,7 @@ def test_golden_property_independent_rebuilds_are_deterministic(root: Node) -> N
 def test_golden_property_ids_are_unique_and_props_are_registry_known(
     root: Node,
 ) -> None:
-    snapshot = emit_ir(State(root=root), "1.0.0")
+    snapshot = emit_ir(Snapshot(root=root), "1.0.0")
     pending = [snapshot.root]
     ids = []
     while pending:
@@ -115,9 +115,9 @@ def test_golden_property_ids_are_unique_and_props_are_registry_known(
 @given(st.lists(TEXT, min_size=0, max_size=15))
 def test_golden_property_lazy_identity_survives_reordering(texts: list[str]) -> None:
     items = tuple(Text(id=f"key{index}", text=text) for index, text in enumerate(texts))
-    first = readable(State(root=LazyColumn(id="list", items=items)), "1.0.0")
+    first = readable(Snapshot(root=LazyColumn(id="list", items=items)), "1.0.0")
     second = readable(
-        State(root=LazyColumn(id="list", items=tuple(reversed(items)))), "1.0.0"
+        Snapshot(root=LazyColumn(id="list", items=tuple(reversed(items)))), "1.0.0"
     )
     assert [item["id"] for item in first["root"].get("children", [])] == list(
         reversed([item["id"] for item in second["root"].get("children", [])])

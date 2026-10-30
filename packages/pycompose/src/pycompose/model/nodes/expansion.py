@@ -174,7 +174,7 @@ class ExpansionMemo:
     A composable's output is a pure function of its definition and arguments
     (the :class:`~pycompose.ui.composition.Composable` contract). Arguments are
     keyed by value for scalars and by identity otherwise, so a structurally
-    shared frozen State re-runs only the declarations whose inputs changed.
+    shared frozen snapshot re-runs only the declarations whose inputs changed.
     Each pass keeps exactly the entries it used, which bounds the memo by the
     current tree and releases replaced inputs. With ``verify_every`` set, every
     n-th reuse is expanded again and compared, so a composable reading anything

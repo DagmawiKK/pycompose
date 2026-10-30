@@ -41,7 +41,7 @@ def _smoke_emit_and_compose() -> None:
     from pycompose import composable
     from pycompose.foundation import Column
     from pycompose.material3 import Text
-    from pycompose.state import State
+    from pycompose.model.snapshot import Snapshot
     from pycompose.wire import emit_ir
 
     assert Column(id="screen", children=[Text(id="title", text="Hello")]).type == (
@@ -52,7 +52,7 @@ def _smoke_emit_and_compose() -> None:
     def greeting(*, text: str) -> Text:
         return Text(id="message", text=text)
 
-    composed = emit_ir(State(root=greeting(id="greeting", text="Hello")), "1.0.0")
+    composed = emit_ir(Snapshot(root=greeting(id="greeting", text="Hello")), "1.0.0")
     assert composed.root.type == "Text"
     assert composed.root.props["text"] == "Hello"
 

@@ -8,7 +8,7 @@ import pytest
 
 from pycompose.errors import IrValidationError
 from pycompose.material3 import Text
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 
@@ -18,7 +18,7 @@ def test_color_is_data_and_reaches_canonical_ir() -> None:
     color = Color(0xFF336699)
     assert color == {"type": "Color", "color": 4281558681}
     node = Text(id="title", text="Hello", color=color)
-    snapshot = json.loads(to_json_bytes(emit_ir(State(root=node), "1.11.0")))
+    snapshot = json.loads(to_json_bytes(emit_ir(Snapshot(root=node), "1.11.0")))
     assert snapshot["root"]["props"]["color"] == color
 
 
@@ -26,7 +26,7 @@ def test_tagged_values_require_new_schema() -> None:
     from pycompose.values import Color
 
     tagged = emit_ir(
-        State(root=Text(id="t", text="Hi", color=Color(0xFF000000))), "1.11.0"
+        Snapshot(root=Text(id="t", text="Hi", color=Color(0xFF000000))), "1.11.0"
     )
     with pytest.raises(IrValidationError, match="newer schema"):
         validate_ir(replace(tagged, schema_version="1.10.0"))
@@ -100,7 +100,9 @@ def test_shapes_and_edges_are_typed_records_not_universal_enums() -> None:
         .window_insets_padding(WindowInsets(left=Dp(2)))
     )
     node = Text(id="t", text="Hi", modifier=modifier)
-    assert validate_ir(emit_ir(State(root=node), "1.11.0")).snapshot.root.type == "Text"
+    assert (
+        validate_ir(emit_ir(Snapshot(root=node), "1.11.0")).snapshot.root.type == "Text"
+    )
     with pytest.raises(IrValidationError):
         PaddingValues(start=Color(0))
 
@@ -114,7 +116,7 @@ def test_theme_references_remain_symbolic_in_canonical_ir() -> None:
         color=ThemeColor("primary"),
         style=ThemeTypography("titleLarge"),
     )
-    wire = to_json_bytes(emit_ir(State(root=node), "1.11.0"))
+    wire = to_json_bytes(emit_ir(Snapshot(root=node), "1.11.0"))
     assert b'"color":{"name":"primary","type":"ThemeColor"}' in wire
     with pytest.raises(IrValidationError):
         ThemeColor("notAThemeToken")
@@ -147,7 +149,8 @@ def test_component_factories_keep_omission_native() -> None:
         elevation=buttonElevation(default_elevation=Dp(6)),
     )
     assert (
-        validate_ir(emit_ir(State(root=node), "1.11.0")).snapshot.root.type == "Button"
+        validate_ir(emit_ir(Snapshot(root=node), "1.11.0")).snapshot.root.type
+        == "Button"
     )
 
 
@@ -195,7 +198,7 @@ def test_generated_json_schema_agrees_on_recursive_and_versioned_values() -> Non
         style=TextStyle(font_size=Sp(20)),
         modifier=Modifier().size(Dp(80)),
     )
-    document = json.loads(to_json_bytes(emit_ir(State(root=node), "1.11.0")))
+    document = json.loads(to_json_bytes(emit_ir(Snapshot(root=node), "1.11.0")))
     jsonschema.validate(document, schema)
     document["schemaVersion"] = "1.10.0"
     with pytest.raises(jsonschema.ValidationError):

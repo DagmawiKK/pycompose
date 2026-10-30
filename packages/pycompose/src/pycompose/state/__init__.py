@@ -1,4 +1,4 @@
-"""pycompose.state — frozen State, typed app state, and the mutable Store."""
+"""pycompose.state — the app's own data, typed."""
 
 from __future__ import annotations
 
@@ -6,9 +6,8 @@ from typing import Any
 
 from pycompose.state.app_state import AppState
 from pycompose.state.app_state_types import Loaded
-from pycompose.state.state import State, Store
 
-__all__ = ["AppState", "Loaded", "State", "Store"]
+__all__ = ["AppState", "Loaded"]
 
 _VIEW_MODEL = "define an Intent and handle it in a ViewModel (pycompose.app)"
 REMOVED = {

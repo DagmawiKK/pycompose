@@ -6,7 +6,7 @@ from collections.abc import Mapping
 from typing import Protocol
 
 from pycompose.model.catalog.registry_types import PropDef
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.ui.intents import IntentSpec
 
 __all__ = ["AppSession"]
@@ -32,19 +32,19 @@ class AppSession(Protocol):
     ) -> Mapping[str, object]: ...  # pragma: no cover - protocol declaration
 
     def dispatch(
-        self, action_id: str, state: State, payload: Mapping[str, object]
+        self, action_id: str, state: Snapshot, payload: Mapping[str, object]
     ) -> bool: ...  # pragma: no cover - protocol declaration
 
     def dispatch_binding(
-        self, spec: IntentSpec, state: State, payload: Mapping[str, object]
+        self, spec: IntentSpec, state: Snapshot, payload: Mapping[str, object]
     ) -> bool: ...  # pragma: no cover - protocol declaration
 
     def snapshot_state(
-        self, previous: State | None
-    ) -> State: ...  # pragma: no cover - protocol declaration
+        self, previous: Snapshot | None
+    ) -> Snapshot: ...  # pragma: no cover - protocol declaration
 
     def snapshot_below(
         self,
-    ) -> State | None: ...  # pragma: no cover - protocol declaration
+    ) -> Snapshot | None: ...  # pragma: no cover - protocol declaration
 
     def close(self) -> None: ...  # pragma: no cover - protocol declaration

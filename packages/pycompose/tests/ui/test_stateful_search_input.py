@@ -4,7 +4,7 @@ import pytest
 
 from pycompose.errors import IrValidationError
 from pycompose.material3 import StatefulSearchBarInputField
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.wire import emit_ir, to_dict, validate_ir
 
 
@@ -13,7 +13,7 @@ def test_text_selection_and_revision_travel_in_one_snapshot() -> None:
     from pycompose.material3 import Text
 
     candidate = emit_ir(
-        State(
+        Snapshot(
             root=StatefulSearchBarInputField(
                 id="search",
                 text="compose",
@@ -75,7 +75,7 @@ def test_out_of_range_editing_coordinates_are_rejected(prop: str, value: int) ->
     with pytest.raises(IrValidationError):
         validate_ir(
             emit_ir(
-                State(
+                Snapshot(
                     root=Node(
                         id="field", type="StatefulSearchBarInputField", props=props
                     )

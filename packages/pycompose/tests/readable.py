@@ -11,7 +11,7 @@ from typing import Any
 from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.nodes.ids import Handles
 from pycompose.model.nodes.reuse import Reuse
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.wire import emit_ir, to_dict
 
 
@@ -33,7 +33,7 @@ def rename(document: dict[str, Any], reuse: Reuse) -> dict[str, Any]:
     return {**document, "root": visit(document["root"])}
 
 
-def readable(state: State, version: str = SCHEMA_VERSION) -> dict[str, Any]:
+def readable(state: Snapshot, version: str = SCHEMA_VERSION) -> dict[str, Any]:
     """Emit ``state`` and name each node by its readable path."""
     reuse = readable_reuse()
     return rename(to_dict(emit_ir(state, version, reuse)), reuse)

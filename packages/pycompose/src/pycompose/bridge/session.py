@@ -1,4 +1,4 @@
-"""One app session on the loop thread: the app module, its back stack and its Store."""
+"""One app session on the loop thread: its app module, back stack and snapshot store."""
 
 from __future__ import annotations
 
@@ -18,9 +18,9 @@ from pycompose.app.observe import Failure
 from pycompose.app.session import NavigationSession
 from pycompose.bridge.api import BridgeSurface
 from pycompose.errors import BridgeError
+from pycompose.model.snapshot import SnapshotStore
 from pycompose.runtime.loop import LoopThread
 from pycompose.runtime.trace import current_trace
-from pycompose.state import Store
 
 __all__ = ["RuntimeSession", "compose_once"]
 
@@ -136,7 +136,7 @@ class RuntimeSession:
         built = False
         try:
             surface = BridgeSurface(
-                Store(screen.snapshot_state(None)),
+                SnapshotStore(screen.snapshot_state(None)),
                 screen,
                 debug=self._debug,
                 host_components=_host_components,

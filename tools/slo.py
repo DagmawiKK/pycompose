@@ -44,8 +44,8 @@ def _notes_pass_times(keystrokes: int) -> list[float]:
 
     from pycompose.app.session import NavigationSession
     from pycompose.bridge import BridgeSurface
+    from pycompose.model.snapshot import SnapshotStore
     from pycompose.runtime.loop import LoopThread
-    from pycompose.state import Store
 
     def intents(bridge: Any) -> list[dict[str, Any]]:
         found: list[dict[str, Any]] = []
@@ -71,7 +71,7 @@ def _notes_pass_times(keystrokes: int) -> list[float]:
             main.app, container, "", "", report=lambda *_: None, signal=lambda: None
         )
         bridge = BridgeSurface(
-            Store(session.snapshot_state(None)), session, debug=False
+            SnapshotStore(session.snapshot_state(None)), session, debug=False
         )
         opened = next(i for i in intents(bridge) if i["intent"].endswith("OpenNote"))
         bridge.accept_action(json.dumps({**opened, "payload": {}}))

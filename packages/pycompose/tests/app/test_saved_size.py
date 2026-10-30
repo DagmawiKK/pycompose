@@ -9,7 +9,8 @@ from pycompose.app.session import SAVED_LIMIT, NavigationSession
 from pycompose.bridge import BridgeSurface
 from pycompose.foundation import Column
 from pycompose.material3 import Button, Text
-from pycompose.state import AppState, Loaded, Store
+from pycompose.model.snapshot import SnapshotStore
+from pycompose.state import AppState, Loaded
 
 
 class Draft(AppState):
@@ -55,7 +56,9 @@ def bridge(*, debug: bool) -> BridgeSurface:
     session = NavigationSession(
         APP, None, "", "", report=lambda *_: None, signal=lambda: None, debug=debug
     )
-    return BridgeSurface(Store(session.snapshot_state(None)), session, debug=debug)
+    return BridgeSurface(
+        SnapshotStore(session.snapshot_state(None)), session, debug=debug
+    )
 
 
 def tap(surface: BridgeSurface, node: int) -> str:

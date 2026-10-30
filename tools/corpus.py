@@ -32,8 +32,7 @@ from pycompose.errors import PyComposeError
 from pycompose.foundation import Column
 from pycompose.material3 import Button, Scaffold, Switch, Text, TextField
 from pycompose.model.catalog.lock import SCHEMA_VERSION
-from pycompose.model.nodes.effect import Effect
-from pycompose.state import State
+from pycompose.model.snapshot import Effect, Snapshot
 from pycompose.ui import Modifier
 from pycompose.wire import emit_ir, to_json
 
@@ -61,7 +60,7 @@ def base() -> dict[str, Any]:
     Returns:
         The snapshot as parsed JSON.
     """
-    state = State(
+    state = Snapshot(
         root=Scaffold(
             top_bar=Text(text="Corpus", style="titleLarge"),
             content=Column(

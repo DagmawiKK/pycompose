@@ -9,7 +9,7 @@ from pycompose.foundation import Column
 from pycompose.material3 import Scaffold, Text
 from pycompose.model.nodes.expansion import ExpansionMemo
 from pycompose.model.nodes.reuse import Reuse
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.ui import Modifier
 from pycompose.wire import emit_ir, to_dict, validate_ir
 
@@ -28,7 +28,7 @@ def test_composable_expands_on_emission_with_scoped_identity() -> None:
 
     first = profile_header(id="first", name="Ada", modifier=Modifier().padding(8))
     second = profile_header(id="second", name="Grace")
-    state = State(root=Column(id="screen", children=(first, second)))
+    state = Snapshot(root=Column(id="screen", children=(first, second)))
     assert calls == []
     reuse = readable_reuse()
     candidate = emit_ir(state, "1.0.0", reuse)
@@ -94,7 +94,7 @@ def test_named_content_callables_expand_on_the_worker() -> None:
     root = Scaffold(id="screen", content=content)
     assert calls == []
     reuse = readable_reuse()
-    candidate = emit_ir(State(root=root), "1.0.0", reuse)
+    candidate = emit_ir(Snapshot(root=root), "1.0.0", reuse)
     assert calls == ["content"]
     assert validate_ir(candidate).snapshot is candidate
     assert [n["id"] for n in rename(to_dict(candidate), reuse)["root"]["children"]] == [
@@ -119,10 +119,10 @@ def test_nested_compositions_are_stable_when_instances_reorder() -> None:
     # One session: its names follow each identity across the reorder.
     reuse = readable_reuse()
     a = emit_ir(
-        State(root=Column(id="screen", children=[first, second])), "1.0.0", reuse
+        Snapshot(root=Column(id="screen", children=[first, second])), "1.0.0", reuse
     )
     b = emit_ir(
-        State(root=Column(id="screen", children=[second, first])), "1.0.0", reuse
+        Snapshot(root=Column(id="screen", children=[second, first])), "1.0.0", reuse
     )
     assert [n["id"] for n in rename(to_dict(a), reuse)["root"]["children"]] == [
         "root.first.label.text",
@@ -130,7 +130,7 @@ def test_nested_compositions_are_stable_when_instances_reorder() -> None:
     ]
     assert b.root.children == tuple(reversed(a.root.children))
     assert to_json_bytes(a) == to_json_bytes(
-        emit_ir(State(root=Column(id="screen", children=[first, second])), "1.0.0")
+        emit_ir(Snapshot(root=Column(id="screen", children=[first, second])), "1.0.0")
     )
 
 
@@ -167,14 +167,14 @@ def test_invalid_output_does_not_replace_the_last_good_bridge_snapshot() -> None
     from handlers import Handlers
 
     from pycompose.bridge import BridgeSurface
-    from pycompose.state import Store
+    from pycompose.model.snapshot import SnapshotStore
 
     @composable
     def broken():
         return None
 
-    initial = State(root=Text(id="message", text="Hello"))
-    store = Store(initial)
+    initial = Snapshot(root=Text(id="message", text="Hello"))
+    store = SnapshotStore(initial)
     actions = Handlers()
     actions.register(
         "increment", lambda state, _: replace(state, root=broken(id="broken"))
@@ -211,7 +211,7 @@ def test_recursive_composition_can_make_progress_with_explicit_inputs() -> None:
             id="branch", children=[nested(id="next", remaining=remaining - 1)]
         )
 
-    snapshot = emit_ir(State(root=nested(id="tree", remaining=1500)), "1.0.0")
+    snapshot = emit_ir(Snapshot(root=nested(id="tree", remaining=1500)), "1.0.0")
     assert validate_ir(snapshot).snapshot is snapshot
     node = snapshot.root
     while node.children:
@@ -233,7 +233,7 @@ def test_a_composable_fills_a_declared_slot() -> None:
 
     reuse = readable_reuse()
     snapshot = emit_ir(
-        State(
+        Snapshot(
             root=Scaffold(
                 id="screen",
                 top_bar=header(id="bar", text="Notes"),
@@ -254,8 +254,8 @@ def test_a_composable_fills_a_declared_slot() -> None:
     assert title["props"]["text"] == "Notes"
 
 
-def _rows(names: list[str], render: object) -> State:
-    return State(
+def _rows(names: list[str], render: object) -> Snapshot:
+    return Snapshot(
         root=Column(
             id="screen",
             children=tuple(render(id=f"row{i}", name=n) for i, n in enumerate(names)),  # type: ignore[operator]

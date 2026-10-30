@@ -20,7 +20,7 @@ def test_validate_accepts_tagged_nullable_and_numeric_value_unions(
 ) -> None:
     from pycompose.foundation import Column
     from pycompose.material3 import Button, Text
-    from pycompose.state import State
+    from pycompose.model.snapshot import Snapshot
     from pycompose.ui import Modifier
     from pycompose.values import Dp, Sp, TextStyle, ThemeColor
     from pycompose.wire import emit_ir, to_json_bytes
@@ -39,7 +39,7 @@ def test_validate_accepts_tagged_nullable_and_numeric_value_unions(
         ),
     )
     path = tmp_path / "ui.json"
-    path.write_bytes(to_json_bytes(emit_ir(State(root=root), "1.11.0")))
+    path.write_bytes(to_json_bytes(emit_ir(Snapshot(root=root), "1.11.0")))
     result = cli(tmp_path, "validate", str(path))
     assert result.returncode == 0, result.stderr
     document = json.loads(path.read_text())

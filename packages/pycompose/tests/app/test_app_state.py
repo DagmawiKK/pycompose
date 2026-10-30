@@ -2,15 +2,17 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import pytest
 
 from pycompose.errors import StateError
 from pycompose.material3 import Text
 from pycompose.model.canonical import freeze_json, thaw_json
-from pycompose.state import AppState, State, Store
+from pycompose.model.snapshot import Snapshot, SnapshotStore
+from pycompose.state import AppState
 
 
 class Filter(AppState):
@@ -95,16 +97,28 @@ class Parent:
     name: str = ""
 
 
-def _state(**values: Any) -> State:
-    """Return a State carrying one typed app value.
+def _published(value: AppState) -> Mapping[str, Any]:
+    """Return what an app value publishes: its encoding, frozen as a snapshot holds it.
 
     Args:
-        **values: Fields of the AppState.
+        value: The declared state.
 
     Returns:
-        A snapshot whose data came from the declared state.
+        Its frozen JSON.
     """
-    return State(root=Text(id="t", text="ok"), app=Filter(**values))
+    return cast("Mapping[str, Any]", freeze_json(value.codec.encode(value)))
+
+
+def _state(**values: Any) -> Mapping[str, Any]:
+    """Return what one ``Filter`` value publishes.
+
+    Args:
+        **values: Fields of the Filter.
+
+    Returns:
+        Its frozen JSON.
+    """
+    return _published(Filter(**values))
 
 
 # ---------------------------------------------------------------------------
@@ -122,9 +136,9 @@ def test_a_subclass_is_already_a_frozen_dataclass() -> None:
 
 
 def test_declared_state_publishes_camel_case_json() -> None:
-    # State.data is the frozen form, so arrays arrive as tuples; what crosses the
-    # wire is the thawed JSON below.
-    assert thaw_json(dict(_state(count=3, title="hi").data or {})) == {
+    # The frozen form holds arrays as tuples; what crosses the wire is the
+    # thawed JSON below.
+    assert thaw_json(dict(_state(count=3, title="hi"))) == {
         "count": 3,
         "title": "hi",
         "ratio": 0.0,
@@ -139,14 +153,9 @@ def test_declared_state_publishes_camel_case_json() -> None:
 
 def test_typed_state_and_hand_written_data_are_interchangeable() -> None:
     typed = _state(count=7)
-    plain = State(root=Text(id="t", text="ok"), data={"count": 7, "title": "hi"})
+    plain = Snapshot(root=Text(id="t", text="ok"), data={"count": 7, "title": "hi"})
     # Both publish the same JSON, so persistence cannot tell them apart.
-    assert set(typed.data or {}) >= set(plain.data or {})
-
-
-def test_declaring_both_data_and_app_is_rejected() -> None:
-    with pytest.raises(StateError, match="both"):
-        State(root=Text(id="t", text="ok"), data={}, app=Filter())
+    assert set(typed) >= set(plain.data or {})
 
 
 # ---------------------------------------------------------------------------
@@ -166,7 +175,7 @@ def test_a_state_survives_a_round_trip_through_frozen_json() -> None:
         parent=Parent(name="p"),
         flag=False,
     )
-    published = State(root=Text(id="t", text="ok"), app=original).data or {}
+    published = _published(original)
 
     # Straight back out of a snapshot, where the freeze has turned the arrays
     # into tuples. This is the case that silently deleted notes before.
@@ -182,20 +191,12 @@ def test_a_state_survives_a_round_trip_through_parsed_json() -> None:
 
     original = Filter(count=5, tags=("x",), rows=[Row(id=2, label="y")])
     # What the host hands back is parsed JSON: lists, plain objects, no freeze.
-    wire = json.loads(json.dumps(thaw_json(dict(_state(count=5).data or {}))))
+    wire = json.loads(json.dumps(thaw_json(dict(_state(count=5)))))
     rebuilt = Filter.codec.decode(wire)
     assert rebuilt.count == 5
     assert (
         Filter.codec.decode(
-            json.loads(
-                json.dumps(
-                    thaw_json(
-                        dict(
-                            State(root=Text(id="t", text="o"), app=original).data or {}
-                        )
-                    )
-                )
-            )
+            json.loads(json.dumps(thaw_json(dict(_published(original)))))
         )
         == original
     )
@@ -214,7 +215,7 @@ def test_an_int_field_will_not_hold_a_bool() -> None:
     with pytest.raises(StateError, match="count"):
         Filter.codec.decode({"count": True})
     with pytest.raises(StateError, match="cannot hold"):
-        State(root=Text(id="t", text="ok"), app=Countly(count=True))  # type: ignore[arg-type]
+        _published(Countly(count=True))  # type: ignore[arg-type]
 
 
 def test_a_float_field_accepts_an_int() -> None:
@@ -323,7 +324,8 @@ def test_store_round_trips_a_typed_state_through_a_real_snapshot() -> None:
 
     from pycompose.bridge import BridgeSurface
 
-    bridge = BridgeSurface(Store(_state(count=1)), Handlers())
+    snapshot = Snapshot(root=Text(id="t", text="ok"), data=_state(count=1))
+    bridge = BridgeSurface(SnapshotStore(snapshot), Handlers())
     assert bridge.expose_latest_snapshot() is not None
     assert bridge.expose_latest_error() == ""
     rebuilt = Filter.codec.decode(

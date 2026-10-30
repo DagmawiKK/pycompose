@@ -15,8 +15,8 @@ from pycompose.app import Intent, StateFlow
 from pycompose.bridge import runtime
 from pycompose.errors import StateError
 from pycompose.material3 import Button
+from pycompose.model.snapshot import Snapshot
 from pycompose.runtime import signal
-from pycompose.state import State
 from pycompose.wire import emit_ir, to_json
 
 APP = """
@@ -200,7 +200,7 @@ class QueryChanged(Intent):
 
 
 def test_an_intent_instance_binds_every_field_and_a_class_binds_none() -> None:
-    state = State(
+    state = Snapshot(
         root=Button(id="b", text="Open", on_click=Open(id=4)),
     )
     wire = json.loads(to_json(emit_ir(state, "1.23.0")))

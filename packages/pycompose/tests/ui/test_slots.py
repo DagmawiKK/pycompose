@@ -17,7 +17,7 @@ from pycompose.errors import IrError, IrValidationError
 from pycompose.foundation import Column
 from pycompose.material3 import PlainTooltip, RichTooltip, Scaffold, Text, TooltipBox
 from pycompose.model.nodes.node import Node, Props
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.ui.composition import slot_nodes
 from pycompose.wire import emit_ir, to_dict, validate_ir
 
@@ -47,7 +47,7 @@ def snapshot(root: Node, schema_version: str = "1.0.0") -> dict:
         The canonical wire snapshot, each node named by its readable path.
     """
     reuse = readable_reuse()
-    candidate = emit_ir(State(root=root), schema_version, reuse)
+    candidate = emit_ir(Snapshot(root=root), schema_version, reuse)
     assert validate_ir(candidate).snapshot is candidate
     return rename(to_dict(candidate), reuse)
 
@@ -104,7 +104,7 @@ def test_an_undeclared_slot_is_refused_in_debug() -> None:
         children=(text_node("line", slot="topBar"),),
     )
     with pytest.raises(IrValidationError) as excinfo:
-        validate_ir(emit_ir(State(root=column), "1.0.0"))
+        validate_ir(emit_ir(Snapshot(root=column), "1.0.0"))
     assert "unknown slot" in str(excinfo.value)
 
 
@@ -112,7 +112,7 @@ def test_a_leaf_component_refuses_children() -> None:
     """``Text`` declares neither primary children nor slots."""
     text = replace(text_node("root"), children=(text_node("child"),))
     with pytest.raises(IrValidationError) as excinfo:
-        validate_ir(emit_ir(State(root=text), "1.0.0"))
+        validate_ir(emit_ir(Snapshot(root=text), "1.0.0"))
     assert "children are not allowed" in str(excinfo.value)
 
 
@@ -120,7 +120,7 @@ def test_a_root_cannot_fill_a_slot() -> None:
     """Nothing encloses the root, so a slot on it names no slot at all."""
     root = text_node("root", slot="topBar")
     with pytest.raises(IrValidationError) as excinfo:
-        validate_ir(emit_ir(State(root=root), "1.0.0"))
+        validate_ir(emit_ir(Snapshot(root=root), "1.0.0"))
     assert "root cannot fill a slot" in str(excinfo.value)
 
 
@@ -131,7 +131,7 @@ def test_a_slotted_child_still_needs_a_declared_slot_on_the_wire() -> None:
         children=(text_node("line", slot="topBar"),),
     )
     with pytest.raises(IrValidationError, match="unknown slot"):
-        validate_ir(emit_ir(State(root=column), "1.0.0"))
+        validate_ir(emit_ir(Snapshot(root=column), "1.0.0"))
 
 
 def test_tooltip_content_fills_the_box_slot_and_reaches_the_wire() -> None:

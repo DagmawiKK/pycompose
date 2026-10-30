@@ -9,8 +9,7 @@ import pytest
 from pycompose.app import Intent
 from pycompose.errors import IrValidationError, StateError
 from pycompose.material3 import Button, Text
-from pycompose.model.nodes.effect import Effect
-from pycompose.state import State
+from pycompose.model.snapshot import Effect, Snapshot
 from pycompose.ui.intents import intent_name
 from pycompose.wire import emit_ir, to_json, validate_ir
 from pycompose.wire.effects import read_effects
@@ -18,7 +17,7 @@ from pycompose.wire.model import IRRoot
 
 
 def _snapshot(*effects: Effect, version: str = "1.4.0") -> dict:
-    state = State(root=Text(id="text", text="hi"), effects=effects)
+    state = Snapshot(root=Text(id="text", text="hi"), effects=effects)
     candidate = emit_ir(state, version)
     validate_ir(candidate)
     return json.loads(to_json(candidate))
@@ -47,7 +46,7 @@ class Toggle(Intent):
 
 
 def test_effects_and_intent_contracts_share_one_metadata_object() -> None:
-    state = State(
+    state = Snapshot(
         root=Button(id="done", text="Done", on_click=Toggle(task_id=1)),
         effects=(Effect("toast", {"message": "saved"}),),
     )
@@ -76,13 +75,13 @@ def test_no_effects_leaves_metadata_untouched() -> None:
 )
 def test_broken_effects_fail_closed(effects: tuple[object, ...]) -> None:
     with pytest.raises((IrValidationError, StateError)):
-        state = State(root=Text(id="text", text="hi"), effects=effects)  # type: ignore[arg-type]
+        state = Snapshot(root=Text(id="text", text="hi"), effects=effects)  # type: ignore[arg-type]
         validate_ir(emit_ir(state, "1.4.0"))
 
 
 @pytest.mark.parametrize("version", ["1.0.0", "1.2.0", "1.3.0"])
 def test_effects_require_their_schema(version: str) -> None:
-    state = State(root=Text(id="text", text="hi"), effects=(Effect("finish"),))
+    state = Snapshot(root=Text(id="text", text="hi"), effects=(Effect("finish"),))
     with pytest.raises(IrValidationError, match="newer schema"):
         validate_ir(emit_ir(state, version))
 
@@ -99,7 +98,7 @@ def test_effects_require_their_schema(version: str) -> None:
     ],
 )
 def test_malformed_metadata_is_rejected(metadata: dict) -> None:
-    base = emit_ir(State(root=Text(id="text", text="hi")), "1.4.0")
+    base = emit_ir(Snapshot(root=Text(id="text", text="hi")), "1.4.0")
     broken = IRRoot(
         root=base.root,
         schema_version=base.schema_version,

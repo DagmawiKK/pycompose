@@ -6,12 +6,12 @@ from goldens import read_golden
 from pycompose.errors import IrValidationError
 from pycompose.foundation import Column, Image
 from pycompose.material3 import Text
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.wire import emit_ir, to_json, to_json_bytes, validate_ir
 
 
 def test_resource_props_and_images_require_the_new_schema() -> None:
-    state = State(
+    state = Snapshot(
         root=Column(
             id="screen",
             children=[
@@ -55,7 +55,7 @@ def test_a_media_file_is_named_by_its_digest() -> None:
 
 
 def test_resource_screen_matches_shared_native_golden() -> None:
-    state = State(
+    state = Snapshot(
         root=Column(
             id="screen",
             children=[

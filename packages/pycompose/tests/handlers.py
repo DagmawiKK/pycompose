@@ -1,4 +1,4 @@
-"""Named handlers over State: the session a bridge test serves.
+"""Named handlers over Snapshot: the session a bridge test serves.
 
 The bridge asks its session to handle each action, to draw the state the actions
 left when the host pulls, and to validate each snapshot's intents. These tests
@@ -13,10 +13,10 @@ from typing import Any
 
 from pycompose.errors import StateError
 from pycompose.model.catalog.registry_types import PropDef
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.ui.intents import IntentSpec
 
-Handler = Callable[[State, Any], State]
+Handler = Callable[[Snapshot, Any], Snapshot]
 
 
 class Handlers:
@@ -24,7 +24,7 @@ class Handlers:
 
     def __init__(self) -> None:
         self._handlers: dict[str, Handler] = {}
-        self._state: State | None = None
+        self._state: Snapshot | None = None
         self.closed = False
 
     def register(self, name: str, handler: Handler) -> None:
@@ -48,7 +48,7 @@ class Handlers:
         return payload
 
     def dispatch(
-        self, action_id: str, state: State, payload: Mapping[str, object]
+        self, action_id: str, state: Snapshot, payload: Mapping[str, object]
     ) -> bool:
         if action_id not in self._handlers:
             raise StateError("unknown action", action_id=action_id)
@@ -58,12 +58,12 @@ class Handlers:
         return self._state is not before
 
     def dispatch_binding(
-        self, spec: IntentSpec, state: State, payload: Mapping[str, object]
+        self, spec: IntentSpec, state: Snapshot, payload: Mapping[str, object]
     ) -> bool:
         del state, payload
         raise StateError("these tests state no intents", intent=spec.handler_id)
 
-    def snapshot_state(self, previous: State | None) -> State:
+    def snapshot_state(self, previous: Snapshot | None) -> Snapshot:
         """Return the state the handlers left, or the store's when none ran."""
         state = self._state if self._state is not None else previous
         assert state is not None
@@ -71,7 +71,7 @@ class Handlers:
         self._state = None
         return state
 
-    def snapshot_below(self) -> State | None:
+    def snapshot_below(self) -> Snapshot | None:
         return None
 
     def close(self) -> None:

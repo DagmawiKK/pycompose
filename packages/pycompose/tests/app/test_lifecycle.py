@@ -12,7 +12,7 @@ from handlers import Handlers
 from pycompose.bridge import BridgeSurface
 from pycompose.errors import IrValidationError
 from pycompose.material3 import Button, Text
-from pycompose.state import State, Store
+from pycompose.model.snapshot import Snapshot, SnapshotStore
 from pycompose.wire import emit_ir
 
 CONFIG = {
@@ -23,14 +23,14 @@ CONFIG = {
 }
 
 
-def shows(text: str) -> State:
-    return State(root=Text(id="text", text=text))
+def shows(text: str) -> Snapshot:
+    return Snapshot(root=Text(id="text", text=text))
 
 
 def handling(name: str, seen: list[Mapping[str, object]]) -> Handlers:
     handlers = Handlers()
 
-    def handle(_state: State, payload: Mapping[str, object]) -> State:
+    def handle(_state: Snapshot, payload: Mapping[str, object]) -> Snapshot:
         seen.append(payload)
         return shows(name)
 
@@ -44,7 +44,9 @@ def text(bridge: BridgeSurface) -> str:
 
 def test_lifecycle_events_reach_python_through_the_ordinary_action_queue() -> None:
     seen: list[Mapping[str, object]] = []
-    bridge = BridgeSurface(Store(shows("home")), handling("onConfigChanged", seen))
+    bridge = BridgeSurface(
+        SnapshotStore(shows("home")), handling("onConfigChanged", seen)
+    )
 
     bridge.accept_action(json.dumps({"intent": "onConfigChanged", "payload": CONFIG}))
 
@@ -57,7 +59,7 @@ def test_an_unhandled_lifecycle_event_is_idle_not_a_diagnostic(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     """The host sends every lifecycle fact; ignoring one is the app's choice."""
-    bridge = BridgeSurface(Store(shows("home")), handling("onResume", []))
+    bridge = BridgeSurface(SnapshotStore(shows("home")), handling("onResume", []))
     before = bridge.expose_latest_snapshot()
 
     with caplog.at_level(logging.DEBUG):
@@ -72,7 +74,7 @@ def test_an_unhandled_lifecycle_event_is_idle_not_a_diagnostic(
 
 def test_an_unhandled_catalog_action_is_still_a_diagnostic() -> None:
     """A control wired to an action nobody handles remains a wiring fault."""
-    bridge = BridgeSurface(Store(shows("home")), Handlers())
+    bridge = BridgeSurface(SnapshotStore(shows("home")), Handlers())
 
     bridge.accept_action('{"intent":"increment","payload":{"by":1}}')
 
@@ -92,7 +94,9 @@ def test_an_ill_formed_lifecycle_payload_leaves_state_untouched(
     payload: dict[str, object],
 ) -> None:
     seen: list[Mapping[str, object]] = []
-    bridge = BridgeSurface(Store(shows("home")), handling("onConfigChanged", seen))
+    bridge = BridgeSurface(
+        SnapshotStore(shows("home")), handling("onConfigChanged", seen)
+    )
     before = bridge.expose_latest_snapshot()
 
     bridge.accept_action(json.dumps({"intent": "onConfigChanged", "payload": payload}))

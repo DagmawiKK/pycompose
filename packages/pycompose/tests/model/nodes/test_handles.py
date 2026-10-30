@@ -7,7 +7,7 @@ from pycompose.material3 import Text
 from pycompose.model.nodes.ids import Handles
 from pycompose.model.nodes.node import Node
 from pycompose.model.nodes.reuse import Reuse
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.wire import emit_ir
 from pycompose.wire.patch import PatchOp, ReplaceSubtree, diff_nodes
 
@@ -36,7 +36,7 @@ def names(root: Node) -> dict[str, str]:
     return {str(child.props["text"]): child.id for child in root.children}
 
 
-def column(*labels: str) -> State:
+def column(*labels: str) -> Snapshot:
     """Return a column with one keyed text per label.
 
     Args:
@@ -45,7 +45,7 @@ def column(*labels: str) -> State:
     Returns:
         The state.
     """
-    return State(
+    return Snapshot(
         root=Column(
             id="list", children=[Text(id=label, text=label) for label in labels]
         )
@@ -103,8 +103,8 @@ def test_debug_keeps_each_names_full_path_off_the_wire() -> None:
     assert session().handles.paths() == {}
 
 
-def _rows(labels: list[str], *, title: str = "Rows") -> State:
-    return State(
+def _rows(labels: list[str], *, title: str = "Rows") -> Snapshot:
+    return Snapshot(
         root=Column(
             id="screen",
             children=[

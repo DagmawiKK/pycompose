@@ -12,12 +12,12 @@ from readable import ids, readable
 
 from pycompose.errors import IrError, IrValidationError, SchemaError
 from pycompose.model.nodes import Node, Props
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 
 def test_emit_ir_matches_golden_and_generated_schema() -> None:
-    state = State(
+    state = Snapshot(
         root=Node(
             id="root",
             type="Column",
@@ -45,11 +45,11 @@ def test_emitter_rejects_old_unsupported_and_malformed_schema_versions(
     version: str,
 ) -> None:
     with pytest.raises(SchemaError):
-        emit_ir(State(root=Node(id="root", type="Column")), version)
+        emit_ir(Snapshot(root=Node(id="root", type="Column")), version)
 
 
 def test_emitter_qualifies_stable_keys_and_preserves_action_ids() -> None:
-    state = State(
+    state = Snapshot(
         root=Node(
             id="screen",
             type="Column",
@@ -78,15 +78,16 @@ def test_emitter_rejects_colliding_keys_and_invalid_props() -> None:
     child = Node(id="item", type="Text", props=Props({"text": "hi"}))
     with pytest.raises(IrError, match="duplicate node id"):
         emit_ir(
-            State(root=Node(id="root", type="Column", children=(child, child))), "1.0.0"
+            Snapshot(root=Node(id="root", type="Column", children=(child, child))),
+            "1.0.0",
         )
     with pytest.raises(IrValidationError, match="missing required prop"):
-        validate_ir(emit_ir(State(root=Node(id="root", type="Text")), "1.0.0"))
+        validate_ir(emit_ir(Snapshot(root=Node(id="root", type="Text")), "1.0.0"))
 
 
 def test_emission_detaches_nested_props_from_input_state() -> None:
     modifier = {"padding": [1, 2]}
-    state = State(
+    state = Snapshot(
         root=Node(id="root", type="Spacer", props=Props({"modifier": modifier}))
     )
     snapshot = emit_ir(state, "1.0.0")
@@ -100,11 +101,11 @@ def test_keyed_list_ids_survive_reordering() -> None:
     second = Node(id="second", type="Text", props=Props({"text": "two"}))
     root = Node(id="root", type="LazyColumn", children=(first, second))
     reordered = Node(id="root", type="LazyColumn", children=(second, first))
-    assert ids(readable(State(root=root), "1.0.0")["root"])[1:] == [
+    assert ids(readable(Snapshot(root=root), "1.0.0")["root"])[1:] == [
         "root.first",
         "root.second",
     ]
-    assert ids(readable(State(root=reordered), "1.0.0")["root"])[1:] == [
+    assert ids(readable(Snapshot(root=reordered), "1.0.0")["root"])[1:] == [
         "root.second",
         "root.first",
     ]

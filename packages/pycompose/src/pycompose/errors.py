@@ -69,7 +69,7 @@ class IrDecodeError(IrError):
 
 
 class StateError(PyComposeError):
-    """Invalid State or Store usage."""
+    """Invalid app state, snapshot or snapshot store usage."""
 
 
 class BridgeError(PyComposeError):

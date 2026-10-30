@@ -11,7 +11,7 @@ from pycompose.errors import IrValidationError
 from pycompose.foundation import Column
 from pycompose.material3 import ModalNavigationDrawer, Text
 from pycompose.model.catalog.lock import SCHEMA_VERSION
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.wire import emit_ir, to_json, validate_ir
 
 
@@ -50,8 +50,8 @@ def test_an_expression_stays_within_its_limits() -> None:
             deep = deep.times(1.0)
 
 
-def _drawer(scrim: object, key: str = "nav") -> State:
-    return State(
+def _drawer(scrim: object, key: str = "nav") -> Snapshot:
+    return Snapshot(
         root=ModalNavigationDrawer(
             Column(Text(text="Body")),
             id=key,
@@ -75,7 +75,7 @@ def test_a_stream_naming_no_component_is_refused_at_emission() -> None:
 
 
 def test_a_stream_its_holder_does_not_expose_is_refused() -> None:
-    state = State(
+    state = Snapshot(
         root=Column(
             Text(
                 text="Hi",

@@ -9,8 +9,6 @@ renamed or mistyped. Declaring the shape as a frozen dataclass and inheriting
         notes: list[Note] = ()
         dark: bool = False
 
-    return State(app=Notes(notes=notes, dark=dark))
-
 The boundary still carries plain JSON. This only decides how the app describes it,
 and it owns three things the app should never have to know about: the canonical
 JSON freeze (which turns arrays into tuples), the camelCase spelling used on the

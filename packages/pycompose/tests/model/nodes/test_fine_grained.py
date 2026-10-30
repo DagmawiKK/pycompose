@@ -8,7 +8,8 @@ from pycompose.material3 import Text
 from pycompose.model.nodes.expansion import ExpansionMemo
 from pycompose.model.nodes.node import Node
 from pycompose.model.nodes.reuse import Reuse
-from pycompose.state import AppState, State
+from pycompose.model.snapshot import Snapshot
+from pycompose.state import AppState
 from pycompose.wire import emit_ir
 
 runs: list[str] = []
@@ -32,7 +33,7 @@ def screen(*, session: Shell) -> Node:
 
 
 def publish(reuse: Reuse, shell: Shell, root: Node | None = None) -> None:
-    emit_ir(State(root=root or counter(session=shell), app=shell), "1.0.0", reuse)
+    emit_ir(Snapshot(root=root or counter(session=shell)), "1.0.0", reuse)
 
 
 def test_a_change_to_a_field_it_did_not_read_reuses_its_output() -> None:

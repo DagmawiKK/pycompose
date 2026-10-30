@@ -26,7 +26,7 @@ from pycompose_codegen.emit.state_rules import STATE_VALUE_TYPES
 from pycompose.material3 import ModalBottomSheet, ModalNavigationDrawer, Text
 from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.nodes.node import Node
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.ui._rules import validate_prop
 from pycompose.wire import emit_ir, to_dict, validate_ir
 
@@ -67,7 +67,7 @@ def snapshot(root: Node) -> dict:
     Returns:
         The canonical wire snapshot.
     """
-    candidate = emit_ir(State(root=root), CATALOG["schemaVersion"])
+    candidate = emit_ir(Snapshot(root=root), CATALOG["schemaVersion"])
     assert validate_ir(candidate).snapshot is candidate
     return to_dict(candidate)
 

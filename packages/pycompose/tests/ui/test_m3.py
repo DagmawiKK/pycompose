@@ -4,7 +4,7 @@ import pytest
 
 from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.nodes import Node
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 
@@ -20,7 +20,7 @@ def test_imported_builtins_preserve_the_native_contract() -> None:
         children=(Text(id="name", text="Ada"),),
     )
     assert isinstance(node, Node)
-    candidate = emit_ir(State(root=node), SCHEMA_VERSION)
+    candidate = emit_ir(Snapshot(root=node), SCHEMA_VERSION)
     assert validate_ir(candidate).snapshot is candidate
     assert to_json_bytes(candidate) == (
         b'{"root":{"children":[{"id":"1","props":{"text":"Ada"},'

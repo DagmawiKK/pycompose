@@ -12,7 +12,7 @@ from pycompose.material3 import Text
 from pycompose.model.nodes.node import Node, Props
 from pycompose.model.nodes.reuse import Reuse
 from pycompose.model.nodes.windows import windows
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.wire import emit_ir, to_json, validate_ir
 
 
@@ -24,14 +24,14 @@ def row(*, label: str, extra: bool):
     return Column(id="row", children=tuple(children))
 
 
-def _state(labels: list[str], *, extra: bool = False, title: str = "Rows") -> State:
+def _state(labels: list[str], *, extra: bool = False, title: str = "Rows") -> Snapshot:
     rows = tuple(row(id=f"r_{label}", label=label, extra=extra) for label in labels)
-    return State(
+    return Snapshot(
         root=Column(id="screen", children=(Text(id="title", text=title), *rows))
     )
 
 
-def _publish(state: State, reuse: Reuse | None) -> str:
+def _publish(state: Snapshot, reuse: Reuse | None) -> str:
     """Publish in a session, or fresh, with ids replaced by readable paths."""
     reuse = reuse or readable_reuse()
     result = validate_ir(emit_ir(state, "1.0.0", reuse), reuse=reuse)
@@ -72,7 +72,7 @@ def listing(*, title: str):
 
 
 def test_a_reused_publish_follows_a_window_inside_a_composable() -> None:
-    state = State(root=listing(id="screen", title="Rows"))
+    state = Snapshot(root=listing(id="screen", title="Rows"))
     reuse = readable_reuse()
     first_pass = json.loads(_publish(state, reuse))
     key = first_pass["root"]["children"][1]["props"]["window"]
@@ -88,7 +88,7 @@ def test_a_duplicate_id_across_reused_subtrees_is_still_refused() -> None:
     _publish(_state(["a", "b"]), reuse)
     # Components refuse duplicate sibling keys on construction; a raw node does
     # not, so the emitter's claim is what must refuse it, reused or not.
-    duplicate = State(
+    duplicate = Snapshot(
         root=Node(
             id="screen",
             type="Column",

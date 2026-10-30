@@ -53,13 +53,13 @@ except ImportError:  # a base commit from before the package was named wire
     )
     from pycompose.ir.model import IRRoot  # type: ignore[no-redef]
     from pycompose.ir.patch import diff_nodes, patch_bytes  # type: ignore[no-redef]
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 
 SHAPES = ("wide", "nested", "props", "drop", "optional")
 SIZES = (100, 1000)
 
 
-def build_state(size: int, shape: str) -> State:
+def build_state(size: int, shape: str) -> Snapshot:
     leaves = []
     wrappers = (size - 1) // 10 if shape == "nested" else 0
     for index in range(size - 1 - wrappers):
@@ -94,23 +94,25 @@ def build_state(size: int, shape: str) -> State:
             id="item0", type="Unknown", children=tuple(leaves[1 : descendants + 1])
         )
         leaves = [unknown, *leaves[descendants + 1 :]]
-    return State(root=Node(id="root", type="Column", children=tuple(leaves)))
+    return Snapshot(root=Node(id="root", type="Column", children=tuple(leaves)))
 
 
-def pipeline(state: State) -> bytes:
+def pipeline(state: Snapshot) -> bytes:
     result = validate_ir(emit_ir(state, "1.0.0"), debug=False)
     assert result.snapshot is not None
     return to_json_bytes(result.snapshot)
 
 
-def patch_pipeline(state: State, base: IRRoot) -> bytes:
+def patch_pipeline(state: Snapshot, base: IRRoot) -> bytes:
     result = validate_ir(emit_ir(state, "1.0.0"), debug=False)
     assert result.snapshot is not None
     ops = diff_nodes(base.root, result.snapshot.root)
     return patch_bytes(result.snapshot, ops, base_serial=1, serial=2, surface="main")
 
 
-def reuse_pipeline(states: tuple[State, State], reuse: Reuse, turn: list[int]) -> bytes:
+def reuse_pipeline(
+    states: tuple[Snapshot, Snapshot], reuse: Reuse, turn: list[int]
+) -> bytes:
     turn[0] ^= 1
     result = validate_ir(
         emit_ir(states[turn[0]], "1.0.0", reuse), debug=False, reuse=reuse
@@ -158,18 +160,18 @@ def _edit_text(node: Node) -> tuple[Node, bool]:
     return node, False
 
 
-def mutate(state: State) -> State:
+def mutate(state: Snapshot) -> Snapshot:
     """Change one visible leaf's text; the keystroke the patch protocol targets.
 
     Args:
-        state: State to copy with one edited leaf.
+        state: Snapshot to copy with one edited leaf.
 
     Returns:
         The mutated state, structurally shared elsewhere.
     """
     root, edited = _edit_text(state.root)
     assert edited, "bench shapes always carry a text leaf"
-    return State(root=root)
+    return Snapshot(root=root)
 
 
 def operations(size: int, shape: str) -> dict[str, Callable[[], object]]:

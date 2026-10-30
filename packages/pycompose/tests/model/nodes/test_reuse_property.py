@@ -14,7 +14,7 @@ from pycompose.foundation import Column
 from pycompose.material3 import Text
 from pycompose.model.nodes.node import Node
 from pycompose.model.nodes.reuse import Reuse
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.wire import emit_ir, to_json, validate_ir
 
 
@@ -26,7 +26,7 @@ def row(*, label: str, extra: bool) -> Node:
     return Column(children=children)
 
 
-def publish(state: State, reuse: Reuse | None) -> dict[str, object]:
+def publish(state: Snapshot, reuse: Reuse | None) -> dict[str, object]:
     """Publish ``state`` in a session, or fresh, naming nodes by readable path.
 
     Names are a session's own, so a session and a fresh build agree on what
@@ -48,12 +48,12 @@ class Session(RuleBasedStateMachine):
         self.title = "Rows"
         self.session = readable_reuse()
 
-    def state(self) -> State:
+    def state(self) -> Snapshot:
         rows = [
             row(id=f"r_{label}", label=label, extra=label in self.extra)
             for label in self.labels
         ]
-        return State(root=Column(children=[Text(text=self.title), *rows]))
+        return Snapshot(root=Column(children=[Text(text=self.title), *rows]))
 
     @rule(label=st.sampled_from("abcdefg"))
     def add(self, label: str) -> None:

@@ -13,7 +13,7 @@ from pycompose.errors import BridgeError, IrValidationError
 from pycompose.foundation import Column
 from pycompose.material3 import HorizontalDivider, Text
 from pycompose.model.catalog.lock import REGISTRY, SCHEMA_VERSION
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.ui import Fallback
 from pycompose.wire import emit_ir, validate_ir
 from pycompose.wire.host import Host, hosted
@@ -29,10 +29,10 @@ def _screen() -> Column:
 
 
 def _types(host: Host | None, version: str = SCHEMA_VERSION) -> list[str]:
-    root = emit_ir(State(root=_screen()), version).root
+    root = emit_ir(Snapshot(root=_screen()), version).root
     if host is not None:
         with hosted(host):
-            root = emit_ir(State(root=_screen()), version).root
+            root = emit_ir(Snapshot(root=_screen()), version).root
     return [child.type for child in root.children]
 
 
@@ -56,10 +56,10 @@ def test_the_two_sides_are_keyed_apart() -> None:
     # One session, so a shared name would mean one identity for both.
     reuse = readable_reuse()
     lacking = Host(EVERYTHING - {"HorizontalDivider"})
-    shown = emit_ir(State(root=_screen()), SCHEMA_VERSION, reuse).root.children[0]
+    shown = emit_ir(Snapshot(root=_screen()), SCHEMA_VERSION, reuse).root.children[0]
     with hosted(lacking):
         standing_in = emit_ir(
-            State(root=_screen()), SCHEMA_VERSION, reuse
+            Snapshot(root=_screen()), SCHEMA_VERSION, reuse
         ).root.children[0]
     assert shown.id != standing_in.id
 
@@ -67,7 +67,9 @@ def test_the_two_sides_are_keyed_apart() -> None:
 def test_a_lacked_component_with_no_fallback_is_refused_before_sending() -> None:
     host = Host(EVERYTHING - {"HorizontalDivider"})
     with hosted(host):
-        emitted = emit_ir(State(root=Column(children=[HorizontalDivider()])), "1.23.0")
+        emitted = emit_ir(
+            Snapshot(root=Column(children=[HorizontalDivider()])), "1.23.0"
+        )
         with pytest.raises(IrValidationError, match="give it a Fallback"):
             validate_ir(emitted)
 
@@ -87,11 +89,11 @@ def test_the_bridge_announces_each_substitution_once(
     from handlers import Handlers
 
     from pycompose.bridge.api import BridgeSurface
-    from pycompose.state import Store
+    from pycompose.model.snapshot import SnapshotStore
 
     with caplog.at_level(logging.WARNING):
         surface = BridgeSurface(
-            Store(State(root=_screen())),
+            SnapshotStore(Snapshot(root=_screen())),
             Handlers(),
             host_components=EVERYTHING - {"HorizontalDivider"},
         )

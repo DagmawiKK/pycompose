@@ -11,7 +11,7 @@ from pycompose.errors import IrError, IrValidationError
 from pycompose.model.canonical import canonical_json, check_json
 from pycompose.model.nodes import Node, Props
 from pycompose.model.nodes.props import JsonValue
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.wire import IRRoot, emit_ir, to_dict, to_json, to_json_bytes, validate_ir
 
 
@@ -96,7 +96,7 @@ def test_emission_qualifies_two_thousand_levels_without_recursion() -> None:
     for _ in range(2000):
         root = Node(id="a", type="Column", children=(root,))
     reuse = readable_reuse()
-    snapshot = emit_ir(State(root=root), "1.0.0", reuse)
+    snapshot = emit_ir(Snapshot(root=root), "1.0.0", reuse)
     paths = reuse.handles.paths()
     assert paths[snapshot.root.id] == "root"
     leaf = snapshot.root
@@ -109,7 +109,7 @@ def test_two_thousand_level_pipeline_serializes_without_recursion() -> None:
     root = Node(id="leaf", type="Spacer")
     for _ in range(2000):
         root = Node(id="a", type="Column", children=(root,))
-    candidate = emit_ir(State(root=root), "1.0.0")
+    candidate = emit_ir(Snapshot(root=root), "1.0.0")
     result = validate_ir(candidate)
     assert result.snapshot is candidate
     wire = to_dict(candidate)["root"]
@@ -128,7 +128,7 @@ def test_two_thousand_level_pipeline_serializes_without_recursion() -> None:
 
 def test_shared_subtrees_are_not_cycles_and_get_unique_emitted_ids() -> None:
     shared = Node(id="item", type="Text", props=Props({"text": "shared"}))
-    state = State(
+    state = Snapshot(
         root=Node(
             id="root",
             type="Column",
@@ -160,7 +160,7 @@ def test_cycles_reject_the_whole_candidate(
     with pytest.raises(IrValidationError):
         validate_ir(snapshot)
     with pytest.raises(IrValidationError, match="cyclic"):
-        emit_ir(State(root=snapshot.root), "1.0.0")
+        emit_ir(Snapshot(root=snapshot.root), "1.0.0")
     with pytest.raises(IrValidationError, match="cyclic"):
         to_json_bytes(snapshot)
     with pytest.raises(IrValidationError, match="cyclic"):

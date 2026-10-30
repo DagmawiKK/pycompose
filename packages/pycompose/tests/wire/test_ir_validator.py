@@ -8,7 +8,7 @@ from pycompose.errors import IrValidationError, SchemaError
 from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.nodes import Node, Props
 from pycompose.model.nodes.props import JsonValue
-from pycompose.state import State
+from pycompose.model.snapshot import Snapshot
 from pycompose.ui._rules import validate_modifier
 from pycompose.wire import IRRoot, emit_ir, to_json_bytes, validate_ir
 
@@ -115,7 +115,7 @@ def test_invalid_metadata_is_rejected() -> None:
 
 def test_emitted_snapshot_and_tables_cannot_be_mutated() -> None:
     snapshot = emit_ir(
-        State(
+        Snapshot(
             root=Node(
                 id="root", type="Spacer", props=Props({"modifier": {"padding": [1, 2]}})
             )

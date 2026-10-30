@@ -14,8 +14,8 @@ from pycompose.app import to_thread
 from pycompose.app.session import REFRESH, NavigationSession
 from pycompose.bridge import BridgeSurface
 from pycompose.model.nodes.props import to_camel_case
+from pycompose.model.snapshot import SnapshotStore
 from pycompose.runtime.loop import LoopThread
-from pycompose.state import Store
 
 if TYPE_CHECKING:
     from types import ModuleType
@@ -128,7 +128,9 @@ class Host:
                 report=lambda scope, error: FAILURES.append(f"{scope}: {error}"),
                 signal=self._signalled,
             )
-            return BridgeSurface(Store(self.session.snapshot_state(None)), self.session)
+            return BridgeSurface(
+                SnapshotStore(self.session.snapshot_state(None)), self.session
+            )
 
         self._bridge = _loop().call(start)
         _HOSTS.append(self)
