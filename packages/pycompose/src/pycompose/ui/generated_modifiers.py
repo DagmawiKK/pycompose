@@ -5,8 +5,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal
 
-from pycompose.app.intents import Intent, lower_action
 from pycompose.core.props import JsonValue
+from pycompose.ui.intents import Intent, lower_action
 from pycompose.ui.modifier_operation import _Operation
 
 if TYPE_CHECKING:

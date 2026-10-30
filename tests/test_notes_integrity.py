@@ -12,12 +12,12 @@ from typing import TYPE_CHECKING
 import pytest
 from pycompose_testing.driver import AppDriver
 
-from pycompose.app.intents import intent_class
 from pycompose.app.navigation import route_key
 from pycompose.bridge.session import RuntimeSession
 from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.runtime.loop import LoopThread
 from pycompose.storage.documents import use_root
+from pycompose.ui.intents import intent_class
 
 if TYPE_CHECKING:
     from types import ModuleType

@@ -3,10 +3,10 @@
 from collections.abc import Callable, Mapping
 from typing import cast
 
-from pycompose.core.action_binding import ActionBinding
 from pycompose.core.node import Props
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
+from pycompose.ui.intents import BoundIntent
 from pycompose.utils.json_canonical import freeze_json
 
 Declare = Callable[[str, object], None]
@@ -42,19 +42,19 @@ def lower_props(props: Props, declare: Declare) -> Props:
     bindings = {
         key: value
         for key, value in props.values.items()
-        if isinstance(value, ActionBinding)
+        if isinstance(value, BoundIntent)
     }
     modifier = props.values.get("modifier")
     operations = modifier.get("operations", ()) if isinstance(modifier, Mapping) else ()
     modifier_bindings = isinstance(operations, tuple | list) and any(
         isinstance(operation, Mapping)
-        and isinstance(operation.get("onClick"), ActionBinding)
+        and isinstance(operation.get("onClick"), BoundIntent)
         for operation in operations
     )
     if not bindings and not modifier_bindings:
         return props
 
-    def wire(binding: ActionBinding) -> JsonValue:
+    def wire(binding: BoundIntent) -> JsonValue:
         spec = binding.spec
         # Frozen once here, so the contract keeps its identity in metadata.
         declare(spec.handler_id, freeze_json(spec.contract()))
@@ -70,6 +70,6 @@ def lower_props(props: Props, declare: Declare) -> Props:
         )
         for operation in operations_wire:
             click = operation.get("onClick")
-            if isinstance(click, ActionBinding):
+            if isinstance(click, BoundIntent):
                 operation["onClick"] = wire(click)
     return Props(wire_props)

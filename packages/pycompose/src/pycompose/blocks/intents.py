@@ -7,7 +7,7 @@ component's id, so no component defines intents of its own.
 
 from __future__ import annotations
 
-from pycompose.app.intents import Intent
+from pycompose.ui.intents import Intent
 
 __all__ = ["Expand", "Fire", "Pick", "SetFlag", "SetNumber", "SetText"]
 

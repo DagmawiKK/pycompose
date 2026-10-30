@@ -12,9 +12,9 @@ from collections.abc import Callable, Mapping
 from typing import Any
 
 from pycompose.contract.registry_types import PropDef
-from pycompose.core.action_binding import BindingSpec
 from pycompose.errors import StateError
 from pycompose.state import State
+from pycompose.ui.intents import IntentSpec
 
 Handler = Callable[[State, Any], State]
 
@@ -58,7 +58,7 @@ class Handlers:
         return self._state is not before
 
     def dispatch_binding(
-        self, spec: BindingSpec, state: State, payload: Mapping[str, object]
+        self, spec: IntentSpec, state: State, payload: Mapping[str, object]
     ) -> bool:
         del state, payload
         raise StateError("these tests state no intents", intent=spec.handler_id)

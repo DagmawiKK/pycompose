@@ -18,7 +18,6 @@ from pycompose.bridge.types import MAIN_SURFACE, Action, decode_action
 from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
 from pycompose.contract.registry_types import PropDef
 from pycompose.contract.version import at_least
-from pycompose.core.action_binding import read_intents
 from pycompose.core.expansion import ExpansionMemo
 from pycompose.core.ids import Handles
 from pycompose.core.reuse import Reuse
@@ -26,6 +25,7 @@ from pycompose.core.windows import windows
 from pycompose.errors import BridgeError, SchemaError
 from pycompose.runtime.trace import tracing
 from pycompose.state import State, Store
+from pycompose.ui.intents import read_intents
 from pycompose.wire import emit_ir, to_json, validate_ir
 from pycompose.wire.echoes import ECHOES_SCHEMA, echo_key
 from pycompose.wire.host import Host, hosted

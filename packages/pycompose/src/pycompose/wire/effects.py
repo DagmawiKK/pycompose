@@ -7,10 +7,10 @@ from typing import cast
 
 from pycompose.contract.catalog import REGISTRY
 from pycompose.contract.registry_types import PropDef
-from pycompose.core.action_binding import check_payload
 from pycompose.core.effect import Effect
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError
+from pycompose.ui.intents import check_payload
 from pycompose.utils.json_canonical import FrozenJsonValue
 
 __all__ = ["EFFECTS_SCHEMA", "lower_effects", "read_effects"]

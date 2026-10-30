@@ -69,9 +69,9 @@ include_external_packages = true
 [[tool.importlinter.contracts]]
 name = "Layered: the runtime's packages, each importing only those below it"
 type = "layers"
-layers = ["blocks", "material3", "foundation", "ui", "bridge", "app", "runtime", "storage", "wire", "state", "core", "contract", "utils"]
+layers = ["blocks", "material3", "foundation", "bridge", "wire", "app", "ui", "runtime", "storage", "state", "core", "contract", "utils"]
 containers = ["pycompose"]
-explanation = "Components build on the wire, the wire on core and the catalog; no cycles."
+explanation = "The host runs apps; apps describe screens with ui; ui builds on state, core and the catalog; no cycles."
 
 [[tool.importlinter.contracts]]
 name = "Bridge is the only runtime boundary surface"

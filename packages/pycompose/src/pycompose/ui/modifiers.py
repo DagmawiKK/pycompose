@@ -15,11 +15,11 @@ from pycompose.contract.catalog import REGISTRY
 from pycompose.core.props import JsonValue
 from pycompose.core.values import named_value
 from pycompose.errors import IrValidationError
+from pycompose.ui._rules import validate_modifier
 from pycompose.ui.generated_modifiers import GeneratedOperations
 from pycompose.ui.modifier_operation import _Operation
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json, thaw_json
 from pycompose.values import Dp, PaddingValues
-from pycompose.wire.validator import validate_modifier
 
 _PADDING_SIDES = ("start", "top", "end", "bottom")
 

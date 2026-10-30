@@ -5,6 +5,7 @@ The components themselves are generated from the catalog into
 """
 
 from pycompose.ui.fallback import Fallback
+from pycompose.ui.intents import Intent
 from pycompose.ui.modifiers import Modifier
 
-__all__ = ["Fallback", "Modifier"]
+__all__ = ["Fallback", "Intent", "Modifier"]

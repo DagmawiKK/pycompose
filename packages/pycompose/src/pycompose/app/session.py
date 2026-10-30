@@ -10,7 +10,6 @@ from typing import Any, cast
 
 from pycompose.app.app import App, Destination
 from pycompose.app.generated_effects import Finish, Navigate
-from pycompose.app.intents import intent_class
 from pycompose.app.navigation import (
     NavOp,
     Pop,
@@ -23,13 +22,13 @@ from pycompose.app.navigation import (
 from pycompose.app.viewmodel import ViewModel, ViewModelHost, hosting
 from pycompose.contract.catalog import REGISTRY
 from pycompose.contract.registry_types import PropDef
-from pycompose.core.action_binding import BindingSpec, check_payload
 from pycompose.core.effect import Effect
 from pycompose.core.props import JsonValue
 from pycompose.errors import StateError
 from pycompose.runtime import signal
 from pycompose.runtime.scope import Report, Scope
 from pycompose.state.state import State
+from pycompose.ui.intents import IntentSpec, check_payload, intent_class
 from pycompose.utils.json_canonical import canonical_json
 
 __all__ = ["REFRESH", "NavigationSession"]
@@ -333,7 +332,7 @@ class NavigationSession:
         return payload
 
     def dispatch_binding(
-        self, spec: BindingSpec, state: State, payload: Mapping[str, object]
+        self, spec: IntentSpec, state: State, payload: Mapping[str, object]
     ) -> bool:
         """Run one intent on the top screen's view model.
 

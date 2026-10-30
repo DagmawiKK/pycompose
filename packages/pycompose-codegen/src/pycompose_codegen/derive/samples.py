@@ -96,7 +96,7 @@ def _required(entry: dict[str, Any]) -> dict[str, Any]:
 
 
 class _Sample:
-    """Builds one snapshot, collecting the action bindings its props name."""
+    """Builds one snapshot, collecting the intents its props name."""
 
     def __init__(self, catalog: dict[str, Any]) -> None:
         self.components = catalog["components"]

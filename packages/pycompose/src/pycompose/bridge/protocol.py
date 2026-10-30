@@ -6,8 +6,8 @@ from collections.abc import Mapping
 from typing import Protocol
 
 from pycompose.contract.registry_types import PropDef
-from pycompose.core.action_binding import BindingSpec
 from pycompose.state import State
+from pycompose.ui.intents import IntentSpec
 
 __all__ = ["AppSession"]
 
@@ -36,7 +36,7 @@ class AppSession(Protocol):
     ) -> bool: ...  # pragma: no cover - protocol declaration
 
     def dispatch_binding(
-        self, spec: BindingSpec, state: State, payload: Mapping[str, object]
+        self, spec: IntentSpec, state: State, payload: Mapping[str, object]
     ) -> bool: ...  # pragma: no cover - protocol declaration
 
     def snapshot_state(

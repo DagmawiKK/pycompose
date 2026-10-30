@@ -17,11 +17,11 @@ from pycompose.app.generated_effects import (
     PickFile,
     Toast,
 )
-from pycompose.app.intents import Intent
 from pycompose.app.navigation import Pop, Push, Replace, Route
 from pycompose.app.observe import Failure, Span
 from pycompose.app.viewmodel import ViewModel
 from pycompose.runtime.scheduler import to_thread
+from pycompose.ui.intents import Intent
 
 __all__ = [
     "App",

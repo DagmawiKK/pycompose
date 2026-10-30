@@ -9,8 +9,8 @@ from pycompose.core import Node, Props
 from pycompose.core.props import JsonValue
 from pycompose.errors import IrValidationError, SchemaError
 from pycompose.state import State
+from pycompose.ui._rules import validate_modifier
 from pycompose.wire import IRRoot, emit_ir, to_json_bytes, validate_ir
-from pycompose.wire.validator import validate_modifier
 
 
 @pytest.mark.parametrize(

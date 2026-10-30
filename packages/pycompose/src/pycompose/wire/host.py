@@ -11,11 +11,11 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 from contextlib import contextmanager
-from contextvars import ContextVar
 from dataclasses import dataclass, field
 
 from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
 from pycompose.contract.version import at_least
+from pycompose.core.target import render_target, rendering_for
 
 __all__ = ["Host", "current_host", "hosted"]
 
@@ -54,24 +54,18 @@ class Host:
         return spec.since is not None and not at_least(self.schema_version, spec.since)
 
 
-_host: ContextVar[Host | None] = ContextVar("host", default=None)
-
-
 @contextmanager
 def hosted(host: Host) -> Iterator[None]:
-    """Make the session's host visible to the emission and validation inside.
+    """Make the session's host the target of the emission and validation inside.
 
     Args:
         host: The host the snapshot is for.
 
     Yields:
-        None: While the host is visible.
+        None: While the host is the target.
     """
-    token = _host.set(host)
-    try:
+    with rendering_for(host):
         yield
-    finally:
-        _host.reset(token)
 
 
 def current_host() -> Host | None:
@@ -80,4 +74,5 @@ def current_host() -> Host | None:
     Returns:
         The host, or None outside a session's emission.
     """
-    return _host.get()
+    target = render_target()
+    return target if isinstance(target, Host) else None

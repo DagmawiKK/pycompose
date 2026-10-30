@@ -10,10 +10,10 @@ from typing import cast
 from pycompose.bridge.generated_payloads import IncrementPayload, SubmitPayload
 from pycompose.contract.catalog import REGISTRY
 from pycompose.contract.registry_types import PropDef
-from pycompose.core.action_binding import BindingSpec, check_payload
 from pycompose.errors import BridgeError, IrValidationError
+from pycompose.ui._rules import validate_prop
+from pycompose.ui.intents import IntentSpec, check_payload
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json
-from pycompose.wire.validator import validate_prop
 
 __all__ = [
     "MAIN_SURFACE",
@@ -56,7 +56,7 @@ class Action:
 
     action_id: str
     payload: Mapping[str, FrozenJsonValue]
-    binding: BindingSpec | None = None
+    binding: IntentSpec | None = None
     app_handler: bool = False
     seq: int | None = None
     trace: str | None = None
@@ -217,7 +217,7 @@ def decode_action(
             raise BridgeError("unknown action", action_id=action_id)
         return Action(action_id, payload, app_handler=True, seq=seq, trace=trace)
     try:
-        binding = BindingSpec(action_id, contract, fields)
+        binding = IntentSpec(action_id, contract, fields)
         return Action(action_id, payload, binding, seq=seq, trace=trace)
     except IrValidationError as exc:
         raise BridgeError("invalid app action payload", action_id=action_id) from exc

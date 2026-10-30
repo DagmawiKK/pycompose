@@ -9,7 +9,7 @@ from test_state_projection import load_with, snapshot
 
 from pycompose.contract.catalog import REGISTRY
 from pycompose.material3 import ModalBottomSheet, Text
-from pycompose.wire.validator import validate_prop
+from pycompose.ui._rules import validate_prop
 
 
 def test_a_sheet_can_state_an_expanded_anchor_and_observe_it() -> None:

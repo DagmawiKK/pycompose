@@ -7,7 +7,7 @@ from collections.abc import Callable
 from pycompose.core.expansion import DeferredNode
 from pycompose.core.ids import call_site
 from pycompose.core.node import Node
-from pycompose.wire.host import current_host
+from pycompose.core.target import render_target
 
 
 class Fallback(DeferredNode):
@@ -51,11 +51,11 @@ class Fallback(DeferredNode):
         return f"fallback for {self.content.type}"
 
     def build(self) -> tuple[Node, ...]:
-        host = current_host()
-        lacking = _lacking(self.content, host.lacks) if host is not None else None
-        if host is None or not lacking:
+        target = render_target()
+        lacking = _lacking(self.content, target.lacks) if target is not None else None
+        if target is None or not lacking:
             return (self.content,)
-        host.substituted.update(lacking)
+        target.substituted.update(lacking)
         return (self.otherwise,)
 
 
