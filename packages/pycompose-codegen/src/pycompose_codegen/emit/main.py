@@ -42,6 +42,10 @@ GENERATED_PACKAGE = (
     '"""What the catalog generates for ``pycompose.ui``.\n\n'
     'Components, values and modifier operations."""\n'
 )
+EFFECTS_PACKAGE = (
+    f"# {GENERATED_NOTICE}\n"
+    '"""What the catalog generates for ``pycompose.app``: the typed effects."""\n'
+)
 PAYLOADS_PATH = PACKAGE / "host" / "bridge" / "_generated" / "payloads.py"
 PAYLOADS_PACKAGE = (
     f"# {GENERATED_NOTICE}\n"
@@ -290,7 +294,8 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         GENERATED / "components.py": render_python_components(registry),
         GENERATED / "values.py": render_values(registry),
         GENERATED / "modifiers.py": render_operations(registry),
-        PACKAGE / "app/generated_effects.py": render_python_effects(registry),
+        PACKAGE / "app/_generated/__init__.py": EFFECTS_PACKAGE,
+        PACKAGE / "app/_generated/effects.py": render_python_effects(registry),
         KOTLIN_MODELS_PATH.with_name("ValueModels.kt"): render_models(registry),
         KOTLIN_MODELS_PATH.with_name("EffectModels.kt"): render_kotlin_effects(
             registry

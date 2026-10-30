@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 
 from pycompose.app import App, Destination, Intent, ViewModel
-from pycompose.app.session import SAVED_LIMIT, NavigationSession
+from pycompose.app.backstack import SAVED_LIMIT, NavigationSession
 from pycompose.host.bridge import BridgeSurface
 from pycompose.model.snapshot import SnapshotStore
 from pycompose.state import AppState, Loaded

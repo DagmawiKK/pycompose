@@ -10,7 +10,7 @@ import json
 
 import httpx
 
-import pycompose.blocks as pc
+import pycompose.app.blocks as pc
 
 URL = "http://localhost:11434/v1/chat/completions"
 MODEL = "llama3.2"

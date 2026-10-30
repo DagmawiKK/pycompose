@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from pycompose.app import to_thread
-from pycompose.app.session import REFRESH, NavigationSession
+from pycompose.app.backstack import REFRESH, NavigationSession
 from pycompose.host.bridge import BridgeSurface
 from pycompose.model.nodes.props import to_camel_case
 from pycompose.model.snapshot import SnapshotStore

@@ -13,7 +13,7 @@ from pycompose.state.disk.paths import paths
 
 PICKS = """
 from pathlib import Path
-import pycompose.blocks as pc
+import pycompose.app.blocks as pc
 
 def size(photo):
     return f"{len(Path(photo).read_bytes())} bytes"
@@ -87,7 +87,7 @@ def test_files_and_uploads_hold_the_picked_path(tmp_path: Path) -> None:
         assert value(app, "Named") == "notes.txt"
 
 
-PHOTOS = Path(__file__).resolve().parents[4] / "examples/photos"
+PHOTOS = Path(__file__).resolve().parents[5] / "examples/photos"
 
 
 def test_the_photo_example_edits_the_picked_photo(tmp_path: Path) -> None:

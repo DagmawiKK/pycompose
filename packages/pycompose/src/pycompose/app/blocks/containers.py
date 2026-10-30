@@ -5,8 +5,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from pycompose import ui
-from pycompose.blocks.intents import Expand, SetText
-from pycompose.blocks.layout import Container
+from pycompose.app.blocks.intents import Expand, SetText
+from pycompose.app.blocks.layout import Container
 from pycompose.errors import StateError
 from pycompose.ui import (
     AnimatedVisibility,
@@ -20,7 +20,7 @@ from pycompose.ui import (
 )
 
 if TYPE_CHECKING:
-    from pycompose.blocks.screen import View
+    from pycompose.app.blocks.screen import View
     from pycompose.model.nodes.node import Node
 
 __all__ = ["Accordion", "Column", "Row", "Tab", "Tabs"]

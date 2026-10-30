@@ -8,7 +8,7 @@ from typing import Literal
 import pytest
 
 from pycompose.app import App, Destination, Intent, ViewModel
-from pycompose.app.session import NavigationSession
+from pycompose.app.backstack import NavigationSession
 from pycompose.errors import IrValidationError
 from pycompose.host.bridge import BridgeSurface
 from pycompose.model.snapshot import SnapshotStore

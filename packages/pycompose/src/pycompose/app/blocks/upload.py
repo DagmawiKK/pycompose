@@ -11,13 +11,13 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from pycompose import ui
-from pycompose.blocks.components import Component
-from pycompose.blocks.intents import Pick
-from pycompose.blocks.layout import Event
+from pycompose.app.blocks.components import Component
+from pycompose.app.blocks.intents import Pick
+from pycompose.app.blocks.layout import Event
 from pycompose.ui import Modifier, OutlinedButton, Text
 
 if TYPE_CHECKING:
-    from pycompose.blocks.screen import View
+    from pycompose.app.blocks.screen import View
     from pycompose.model.nodes.node import Node
 
 __all__ = ["File", "UploadButton"]

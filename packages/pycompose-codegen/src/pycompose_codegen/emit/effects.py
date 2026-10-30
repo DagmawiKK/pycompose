@@ -82,7 +82,7 @@ def _python_class(kind: str, effect: dict[str, Any]) -> list[str]:
 
 
 def render_python_effects(registry: dict[str, Any]) -> str:
-    """Render ``pycompose/app/generated_effects.py``.
+    """Render ``pycompose/app/_generated/effects.py``.
 
     Args:
         registry: The catalog lock.

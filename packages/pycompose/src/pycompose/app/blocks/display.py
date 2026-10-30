@@ -7,8 +7,8 @@ from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from pycompose import ui
-from pycompose.blocks.components import Component
-from pycompose.blocks.intents import Pick
+from pycompose.app.blocks.components import Component
+from pycompose.app.blocks.intents import Pick
 from pycompose.model.nodes.resources import valid_resource
 from pycompose.state.disk import media
 from pycompose.state.disk.paths import paths
@@ -22,7 +22,7 @@ from pycompose.ui import (
 )
 
 if TYPE_CHECKING:
-    from pycompose.blocks.screen import View
+    from pycompose.app.blocks.screen import View
     from pycompose.model.nodes.node import Node
 
 __all__ = ["JSON", "Gallery", "Image", "Label"]

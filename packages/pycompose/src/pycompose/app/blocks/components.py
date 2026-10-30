@@ -11,12 +11,12 @@ from collections.abc import Callable, Sequence
 from typing import TYPE_CHECKING, Any
 
 from pycompose import ui
-from pycompose.blocks.intents import Fire
-from pycompose.blocks.layout import Element, Event
+from pycompose.app.blocks.intents import Fire
+from pycompose.app.blocks.layout import Element, Event
 from pycompose.ui import Text
 
 if TYPE_CHECKING:
-    from pycompose.blocks.screen import View
+    from pycompose.app.blocks.screen import View
     from pycompose.model.nodes.node import Node
 
 __all__ = ["Button", "Component", "label"]

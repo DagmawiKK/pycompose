@@ -21,8 +21,8 @@ from typing import TYPE_CHECKING, Any, Literal, Self, TypeVar
 from pycompose.errors import StateError
 
 if TYPE_CHECKING:
-    from pycompose.blocks.components import Component
-    from pycompose.blocks.screen import View
+    from pycompose.app.blocks.components import Component
+    from pycompose.app.blocks.screen import View
     from pycompose.model.nodes.node import Node
 
 __all__ = ["Container", "Element", "Event", "detached"]

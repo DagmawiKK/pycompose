@@ -11,10 +11,10 @@ from images import PIXEL
 from pycompose_testing.driver import AppDriver
 from test_blocks import project
 
-import pycompose.blocks as pc
+import pycompose.app.blocks as pc
 
 DISPLAY = f"""
-import pycompose.blocks as pc
+import pycompose.app.blocks as pc
 
 PIXEL = {PIXEL!r}
 SEEN = []
@@ -68,7 +68,7 @@ def test_a_picture_reference_must_name_an_image() -> None:
     assert pc.Image("@drawable/logo").default == "@drawable/logo"
 
 
-DOGS = Path(__file__).resolve().parents[4] / "examples/dogs"
+DOGS = Path(__file__).resolve().parents[5] / "examples/dogs"
 
 
 def test_the_dogs_example_shows_the_photos_it_downloads(

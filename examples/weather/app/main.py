@@ -2,7 +2,7 @@
 
 import httpx
 
-import pycompose.blocks as pc
+import pycompose.app.blocks as pc
 
 PLACES = "https://geocoding-api.open-meteo.com/v1/search"
 FORECAST = "https://api.open-meteo.com/v1/forecast"

@@ -7,7 +7,7 @@ photo picked, and the edit runs on the I/O pool, off the screen's thread.
 from PIL import Image as Picture
 from PIL import ImageFilter, ImageOps
 
-import pycompose.blocks as pc
+import pycompose.app.blocks as pc
 
 LOOKS = ["Original", "Black and white", "Soft focus", "Outline"]
 

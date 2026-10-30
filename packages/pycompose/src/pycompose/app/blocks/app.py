@@ -6,12 +6,12 @@ from collections.abc import Callable, Sequence
 from typing import TYPE_CHECKING, Any, Self
 
 from pycompose.app.app import App, Destination
+from pycompose.app.blocks.components import Button, Component
+from pycompose.app.blocks.containers import Column
+from pycompose.app.blocks.layout import Element, detached
+from pycompose.app.blocks.screen import View
+from pycompose.app.blocks.view_model import BlocksState, BlocksViewModel
 from pycompose.app.observe import Failure, Span
-from pycompose.blocks.components import Button, Component
-from pycompose.blocks.containers import Column
-from pycompose.blocks.layout import Element, detached
-from pycompose.blocks.screen import View
-from pycompose.blocks.view_model import BlocksState, BlocksViewModel
 from pycompose.ui import Column as NativeColumn
 from pycompose.ui import Modifier
 

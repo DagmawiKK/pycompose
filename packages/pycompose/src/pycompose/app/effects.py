@@ -2,7 +2,7 @@
 
 An effect may be lost if the process dies before the host runs it, so anything
 that must happen belongs in state instead. The effects themselves are generated
-from the catalog (:mod:`pycompose.app.generated_effects`); this is their base.
+from the catalog (:mod:`pycompose.app._generated.effects`); this is their base.
 """
 
 from __future__ import annotations

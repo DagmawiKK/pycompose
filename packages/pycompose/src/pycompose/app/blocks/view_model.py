@@ -10,11 +10,11 @@ from collections.abc import Mapping
 from dataclasses import field
 from typing import Any
 
-from pycompose.app.generated_effects import PickFile, Toast
+from pycompose.app._generated.effects import PickFile, Toast
+from pycompose.app.blocks.components import Component
+from pycompose.app.blocks.intents import Expand, Fire, Pick, SetFlag, SetNumber, SetText
+from pycompose.app.blocks.layout import Element, Event, Trigger
 from pycompose.app.viewmodel import ViewModel
-from pycompose.blocks.components import Component
-from pycompose.blocks.intents import Expand, Fire, Pick, SetFlag, SetNumber, SetText
-from pycompose.blocks.layout import Element, Event, Trigger
 from pycompose.runtime.scheduler import to_thread
 from pycompose.state import AppState, Loaded
 from pycompose.ui.intents import Intent

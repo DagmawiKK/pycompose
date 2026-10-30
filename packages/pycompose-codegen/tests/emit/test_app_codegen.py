@@ -235,7 +235,7 @@ def test_an_app_on_a_drawing_layer_carries_what_the_layer_draws(tmp_path: Path) 
     app = tmp_path / "app"
     app.mkdir()
     (app / "main.py").write_text(
-        "import pycompose.blocks as pc\n\nbox = pc.Textbox()\n"
+        "import pycompose.app.blocks as pc\n\nbox = pc.Textbox()\n"
     )
     used = discover(app, load_catalog(ROOT / "schema/catalog.lock.json"))
     assert needs_slice(app)
@@ -245,14 +245,14 @@ def test_an_app_on_a_drawing_layer_carries_what_the_layer_draws(tmp_path: Path) 
 
 
 def test_an_app_on_a_drawing_layer_keeps_the_library_catalog(tmp_path: Path) -> None:
-    """Its own slice may not stand in for the catalog pycompose.blocks draws from."""
+    """Its own slice may not stand in for the catalog app.blocks draws from."""
     from pycompose_cli.commands.build import _own_slice
 
     app = tmp_path / "app"
     app.mkdir()
     (app / "catalog.py").write_text("from components import Button\n")
     assert _own_slice(app) == "true"
-    (app / "main.py").write_text("import pycompose.blocks as pc\n")
+    (app / "main.py").write_text("import pycompose.app.blocks as pc\n")
     assert _own_slice(app) == "false"
 
 

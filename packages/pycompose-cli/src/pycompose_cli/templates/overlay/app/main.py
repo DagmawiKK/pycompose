@@ -5,7 +5,7 @@ The README lists every component and shows how to stream, pick photos, and
 build screens of your own with view models.
 """
 
-import pycompose.blocks as pc
+import pycompose.app.blocks as pc
 
 
 def greet(name: str) -> str:

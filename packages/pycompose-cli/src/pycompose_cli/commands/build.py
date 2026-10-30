@@ -265,7 +265,7 @@ def codegen(project: Project, *, kotlin: bool = True) -> None:
     something other than the build is the arrangement ADR-0014 replaced.
 
     Only runs for an app that has adopted per-app codegen -- one importing its
-    own generated package, or a drawing layer such as ``pycompose.blocks``,
+    own generated package, or a drawing layer such as ``pycompose.app.blocks``,
     whose components join the slice. An app on the library catalog has nothing
     to generate, and starting to fail those builds would be a regression
     dressed up as an improvement.

@@ -31,7 +31,7 @@ from types import TracebackType
 from typing import Any, Self
 
 import pycompose
-from pycompose.app.session import REFRESH
+from pycompose.app.backstack import REFRESH
 from pycompose.host.bridge.imports import fresh_imports
 from pycompose.host.bridge.session import RuntimeSession
 from pycompose.runtime import signal

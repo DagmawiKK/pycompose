@@ -34,7 +34,7 @@ from pycompose.model.catalog.rules import with_rules
 APP_PACKAGE = "components"
 """The app-side generated package: the components the app draws, and their values."""
 
-LAYERS = ("pycompose.blocks",)
+LAYERS = ("pycompose.app.blocks",)
 """Library packages that draw native components for an app: an app importing one
 carries the components the package draws, found in its source as an app's are."""
 

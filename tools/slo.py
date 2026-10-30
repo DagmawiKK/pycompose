@@ -42,7 +42,7 @@ def _notes_pass_times(keystrokes: int) -> list[float]:
     from notes_app.data.notes_repo import MemoryNotesRepo
     from notes_app.domain.models import Note
 
-    from pycompose.app.session import NavigationSession
+    from pycompose.app.backstack import NavigationSession
     from pycompose.host.bridge import BridgeSurface
     from pycompose.model.snapshot import SnapshotStore
     from pycompose.runtime.loop import LoopThread

@@ -11,13 +11,13 @@ from collections.abc import AsyncIterator, Callable, Iterator, Mapping
 from typing import TYPE_CHECKING, Any
 
 from pycompose import ui
-from pycompose.blocks.app import Blocks
-from pycompose.blocks.components import Button, Component
-from pycompose.blocks.text import Textbox
+from pycompose.app.blocks.app import Blocks
+from pycompose.app.blocks.components import Button, Component
+from pycompose.app.blocks.text import Textbox
 from pycompose.ui import CardWithoutOnClick, Modifier, Text, ThemeColor, cardColors
 
 if TYPE_CHECKING:
-    from pycompose.blocks.screen import View
+    from pycompose.app.blocks.screen import View
     from pycompose.model.nodes.node import Node
 
 __all__ = ["ChatInterface", "Chatbot"]

@@ -8,8 +8,8 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from typing import Any, cast
 
+from pycompose.app._generated.effects import Finish, Navigate
 from pycompose.app.app import App, Destination
-from pycompose.app.generated_effects import Finish, Navigate
 from pycompose.app.navigation import (
     NavOp,
     Pop,

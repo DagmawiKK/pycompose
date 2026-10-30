@@ -14,8 +14,8 @@ from types import ModuleType
 from typing import Protocol, runtime_checkable
 
 from pycompose.app.app import App
+from pycompose.app.backstack import NavigationSession
 from pycompose.app.observe import Failure
-from pycompose.app.session import NavigationSession
 from pycompose.errors import BridgeError
 from pycompose.host.bridge.api import BridgeSurface
 from pycompose.model.snapshot import SnapshotStore

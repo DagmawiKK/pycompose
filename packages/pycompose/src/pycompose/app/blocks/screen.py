@@ -13,9 +13,9 @@ from pycompose.ui import (
 )
 
 if TYPE_CHECKING:
-    from pycompose.blocks.components import Component
-    from pycompose.blocks.layout import Container, Element
-    from pycompose.blocks.view_model import BlocksState
+    from pycompose.app.blocks.components import Component
+    from pycompose.app.blocks.layout import Container, Element
+    from pycompose.app.blocks.view_model import BlocksState
     from pycompose.model.nodes.node import Node
 
 __all__ = ["View"]

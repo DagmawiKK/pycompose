@@ -12,12 +12,12 @@ from typing import Any
 import pytest
 from pycompose_testing.driver import AppDriver
 
-import pycompose.blocks as pc
+import pycompose.app.blocks as pc
 from pycompose.errors import StateError
 
 GREET = """
 import threading
-import pycompose.blocks as pc
+import pycompose.app.blocks as pc
 
 GATE = threading.Event()
 GATE.set()
@@ -164,7 +164,7 @@ def test_values_survive_process_death_and_progress_does_not(tmp_path: Path) -> N
 
 
 CHOICES = """
-import pycompose.blocks as pc
+import pycompose.app.blocks as pc
 
 with pc.Blocks() as app:
     with pc.Tabs():
@@ -221,7 +221,7 @@ def test_tabs_show_one_page_and_an_accordion_opens(tmp_path: Path) -> None:
 
 def test_an_interface_stacks_inputs_a_button_and_outputs(tmp_path: Path) -> None:
     source = """
-    import pycompose.blocks as pc
+    import pycompose.app.blocks as pc
 
     app = pc.Interface(
         lambda a, b: a + b,
@@ -252,7 +252,7 @@ def test_a_choice_must_offer_its_value() -> None:
         pc.Slider(5, 1)
 
 
-WEATHER = Path(__file__).resolve().parents[4] / "examples/weather"
+WEATHER = Path(__file__).resolve().parents[5] / "examples/weather"
 
 
 def test_the_weather_example_fills_both_tabs_from_its_two_requests(
@@ -302,7 +302,7 @@ def test_the_weather_example_asks_for_a_city_first() -> None:
 STREAM = """
 import asyncio
 import threading
-import pycompose.blocks as pc
+import pycompose.app.blocks as pc
 
 STEP = threading.Semaphore(0)
 CLOSED = []
@@ -372,7 +372,7 @@ def test_a_superseded_stream_stops_and_closes(stream: AppDriver) -> None:
 
 
 CHAT = """
-import pycompose.blocks as pc
+import pycompose.app.blocks as pc
 
 SEEN = []
 
@@ -422,7 +422,7 @@ def test_a_chat_message_needs_a_known_role() -> None:
         pc.Chatbot([{"role": "robot", "content": "beep"}])
 
 
-CHAT_EXAMPLE = Path(__file__).resolve().parents[4] / "examples/chat"
+CHAT_EXAMPLE = Path(__file__).resolve().parents[5] / "examples/chat"
 
 
 def test_the_chat_example_streams_a_server_sent_reply(

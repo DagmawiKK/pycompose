@@ -115,7 +115,7 @@ XML to touch:
 The app `init` writes, in full:
 
 ```python
-import pycompose.blocks as pc
+import pycompose.app.blocks as pc
 
 
 def greet(name: str) -> str:

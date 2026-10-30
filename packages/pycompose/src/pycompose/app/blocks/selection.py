@@ -6,8 +6,8 @@ from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any
 
 from pycompose import ui
-from pycompose.blocks.components import Component, label
-from pycompose.blocks.intents import Expand, SetFlag, SetNumber, SetText
+from pycompose.app.blocks.components import Component, label
+from pycompose.app.blocks.intents import Expand, SetFlag, SetNumber, SetText
 from pycompose.errors import StateError
 from pycompose.ui import (
     DropdownMenuItem,
@@ -23,7 +23,7 @@ from pycompose.ui import (
 )
 
 if TYPE_CHECKING:
-    from pycompose.blocks.screen import View
+    from pycompose.app.blocks.screen import View
     from pycompose.model.nodes.node import Node
 
 __all__ = ["Checkbox", "Dropdown", "Radio", "Slider"]

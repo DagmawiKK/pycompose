@@ -69,7 +69,7 @@ include_external_packages = true
 [[tool.importlinter.contracts]]
 name = "Layered: the runtime's packages, each importing only those below it"
 type = "layers"
-layers = ["blocks", "host", "app", "ui", "runtime", "state", "model"]
+layers = ["host", "app", "ui", "runtime", "state", "model"]
 containers = ["pycompose"]
 explanation = "The host runs apps; apps describe screens with ui; ui builds on state and the model; no cycles."
 
@@ -108,7 +108,7 @@ explanation = "derive writes the lock that emit reads; both find the checkout th
 name = "Codegen reads the runtime's catalog, never its machinery"
 type = "forbidden"
 source_modules = ["pycompose_codegen"]
-forbidden_modules = ["pycompose.app", "pycompose.blocks", "pycompose.host", "pycompose.runtime", "pycompose.state", "pycompose.ui", "pycompose_testing", "pycompose_cli"]
+forbidden_modules = ["pycompose.app", "pycompose.host", "pycompose.runtime", "pycompose.state", "pycompose.ui", "pycompose_testing", "pycompose_cli"]
 explanation = """It generates code from the catalog's types and rules; running an app is not its
 concern, so it imports only pycompose.model and pycompose.errors (ADR-0063)."""
 

@@ -1,9 +1,9 @@
-"""pycompose.blocks — an app from components, events and plain functions.
+"""pycompose.app.blocks — an app from components, events and plain functions.
 
 Declare the screen in a ``with`` block; connect components with events that
 name a function, the components it reads and the ones it writes::
 
-    import pycompose.blocks as pc
+    import pycompose.app.blocks as pc
 
     def greet(name):
         return f"Hello, {name}"
@@ -20,15 +20,15 @@ becomes a toast. A function that yields streams: each value it yields is shown
 as it arrives, which is how a chat reply appears word by word.
 """
 
-from pycompose.blocks.app import Blocks, Interface
-from pycompose.blocks.chat import Chatbot, ChatInterface
-from pycompose.blocks.components import Button, Component
-from pycompose.blocks.containers import Accordion, Column, Row, Tab, Tabs
-from pycompose.blocks.display import JSON, Gallery, Image, Label
-from pycompose.blocks.layout import Event
-from pycompose.blocks.selection import Checkbox, Dropdown, Radio, Slider
-from pycompose.blocks.text import Markdown, Number, Textbox
-from pycompose.blocks.upload import File, UploadButton
+from pycompose.app.blocks.app import Blocks, Interface
+from pycompose.app.blocks.chat import Chatbot, ChatInterface
+from pycompose.app.blocks.components import Button, Component
+from pycompose.app.blocks.containers import Accordion, Column, Row, Tab, Tabs
+from pycompose.app.blocks.display import JSON, Gallery, Image, Label
+from pycompose.app.blocks.layout import Event
+from pycompose.app.blocks.selection import Checkbox, Dropdown, Radio, Slider
+from pycompose.app.blocks.text import Markdown, Number, Textbox
+from pycompose.app.blocks.upload import File, UploadButton
 
 __all__ = [
     "Accordion",

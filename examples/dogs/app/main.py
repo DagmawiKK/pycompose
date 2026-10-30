@@ -6,7 +6,7 @@ shows it as a file, through an image output.
 
 import httpx
 
-import pycompose.blocks as pc
+import pycompose.app.blocks as pc
 
 API = "https://dog.ceo/api/breed/{breed}/images/random/{count}"
 BREEDS = ["shiba", "husky", "corgi", "beagle", "pug", "samoyed"]
