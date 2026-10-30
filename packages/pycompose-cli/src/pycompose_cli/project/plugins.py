@@ -1,4 +1,4 @@
-"""Build plugins: the typed escape hatch past config keys (plan 31 §21.6).
+"""Build plugins: the typed escape hatch past config keys.
 
 A plugin is a function an installed package exposes under the
 ``pycompose.build_plugins`` entry point group and an app names in

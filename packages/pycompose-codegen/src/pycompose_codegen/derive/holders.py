@@ -1,4 +1,4 @@
-"""Derive each state holder's drive table from pinned source evidence (plan 30 §4).
+"""Derive each state holder's drive table from pinned source evidence.
 
 A drive moves a native holder to one anchor of its value enum. For each anchor
 the table names exactly one public, non-deprecated suspend member: a member
@@ -17,7 +17,7 @@ from pycompose_codegen.derive.classpath_types import Declaration
 from pycompose_codegen.derive.opt_ins import opt_in_index, required_opt_ins
 
 ANIMATING = frozenset({"androidx.compose.foundation.gestures.animateTo"})
-"""Primitive drives that animate rather than snap: approved policy (plan 30 §4.3)."""
+"""Primitive drives that animate rather than snap: approved policy."""
 
 Key = tuple[str, str, str]
 

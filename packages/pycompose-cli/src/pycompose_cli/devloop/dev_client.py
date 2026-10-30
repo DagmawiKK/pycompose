@@ -1,4 +1,4 @@
-"""The dev client: one prebuilt host that runs any app its dev server serves (§18.8).
+"""The dev client: one prebuilt host that runs any app its dev server serves.
 
 Building an app's APK needs Gradle and the Android SDK; running an app on the
 dev client needs neither once the client exists. ``pycompose dev-client``

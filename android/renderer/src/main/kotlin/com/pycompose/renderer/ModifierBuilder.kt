@@ -134,7 +134,7 @@ class ModifierBuilder(
         )
     }
 
-    /** Accessibility semantics the native component does not carry itself (plan 31 §16.6). */
+    /** Accessibility semantics the native component does not carry itself. */
     private fun semantics(operation: JsonObject): Modifier {
         val description = operation.optional("contentDescription")
         val state = operation.optional("stateDescription")

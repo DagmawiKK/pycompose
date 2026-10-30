@@ -66,7 +66,7 @@ def handshake(offer: str) -> str:
 
 
 def use_source(path: str) -> None:
-    """Import the app from ``path`` first: a dev client's bundle (plan 31 §18.8).
+    """Import the app from ``path`` first: a dev client's bundle.
 
     Args:
         path: The app's Python directory, as the dev server served it.

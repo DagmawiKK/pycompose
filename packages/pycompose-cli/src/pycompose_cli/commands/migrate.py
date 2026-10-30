@@ -1,6 +1,6 @@
 """``pycompose migrate``: turn an app-owned Android project into a generated one.
 
-Every file of the old project is accounted for (plan 31 §21.8): identical to
+Every file of the old project is accounted for: identical to
 the template, or a resource output, it is regenerated; a launcher icon becomes
 ``[app] icon`` from one SVG; any other resource the app added becomes a raw
 resource fragment; a manifest that only adds the app's chosen permissions is

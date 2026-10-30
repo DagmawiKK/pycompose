@@ -10,7 +10,7 @@ import java.util.zip.ZipFile
 import java.util.zip.ZipInputStream
 import javax.inject.Inject
 
-// Development tooling only (plan 31 S1): extract the pinned Compose API and its
+// Development tooling only: extract the pinned Compose API and its
 // source defaults as evidence for the schema tooling. Nothing depends on this
 // module and nothing ships from it; a scaffolded app has neither the module nor
 // these tasks. Gradle does only what needs Gradle -- resolving :renderer's

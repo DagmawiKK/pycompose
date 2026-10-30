@@ -1,4 +1,4 @@
-"""``pycompose add``: wrap a Compose library the app declares (plan 31 §16.3, §19).
+"""``pycompose add``: wrap a Compose library the app declares.
 
 The library is resolved against the pinned BOM, extracted into the app's own
 Android project exactly as Google's artifacts are extracted for the library,

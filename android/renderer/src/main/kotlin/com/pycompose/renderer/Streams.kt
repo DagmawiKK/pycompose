@@ -17,7 +17,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.doubleOrNull
 
 /*
- * Streams and expressions (plan 31 §6): behaviour as data.
+ * Streams and expressions: behaviour as data.
  *
  * A holder publishes the numbers it exposes -- a drawer's open fraction, a
  * scroll's offset and fraction -- under its node's id, read from its public

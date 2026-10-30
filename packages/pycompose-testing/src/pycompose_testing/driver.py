@@ -1,4 +1,4 @@
-"""Drive an app the way its Android host does, with no device (plan 31 §18.7).
+"""Drive an app the way its Android host does, with no device.
 
 ``AppDriver`` starts the app through the same session the device runs, finds
 controls in the snapshot it publishes, and acts on them by the intents

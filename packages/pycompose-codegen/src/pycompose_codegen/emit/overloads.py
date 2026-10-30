@@ -1,4 +1,4 @@
-"""Overloads behind one Python name, told apart by keywords (plan 31 §12.5).
+"""Overloads behind one Python name, told apart by keywords.
 
 A native composable often has several overloads -- a plain and a clickable
 ``Card``, an indeterminate and a determinate progress indicator. Each is its

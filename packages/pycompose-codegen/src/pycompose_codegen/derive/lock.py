@@ -96,7 +96,7 @@ def promotable(
     """Review decisions for every component the closure has and no policy names.
 
     A component is exposed because it derives, never because someone typed it
-    in (plan 31 §3.8): its category is its group's domain, it is experimental
+    in: its category is its group's domain, it is experimental
     when it needs an opt-in, and of several overloads the one taking the most
     parameters is the primary; the rest follow as overloads. A name whose every
     overload is deprecated is not promoted.
@@ -400,7 +400,7 @@ def _coverage(
 ) -> dict[str, dict[str, int]]:
     """Count every component overload in the closure by group and outcome.
 
-    Every public declaration ends exposed, held or refused (plan 31 §3.6);
+    Every public declaration ends exposed, held or refused;
     deprecated overloads are counted apart, since none is ever chosen.
     """
     exposed = {

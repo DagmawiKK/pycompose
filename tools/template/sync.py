@@ -92,7 +92,7 @@ def is_excluded(relative: Path) -> bool:
 
 EXTRACTOR = ("compose-extract", "compose-closure.json")
 """What ``pycompose add`` copies into an app's Android project to extract its
-libraries (plan 31 §16.3): the extraction module and the default closure. They
+libraries: the extraction module and the default closure. They
 ship as their own asset, never in the scaffold, so an app carries them only
 while ``add`` runs."""
 

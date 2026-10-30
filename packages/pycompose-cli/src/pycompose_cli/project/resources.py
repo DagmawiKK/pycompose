@@ -134,7 +134,7 @@ def resource_files(project: Project) -> dict[str, bytes]:
             continue
         relative = source.relative_to(root)
         if relative.parts[0] == "android":
-            # Raw Android fragments, merged by the generated project (plan 31 §21.6).
+            # Raw Android fragments, merged by the generated project.
             continue
         if len(relative.parts) == 1 and (
             source.name == "strings.json"

@@ -108,7 +108,7 @@ class BridgeSurface:
         self._batch: dict[str, float] = {}
         # The handlers the latest snapshot states, whose echoes are kept.
         self._intents: frozenset[str] = frozenset()
-        # The latest report sequence number answered, per action (plan 31 §17).
+        # The latest report sequence number answered, per action.
         self._echoes: dict[str, int] = {}
         # The window the host last asked for, per lazy container key.
         self._windows: dict[str, tuple[int, int]] = {}

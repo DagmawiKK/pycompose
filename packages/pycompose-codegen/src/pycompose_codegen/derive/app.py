@@ -1,4 +1,4 @@
-"""Compile an app's own Compose libraries into its lock slice (plan 31 §16.3).
+"""Compile an app's own Compose libraries into its lock slice.
 
 The library's lock covers Google's artifacts. An app that declares more
 libraries extracts them the same way, into its own Android project, and the

@@ -1,4 +1,4 @@
-"""The pinned toolchain, and ``pycompose setup`` to install it (plan 31 §21.5).
+"""The pinned toolchain, and ``pycompose setup`` to install it.
 
 An app never chooses Gradle, AGP, Kotlin, the Compose BOM or SDK levels: the
 Android template pins them, and ``templates/toolchain.toml`` pins the JDK and

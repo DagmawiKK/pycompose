@@ -1,4 +1,4 @@
-"""The Android project is build output, generated from the app (plan 31 §21).
+"""The Android project is build output, generated from the app.
 
 ``.pycompose/android/`` is written on every build from the app's inputs --
 ``pycompose.toml``, ``resources/``, the icon, the theme, its fragments and its
@@ -238,7 +238,7 @@ def _fragments(project: Project, generation: Generation) -> None:
 
 
 def _plugins(project: Project, generation: Generation) -> None:
-    """Merge what the app's build plugins add (plan 31 §21.6)."""
+    """Merge what the app's build plugins add."""
     model = run_plugins(project)
     if model == AndroidModel():
         return

@@ -1,4 +1,4 @@
-"""Expose every overload of a catalog component behind its name (plan 31 §12.5).
+"""Expose every overload of a catalog component behind its name.
 
 The catalog binds one overload per decision; the pin often has more -- a plain
 ``Card`` beside the clickable one, a determinate progress indicator beside the

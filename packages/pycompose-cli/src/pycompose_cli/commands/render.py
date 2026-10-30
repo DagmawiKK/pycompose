@@ -1,4 +1,4 @@
-"""``pycompose render``: screenshots and semantics, with no device (plan 31 §18.7).
+"""``pycompose render``: screenshots and semantics, with no device.
 
 The app's own generated host draws each snapshot on the JVM under Robolectric
 -- the same adapters a phone runs -- and writes a PNG and a semantics dump:

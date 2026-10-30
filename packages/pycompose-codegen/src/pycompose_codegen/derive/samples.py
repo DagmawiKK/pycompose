@@ -1,4 +1,4 @@
-"""One sample snapshot per component, built from its types alone (plan 31 §10).
+"""One sample snapshot per component, built from its types alone.
 
 Each required prop gets a value of its type, each action a declared binding,
 each required slot a ``Text``, a scoped component its provider as parent, and
@@ -133,7 +133,7 @@ class _Sample:
         ]
         if not children and not texts:
             # Nothing in the sample names it (a Checkbox, a Slider): its label
-            # comes from semantics, as an app's must (plan 31 §16.6).
+            # comes from semantics, as an app's must.
             props["modifier"] = {
                 "operations": [{"type": "semantics", "contentDescription": name}]
             }

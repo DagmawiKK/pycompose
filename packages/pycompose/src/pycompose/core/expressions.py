@@ -1,4 +1,4 @@
-"""Expressions over holder streams, evaluated by the host every frame (plan 31 §6).
+"""Expressions over holder streams, evaluated by the host every frame.
 
 Python states desired values and hears settled reports; an expression is the
 one thing it hands the host to evaluate on its own, frame by frame, so a prop

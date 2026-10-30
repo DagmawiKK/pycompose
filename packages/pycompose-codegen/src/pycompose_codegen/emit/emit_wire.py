@@ -207,7 +207,7 @@ def _tagged(prop: dict[str, Any], value: dict[str, Any]) -> dict[str, Any]:
         return tagged
     forms = [value, tagged]
     if prop["type"] == "color":
-        # A colour may be an expression over holder streams (plan 31 §6).
+        # A colour may be an expression over holder streams.
         forms.append({"$ref": "#/definitions/Expression"})
     return {"anyOf": forms}
 

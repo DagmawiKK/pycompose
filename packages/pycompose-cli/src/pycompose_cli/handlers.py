@@ -1,4 +1,4 @@
-"""Handlers for the commands that make and check an app's project (plan 31 §18, §21).
+"""Handlers for the commands that make and check an app's project.
 
 ``main`` owns the parser; these turn each parsed command into its effect and
 print the outcome.

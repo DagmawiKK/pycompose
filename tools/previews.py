@@ -1,7 +1,7 @@
 """Write one sample snapshot per catalog component for the render gate.
 
 Every component the lock exposes is composed once on the JVM before an app
-can reach it (plan 31 §10). The sample is built from the component's types
+can reach it. The sample is built from the component's types
 alone (``pycompose_codegen.derive.samples``), and Python's validator accepts every
 sample before it is written. The samples are output of the lock, so they are
 written into the build directory, never committed: the host's

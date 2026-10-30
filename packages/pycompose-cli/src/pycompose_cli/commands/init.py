@@ -167,7 +167,7 @@ def init_project(
     android_root = target / android_dir
     android_root.mkdir(parents=True, exist_ok=True)
     # A native project owns its Android files; any other is generated from the
-    # app on every build (plan 31 §21), so only the app's own files are copied.
+    # app on every build, so only the app's own files are copied.
     _copy_assets(template, target, android_root=android_root if native else None)
     if starter != STARTERS[0]:
         main = template.joinpath(STARTER_DIR, starter, "main.py")

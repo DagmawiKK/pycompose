@@ -11,7 +11,7 @@ import kotlinx.serialization.json.doubleOrNull
 /**
  * An expression's wire form, judged exactly as `pycompose/core/expressions.py` judges it.
  *
- * Closed and total (plan 31 §6): numbers from literals and holder streams,
+ * Closed and total: numbers from literals and holder streams,
  * combined by `times`, `plus`, `minus` and `clamp`, and made a colour by `alpha`
  * or `mix`. The vocabulary, the stream names and the limits are the generated
  * contract's, so the two validators cannot drift.

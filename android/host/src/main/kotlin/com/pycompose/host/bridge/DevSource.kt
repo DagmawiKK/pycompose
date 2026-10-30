@@ -11,7 +11,7 @@ import java.net.URI
 import kotlin.io.encoding.Base64
 
 /**
- * An app served by `pycompose run --dev-client` (plan 31 §18.8): the dev
+ * An app served by `pycompose run --dev-client`: the dev
  * server's bundle, kept in the host's private files.
  *
  * A debug build launched with a dev URL runs the app it serves instead of the

@@ -25,7 +25,7 @@ object ValueParser {
     ): Result<Unit> =
         runCatching {
             if (Expressions.isExpression(value)) {
-                // The host evaluates it each frame; it gives a colour (plan 31 §6).
+                // The host evaluates it each frame; it gives a colour.
                 require(family == "Color") { "An expression gives a Color, not a $family" }
                 Expressions.validate(value as JsonObject, "color")
             } else {

@@ -1,4 +1,4 @@
-"""The wire projection each host state family owns (plan 31 §5, holder binding).
+"""The wire projection each host state family owns.
 
 A family is one host implementation (see ``STATE_KINDS``); it decides what the
 app states and what it hears back, whatever component binds it. A drawer's

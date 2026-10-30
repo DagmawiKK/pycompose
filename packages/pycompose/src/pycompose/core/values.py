@@ -62,7 +62,7 @@ def validate_value(
     """
     check_json(value)
     if isinstance(value, Mapping) and value.get("type") == "expression":
-        # The host evaluates it each frame; it gives a colour (plan 31 §6).
+        # The host evaluates it each frame; it gives a colour.
         _require(family == "Color", f"an expression gives a Color, not a {family}")
         validate_expression(value, "color")
         return

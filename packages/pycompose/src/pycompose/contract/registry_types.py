@@ -1,4 +1,4 @@
-"""Runtime registry types mirroring ``schema/catalog.lock.json`` (plan 04).
+"""Runtime registry types mirroring ``schema/catalog.lock.json``.
 
 The registry is the single source of truth for which components and
 actions exist and what shape their props/payloads take. These frozen,
@@ -289,7 +289,7 @@ class Registry(AbstractComponentRegistry):
         )
 
     def extend(self, components: Mapping[str, Mapping[str, object]]) -> None:
-        """Add the components an app's own libraries bring (plan 31 §16.3).
+        """Add the components an app's own libraries bring.
 
         An app's generated package registers its lock slice on import, before
         anything is composed; a debug reload registers it again, replacing what

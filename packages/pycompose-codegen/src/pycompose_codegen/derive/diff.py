@@ -1,4 +1,4 @@
-"""Classify every difference between two catalog locks (plan 31 §9).
+"""Classify every difference between two catalog locks.
 
 An upgrade or a policy change regenerates the lock; this says what that means
 for an app. Each change gets a stable id and one class:

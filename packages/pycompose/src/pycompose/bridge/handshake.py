@@ -1,4 +1,4 @@
-"""The session handshake: what each side of the bridge speaks (plan 31 §16.8).
+"""The session handshake: what each side of the bridge speaks.
 
 The host and the Python app may come from different builds, so before a session
 starts each states its protocol version and the capabilities it offers, and each

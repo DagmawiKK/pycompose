@@ -24,7 +24,7 @@ __all__ = [
 ]
 
 MAIN_SURFACE = "main"
-"""The one surface a session hosts until it hosts several (plan 31 §16.5)."""
+"""The one surface a session hosts until it hosts several."""
 
 
 def _unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:

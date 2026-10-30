@@ -1,10 +1,10 @@
-"""``pycompose check``: every mistake a build would find, found before it (§18.7).
+"""``pycompose check``: every mistake a build would find, found before it.
 
 In about a second and with no device or Gradle: the configuration against its
-published schema, each error naming the key and its fix (§21.4); the app
+published schema, each error naming the key and its fix; the app
 itself, imported and composed exactly as the device's session composes it, so
 its first snapshot must validate; and Google Play's policy over the manifest
-the build would ship and the pinned toolchain (§21.7).
+the build would ship and the pinned toolchain.
 """
 
 from __future__ import annotations

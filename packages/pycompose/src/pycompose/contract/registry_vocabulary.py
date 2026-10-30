@@ -116,7 +116,7 @@ DECODERS = (
 """The host resolvers a prop may name."""
 
 STATE_STREAMS = {"drawer": ("progress",), "scroll": ("offset", "progress")}
-"""Streams each state family's holder exposes to expressions (plan 31 §6).
+"""Streams each state family's holder exposes to expressions.
 
 A stream is a number the host reads from the holder every frame -- a drawer's
 open fraction, a scroll's offset and fraction -- so a prop bound to an

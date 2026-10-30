@@ -40,8 +40,8 @@ LAYERS = ("pycompose.blocks",)
 carries the components the package draws, found in its source as an app's are."""
 
 APP_LOCK = "compose.lock.json"
-"""The app's lock slice beside ``pycompose.toml``: its own libraries' components
-(plan 31 §16.3), compiled by ``pycompose add`` and committed like a lock file."""
+"""The app's lock slice beside ``pycompose.toml``: its own libraries' components,
+compiled by ``pycompose add`` and committed like a lock file."""
 
 GENERATED_RELATIVE = Path(".pycompose/generated")
 """Where a project's generated slice lives, relative to the project root.
@@ -88,7 +88,7 @@ FLOOR_COMPONENTS = frozenset(
 ``host/.../ui/BuiltinComponents.kt`` is hand-written and always compiled: it
 registers the components whose behavior is not mechanical and names their
 generated node classes by type, so a slice without them would emit a host that
-does not compile (plan 17, step 8.4). Keeping them in every slice is what lets
+does not compile. Keeping them in every slice is what lets
 those adapters stay hand-written once instead of being re-derived per app; the
 generated adapters file skips them for the same reason. Every other component
 enters a slice only because the app references it, and

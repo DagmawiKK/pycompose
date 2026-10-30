@@ -1,4 +1,4 @@
-"""Move the library to a new Compose BOM in one command (plan 31 §14 step 10).
+"""Move the library to a new Compose BOM in one command.
 
     python -m pycompose_codegen.derive upgrade --bom 2026.10.00
 
