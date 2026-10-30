@@ -12,9 +12,9 @@ from pycompose.model.nodes.expressions import Expression
 from pycompose.model.nodes.node import Node
 from pycompose.model.nodes.props import JsonValue
 from pycompose.model.nodes.values import UNSET, _Unset
-from pycompose.ui.base import ActionTarget, Component, PropValue
+from pycompose.ui.component import ActionTarget, Component, PropValue
 from pycompose.ui.composition import Content, content_nodes, slot_nodes
-from pycompose.ui.modifiers import Modifier
+from pycompose.ui.modifier import Modifier
 
 __all__ = [
     "AlertDialog",

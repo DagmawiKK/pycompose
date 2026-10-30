@@ -10,7 +10,7 @@ from pycompose.ui.intents import Intent, lower_action
 from pycompose.ui.modifier_operation import _Operation
 
 if TYPE_CHECKING:
-    from pycompose.ui.modifiers import Modifier
+    from pycompose.ui.modifier import Modifier
 
 _BoxAlignAlignment = Literal[
     "bottomCenter",

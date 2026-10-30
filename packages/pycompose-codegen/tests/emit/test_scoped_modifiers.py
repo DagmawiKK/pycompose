@@ -11,7 +11,7 @@ from pycompose_codegen.emit.modifiers_kotlin import render_modifiers
 
 from pycompose.errors import IrValidationError
 from pycompose.ui import ExposedDropdownMenuAnchorType
-from pycompose.ui.modifiers import Modifier
+from pycompose.ui.modifier import Modifier
 
 MENU = "androidx.compose.material3.ExposedDropdownMenuBoxScope"
 

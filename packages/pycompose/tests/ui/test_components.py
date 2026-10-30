@@ -29,7 +29,7 @@ from pycompose.ui import (
     TextButton,
     TextField,
 )
-from pycompose.ui.base import Component
+from pycompose.ui.component import Component
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 ROOT = Path(__file__).resolve().parents[4]

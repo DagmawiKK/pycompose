@@ -18,7 +18,7 @@ from pycompose.model.nodes.values import _Unset, named_value
 from pycompose.ui._generated.values import Color
 from pycompose.ui._rules import validate_component
 from pycompose.ui.intents import Intent, lower_action
-from pycompose.ui.modifiers import Modifier
+from pycompose.ui.modifier import Modifier
 
 ActionTarget = str | Intent | type[Intent]
 """What an action prop takes: an intent, an intent class, or a registry action id."""

@@ -118,9 +118,9 @@ _FIRST_PARTY = (
     ("pycompose.model.nodes.node", ("Node",)),
     ("pycompose.model.nodes.props", ("JsonValue",)),
     ("pycompose.model.nodes.values", ("UNSET", "_Unset")),
-    ("pycompose.ui.base", ("ActionTarget", "Component", "PropValue")),
+    ("pycompose.ui.component", ("ActionTarget", "Component", "PropValue")),
     ("pycompose.ui.composition", ("Content", "content_nodes", "slot_nodes")),
-    ("pycompose.ui.modifiers", ("Modifier",)),
+    ("pycompose.ui.modifier", ("Modifier",)),
 )
 
 

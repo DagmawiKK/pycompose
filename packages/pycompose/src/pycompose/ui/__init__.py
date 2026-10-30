@@ -18,7 +18,7 @@ from pycompose.ui._generated.values import *  # noqa: F403 -- the catalog's valu
 # The redundant aliases re-export: the star imports leave no room for __all__.
 from pycompose.ui.fallback import Fallback as Fallback  # noqa: PLC0414
 from pycompose.ui.intents import Intent as Intent  # noqa: PLC0414
-from pycompose.ui.modifiers import Modifier as Modifier  # noqa: PLC0414
+from pycompose.ui.modifier import Modifier as Modifier  # noqa: PLC0414
 
 if TYPE_CHECKING:
     from pycompose.ui._generated.components import *  # noqa: F403
