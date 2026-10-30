@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Growth governor: line budgets for every file a human may edit (ADR-0017).
+"""Growth governor: line budgets for every file a human may edit (ADR-0015).
 
 Three rules, each measuring what it can measure well (function size and
 complexity are ruff's, in ``pyproject.toml``):
@@ -43,7 +43,7 @@ BUDGETS: dict[str, int] = {
 """
 Glob -> budget overrides relative to the repo root.
 
-Hard targets, not aspirations (ADR-0017): they bind today, and a change may
+Hard targets, not aspirations (ADR-0015): they bind today, and a change may
 only be written together with the files it budgets.
 """
 
