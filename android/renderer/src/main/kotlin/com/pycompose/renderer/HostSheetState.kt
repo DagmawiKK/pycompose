@@ -42,7 +42,9 @@ internal fun rememberHostSheetState(
 ): HostSheetState {
     val skipPartial = skipPartiallyExpanded ?: false
     val state = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartial)
-    val desired = contract.value ?: contract.open?.let { if (it) VISIBLE_REQUEST else "hidden" }
+    // Open asks for the anchor the native sheet opens to: partial, or expanded
+    // where measurement has none, which reconciling already falls back to.
+    val desired = contract.value ?: contract.open?.let { if (it) "partiallyExpanded" else "hidden" }
     val memory =
         rememberSaveable(stateSaver = SheetMemory.saver) {
             mutableStateOf(SheetMemory(dismissed = false, request = null))
@@ -122,9 +124,6 @@ private data class SheetSnapshot(
     val failed: Boolean,
 )
 
-/** The legacy boolean request's internal spelling; never a native anchor. */
-private const val VISIBLE_REQUEST = "visible"
-
 /** Reconciliation bookkeeping, scoped to the node's remembered native holder. */
 @OptIn(ExperimentalMaterial3Api::class)
 private class SheetProjection(
@@ -203,7 +202,7 @@ private fun DriveSheet(
                 } catch (cancelled: CancellationException) {
                     if (!currentCoroutineContext().isActive) throw cancelled
                     // A competing native gesture can cancel an anchor animation.
-                    // Let the gesture settle; a hide is a failed visible request.
+                    // Let the gesture settle; a hide is a failed opening.
                     snapshotFlow { projection.state.isAnimationRunning }.first { !it }
                     if (projection.state.currentValue == SheetValue.Hidden) {
                         projection.present(false)
@@ -233,14 +232,14 @@ private suspend fun SheetProjection.drive(
         present(false)
         return
     }
-    // A visible request supersedes any dismissal that kept the last one absent.
+    // An opening request supersedes any dismissal that kept the last one absent.
     val opening = !visible || state.currentValue == SheetValue.Hidden || reattaching
     present(true)
     if (opening) awaitOpening()
     snapshotFlow { state.isAnimationRunning }.first { !it }
     if (state.currentValue == SheetValue.Hidden) {
         // A native dismissal may cancel the automatic opening; do not fight it,
-        // but the app must learn that the visible request did not commit.
+        // but the app must learn that the opening did not commit.
         present(false)
         failedToOpen = true
     } else {
