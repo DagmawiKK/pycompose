@@ -22,11 +22,8 @@ from typing import Any
 from pycompose_codegen.derive.candidate_props import CandidateError
 from pycompose_codegen.derive.component_binding import spell
 from pycompose_codegen.emit.adapters.eligibility import is_mechanical
+from pycompose_codegen.emit.adapters.policy import pascal
 from pycompose_codegen.emit.overloads import ambiguous, keywords
-
-
-def _pascal(name: str) -> str:
-    return name[:1].upper() + name[1:]
 
 
 def _required(plan: dict[str, Any]) -> dict[str, str]:
@@ -56,10 +53,10 @@ def suffix(plan: dict[str, Any], primary: dict[str, Any]) -> str | None:
         if theirs.get(name) == classifier:
             continue
         if name not in everything:
-            return _pascal(name)
+            return pascal(name)
         return classifier.rsplit("/", 1)[-1]
     dropped = [name for name in theirs if name not in plan["parameters"]]
-    return f"Without{_pascal(dropped[0])}" if dropped else None
+    return f"Without{pascal(dropped[0])}" if dropped else None
 
 
 def extras(

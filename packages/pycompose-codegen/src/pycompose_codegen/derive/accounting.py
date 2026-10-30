@@ -1,7 +1,8 @@
 """Account for every declaration of the pinned target; approve nothing.
 
-    python tools/schema/accounting.py --out android/build/compose-api/accounting.json
-    python tools/schema/accounting.py --strict --summary
+    python -m pycompose_codegen.derive.accounting \
+        --out android/build/compose-api/accounting.json
+    python -m pycompose_codegen.derive.accounting --strict --summary
 
 The denominator is every declaration the pinned extraction sees. Each one
 carries the dump's own structural disposition, a capability domain resolved

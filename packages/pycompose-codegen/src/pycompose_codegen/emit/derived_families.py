@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose_codegen.emit.adapters.policy import camel
+from pycompose_codegen.emit.adapters.policy import camel, pascal
 from pycompose_codegen.emit.literals import kotlin_string
 from pycompose_codegen.emit.rules import DOTTED_NAME, die
 from pycompose_codegen.emit.state_families import property_props, report_name
@@ -52,11 +52,11 @@ def properties_locals(state: dict[str, Any]) -> list[str]:
             desired = f"{prop}.wanted {{ it.{DECODE[spec['type']]}{narrow} }}"
         else:
             desired = f"{prop}?.let {{ Wanted(it{narrow}) }}"
-        lines.append(f"val {native}{_title(name)} = {desired}")
+        lines.append(f"val {native}{pascal(name)} = {desired}")
         if "seed" in spec:
             # Absent from the app, a re-created holder keeps what the last had.
             seeded.append(
-                f"{spec['seed']['parameter']} = {native}{_title(name)}?.value"
+                f"{spec['seed']['parameter']} = {native}{pascal(name)}?.value"
                 f" ?: {seeds}.previous?.{name}"
                 f" ?: {_literal(spec['seed']['default'], spec['nativeType'])}"
             )
@@ -75,15 +75,11 @@ def properties_locals(state: dict[str, Any]) -> list[str]:
             else f"{{ {held}.{name} = it }}"
         )
         lines.append(
-            f'context.reconcileProperty({held}, "{name}", {native}{_title(name)}, '
+            f'context.reconcileProperty({held}, "{name}", {native}{pascal(name)}, '
             f"model.props.{report_name(name)}, {{ {held}.{name} }}, "
             f"{write}) {{ JsonPrimitive(it) }}"
         )
     return lines
-
-
-def _title(name: str) -> str:
-    return name[:1].upper() + name[1:]
 
 
 def _literal(value: Any, native: str) -> str:

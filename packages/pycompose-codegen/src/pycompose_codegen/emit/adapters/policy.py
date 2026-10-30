@@ -142,7 +142,12 @@ def camel(name: str) -> str:
         The Kotlin property name.
     """
     head, *rest = name.split("_")
-    return head + "".join(word[:1].upper() + word[1:] for word in rest)
+    return head + "".join(pascal(word) for word in rest)
+
+
+def pascal(name: str) -> str:
+    """Return a name with its first letter capitalised, the rest as written."""
+    return name[:1].upper() + name[1:]
 
 
 def simple(scope: str) -> str:
