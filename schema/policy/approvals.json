@@ -1,0 +1,31 @@
+{
+  "approved": {
+    "components.BasicText.props.overflow.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "components.CircularProgressIndicator.props.strokeCap.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "components.CircularProgressIndicatorProgress.props.strokeCap.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "components.FlowColumn.stability:changed": "stability is read from the pin's opt-in markers; this call needs none at this pin",
+    "components.FlowRow.stability:changed": "stability is read from the pin's opt-in markers; this call needs none at this pin",
+    "components.Image.props.contentScale.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "components.ImageImageVector.props.contentScale.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "components.LinearProgressIndicatorWithoutProgress.props.strokeCap.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "components.NavigationSuite.props.navigationSuiteType.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "components.NavigationSuiteScaffoldLayout.props.navigationSuiteType.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "components.OutlinedSecureTextField.props.textObfuscationMode.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "components.SecureTextField.props.textObfuscationMode.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "components.ShortNavigationBar.props.arrangement.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "components.ShortNavigationBarItem.props.iconPosition.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "components.SliderValue.stability:changed": "stability is read from the pin's opt-in markers; this call needs none at this pin",
+    "components.TextAnnotatedString.props.fontFamily.nullable:changed": "a constant whose default is null takes it when absent; null is never sent",
+    "components.TextAnnotatedString.props.fontFamily.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "components.TextAnnotatedString.props.fontStyle.nullable:changed": "a constant whose default is null takes it when absent; null is never sent",
+    "components.TextAnnotatedString.props.fontStyle.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "components.TextAnnotatedString.props.overflow.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "components.TextAnnotatedString.props.textAlign.nullable:changed": "a constant whose default is null takes it when absent; null is never sent",
+    "components.TextAnnotatedString.props.textAlign.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "components.TextAnnotatedString.props.textDecoration.nullable:changed": "a constant whose default is null takes it when absent; null is never sent",
+    "components.TextAnnotatedString.props.textDecoration.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "components.TimePicker.props.layoutType.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "components.TriStateCheckbox.props.state.type:changed": "a constant family is named by its Compose names (ADR-0065): the prop takes \"crop\", not ContentScale(\"Crop\")",
+    "modifiers.menuAnchor:changed": "menuAnchorType is named by its Compose names (ADR-0065)"
+  }
+}
