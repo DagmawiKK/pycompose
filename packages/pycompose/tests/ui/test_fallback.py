@@ -8,13 +8,13 @@ import logging
 import pytest
 from readable import readable_reuse
 
-from pycompose.bridge.handshake import PROTOCOL, offered_components
 from pycompose.errors import BridgeError, IrValidationError
+from pycompose.host.bridge.handshake import PROTOCOL, offered_components
+from pycompose.host.wire import emit_ir, validate_ir
+from pycompose.host.wire.host import Host, hosted
 from pycompose.model.catalog.lock import REGISTRY, SCHEMA_VERSION
 from pycompose.model.snapshot import Snapshot
 from pycompose.ui import Column, Fallback, HorizontalDivider, Text
-from pycompose.wire import emit_ir, validate_ir
-from pycompose.wire.host import Host, hosted
 
 EVERYTHING = frozenset(REGISTRY.components)
 
@@ -86,7 +86,7 @@ def test_the_bridge_announces_each_substitution_once(
 ) -> None:
     from handlers import Handlers
 
-    from pycompose.bridge.api import BridgeSurface
+    from pycompose.host.bridge.api import BridgeSurface
     from pycompose.model.snapshot import SnapshotStore
 
     with caplog.at_level(logging.WARNING):
@@ -106,7 +106,7 @@ def test_the_bridge_announces_each_substitution_once(
 def test_the_runtime_keeps_the_hosts_list_for_the_sessions_it_starts(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from pycompose.bridge import runtime, session
+    from pycompose.host.bridge import runtime, session
 
     monkeypatch.setattr(session, "_host_components", None)
     offer = {"protocol": PROTOCOL, "capabilities": [], "components": ["Text"]}

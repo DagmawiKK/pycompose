@@ -9,8 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from pycompose.bridge import runtime
 from pycompose.errors import BridgeError, StateError
+from pycompose.host.bridge import runtime
 
 SOURCE = """
 import threading
@@ -162,7 +162,7 @@ def test_a_container_that_is_not_callable_is_refused() -> None:
 def test_an_entrypoint_that_names_no_app_fails_closed(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from pycompose.bridge.session import RuntimeSession
+    from pycompose.host.bridge.session import RuntimeSession
 
     (tmp_path / "no_export_app.py").write_text('label = "not an app"\n')
     monkeypatch.syspath_prepend(str(tmp_path))

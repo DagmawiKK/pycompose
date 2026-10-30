@@ -42,7 +42,11 @@ GENERATED_PACKAGE = (
     '"""What the catalog generates for ``pycompose.ui``.\n\n'
     'Components, values and modifier operations."""\n'
 )
-PAYLOADS_PATH = PACKAGE / "bridge" / "generated_payloads.py"
+PAYLOADS_PATH = PACKAGE / "host" / "bridge" / "_generated" / "payloads.py"
+PAYLOADS_PACKAGE = (
+    f"# {GENERATED_NOTICE}\n"
+    '"""What the catalog generates for the bridge: host action payloads."""\n'
+)
 KOTLIN_ADAPTERS_PATH = (
     ROOT / "android/host/src/main/kotlin/com/pycompose/host/ui/GeneratedAdapters.kt"
 )
@@ -279,6 +283,7 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
     artifacts = {
         IR_SCHEMA_PATH: render_ir_schema(registry),
         PAYLOADS_PATH: render_payloads(registry),
+        PAYLOADS_PATH.with_name("__init__.py"): PAYLOADS_PACKAGE,
         KOTLIN_MODELS_PATH: render_kotlin_models(registry),
         KOTLIN_REGISTRY_PATH: render_kotlin_registry(registry),
         GENERATED / "__init__.py": GENERATED_PACKAGE,

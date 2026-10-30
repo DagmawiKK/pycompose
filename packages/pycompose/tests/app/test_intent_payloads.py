@@ -9,8 +9,8 @@ import pytest
 
 from pycompose.app import App, Destination, Intent, ViewModel
 from pycompose.app.session import NavigationSession
-from pycompose.bridge import BridgeSurface
 from pycompose.errors import IrValidationError
+from pycompose.host.bridge import BridgeSurface
 from pycompose.model.snapshot import SnapshotStore
 from pycompose.state import AppState
 from pycompose.ui import Button, Column, Text, TextField

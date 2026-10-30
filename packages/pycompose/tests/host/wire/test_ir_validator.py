@@ -5,12 +5,12 @@ from __future__ import annotations
 import pytest
 
 from pycompose.errors import IrValidationError, SchemaError
+from pycompose.host.wire import IRRoot, emit_ir, to_json_bytes, validate_ir
 from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.nodes import Node, Props
 from pycompose.model.nodes.props import JsonValue
 from pycompose.model.snapshot import Snapshot
 from pycompose.ui._rules import validate_modifier
-from pycompose.wire import IRRoot, emit_ir, to_json_bytes, validate_ir
 
 
 @pytest.mark.parametrize(

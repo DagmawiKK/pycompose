@@ -9,11 +9,11 @@ from collections.abc import Mapping
 import pytest
 from handlers import Handlers
 
-from pycompose.bridge import BridgeSurface
 from pycompose.errors import IrValidationError
+from pycompose.host.bridge import BridgeSurface
+from pycompose.host.wire import emit_ir
 from pycompose.model.snapshot import Snapshot, SnapshotStore
 from pycompose.ui import Button, Text
-from pycompose.wire import emit_ir
 
 CONFIG = {
     "orientation": "landscape",

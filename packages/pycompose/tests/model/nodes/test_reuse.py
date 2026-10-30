@@ -7,12 +7,12 @@ from readable import readable_reuse, rename
 
 from pycompose import composable
 from pycompose.errors import IrError
+from pycompose.host.wire import emit_ir, to_json, validate_ir
 from pycompose.model.nodes.node import Node, Props
 from pycompose.model.nodes.reuse import Reuse
 from pycompose.model.nodes.windows import windows
 from pycompose.model.snapshot import Snapshot
 from pycompose.ui import Column, LazyColumn, Text
-from pycompose.wire import emit_ir, to_json, validate_ir
 
 
 @composable

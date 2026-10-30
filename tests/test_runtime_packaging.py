@@ -13,7 +13,7 @@ runtime code, so nothing in it exists only for the CLI.
 
 A repository-wide reachability check is deliberately not attempted. Generated
 app slices and host-named entry points import runtime modules that no source
-file here imports (``ChaquopyBridge`` names ``pycompose.bridge.runtime``), so a
+file here imports (``ChaquopyBridge`` names ``pycompose.host.bridge.runtime``), so a
 repo-wide version reports real runtime code as tooling.
 """
 

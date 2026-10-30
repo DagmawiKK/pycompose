@@ -42,9 +42,9 @@ try:
 except ImportError:
     Reuse = None  # type: ignore[assignment,misc]
 try:
-    from pycompose.wire import emit_ir, to_json_bytes, validate_ir
-    from pycompose.wire.model import IRRoot
-    from pycompose.wire.patch import diff_nodes, patch_bytes
+    from pycompose.host.wire import emit_ir, to_json_bytes, validate_ir
+    from pycompose.host.wire.model import IRRoot
+    from pycompose.host.wire.patch import diff_nodes, patch_bytes
 except ImportError:  # a base commit from before the package was named wire
     from pycompose.ir import (  # type: ignore[no-redef]
         emit_ir,

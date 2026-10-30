@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 from pycompose_testing.simulator import Simulator
 
-from pycompose.bridge.session import RuntimeSession
+from pycompose.host.bridge.session import RuntimeSession
 
 APP = """
 import asyncio

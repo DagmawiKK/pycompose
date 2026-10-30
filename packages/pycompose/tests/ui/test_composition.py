@@ -5,11 +5,11 @@ from readable import readable_reuse, rename
 
 from pycompose import composable
 from pycompose.errors import IrValidationError
+from pycompose.host.wire import emit_ir, to_dict, validate_ir
 from pycompose.model.nodes.expansion import ExpansionMemo
 from pycompose.model.nodes.reuse import Reuse
 from pycompose.model.snapshot import Snapshot
 from pycompose.ui import Column, Modifier, Scaffold, Text
-from pycompose.wire import emit_ir, to_dict, validate_ir
 
 
 def test_composable_expands_on_emission_with_scoped_identity() -> None:
@@ -69,7 +69,7 @@ def test_composable_expands_on_emission_with_scoped_identity() -> None:
 
 def test_python_declarations_cannot_cross_the_wire_unexpanded() -> None:
     from pycompose.errors import IrValidationError
-    from pycompose.wire import to_json_bytes
+    from pycompose.host.wire import to_json_bytes
 
     @composable
     def greeting():
@@ -102,7 +102,7 @@ def test_named_content_callables_expand_on_the_worker() -> None:
 
 
 def test_nested_compositions_are_stable_when_instances_reorder() -> None:
-    from pycompose.wire import to_json_bytes
+    from pycompose.host.wire import to_json_bytes
 
     @composable
     def label(*, text: str):
@@ -164,7 +164,7 @@ def test_invalid_output_does_not_replace_the_last_good_bridge_snapshot() -> None
 
     from handlers import Handlers
 
-    from pycompose.bridge import BridgeSurface
+    from pycompose.host.bridge import BridgeSurface
     from pycompose.model.snapshot import SnapshotStore
 
     @composable

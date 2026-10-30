@@ -13,7 +13,7 @@ import pytest
 from pycompose_testing.driver import AppDriver
 
 from pycompose.app.navigation import route_key
-from pycompose.bridge.session import RuntimeSession
+from pycompose.host.bridge.session import RuntimeSession
 from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.runtime.loop import LoopThread
 from pycompose.state.disk.documents import use_root

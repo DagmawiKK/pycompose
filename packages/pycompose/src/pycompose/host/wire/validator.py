@@ -14,6 +14,13 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 
 from pycompose.errors import ComponentRegistryError, IrValidationError
+from pycompose.host.wire.data import DATA_SCHEMA, read_data
+from pycompose.host.wire.echoes import ECHOES_SCHEMA, read_echoes
+from pycompose.host.wire.effects import EFFECTS_SCHEMA, read_effects
+from pycompose.host.wire.host import current_host
+from pycompose.host.wire.model import IRRoot
+from pycompose.host.wire.streams import stream_problems
+from pycompose.host.wire.validator_walk import walk
 from pycompose.model.canonical import check_json
 from pycompose.model.catalog.lock import (
     MIN_LIBRARY_VERSION,
@@ -26,13 +33,6 @@ from pycompose.model.nodes.node import Node
 from pycompose.model.nodes.reuse import Reuse
 from pycompose.ui._rules import Intents, _Validation
 from pycompose.ui.intents import read_intents
-from pycompose.wire.data import DATA_SCHEMA, read_data
-from pycompose.wire.echoes import ECHOES_SCHEMA, read_echoes
-from pycompose.wire.effects import EFFECTS_SCHEMA, read_effects
-from pycompose.wire.host import current_host
-from pycompose.wire.model import IRRoot
-from pycompose.wire.streams import stream_problems
-from pycompose.wire.validator_walk import walk
 
 __all__ = ["ValidationResult", "validate_ir"]
 

@@ -11,11 +11,21 @@ from contextlib import contextmanager
 from threading import current_thread
 
 from pycompose.app.observe import Span
-from pycompose.bridge.preview import BELOW_SURFACE, preview_envelope
-from pycompose.bridge.protocol import AppSession
-from pycompose.bridge.stats import PassStats
-from pycompose.bridge.types import MAIN_SURFACE, Action, decode_action
 from pycompose.errors import BridgeError, SchemaError
+from pycompose.host.bridge.preview import BELOW_SURFACE, preview_envelope
+from pycompose.host.bridge.protocol import AppSession
+from pycompose.host.bridge.stats import PassStats
+from pycompose.host.bridge.types import MAIN_SURFACE, Action, decode_action
+from pycompose.host.wire import emit_ir, to_json, validate_ir
+from pycompose.host.wire.echoes import ECHOES_SCHEMA, echo_key
+from pycompose.host.wire.host import Host, hosted
+from pycompose.host.wire.model import IRRoot
+from pycompose.host.wire.patch import (
+    ReplaceSubtree,
+    diff_nodes,
+    full_bytes,
+    patch_bytes,
+)
 from pycompose.model.catalog.lock import REGISTRY, SCHEMA_VERSION
 from pycompose.model.catalog.registry import PropDef
 from pycompose.model.catalog.version import at_least
@@ -26,11 +36,6 @@ from pycompose.model.nodes.windows import windows
 from pycompose.model.snapshot import Snapshot, SnapshotStore
 from pycompose.runtime.trace import tracing
 from pycompose.ui.intents import read_intents
-from pycompose.wire import emit_ir, to_json, validate_ir
-from pycompose.wire.echoes import ECHOES_SCHEMA, echo_key
-from pycompose.wire.host import Host, hosted
-from pycompose.wire.model import IRRoot
-from pycompose.wire.patch import ReplaceSubtree, diff_nodes, full_bytes, patch_bytes
 
 LOGGER = logging.getLogger(__name__)
 

@@ -10,11 +10,11 @@ from __future__ import annotations
 
 import itertools
 
-from pycompose.bridge.protocol import AppSession
+from pycompose.host.bridge.protocol import AppSession
+from pycompose.host.wire import emit_ir, validate_ir
+from pycompose.host.wire.host import Host, hosted
+from pycompose.host.wire.patch import full_bytes
 from pycompose.model.nodes.reuse import Reuse
-from pycompose.wire import emit_ir, validate_ir
-from pycompose.wire.host import Host, hosted
-from pycompose.wire.patch import full_bytes
 
 __all__ = ["BELOW_SURFACE", "preview_envelope"]
 

@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from pycompose.bridge import runtime
+from pycompose.host.bridge import runtime
 from pycompose.runtime import signal
 
 APP = """

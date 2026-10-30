@@ -5,8 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, cast
 
+from pycompose.host.wire import IRRoot, validate_ir
 from pycompose.model.nodes import Node
-from pycompose.wire import IRRoot, validate_ir
 from pycompose_cli.commands.wire_schema import WireSchema
 from pycompose_cli.project import ProjectError, read_json
 

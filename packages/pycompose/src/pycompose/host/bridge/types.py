@@ -7,8 +7,8 @@ from collections.abc import Callable, Container, Mapping
 from dataclasses import dataclass
 from typing import cast
 
-from pycompose.bridge.generated_payloads import IncrementPayload, SubmitPayload
 from pycompose.errors import BridgeError, IrValidationError
+from pycompose.host.bridge._generated.payloads import IncrementPayload, SubmitPayload
 from pycompose.model.canonical import FrozenJsonValue, freeze_json
 from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.catalog.registry import PropDef

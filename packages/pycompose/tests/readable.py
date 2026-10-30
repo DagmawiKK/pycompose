@@ -8,11 +8,11 @@ from __future__ import annotations
 
 from typing import Any
 
+from pycompose.host.wire import emit_ir, to_dict
 from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.nodes.ids import Handles
 from pycompose.model.nodes.reuse import Reuse
 from pycompose.model.snapshot import Snapshot
-from pycompose.wire import emit_ir, to_dict
 
 
 def readable_reuse() -> Reuse:

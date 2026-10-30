@@ -10,13 +10,13 @@ an explicit O(N + V) detached copy; to_json adapts from UTF-8 bytes.
 from __future__ import annotations
 
 from pycompose.errors import IrValidationError
+from pycompose.host.wire.model import IRRoot
 from pycompose.model.canonical import canonical_json_bytes, thaw_json
 from pycompose.model.nodes.expansion import DeferredNode
 from pycompose.model.nodes.node import Node
 from pycompose.model.nodes.props import JsonValue
 from pycompose.model.nodes.reuse import Reuse, SubtreeMemo
 from pycompose.model.nodes.traversal import walk_nodes
-from pycompose.wire.model import IRRoot
 
 __all__ = ["node_bytes", "node_to_dict", "to_dict", "to_json", "to_json_bytes"]
 

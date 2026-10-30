@@ -86,7 +86,7 @@ its base. Check its report if you touch the IR, diffing, or bridge.
 - **Package boundaries.** Layering and forbidden imports are declared in
   `[tool.importlinter]` in `pyproject.toml` and are blocking. Do not import
   upward, skip layers, or import Android/Chaquopy modules from
-  `pycompose.bridge`. A new package or boundary comes with its contract in the
+  `pycompose.host.bridge`. A new package or boundary comes with its contract in the
   same change.
 - **Line budgets.** Hand-written files are limited to 500 lines (600 under
   `tests/` and `tools/`), checked by `tools/limits.py`. Over budget means split

@@ -8,8 +8,8 @@ import pytest
 from handlers import Handlers
 
 from pycompose import composable
-from pycompose.bridge import BridgeSurface
 from pycompose.errors import IrValidationError
+from pycompose.host.bridge import BridgeSurface
 from pycompose.model.nodes.windows import DEFAULT_WINDOW, MAX_WINDOW
 from pycompose.model.snapshot import Snapshot, SnapshotStore
 from pycompose.ui import Column, LazyColumn, Text
@@ -104,7 +104,7 @@ def test_a_list_inside_a_composable_follows_each_requested_window(
 def test_a_composable_beside_a_windowed_list_is_still_reused(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from pycompose.bridge import api
+    from pycompose.host.bridge import api
 
     # As an app runs it: no re-expansion to verify reuse, which would build it.
     monkeypatch.setattr(api, "VERIFY_EVERY", 0)

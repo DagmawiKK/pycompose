@@ -15,7 +15,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-from pycompose.bridge.imports import fresh_imports
+from pycompose.host.bridge.imports import fresh_imports
 from pycompose.state.disk.documents import documents_at
 from pycompose_cli.commands.build import prepare
 from pycompose_cli.console import step
@@ -99,7 +99,7 @@ def first_screen(project: Project) -> str:
     Raises:
         ProjectError: If the app published no snapshot.
     """
-    from pycompose.bridge.session import compose_once
+    from pycompose.host.bridge.session import compose_once
 
     python = project.table("python")
     source = project_path(project.root, str(python.get("source_dir", "app")))

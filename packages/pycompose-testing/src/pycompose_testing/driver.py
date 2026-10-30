@@ -32,8 +32,8 @@ from typing import Any, Self
 
 import pycompose
 from pycompose.app.session import REFRESH
-from pycompose.bridge.imports import fresh_imports
-from pycompose.bridge.session import RuntimeSession
+from pycompose.host.bridge.imports import fresh_imports
+from pycompose.host.bridge.session import RuntimeSession
 from pycompose.runtime import signal
 from pycompose.runtime.loop import LoopThread
 from pycompose.state.disk.documents import documents_at

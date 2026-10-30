@@ -12,12 +12,12 @@ from pathlib import Path
 import pytest
 
 from pycompose.app import Intent, StateFlow
-from pycompose.bridge import runtime
 from pycompose.errors import StateError
+from pycompose.host.bridge import runtime
+from pycompose.host.wire import emit_ir, to_json
 from pycompose.model.snapshot import Snapshot
 from pycompose.runtime import signal
 from pycompose.ui import Button
-from pycompose.wire import emit_ir, to_json
 
 APP = """
 import asyncio

@@ -183,7 +183,7 @@ def test_generated_python_entrypoint_emits_valid_ir(
     config = tomllib.loads((project / "pycompose.toml").read_text())
     assert config["app"]["application_id"] == "com.example.app_demo_app"
     script = (
-        "from pycompose.bridge.session import compose_once\n"
+        "from pycompose.host.bridge.session import compose_once\n"
         "snapshot, error = compose_once('main:app')\n"
         "assert snapshot, error\nprint(snapshot)"
     )

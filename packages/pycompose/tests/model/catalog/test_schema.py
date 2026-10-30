@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[5]
 COMPONENTS_PATH = ROOT / "schema" / "catalog.lock.json"
 IR_SCHEMA_PATH = ROOT / "schema" / "ir.schema.json"
 PACKAGE = ROOT / "packages/pycompose/src/pycompose"
-PAYLOADS_PATH = PACKAGE / "bridge" / "generated_payloads.py"
+PAYLOADS_PATH = PACKAGE / "host" / "bridge" / "_generated" / "payloads.py"
 
 PROP_TYPE_VOCABULARY = {
     "resource",

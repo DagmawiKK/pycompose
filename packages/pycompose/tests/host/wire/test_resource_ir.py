@@ -4,9 +4,9 @@ import pytest
 from goldens import read_golden
 
 from pycompose.errors import IrValidationError
+from pycompose.host.wire import emit_ir, to_json, to_json_bytes, validate_ir
 from pycompose.model.snapshot import Snapshot
 from pycompose.ui import Column, Image, Text
-from pycompose.wire import emit_ir, to_json, to_json_bytes, validate_ir
 
 
 def test_resource_props_and_images_require_the_new_schema() -> None:

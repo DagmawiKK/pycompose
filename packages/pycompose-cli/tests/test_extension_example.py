@@ -11,7 +11,7 @@ from test_cli_build import wrapper
 from test_cli_init import cli
 from test_cli_permissions import declare
 
-from pycompose.bridge import runtime
+from pycompose.host.bridge import runtime
 from pycompose.state import paths
 
 

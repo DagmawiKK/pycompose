@@ -23,12 +23,12 @@ import pytest
 from pycompose_codegen.emit.state_anchors import SWIPE_VALUES
 from pycompose_codegen.emit.state_rules import STATE_VALUE_TYPES
 
+from pycompose.host.wire import emit_ir, to_dict, validate_ir
 from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.nodes.node import Node
 from pycompose.model.snapshot import Snapshot
 from pycompose.ui import ModalBottomSheet, ModalNavigationDrawer, Text
 from pycompose.ui._rules import validate_prop
-from pycompose.wire import emit_ir, to_dict, validate_ir
 
 SCHEMA_PATH = Path(__file__).resolve().parents[4] / "schema" / "catalog.lock.json"
 

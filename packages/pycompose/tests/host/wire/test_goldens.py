@@ -10,6 +10,7 @@ from hypothesis import given
 from hypothesis import strategies as st
 from readable import readable
 
+from pycompose.host.wire import emit_ir, to_json_bytes, validate_ir
 from pycompose.model.canonical import canonical_json_bytes
 from pycompose.model.catalog.lock import REGISTRY, SCHEMA_VERSION
 from pycompose.model.nodes import Node
@@ -25,7 +26,6 @@ from pycompose.ui import (
     Text,
     TextField,
 )
-from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 
 def test_golden_screen_rebuilds_match_packaged_fixture_exactly() -> None:
@@ -40,7 +40,7 @@ def test_every_packaged_golden_is_canonical_and_schema_valid() -> None:
     names = golden_names()
     assert names == ("component_screen.json", "ir_counter.json", "resource_screen.json")
     schema = json.loads(
-        (Path(__file__).resolve().parents[4] / "schema" / "ir.schema.json").read_text()
+        (Path(__file__).resolve().parents[5] / "schema" / "ir.schema.json").read_text()
     )
     jsonschema.Draft7Validator.check_schema(schema)
     for name in names:

@@ -10,11 +10,11 @@ from hypothesis.stateful import RuleBasedStateMachine, invariant, rule
 from readable import readable_reuse, rename
 
 from pycompose import composable
+from pycompose.host.wire import emit_ir, to_json, validate_ir
 from pycompose.model.nodes.node import Node
 from pycompose.model.nodes.reuse import Reuse
 from pycompose.model.snapshot import Snapshot
 from pycompose.ui import Column, Text
-from pycompose.wire import emit_ir, to_json, validate_ir
 
 
 @composable

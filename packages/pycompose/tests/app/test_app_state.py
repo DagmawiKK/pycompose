@@ -322,7 +322,7 @@ def test_a_subclass_never_inherits_its_parentscodec() -> None:
 def test_store_round_trips_a_typed_state_through_a_real_snapshot() -> None:
     from handlers import Handlers
 
-    from pycompose.bridge import BridgeSurface
+    from pycompose.host.bridge import BridgeSurface
 
     snapshot = Snapshot(root=Text(id="t", text="ok"), data=_state(count=1))
     bridge = BridgeSurface(SnapshotStore(snapshot), Handlers())

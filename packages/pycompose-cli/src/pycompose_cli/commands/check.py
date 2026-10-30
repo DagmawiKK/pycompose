@@ -23,7 +23,7 @@ from xml.etree.ElementTree import Element
 
 from defusedxml import ElementTree
 
-from pycompose.bridge.imports import fresh_imports
+from pycompose.host.bridge.imports import fresh_imports
 from pycompose.state.disk.documents import documents_at
 from pycompose_cli.project import Project, ProjectError, load_project, project_path
 from pycompose_cli.project.prebuild import generated, plan
@@ -239,7 +239,7 @@ def app_problems(project: Project) -> list[Problem]:
     Returns:
         The failure, if composing or validating failed.
     """
-    from pycompose.bridge.session import compose_once
+    from pycompose.host.bridge.session import compose_once
     from pycompose_cli.commands.build import codegen
 
     # The app's generated package is what the build would generate from it.

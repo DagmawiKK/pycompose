@@ -189,7 +189,7 @@ class ChaquopyBridge(
     }
 
     companion object {
-        private const val MODULE = "pycompose.bridge.runtime"
+        private const val MODULE = "pycompose.host.bridge.runtime"
         private val startLock = Any()
     }
 }

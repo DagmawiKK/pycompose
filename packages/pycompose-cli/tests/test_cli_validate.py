@@ -18,6 +18,7 @@ def test_validate_accepts_a_canonical_fixture_outside_a_project(tmp_path: Path) 
 def test_validate_accepts_tagged_nullable_and_numeric_value_unions(
     tmp_path: Path,
 ) -> None:
+    from pycompose.host.wire import emit_ir, to_json_bytes
     from pycompose.model.snapshot import Snapshot
     from pycompose.ui import (
         Button,
@@ -29,7 +30,6 @@ def test_validate_accepts_tagged_nullable_and_numeric_value_unions(
         TextStyle,
         ThemeColor,
     )
-    from pycompose.wire import emit_ir, to_json_bytes
 
     root = Column(
         id="root",

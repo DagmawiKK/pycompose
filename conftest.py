@@ -46,6 +46,6 @@ def verify_every_reuse(monkeypatch: pytest.MonkeyPatch) -> None:
     Args:
         monkeypatch: Restores the sampling rate after each test.
     """
-    from pycompose.bridge import api
+    from pycompose.host.bridge import api
 
     monkeypatch.setattr(api, "VERIFY_EVERY", 1)

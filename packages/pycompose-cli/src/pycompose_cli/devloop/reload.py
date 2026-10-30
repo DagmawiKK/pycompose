@@ -11,7 +11,7 @@ from pathlib import Path
 from types import ModuleType
 
 from pycompose.app.app import App
-from pycompose.bridge.session import compose_once
+from pycompose.host.bridge.session import compose_once
 from pycompose_cli.project import Project, ProjectError, project_path
 
 

@@ -3,12 +3,12 @@
 import pytest
 
 from pycompose.errors import ComponentRegistryError, IrValidationError
+from pycompose.host.wire import emit_ir, to_dict, validate_ir
 from pycompose.model.catalog.elements import SlotRule
 from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.nodes.node import Node
 from pycompose.model.snapshot import Snapshot
 from pycompose.ui import Dp, RoundedCornerShape
-from pycompose.wire import emit_ir, to_dict, validate_ir
 
 
 def owner(**overrides: object) -> Node:

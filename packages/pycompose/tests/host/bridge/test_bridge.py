@@ -9,9 +9,9 @@ from threading import Thread
 import pytest
 from handlers import Handlers
 
-from pycompose.bridge import BridgeSurface
-from pycompose.bridge.types import IncrementPayload, SubmitPayload
 from pycompose.errors import SchemaError
+from pycompose.host.bridge import BridgeSurface
+from pycompose.host.bridge.types import IncrementPayload, SubmitPayload
 from pycompose.model.canonical import FrozenJsonValue
 from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.nodes import Node, Props
@@ -500,7 +500,7 @@ def test_a_pull_or_an_action_for_another_surface_is_refused() -> None:
 def test_a_pass_over_budget_is_reported_in_debug(
     caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from pycompose.bridge import api
+    from pycompose.host.bridge import api
 
     monkeypatch.setattr(api, "PASS_BUDGET", 0.0)
     bridge = _counter_bridge()

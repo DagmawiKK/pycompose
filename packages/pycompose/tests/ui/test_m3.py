@@ -2,10 +2,10 @@
 
 import pytest
 
+from pycompose.host.wire import emit_ir, to_json_bytes, validate_ir
 from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.nodes import Node
 from pycompose.model.snapshot import Snapshot
-from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 
 def test_imported_builtins_preserve_the_native_contract() -> None:

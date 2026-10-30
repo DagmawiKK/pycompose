@@ -48,7 +48,7 @@ assert source == Path("app").resolve()
 # The blocks starter draws with the library's components, so it carries them.
 assert os.environ["ORG_GRADLE_PROJECT_pycomposeOwnSlice"] == "false"
 runtime = Path(os.environ["ORG_GRADLE_PROJECT_pycomposeRuntimeDir"])
-assert (runtime / "pycompose/bridge/runtime.py").is_file()
+assert (runtime / "pycompose/host/bridge/runtime.py").is_file()
 assert Path(os.environ["ORG_GRADLE_PROJECT_pycomposeBuildPython"]).is_file()
 assert Path("host/src/main/res/values/strings.xml").is_file()
 Path("invocation.json").write_text(json.dumps(sys.argv[1:]))

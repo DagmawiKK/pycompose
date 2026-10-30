@@ -21,10 +21,10 @@ from typing import Any
 import pytest
 from pycompose_codegen.emit.adapters.assemble import render
 
+from pycompose.host.wire import emit_ir, to_dict, validate_ir
 from pycompose.model.nodes.node import Node
 from pycompose.model.snapshot import Snapshot
 from pycompose.ui import Button
-from pycompose.wire import emit_ir, to_dict, validate_ir
 
 SCHEMA_PATH = Path(__file__).resolve().parents[4] / "schema" / "catalog.lock.json"
 

@@ -7,10 +7,8 @@ import json
 from hypothesis import given
 from hypothesis import strategies as st
 
-from pycompose.model.canonical import canonical_json_bytes
-from pycompose.model.nodes import ROOT_ID, Node, Props, child_id
-from pycompose.wire.model import IRRoot
-from pycompose.wire.patch import (
+from pycompose.host.wire.model import IRRoot
+from pycompose.host.wire.patch import (
     PatchOp,
     ReplaceSubtree,
     SetProp,
@@ -18,7 +16,9 @@ from pycompose.wire.patch import (
     full_bytes,
     patch_bytes,
 )
-from pycompose.wire.serializer import to_json_bytes
+from pycompose.host.wire.serializer import to_json_bytes
+from pycompose.model.canonical import canonical_json_bytes
+from pycompose.model.nodes import ROOT_ID, Node, Props, child_id
 
 SCHEMA_VERSION = "1.0.0"
 

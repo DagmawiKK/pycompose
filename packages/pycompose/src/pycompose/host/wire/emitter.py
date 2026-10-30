@@ -12,6 +12,12 @@ from dataclasses import dataclass, field
 from typing import cast
 
 from pycompose.errors import IrValidationError
+from pycompose.host.wire.bindings import lower_props, record
+from pycompose.host.wire.data import lower_data
+from pycompose.host.wire.echoes import lower_echoes
+from pycompose.host.wire.effects import lower_effects
+from pycompose.host.wire.model import IRRoot
+from pycompose.host.wire.streams import is_expression, resolve_streams
 from pycompose.model.canonical import FrozenJsonValue
 from pycompose.model.catalog.lock import (
     MIN_SCHEMA_VERSION,
@@ -26,12 +32,6 @@ from pycompose.model.nodes.props import JsonValue
 from pycompose.model.nodes.reuse import Reuse, SubtreeMemo
 from pycompose.model.nodes.traversal import walk_nodes
 from pycompose.model.snapshot import Snapshot
-from pycompose.wire.bindings import lower_props, record
-from pycompose.wire.data import lower_data
-from pycompose.wire.echoes import lower_echoes
-from pycompose.wire.effects import lower_effects
-from pycompose.wire.model import IRRoot
-from pycompose.wire.streams import is_expression, resolve_streams
 
 __all__ = ["emit_ir"]
 

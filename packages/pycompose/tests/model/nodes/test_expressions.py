@@ -8,10 +8,10 @@ import pytest
 
 from pycompose import Stream
 from pycompose.errors import IrValidationError
+from pycompose.host.wire import emit_ir, to_json, validate_ir
 from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.snapshot import Snapshot
 from pycompose.ui import Column, ModalNavigationDrawer, Text
-from pycompose.wire import emit_ir, to_json, validate_ir
 
 
 def _scrim(key: str = "nav") -> object:

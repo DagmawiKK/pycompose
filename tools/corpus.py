@@ -29,10 +29,10 @@ from pycompose_cli.commands.validate import validate_file
 
 from pycompose.app import Intent
 from pycompose.errors import PyComposeError
+from pycompose.host.wire import emit_ir, to_json
 from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.snapshot import Effect, Snapshot
 from pycompose.ui import Button, Column, Modifier, Scaffold, Switch, Text, TextField
-from pycompose.wire import emit_ir, to_json
 
 ROOT = Path(__file__).resolve().parents[1]
 CORPUS = ROOT / "android/ir/src/test/resources/corpus"

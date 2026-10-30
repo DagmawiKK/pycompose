@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 from pycompose import composable
+from pycompose.host.wire import emit_ir
 from pycompose.model.nodes.expansion import ExpansionMemo
 from pycompose.model.nodes.node import Node
 from pycompose.model.nodes.reuse import Reuse
 from pycompose.model.snapshot import Snapshot
 from pycompose.state import AppState
 from pycompose.ui import Column, Text
-from pycompose.wire import emit_ir
 
 runs: list[str] = []
 

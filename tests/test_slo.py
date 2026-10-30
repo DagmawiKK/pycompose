@@ -33,7 +33,7 @@ def test_a_device_floor_absorbs_a_frame_of_jitter() -> None:
 def test_the_gate_fails_a_deliberate_regression(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from pycompose.bridge import api
+    from pycompose.host.bridge import api
 
     before = slo.measure(rounds=3, keystrokes=120)
     # Every pass waits a further whole 95th-percentile pass: at least double on

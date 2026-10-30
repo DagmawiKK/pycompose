@@ -8,9 +8,9 @@ from pathlib import Path
 
 import pytest
 
-from pycompose.bridge import handshake
-from pycompose.bridge.runtime import handshake as runtime_handshake
 from pycompose.errors import BridgeError
+from pycompose.host.bridge import handshake
+from pycompose.host.bridge.runtime import handshake as runtime_handshake
 
 
 def offer(protocol: int = handshake.PROTOCOL, *capabilities: str) -> str:
@@ -61,7 +61,7 @@ def test_a_malformed_handshake_is_refused(raw: str) -> None:
 
 def test_the_host_and_this_side_speak_the_same_protocol() -> None:
     source = (
-        Path(__file__).resolve().parents[4]
+        Path(__file__).resolve().parents[5]
         / "android/ir/src/main/kotlin/com/pycompose/ir/Handshake.kt"
     ).read_text()
     stated = re.search(r"const val PROTOCOL = (\d+)", source)

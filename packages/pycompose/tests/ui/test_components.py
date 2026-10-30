@@ -11,6 +11,7 @@ from goldens import component_screen, read_golden
 from readable import readable
 
 from pycompose.errors import IrValidationError
+from pycompose.host.wire import emit_ir, to_json_bytes, validate_ir
 from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.nodes.props import JsonValue
 from pycompose.model.snapshot import Snapshot
@@ -30,7 +31,6 @@ from pycompose.ui import (
     TextField,
 )
 from pycompose.ui.component import Component
-from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 ROOT = Path(__file__).resolve().parents[4]
 

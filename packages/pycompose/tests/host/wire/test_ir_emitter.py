@@ -11,9 +11,9 @@ from goldens import read_golden
 from readable import ids, readable
 
 from pycompose.errors import IrError, IrValidationError, SchemaError
+from pycompose.host.wire import emit_ir, to_json_bytes, validate_ir
 from pycompose.model.nodes import Node, Props
 from pycompose.model.snapshot import Snapshot
-from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 
 
 def test_emit_ir_matches_golden_and_generated_schema() -> None:
@@ -36,7 +36,7 @@ def test_emit_ir_matches_golden_and_generated_schema() -> None:
     expected = read_golden("ir_counter.json")
     assert to_json_bytes(snapshot) == expected
     assert to_json_bytes(emit_ir(state, "1.0.0")) == expected
-    schema_path = Path(__file__).resolve().parents[4] / "schema" / "ir.schema.json"
+    schema_path = Path(__file__).resolve().parents[5] / "schema" / "ir.schema.json"
     jsonschema.validate(json.loads(expected), json.loads(schema_path.read_text()))
 
 

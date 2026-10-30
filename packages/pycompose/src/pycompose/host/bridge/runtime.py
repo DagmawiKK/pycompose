@@ -8,9 +8,9 @@ import sys
 from collections.abc import Callable
 from typing import ParamSpec, TypeVar, cast
 
-from pycompose.bridge.handshake import answer, offered_components
-from pycompose.bridge.session import RuntimeSession, offer_components
 from pycompose.errors import BridgeError
+from pycompose.host.bridge.handshake import answer, offered_components
+from pycompose.host.bridge.session import RuntimeSession, offer_components
 from pycompose.runtime import signal
 from pycompose.runtime.loop import LoopThread
 from pycompose.state.disk.paths import install as install_paths

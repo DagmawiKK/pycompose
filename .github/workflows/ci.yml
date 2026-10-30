@@ -377,7 +377,7 @@ jobs:
         working-directory: ${{ runner.temp }}/smoke/app
         run: |
           python - <<'PY'
-          from pycompose.bridge.session import compose_once
+          from pycompose.host.bridge.session import compose_once
           snapshot, error = compose_once("main:app")
           assert snapshot and not error, error
           PY
@@ -409,12 +409,12 @@ jobs:
               assert (project / "resources" / resource).is_dir()
           sys.path.insert(0, str(project / "app"))
           import main
-          from pycompose.wire import emit_ir, validate_ir
-          from pycompose.wire.generated_validators import SCHEMA_VERSION
+          from pycompose.host.wire import emit_ir, validate_ir
+          from pycompose.model.catalog.lock import SCHEMA_VERSION
           candidate = emit_ir(main.app.build(route="home"), SCHEMA_VERSION)
           assert validate_ir(candidate).snapshot is candidate
           assert not any(name.startswith("pycompose_cli.templates") for name in sys.modules)
-          from pycompose.wire import to_json_bytes
+          from pycompose.host.wire import to_json_bytes
           (project / "ui.json").write_bytes(to_json_bytes(candidate))
           PY
           "$RUNNER_TEMP/cli-venv/bin/pycompose" validate wheel-smoke/ui.json
