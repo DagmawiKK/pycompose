@@ -1,6 +1,7 @@
 package com.pycompose.ir
 
 import com.pycompose.ir.generated.ValueContract
+import com.pycompose.program.Expressions
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -27,7 +28,7 @@ object ValueParser {
             if (Expressions.isExpression(value)) {
                 // The host evaluates it each frame; it gives a colour.
                 require(family == "Color") { "An expression gives a Color, not a $family" }
-                Expressions.validate(value as JsonObject, "color")
+                Expressions.validate(value as JsonObject, "color", EXPRESSIONS)
             } else {
                 tagged(value, family, 0, specs)
             }

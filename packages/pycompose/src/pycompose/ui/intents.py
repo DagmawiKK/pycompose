@@ -37,8 +37,8 @@ from pycompose.model.canonical import (
     thaw_json,
 )
 from pycompose.model.catalog.registry import PropDef
-from pycompose.model.nodes.expressions import Expression
 from pycompose.model.nodes.props import JsonValue, to_camel_case
+from pycompose.model.programs.expressions import Expression
 from pycompose.state.memory.app_state import AppState
 
 __all__ = [

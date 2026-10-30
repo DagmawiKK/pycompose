@@ -123,16 +123,21 @@ _STANDARD = (
     ("collections.abc", ("Callable", "Sequence")),
     ("typing", ("Any", "Literal", "cast", "overload")),
 )
-_FIRST_PARTY = (
-    ("pycompose.errors", ("IrValidationError",)),
-    ("pycompose.model.catalog.lock", ("REGISTRY",)),
-    ("pycompose.model.nodes.expressions", ("Expression",)),
-    ("pycompose.model.nodes.node", ("Node",)),
-    ("pycompose.model.nodes.props", ("JsonValue",)),
-    ("pycompose.model.nodes.values", ("UNSET", "_Unset")),
-    ("pycompose.ui.component", ("ActionTarget", "Component", "PropValue")),
-    ("pycompose.ui.composition", ("Content", "content_nodes", "slot_nodes")),
-    ("pycompose.ui.modifier", ("Modifier",)),
+_FIRST_PARTY = tuple(
+    sorted(
+        (
+            ("pycompose.errors", ("IrValidationError",)),
+            ("pycompose.model.catalog.lock", ("REGISTRY",)),
+            ("pycompose.model.programs.expressions", ("Expression",)),
+            ("pycompose.model.nodes.node", ("Node",)),
+            ("pycompose.model.nodes.props", ("JsonValue",)),
+            ("pycompose.model.nodes.values", ("UNSET", "_Unset")),
+            ("pycompose.ui.component", ("ActionTarget", "Component", "PropValue")),
+            ("pycompose.ui.composition", ("Content", "content_nodes", "slot_nodes")),
+            ("pycompose.ui.modifier", ("Modifier",)),
+        ),
+        key=lambda entry: entry[0],
+    )
 )
 
 

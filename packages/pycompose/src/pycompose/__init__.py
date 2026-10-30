@@ -12,14 +12,14 @@ from typing import TYPE_CHECKING, Any
 from pycompose.version import __version__
 
 if TYPE_CHECKING:
-    from pycompose.model.nodes.expressions import Expression, Stream
+    from pycompose.model.programs.expressions import Expression, Stream
     from pycompose.ui.composition import composable
 
 __all__ = ["Expression", "Stream", "__version__", "composable"]
 
 _LAZY = {
-    "Expression": ("pycompose.model.nodes.expressions", "Expression"),
-    "Stream": ("pycompose.model.nodes.expressions", "Stream"),
+    "Expression": ("pycompose.model.programs.expressions", "Expression"),
+    "Stream": ("pycompose.model.programs.expressions", "Stream"),
     "composable": ("pycompose.ui.composition", "composable"),
 }
 

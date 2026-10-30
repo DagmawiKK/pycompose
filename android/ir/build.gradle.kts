@@ -29,6 +29,7 @@ sourceSets
     .srcDir("../../schema/goldens")
 
 dependencies {
+    api(project(":program"))
     implementation(libs.serialization.json)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.archunit)
@@ -45,7 +46,9 @@ configurations.matching { it.name in setOf("compileClasspath", "runtimeClasspath
             val serialization =
                 group == "org.jetbrains.kotlinx" &&
                     artifact.name.startsWith("kotlinx-serialization-")
-            check(stdlib || serialization || stdlibAnnotations) {
+            // :program is held to the same rule in its own build.
+            val program = artifact.moduleVersion.id.name == "program" && group == rootProject.name
+            check(stdlib || serialization || stdlibAnnotations || program) {
                 ":ir must remain pure JVM; forbidden dependency: ${artifact.moduleVersion.id}"
             }
         }

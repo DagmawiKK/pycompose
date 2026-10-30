@@ -15,7 +15,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "PyCompose"
-include(":ir", ":renderer", ":host")
+include(":program", ":ir", ":renderer", ":host")
 
 // Development-only Compose API extraction. A scaffolded app is handed
 // generated code and has no such module, so it is included only where it exists.

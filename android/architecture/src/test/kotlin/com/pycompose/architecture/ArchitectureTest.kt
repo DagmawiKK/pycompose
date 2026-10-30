@@ -33,6 +33,24 @@ class ArchitectureTest {
     }
 
     @Test
+    fun `program is a pure JVM language that knows no catalog or renderer`() {
+        assertTrue(imported.any { it.packageName.startsWith("com.pycompose.program") })
+        noClasses()
+            .that()
+            .resideInAPackage("com.pycompose.program..")
+            .should()
+            .dependOnClassesThat()
+            .resideInAnyPackage(
+                "android..",
+                "androidx..",
+                "com.chaquo..",
+                "com.pycompose.ir..",
+                "com.pycompose.renderer..",
+                "com.pycompose.host..",
+            ).check(imported)
+    }
+
+    @Test
     fun `Python namespace never leaks into Kotlin`() {
         noClasses()
             .should()

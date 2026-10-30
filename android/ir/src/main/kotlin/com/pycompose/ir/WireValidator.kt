@@ -1,6 +1,7 @@
 package com.pycompose.ir
 
 import com.pycompose.ir.generated.IrContract
+import com.pycompose.program.Expressions
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -62,7 +63,7 @@ internal object WireValidator {
                 ?: error("root must be an object")
         require("slot" !in rootNode) { "The root cannot fill a slot" }
         NodeWalk(schema, actionIds, cache?.memoFor(schema, actionIds)).run(rootNode)
-        Expressions.targets(rootNode)
+        Expressions.targets(rootNode, EXPRESSIONS) { type -> IrContract.streams[type].orEmpty() }
     }
 
     /**

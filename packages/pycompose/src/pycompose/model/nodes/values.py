@@ -9,7 +9,7 @@ from typing import cast
 
 from pycompose.errors import IrValidationError
 from pycompose.model.canonical import JsonValue, check_json, freeze_json, thaw_json
-from pycompose.model.nodes.expressions import validate_expression
+from pycompose.model.programs.expressions import validate_expression
 
 
 class _Unset:

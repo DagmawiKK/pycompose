@@ -1,6 +1,5 @@
-package com.pycompose.ir
+package com.pycompose.program
 
-import com.pycompose.ir.generated.IrContract
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -9,12 +8,26 @@ import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.doubleOrNull
 
 /**
- * An expression's wire form, judged exactly as `pycompose/model/nodes/expressions.py` judges it.
+ * What the catalog lets an expression use: its limits, its operations and the streams a
+ * holder may publish. The language knows none of them itself.
  *
- * Closed and total: numbers from literals and holder streams,
- * combined by `times`, `plus`, `minus` and `clamp`, and made a colour by `alpha`
- * or `mix`. The vocabulary, the stream names and the limits are the generated
- * contract's, so the two validators cannot drift.
+ * @property depth How deeply an expression may nest.
+ * @property nodes How many nodes one expression may hold.
+ * @property operations The operations the catalog declares.
+ * @property streamNames Every stream name any holder publishes.
+ */
+data class Contract(
+    val depth: Int,
+    val nodes: Int,
+    val operations: Set<String>,
+    val streamNames: Set<String>,
+)
+
+/**
+ * An expression's wire form, judged exactly as Python's validator judges it.
+ *
+ * Closed and total: numbers from literals and holder streams, combined by `times`, `plus`,
+ * `minus` and `clamp`, and made a colour by `alpha` or `mix`.
  */
 object Expressions {
     private val color = Regex("#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8})")
@@ -30,15 +43,17 @@ object Expressions {
      *
      * @param value The `{"type": "expression", "node": ...}` object.
      * @param expected The kind the prop needs: `number` or `color`.
+     * @param contract The catalog's limits and vocabulary.
      * @return Each stream read, as (holder node id, stream name).
      */
     fun validate(
         value: JsonObject,
         expected: String,
+        contract: Contract,
     ): List<Pair<String, String>> {
         require(value.keys == setOf("type", "node")) { "An expression is {type: expression, node}" }
         val streams = mutableListOf<Pair<String, String>>()
-        val kind = Walk(streams).kind(value.getValue("node"), 1)
+        val kind = Walk(streams, contract).kind(value.getValue("node"), 1)
         require(kind == expected) { "Expression gives a $kind, the prop needs a $expected" }
         return streams
     }
@@ -47,8 +62,14 @@ object Expressions {
      * Every stream an expression in the snapshot reads names a node whose holder exposes it.
      *
      * @param root The snapshot's root node, already validated node by node.
+     * @param contract The catalog's limits and vocabulary.
+     * @param published The streams a component type's holder publishes.
      */
-    fun targets(root: JsonObject) {
+    fun targets(
+        root: JsonObject,
+        contract: Contract,
+        published: (String) -> Set<String>,
+    ) {
         val types = mutableMapOf<String, String>()
         val reads = mutableListOf<Pair<String, String>>()
         val pending = ArrayDeque(listOf(root))
@@ -57,12 +78,12 @@ object Expressions {
             types[(node.getValue("id") as JsonPrimitive).content] =
                 (node.getValue("type") as JsonPrimitive).content
             (node["props"] as? JsonObject)?.values?.filter(::isExpression)?.forEach {
-                reads += validate(it as JsonObject, "color")
+                reads += validate(it as JsonObject, "color", contract)
             }
             (node["children"] as? JsonArray)?.forEach { pending.add(it as JsonObject) }
         }
         reads.forEach { (holder, stream) ->
-            require(stream in IrContract.streams[types[holder]].orEmpty()) {
+            require(stream in types[holder]?.let(published).orEmpty()) {
                 "Stream $stream names no holder exposing it"
             }
         }
@@ -92,6 +113,7 @@ object Expressions {
 
     private class Walk(
         val streams: MutableList<Pair<String, String>>,
+        val contract: Contract,
     ) {
         var count = 0
 
@@ -100,16 +122,13 @@ object Expressions {
             depth: Int,
         ): String {
             count += 1
-            require(depth <= IrContract.EXPRESSION_DEPTH && count <= IrContract.EXPRESSION_NODES) {
+            require(depth <= contract.depth && count <= contract.nodes) {
                 "Expression exceeds its limits"
             }
             require(node is JsonObject) { "An expression node is an object" }
             return when {
-                node.keys ==
-                    setOf(
-                        "number",
-                    ) &&
-                    isNumber(node["number"] as? JsonPrimitive) -> "number"
+                node.keys == setOf("number") && isNumber(node["number"] as? JsonPrimitive) ->
+                    "number"
                 node.keys == setOf("stream", "name") -> stream(node)
                 else -> operation(node, depth)
             }
@@ -118,7 +137,7 @@ object Expressions {
         private fun stream(node: JsonObject): String {
             val holder = node["stream"] as? JsonPrimitive
             val name = (node["name"] as? JsonPrimitive)?.content
-            require(holder != null && holder.isString && name in IrContract.streamNames) {
+            require(holder != null && holder.isString && name in contract.streamNames) {
                 "Unknown stream $name"
             }
             streams += holder.content to checkNotNull(name)
@@ -132,7 +151,7 @@ object Expressions {
             val op = (node["op"] as? JsonPrimitive)?.content
             val args = node["args"] as? JsonArray
             val shape = shapes[op]
-            require(op in IrContract.expressionOps && shape != null && args != null) {
+            require(op in contract.operations && shape != null && args != null) {
                 "Unknown expression op $op"
             }
             require(
@@ -141,9 +160,9 @@ object Expressions {
             ) {
                 "Expression op $op takes ${shape.arity} arguments"
             }
-            require(
-                args.all { kind(it, depth + 1) == "number" },
-            ) { "Expression op $op takes numbers" }
+            require(args.all { kind(it, depth + 1) == "number" }) {
+                "Expression op $op takes numbers"
+            }
             val colors =
                 when (val field = shape.colors?.let(node::getValue)) {
                     null -> return "number"
@@ -154,7 +173,9 @@ object Expressions {
             require(
                 colors.all {
                     (it as? JsonPrimitive)?.isString == true &&
-                        color.matches(it.content)
+                        color.matches(
+                            it.content,
+                        )
                 },
             ) {
                 "Expression colours are #RRGGBB or #AARRGGBB"
