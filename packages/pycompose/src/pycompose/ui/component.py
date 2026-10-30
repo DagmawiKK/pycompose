@@ -157,18 +157,7 @@ class Component(Node):
         wire = cast(
             "dict[str, JsonValue | FrozenJsonValue]", props_from_kwargs(**values)
         )
-        declared = REGISTRY.components.get(self.component_type)
-        for key, value in wire.items():
-            rule = declared.props.get(key) if declared is not None else None
-            if not isinstance(value, str) or rule is None:
-                continue
-            if rule.type == "color":
-                wire[key] = _hex_color(value, id or "", key)
-            elif rule.type == "enum" and rule.value_type is not None:
-                wire[key] = cast(
-                    "JsonValue",
-                    named_value(rule.value_type, value, REGISTRY.value_types),
-                )
+        _resolve_conveniences(self.component_type, wire, id or "")
         if modifier is not None:
             wire["modifier"] = freeze_json(
                 modifier.values if isinstance(modifier, Modifier) else modifier
@@ -195,6 +184,32 @@ class Component(Node):
 
 
 _CONSTRUCTORS.add(Component.__init__.__code__)
+
+
+def _resolve_conveniences(
+    component: str, wire: dict[str, JsonValue | FrozenJsonValue], node_id: str
+) -> None:
+    """Replace what an app spelled for convenience with its one wire form.
+
+    A colour written ``#RRGGBB`` becomes its tagged ``Color``, and a constant
+    named by string (``centerHorizontally``) its family's tagged value.
+
+    Args:
+        component: The component's catalog name.
+        wire: Its props by wire name, rewritten in place.
+        node_id: The node's id, for a refusal.
+    """
+    declared = REGISTRY.components.get(component)
+    for key, value in wire.items():
+        rule = declared.props.get(key) if declared is not None else None
+        if not isinstance(value, str) or rule is None:
+            continue
+        if rule.type == "color":
+            wire[key] = _hex_color(value, node_id, key)
+        elif rule.type == "enum" and rule.value_type is not None:
+            wire[key] = cast(
+                "JsonValue", named_value(rule.value_type, value, REGISTRY.value_types)
+            )
 
 
 _HEX = "a colour is #RRGGBB, #AARRGGBB or a Color value"

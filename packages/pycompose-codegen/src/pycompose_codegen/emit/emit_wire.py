@@ -244,6 +244,19 @@ def action_schema(action_ids: list[str]) -> dict[str, Any]:
     return {"oneOf": [registry, intent]}
 
 
+def _resource_schema(kinds: list[str]) -> dict[str, Any]:
+    """A resource reference of the kinds a prop accepts: native ids, or assets."""
+    native = "|".join(kind for kind in kinds if kind != "asset")
+    patterns = []
+    if native:
+        patterns.append(f"@({native})/[a-z][a-z0-9_]*")
+    if "asset" in kinds:
+        patterns.append(
+            r"@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*"
+        )
+    return {"type": "string", "pattern": "^(" + "|".join(patterns) + r")(?![\s\S])"}
+
+
 def _prop_schema(prop: dict[str, Any]) -> dict[str, Any]:
     from pycompose_codegen.emit.values import parameter_schema
 
@@ -265,18 +278,7 @@ def _prop_schema(prop: dict[str, Any]) -> dict[str, Any]:
             else {"type": basic[ptype]}
         )
     elif ptype == "resource":
-        native = "|".join(kind for kind in prop["values"] if kind != "asset")
-        patterns = []
-        if native:
-            patterns.append(f"@({native})/[a-z][a-z0-9_]*")
-        if "asset" in prop["values"]:
-            patterns.append(
-                r"@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*"
-            )
-        value = {
-            "type": "string",
-            "pattern": "^(" + "|".join(patterns) + r")(?![\s\S])",
-        }
+        value = _resource_schema(prop["values"])
     elif ptype == "enum":
         value = {"enum": sorted(prop["values"])}
     elif ptype == "actionId":

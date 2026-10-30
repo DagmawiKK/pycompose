@@ -166,6 +166,17 @@ def _validate_slot(
         # shadows a prop drops one of them silently.
         die(f"{where}: 'native' repeats another parameter")
     natives.add(native)
+    _validate_slot_shape(where, slot)
+    _validate_slot_provides(where, slot)
+
+
+def _validate_slot_shape(where: str, slot: dict[str, Any]) -> None:
+    """Check a named slot's kind, nullability and consumed scope agree.
+
+    Args:
+        where: Human-readable location, for error messages.
+        slot: The raw slot object.
+    """
     if not isinstance(slot.get("nullable", False), bool):
         die(f"{where}: 'nullable' must be a boolean")
     if slot.get("kind", "content") not in set(SLOT_KINDS) - {"keyed"}:
@@ -179,7 +190,6 @@ def _validate_slot(
         # A nullable parameter takes a plain lambda, which cannot list items
         # lazily; composing them eagerly instead would be a different tree.
         die(f"{where}: an items slot cannot be nullable")
-    _validate_slot_provides(where, slot)
 
 
 def _validate_slot_provides(where: str, slot: dict[str, Any]) -> None:
@@ -225,15 +235,7 @@ def _validate_prop(
             die(f"enum prop {name}.{prop_name} needs a non-empty string 'values' list")
     if "required" in prop and not isinstance(prop["required"], bool):
         die(f"prop {name}.{prop_name} 'required' must be a boolean")
-    for bound in ("minimum", "maximum"):
-        if bound in prop and (
-            not isinstance(prop[bound], int | float)
-            or isinstance(prop[bound], bool)
-            or (isinstance(prop[bound], float) and not math.isfinite(prop[bound]))
-        ):
-            die(f"prop {name}.{prop_name} {bound} must be finite numeric data")
-    if "minimum" in prop and "maximum" in prop and prop["minimum"] > prop["maximum"]:
-        die(f"prop {name}.{prop_name} minimum exceeds maximum")
+    _validate_bounds(name, prop_name, prop)
     if "fallback" in prop:
         if prop.get("decode") is None and ptype != "color":
             die(f"prop {name}.{prop_name} 'fallback' needs a 'decode' or a colour")
@@ -243,6 +245,19 @@ def _validate_prop(
     if "provider" in prop:
         _validate_provider(name, prop_name, prop)
     _validate_nullable(name, prop_name, prop, held=held)
+
+
+def _validate_bounds(name: str, prop_name: str, prop: dict[str, Any]) -> None:
+    """Check a prop's minimum and maximum are finite numbers in order."""
+    for bound in ("minimum", "maximum"):
+        if bound in prop and (
+            not isinstance(prop[bound], int | float)
+            or isinstance(prop[bound], bool)
+            or (isinstance(prop[bound], float) and not math.isfinite(prop[bound]))
+        ):
+            die(f"prop {name}.{prop_name} {bound} must be finite numeric data")
+    if "minimum" in prop and "maximum" in prop and prop["minimum"] > prop["maximum"]:
+        die(f"prop {name}.{prop_name} minimum exceeds maximum")
 
 
 def _validate_defaults(

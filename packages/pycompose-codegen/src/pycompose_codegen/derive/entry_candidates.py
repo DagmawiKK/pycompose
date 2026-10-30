@@ -123,8 +123,23 @@ def select(
                     reasons.add(reason)
         detail = f": {', '.join(sorted(reasons))}" if reasons else ""
         raise CandidateError(f"{name}: no call plan in the pinned inventory{detail}")
+    plan = _chosen(name, usable, identity)
+    deprecated = (plan.get("annotations") or {}).get("kotlin/Deprecated")
+    if deprecated is not None:
+        message = deprecated.get("message") if isinstance(deprecated, dict) else None
+        detail = f": {message}" if message else ""
+        raise CandidateError(f"{name}: deprecated call plan{detail}")
+    declaration = _declaration(plan, found)
+    _check_declared(plan, declaration)
+    return plan, declaration
+
+
+def _chosen(
+    name: str, usable: list[dict[str, Any]], identity: str | None
+) -> dict[str, Any]:
+    """The one call plan of several, by the reviewed identity, or refuse."""
     # A deprecated overload is never chosen, so it never competes for the name;
-    # when nothing else is left, the refusal below names the deprecation.
+    # when nothing else is left, select refuses it naming the deprecation.
     current = [
         c for c in usable if "kotlin/Deprecated" not in (c.get("annotations") or {})
     ]
@@ -146,15 +161,7 @@ def select(
         raise CandidateError(
             f"{name}: the pin offers one call plan; identity does not disambiguate"
         )
-    plan = usable[0]
-    deprecated = (plan.get("annotations") or {}).get("kotlin/Deprecated")
-    if deprecated is not None:
-        message = deprecated.get("message") if isinstance(deprecated, dict) else None
-        detail = f": {message}" if message else ""
-        raise CandidateError(f"{name}: deprecated call plan{detail}")
-    declaration = _declaration(plan, found)
-    _check_declared(plan, declaration)
-    return plan, declaration
+    return usable[0]
 
 
 def _declaration(plan: dict[str, Any], found: Inventory) -> Declaration:
@@ -218,35 +225,8 @@ def _check_declared(plan: dict[str, Any], declaration: Declaration) -> None:
         )
 
 
-def derive(
-    plan: dict[str, Any],
-    declaration: Declaration,
-    registry: dict[str, Any],
-    decision: dict[str, Any],
-    *,
-    schema_name: str | None = None,
-) -> Derived:
-    """Derive one candidate entry from one selected call plan.
-
-    Args:
-        plan: A fresh call plan for exactly one pinned overload.
-        declaration: The pinned declaration the plan records.
-        registry: The approved catalog, for value families and scopes.
-        decision: Review input: ``category`` and ``stability``, which the pin
-            cannot decide, an optional ``identity`` that selected this plan
-            among competing call plans, and an optional ``nativeName`` when the
-            schema gives one native overload its own component name.
-        schema_name: The schema component name, when it differs from the
-            native name the plan records.
-
-    Returns:
-        The candidate entry plus the differences a reviewer must read.
-
-    Raises:
-        CandidateError: The decision is incomplete or the plan cannot be
-            carried by the wire.
-    """
-    name = schema_name or plan["name"]
+def _check_decision(name: str, plan: dict[str, Any], decision: dict[str, Any]) -> None:
+    """Refuse a review decision that is incomplete or names another overload."""
     unknown = sorted(
         set(decision) - {"category", "stability", "identity", "nativeName"}
     )
@@ -270,6 +250,36 @@ def derive(
             f"{name}: nativeName {native!r} does not match the plan's "
             f"{plan['name']!r}"
         )
+
+
+def derive(
+    plan: dict[str, Any],
+    declaration: Declaration,
+    registry: dict[str, Any],
+    decision: dict[str, Any],
+    *,
+    schema_name: str | None = None,
+) -> Derived:
+    """Derive one candidate entry from one selected call plan.
+
+    Args:
+        plan: A fresh call plan for exactly one pinned overload.
+        declaration: The pinned declaration the plan records.
+        registry: The approved catalog, for value families and scopes.
+        decision: Review input: ``category`` and ``stability``, which the pin
+            cannot decide, an optional ``identity`` that selected this plan
+            among competing call plans, and an optional ``nativeName`` when the
+            schema gives one native overload its own component name.
+        schema_name: The schema component name, when it differs from the
+            native name the plan records.
+
+    Returns:
+        The candidate entry plus the differences a reviewer must read. A
+        decision that is incomplete, or a plan the wire cannot carry, is
+        refused with a CandidateError.
+    """
+    name = schema_name or plan["name"]
+    _check_decision(name, plan, decision)
     props, children, slots, review = wire_shape(name, plan, family_index(registry))
     entry: dict[str, Any] = {
         "package": declaration.package,

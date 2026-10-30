@@ -55,6 +55,20 @@ HOLDER_KINDS = {holder: kind for kind, holder in STATE_HOLDERS.items()}
 TRANSIENT_BY_HOLDER = {holder: kind for kind, holder in TRANSIENT_HOLDERS.items()}
 
 
+def _event_rule(value: KotlinType) -> dict[str, Any]:
+    """A callback's binding: its arguments become the event's scalar payload."""
+    arguments = function_arguments(value)
+    if any(t.classifier not in SCALARS for t in arguments):
+        raise ValueError("event payload needs a structured value codec")
+    return {
+        "policy": "event",
+        "payload": [
+            {"name": f"arg{i}", "type": SCALARS[t.classifier], "nullable": t.nullable}
+            for i, t in enumerate(arguments)
+        ],
+    }
+
+
 def _binding_rule(
     parameter: Parameter,
     families: dict[str, str],
@@ -79,20 +93,7 @@ def _binding_rule(
     elif parameter.kind == Kind.BUILDER:
         rule = builder_rule(value)
     elif parameter.kind == Kind.CALLBACK:
-        arguments = function_arguments(value)
-        if any(t.classifier not in SCALARS for t in arguments):
-            raise ValueError("event payload needs a structured value codec")
-        rule = {
-            "policy": "event",
-            "payload": [
-                {
-                    "name": f"arg{i}",
-                    "type": SCALARS[t.classifier],
-                    "nullable": t.nullable,
-                }
-                for i, t in enumerate(arguments)
-            ],
-        }
+        rule = _event_rule(value)
     elif (typed := _host_filled(parameter, holders)) is not None:
         rule = typed
     elif value.classifier in SCALARS and not value.arguments:

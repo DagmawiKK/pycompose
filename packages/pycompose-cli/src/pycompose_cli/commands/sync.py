@@ -3,6 +3,7 @@
 import hashlib
 import json
 import re
+from pathlib import Path
 
 from pycompose_cli.project import Project, ProjectError, project_path, read_json
 from pycompose_cli.project.resources import MAIN, resource_files
@@ -38,6 +39,28 @@ def _owned(project: Project) -> dict[str, str]:
     return owned
 
 
+def _require_owned(destination: Path, name: str, owned: dict[str, str]) -> None:
+    """Refuse an output that sync did not write, or that was edited since.
+
+    Args:
+        destination: The output on disk.
+        name: Its project-relative name.
+        owned: What sync wrote last, by name and digest.
+
+    Raises:
+        ProjectError: If the output is not a file, unmanaged or modified.
+    """
+    if not destination.is_file():
+        raise ProjectError("resource output is not a file", path=name)
+    if name not in owned:
+        raise ProjectError("refusing to overwrite unmanaged resource", path=name)
+    if hashlib.sha256(destination.read_bytes()).hexdigest() != owned[name]:
+        raise ProjectError(
+            "generated resource was locally modified; resolve it before sync",
+            path=name,
+        )
+
+
 def sync_resources(project: Project, *, check: bool = False) -> tuple[str, ...]:
     """Synchronize project resource outputs, or detect drift without writing.
 
@@ -47,9 +70,8 @@ def sync_resources(project: Project, *, check: bool = False) -> tuple[str, ...]:
 
     Returns:
         Names of generated files or ownership records whose bytes differ.
-
-    Raises:
-        ProjectError: If an output is unmanaged, locally modified or unsafe.
+        An output that is unmanaged, locally modified or unsafe is refused
+        with a ProjectError.
     """
     output = resource_files(project)
     owned = _owned(project)
@@ -68,17 +90,7 @@ def sync_resources(project: Project, *, check: bool = False) -> tuple[str, ...]:
     for name in sorted(output.keys() | owned.keys()):
         destination = project_path(project.root, name)
         if destination.exists():
-            if not destination.is_file():
-                raise ProjectError("resource output is not a file", path=name)
-            if name not in owned:
-                raise ProjectError(
-                    "refusing to overwrite unmanaged resource", path=name
-                )
-            if hashlib.sha256(destination.read_bytes()).hexdigest() != owned[name]:
-                raise ProjectError(
-                    "generated resource was locally modified; resolve it before sync",
-                    path=name,
-                )
+            _require_owned(destination, name, owned)
             if name not in output:
                 stale.append(name)
         if name in output and (

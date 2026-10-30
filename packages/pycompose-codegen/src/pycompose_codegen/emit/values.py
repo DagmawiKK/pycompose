@@ -40,6 +40,13 @@ def validate_definitions(registry: dict[str, Any]) -> None:
                 die(f"invalid value parameter: {name}.{field}")
             _validate_rule(rule, families)
             _validate_default(name, field, rule)
+    _validate_value_props(registry, families)
+
+
+def _validate_value_props(registry: dict[str, Any], families: set[str]) -> None:
+    """Fail on a prop naming no approved family, or a value prop naming none."""
+    from pycompose_codegen.emit.rules import die
+
     for section in ("components", "modifiers"):
         for spec in registry.get(section, {}).values():
             for prop in spec["props"].values():

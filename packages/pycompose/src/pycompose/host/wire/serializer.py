@@ -108,6 +108,22 @@ def node_bytes(node: Node, memo: SubtreeMemo[bytes] | None = None) -> bytes:
     return bytes(output)
 
 
+def _write_fields(output: bytearray, node: Node) -> None:
+    """Close a node's children, then write its own fields in key order."""
+    if node.children:
+        output.extend(b"],")
+    output.extend(b'"id":')
+    output.extend(canonical_json_bytes(node.id))
+    output.extend(b',"props":')
+    output.extend(canonical_json_bytes(node.props.values))
+    if node.slot is not None:
+        output.extend(b',"slot":')
+        output.extend(canonical_json_bytes(node.slot))
+    output.extend(b',"type":')
+    output.extend(canonical_json_bytes(node.type))
+    output.extend(b"}")
+
+
 def _write_node(
     output: bytearray, root: Node, memo: SubtreeMemo[bytes] | None = None
 ) -> None:
@@ -152,18 +168,7 @@ def _write_node(
             start = starts.pop()
             if sibling_counts.pop() < 0:
                 continue
-            if node.children:
-                output.extend(b"],")
-            output.extend(b'"id":')
-            output.extend(canonical_json_bytes(node.id))
-            output.extend(b',"props":')
-            output.extend(canonical_json_bytes(node.props.values))
-            if node.slot is not None:
-                output.extend(b',"slot":')
-                output.extend(canonical_json_bytes(node.slot))
-            output.extend(b',"type":')
-            output.extend(canonical_json_bytes(node.type))
-            output.extend(b"}")
+            _write_fields(output, node)
             if memo is not None:
                 memo.put(node, bytes(memoryview(output)[start:]))
 

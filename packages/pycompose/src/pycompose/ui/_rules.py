@@ -139,27 +139,26 @@ def validate_modifier(value: object, *, intents: Intents | None = None) -> None:
     if not isinstance(operations, list | tuple):
         raise IrValidationError("modifier operations must be an array")
     for operation in operations:
-        if not isinstance(operation, Mapping) or not isinstance(
-            operation.get("type"), str
-        ):
-            raise IrValidationError("invalid modifier operation")
-        name = operation["type"]
-        spec = REGISTRY.modifiers.get(name)
-        if spec is None:
-            raise IrValidationError("unknown modifier operation", modifier=name)
-        for key, prop in spec.items():
-            if prop.required and key not in operation:
-                raise IrValidationError(
-                    "missing modifier prop", modifier=name, prop=key
-                )
-        for key, item in operation.items():
-            if key == "type":
-                continue
-            declared = spec.get(key)
-            if declared is None or not validate_prop(item, declared, intents=intents):
-                raise IrValidationError(
-                    "invalid modifier prop", modifier=name, prop=key
-                )
+        _validate_operation(operation, intents)
+
+
+def _validate_operation(operation: object, intents: Intents | None) -> None:
+    """Check one modifier operation against its catalog definition."""
+    if not isinstance(operation, Mapping) or not isinstance(operation.get("type"), str):
+        raise IrValidationError("invalid modifier operation")
+    name = operation["type"]
+    spec = REGISTRY.modifiers.get(name)
+    if spec is None:
+        raise IrValidationError("unknown modifier operation", modifier=name)
+    for key, prop in spec.items():
+        if prop.required and key not in operation:
+            raise IrValidationError("missing modifier prop", modifier=name, prop=key)
+    for key, item in operation.items():
+        if key == "type":
+            continue
+        declared = spec.get(key)
+        if declared is None or not validate_prop(item, declared, intents=intents):
+            raise IrValidationError("invalid modifier prop", modifier=name, prop=key)
 
 
 @dataclass(slots=True)

@@ -90,6 +90,67 @@ def _generate_slice(target: Path, android_root: Path) -> None:
         )
 
 
+def _manifest(template: Traversable) -> tuple[str, bool]:
+    """The packaged template's version and whether it carries an Android scaffold.
+
+    Args:
+        template: The packaged Android template.
+
+    Returns:
+        Its version, and whether an Android scaffold ships with it.
+
+    Raises:
+        InitError: If the manifest is missing or its fields have the wrong type.
+    """
+    try:
+        manifest = tomllib.loads(
+            template.joinpath("template.toml").read_text(encoding="utf-8")
+        )
+        version = manifest["template_version"]
+        scaffold = manifest["android_scaffold"]
+    except (OSError, KeyError, tomllib.TOMLDecodeError) as exc:
+        raise InitError("packaged Android template is unavailable or invalid") from exc
+    if not isinstance(version, str) or not isinstance(scaffold, bool):
+        raise InitError("invalid template manifest fields")
+    return version, scaffold
+
+
+def _config(name: str, template_version: str, android_dir: str) -> str:
+    """The new project's ``pycompose.toml``.
+
+    Args:
+        name: The project's name.
+        template_version: The packaged template's version.
+        android_dir: Where the project's Android files live.
+
+    Returns:
+        The file's text.
+    """
+    quoted = json.dumps(name)
+    app_id = json.dumps("com.example.app_" + name.lower().replace("-", "_"))
+    return (
+        f"[app]\nname = {quoted}\napplication_id = {app_id}\n"
+        'version_name = "0.1.0"\nversion_code = 1\n\n'
+        '[python]\nentrypoint = "main:app"\nsource_dir = "app"\n'
+        "# Packages installed into the app at build time. Pip resolves them then,\n"
+        "# from PyPI and Chaquopy's index, so pin exact versions (==) when a build\n"
+        "# must be reproducible. Pure Python packages and Android wheels for\n"
+        "# Python 3.12 on arm64-v8a and x86_64 install; a package with native code\n"
+        "# needs an Android wheel, and the build fails listing the available\n"
+        "# versions when there is none. Changing this list changes the app and\n"
+        "# needs a rebuild, not a hot reload.\n"
+        "requirements = []\n\n"
+        '[resources]\npath = "resources"\n\n'
+        '[signing]\nkeystore = ""\nkey_alias = ""\n'
+        'store_password_env = "PYCOMPOSE_STORE_PASSWORD"\n'
+        'key_password_env = "PYCOMPOSE_KEY_PASSWORD"\n\n'
+        f'[toolchain]\nlibrary_version = "{__version__}"\n'
+        f'schema_version = "{SCHEMA_VERSION}"\n'
+        f"template_version = {json.dumps(template_version)}\n"
+        f"android_dir = {json.dumps(android_dir)}\n"
+    )
+
+
 def init_project(
     name: str, *, directory: Path, native: bool = False, starter: str = STARTERS[0]
 ) -> tuple[Path, bool, bool]:
@@ -124,40 +185,9 @@ def init_project(
             "project path already exists and is not a directory", path=target
         )
     template = files("pycompose_cli").joinpath("templates", "android")
-    try:
-        manifest = tomllib.loads(
-            template.joinpath("template.toml").read_text(encoding="utf-8")
-        )
-        template_version = manifest["template_version"]
-        android_scaffold = manifest["android_scaffold"]
-    except (OSError, KeyError, tomllib.TOMLDecodeError) as exc:
-        raise InitError("packaged Android template is unavailable or invalid") from exc
-    if not isinstance(template_version, str) or not isinstance(android_scaffold, bool):
-        raise InitError("invalid template manifest fields")
-    quoted = json.dumps(name)
-    app_id = json.dumps("com.example.app_" + name.lower().replace("-", "_"))
+    template_version, android_scaffold = _manifest(template)
     android_dir = "." if native else ".pycompose/android"
-    config = (
-        f"[app]\nname = {quoted}\napplication_id = {app_id}\n"
-        'version_name = "0.1.0"\nversion_code = 1\n\n'
-        '[python]\nentrypoint = "main:app"\nsource_dir = "app"\n'
-        "# Packages installed into the app at build time. Pip resolves them then,\n"
-        "# from PyPI and Chaquopy's index, so pin exact versions (==) when a build\n"
-        "# must be reproducible. Pure Python packages and Android wheels for\n"
-        "# Python 3.12 on arm64-v8a and x86_64 install; a package with native code\n"
-        "# needs an Android wheel, and the build fails listing the available\n"
-        "# versions when there is none. Changing this list changes the app and\n"
-        "# needs a rebuild, not a hot reload.\n"
-        "requirements = []\n\n"
-        '[resources]\npath = "resources"\n\n'
-        '[signing]\nkeystore = ""\nkey_alias = ""\n'
-        'store_password_env = "PYCOMPOSE_STORE_PASSWORD"\n'
-        'key_password_env = "PYCOMPOSE_KEY_PASSWORD"\n\n'
-        f'[toolchain]\nlibrary_version = "{__version__}"\n'
-        f'schema_version = "{SCHEMA_VERSION}"\n'
-        f"template_version = {json.dumps(template_version)}\n"
-        f"android_dir = {json.dumps(android_dir)}\n"
-    )
+    config = _config(name, template_version, android_dir)
     try:
         target.mkdir()
     except FileExistsError:

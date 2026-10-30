@@ -246,32 +246,28 @@ class PropDef:
             out["required"] = True
         if self.has_default:
             out["default"] = thaw_json(self.default)
-        if self.minimum is not None:
-            out["minimum"] = self.minimum
-        if self.maximum is not None:
-            out["maximum"] = self.maximum
-        if self.since is not None:
-            out["since"] = self.since
-        if self.content is not None:
-            out["content"] = self.content.to_mapping()
-        if self.payload:
-            out["payload"] = [
-                {
-                    "name": field_name,
-                    "type": kind,
-                    **(
-                        {"nullable": True}
-                        if field_name in self.nullable_payload
-                        else {}
-                    ),
-                }
-                for field_name, kind in self.payload
-            ]
-        if self.decode is not None:
-            out["decode"] = self.decode
-        if self.provider is not None:
-            out["provider"] = self.provider.to_mapping()
+        later = {
+            "minimum": self.minimum,
+            "maximum": self.maximum,
+            "since": self.since,
+            "content": None if self.content is None else self.content.to_mapping(),
+            "payload": self._payload_mapping() or None,
+            "decode": self.decode,
+            "provider": None if self.provider is None else self.provider.to_mapping(),
+        }
+        out.update({key: value for key, value in later.items() if value is not None})
         return out
+
+    def _payload_mapping(self) -> list[dict[str, object]]:
+        """The callback's arguments in lock form, a nullable one marked."""
+        return [
+            {
+                "name": field_name,
+                "type": kind,
+                **({"nullable": True} if field_name in self.nullable_payload else {}),
+            }
+            for field_name, kind in self.payload
+        ]
 
 
 def _decode(ptype: str, value: str | None) -> str | None:

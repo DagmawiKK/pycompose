@@ -85,6 +85,36 @@ def _scalars(item: object, rule: dict[str, Any], path: str) -> None:
         raise ProjectError("value does not match its IR schema pattern", path=path)
 
 
+def _fields(
+    item: dict[str, Any], rule: dict[str, Any], path: str
+) -> list[tuple[object, dict[str, Any] | bool, str]]:
+    """Check an object's fields against its rule, and return each to check next.
+
+    Args:
+        item: The object.
+        rule: Its schema rule.
+        path: Where it sits in the snapshot.
+
+    Returns:
+        Each declared field's value with its rule and path.
+
+    Raises:
+        ProjectError: If a required field is missing or an unknown one present.
+    """
+    missing = set(rule.get("required", [])) - item.keys()
+    if missing:
+        raise ProjectError("missing required fields", path=path, fields=sorted(missing))
+    props = rule.get("properties", {})
+    extra = item.keys() - props.keys()
+    if extra and rule.get("additionalProperties") is False:
+        raise ProjectError("unknown fields", path=path, fields=sorted(extra))
+    return [
+        (child, props[name], f"{path}.{name}")
+        for name, child in item.items()
+        if name in props
+    ]
+
+
 class WireSchema:
     """A compiled view of the bundled, generated IR schema."""
 
@@ -194,22 +224,7 @@ class WireSchema:
             if "anyOf" in rule or "oneOf" in rule:
                 pending.append((item, self._choice(rule, item, path), path))
             if isinstance(item, dict):
-                missing = set(rule.get("required", [])) - item.keys()
-                if missing:
-                    raise ProjectError(
-                        "missing required fields", path=path, fields=sorted(missing)
-                    )
-                props = rule.get("properties", {})
-                extra = item.keys() - props.keys()
-                if extra and rule.get("additionalProperties") is False:
-                    raise ProjectError(
-                        "unknown fields", path=path, fields=sorted(extra)
-                    )
-                pending.extend(
-                    (child, props[name], f"{path}.{name}")
-                    for name, child in item.items()
-                    if name in props
-                )
+                pending.extend(_fields(item, rule, path))
             if isinstance(item, list) and "items" in rule:
                 pending.extend(
                     (child, rule["items"], f"{path}[{index}]")

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose_codegen.derive.classpath_dump import Declaration, Inventory
+from pycompose_codegen.derive.classpath_dump import Declaration, Inventory, Parameter
 from pycompose_codegen.derive.opt_ins import OptInIndex, opt_in_index, required_opt_ins
 from pycompose_codegen.derive.propose_icons import propose_icons
 from pycompose_codegen.derive.propose_lookup import (
@@ -109,19 +109,7 @@ def propose_value(
                 "hasDefault": parameter.has_default,
             }
             continue
-        if parameter.vararg_type:
-            raise ValueError(f"{parameter.name}: varargs need a collection policy")
-        rule = _rule(parameter.type, families)
-        if parameter.has_default:
-            if defaults is None or parameter.name not in defaults:
-                raise ValueError(f"{parameter.name}: missing compiler-resolved default")
-            expression = defaults[parameter.name]
-            if expression.get("kind") == "unsupported":
-                raise ValueError(f"{parameter.name}: {expression['reason']}")
-            rule["default"] = expression
-        else:
-            rule["required"] = True
-        parameters[parameter.name] = rule
+        parameters[parameter.name] = _parameter_rule(parameter, families, defaults)
     if surface is not None:
         if set(surface) != set(parameters):
             raise ValueError("approved parameter is missing from the native signature")
@@ -146,6 +134,25 @@ def propose_value(
     if omitted:
         result["omitted"] = omitted
     return result
+
+
+def _parameter_rule(
+    parameter: Parameter, families: dict[str, str], defaults: dict[str, Any] | None
+) -> dict[str, Any]:
+    """One bound parameter's wire rule, with its compiler-resolved default."""
+    if parameter.vararg_type:
+        raise ValueError(f"{parameter.name}: varargs need a collection policy")
+    rule = _rule(parameter.type, families)
+    if not parameter.has_default:
+        rule["required"] = True
+        return rule
+    if defaults is None or parameter.name not in defaults:
+        raise ValueError(f"{parameter.name}: missing compiler-resolved default")
+    expression = defaults[parameter.name]
+    if expression.get("kind") == "unsupported":
+        raise ValueError(f"{parameter.name}: {expression['reason']}")
+    rule["default"] = expression
+    return rule
 
 
 def _validate_callable(source: Declaration) -> None:

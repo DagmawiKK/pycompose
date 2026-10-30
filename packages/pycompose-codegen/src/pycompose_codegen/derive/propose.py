@@ -196,6 +196,19 @@ def stage(
     return candidate, staged, review
 
 
+def _write_stage(
+    path: Path, registry: dict[str, Any], proposals: list[dict[str, Any]]
+) -> None:
+    """Write the candidate registry holding mechanical drift, and report it."""
+    candidate, staged, review = stage(registry, proposals)
+    path.write_text(json.dumps(candidate, indent=2) + "\n")
+    for name in staged:
+        print(f"staged: {name}")
+    for note in review:
+        print(f"needs review: {note}")
+    print(f"{len(staged)} staged, {len(review)} need review")
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("names", nargs="*")
@@ -230,13 +243,7 @@ def main(argv: list[str] | None = None) -> int:
         else:
             proposals = [bind(found, evidence, registry, name) for name in args.names]
         if args.stage:
-            candidate, staged, review = stage(registry, proposals)
-            args.stage.write_text(json.dumps(candidate, indent=2) + "\n")
-            for name in staged:
-                print(f"staged: {name}")
-            for note in review:
-                print(f"needs review: {note}")
-            print(f"{len(staged)} staged, {len(review)} need review")
+            _write_stage(args.stage, registry, proposals)
         text = json.dumps(proposals, indent=2) + "\n"
         if args.out:
             if args.out.resolve() == args.schema.resolve():

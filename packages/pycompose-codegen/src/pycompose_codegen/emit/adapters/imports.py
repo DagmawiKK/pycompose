@@ -16,6 +16,23 @@ from pycompose_codegen.emit.derived_families import property_imports
 from pycompose_codegen.emit.state_families import attach_gate
 
 
+def _state_imports(entry: dict[str, Any]) -> set[str]:
+    """What the component's state holder needs imported, if it has one."""
+    state = entry.get("state")
+    if state is None:
+        return set()
+    if state["kind"] == "properties":
+        return set(property_imports(state))
+    qualified = {f"com.pycompose.renderer.{state_call(state['kind'])}"}
+    if state["kind"] in STATE_STREAMS:
+        qualified.add("com.pycompose.renderer.publish")
+    if attach_gate(state, entry.get("props", {})) is not None:
+        # The holder rides the component's modifier, so the extension making
+        # that ride callable must be imported where the call is written.
+        qualified.add("com.pycompose.renderer.attachTo")
+    return qualified
+
+
 def extra_imports(entry: dict[str, Any]) -> set[str]:
     """List the fully qualified imports an adapter needs beyond its component.
 
@@ -25,17 +42,7 @@ def extra_imports(entry: dict[str, Any]) -> set[str]:
     Returns:
         Import statements' targets, sorted by the caller.
     """
-    qualified = _prop_imports(entry.get("props", {}).values())
-    if (state := entry.get("state")) is not None and state["kind"] == "properties":
-        qualified |= property_imports(state)
-    elif state is not None:
-        qualified.add(f"com.pycompose.renderer.{state_call(state['kind'])}")
-        if state["kind"] in STATE_STREAMS:
-            qualified.add("com.pycompose.renderer.publish")
-        if attach_gate(state, entry.get("props", {})) is not None:
-            # The holder rides the component's modifier, so the extension making
-            # that ride callable must be imported where the call is written.
-            qualified.add("com.pycompose.renderer.attachTo")
+    qualified = _prop_imports(entry.get("props", {}).values()) | _state_imports(entry)
     if entry.get("boxed"):
         qualified.add("androidx.compose.foundation.layout.Box")
     if (transient := entry.get("transient")) is not None:

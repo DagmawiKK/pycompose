@@ -9,11 +9,11 @@ rather than ignoring them.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from dataclasses import field as dataclass_field
 from types import MappingProxyType
-from typing import Protocol, cast
+from typing import Protocol, TypeVar, cast
 
 from pycompose.errors import ComponentRegistryError
 from pycompose.model.catalog.elements import ChildrenRule, SlotRule
@@ -140,6 +140,56 @@ def _opt_in(name: str, value: object) -> tuple[str, ...]:
             f"component {name!r}: 'optIn' must be a string list"
         )
     return tuple(value)
+
+
+_Parsed = TypeVar("_Parsed")
+
+
+def _text(name: str, data: Mapping[str, object], key: str) -> str:
+    """A component's string field, refused when empty or not a string."""
+    value = data.get(key)
+    if not isinstance(value, str) or not value:
+        raise ComponentRegistryError(
+            f"component {name!r}: {key!r} must be a non-empty string"
+        )
+    return value
+
+
+def _entries(
+    name: str,
+    data: Mapping[str, object],
+    key: str,
+    kind: str,
+    parse: Callable[..., _Parsed],
+    absent: Mapping[str, object] | None = None,
+) -> dict[str, _Parsed]:
+    """A component's named entries (its props, its slots), each parsed."""
+    raw = data.get(key, absent)
+    if not isinstance(raw, Mapping):
+        raise ComponentRegistryError(f"component {name!r}: {key!r} must be an object")
+    parsed: dict[str, _Parsed] = {}
+    for entry, value in raw.items():
+        if not isinstance(entry, str) or not isinstance(value, Mapping):
+            raise ComponentRegistryError(
+                f"component {name!r}: {kind} {entry!r} must be an object"
+            )
+        parsed[entry] = parse(value, where=f"{name}.{entry}")
+    return parsed
+
+
+def _section(
+    name: str,
+    data: Mapping[str, object],
+    key: str,
+    parse: Callable[..., _Parsed],
+) -> _Parsed | None:
+    """A component's optional object, parsed when present."""
+    raw = data.get(key)
+    if raw is None:
+        return None
+    if not isinstance(raw, Mapping):
+        raise ComponentRegistryError(f"component {name!r}: {key!r} must be an object")
+    return parse(raw, where=f"{name}.{key}")
 
 
 def _reshaped(name: str, value: object) -> tuple[str, ...]:
@@ -318,88 +368,31 @@ class ComponentSpec:
         Raises:
             ComponentRegistryError: If the component object is malformed.
         """
-        category = data.get("category")
-        if not isinstance(category, str) or not category:
-            raise ComponentRegistryError(
-                f"component {name!r}: 'category' must be a non-empty string"
-            )
-        stability = data.get("stability")
-        if not isinstance(stability, str) or not stability:
-            raise ComponentRegistryError(
-                f"component {name!r}: 'stability' must be a non-empty string"
-            )
-        package = data.get("package")
-        if package is not None and (not isinstance(package, str) or not package):
-            raise ComponentRegistryError(
-                f"component {name!r}: 'package' must be a non-empty string"
-            )
-        raw_props = data.get("props")
-        if not isinstance(raw_props, Mapping):
-            raise ComponentRegistryError(
-                f"component {name!r}: 'props' must be an object"
-            )
-        props: dict[str, PropDef] = {}
-        for prop_name, prop in raw_props.items():
-            if not isinstance(prop_name, str) or not isinstance(prop, Mapping):
-                raise ComponentRegistryError(
-                    f"component {name!r}: prop {prop_name!r} must be an object"
-                )
-            props[prop_name] = PropDef.from_mapping(prop, where=f"{name}.{prop_name}")
         raw_children = data.get("children")
         if not isinstance(raw_children, Mapping):
             raise ComponentRegistryError(
                 f"component {name!r}: 'children' must be an object"
             )
-        raw_slots = data.get("slots", {})
-        if not isinstance(raw_slots, Mapping):
-            raise ComponentRegistryError(
-                f"component {name!r}: 'slots' must be an object"
-            )
-        slots: dict[str, SlotRule] = {}
-        for slot_name, slot in raw_slots.items():
-            if not isinstance(slot_name, str) or not isinstance(slot, Mapping):
-                raise ComponentRegistryError(
-                    f"component {name!r}: slot {slot_name!r} must be an object"
-                )
-            slots[slot_name] = SlotRule.from_mapping(slot, where=f"{name}.{slot_name}")
-        raw_interaction = data.get("interaction")
-        if raw_interaction is not None and not isinstance(raw_interaction, Mapping):
-            raise ComponentRegistryError(
-                f"component {name!r}: 'interaction' must be an object"
-            )
-        interaction = (
-            InteractionRule.from_mapping(raw_interaction, where=f"{name}.interaction")
-            if isinstance(raw_interaction, Mapping)
-            else None
-        )
-        raw_state = data.get("state")
-        if raw_state is not None and not isinstance(raw_state, Mapping):
-            raise ComponentRegistryError(
-                f"component {name!r}: 'state' must be an object"
-            )
-        state = (
-            StateRule.from_mapping(raw_state, where=f"{name}.state")
-            if isinstance(raw_state, Mapping)
-            else None
-        )
-        raw_transient = data.get("transient")
-        transient = _transient(name, raw_transient)
         return cls(
             name=name,
-            category=category,
-            stability=stability,
-            props=props,
+            category=_text(name, data, "category"),
+            stability=_text(name, data, "stability"),
+            props=_entries(name, data, "props", "prop", PropDef.from_mapping),
             children=ChildrenRule.from_mapping(raw_children, where=f"{name}.children"),
             since=cast("str | None", data.get("since")),
             reshaped=_reshaped(name, data.get("reshaped")),
             adapter=_adapter(name, data.get("adapter")),
             wrapper=_wrapper(name, data.get("wrapper")),
-            slots=slots,
-            interaction=interaction,
-            state=state,
-            transient=transient,
+            slots=_entries(name, data, "slots", "slot", SlotRule.from_mapping, {}),
+            interaction=_section(
+                name, data, "interaction", InteractionRule.from_mapping
+            ),
+            state=_section(name, data, "state", StateRule.from_mapping),
+            transient=_transient(name, data.get("transient")),
             opt_in=_opt_in(name, data.get("optIn")),
-            package=package,
+            package=(
+                None if data.get("package") is None else _text(name, data, "package")
+            ),
             scope=cast("str | None", data.get("scope")),
             overload_of=cast("str | None", data.get("overloadOf")),
             boxed=data.get("boxed") is True,

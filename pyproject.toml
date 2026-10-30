@@ -19,10 +19,9 @@ ignore = ["PLR0913", "PLR2004"]
 
 [tool.ruff.lint.mccabe]
 # Function size is where reading cost lives, so it is limited at any scale
-# (with PL's branch, statement and return counts). 13 is the most complex
-# hand-written function today: nothing new may be worse, and the ceiling only
-# comes down.
-max-complexity = 13
+# (with PL's branch, statement and return counts). No hand-written function is
+# above 11; nothing new may be worse, and the ceiling only comes down.
+max-complexity = 11
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 # Runtime code reaches time, randomness, ids, tasks and threads only through
