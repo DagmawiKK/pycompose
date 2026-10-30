@@ -114,6 +114,7 @@ def build_app(
         _VALUES_RELATIVE,
         APP_PACKAGE,
         FLOOR_COMPONENTS,
+        GENERATED_RELATIVE,
         AppCodegenError,
         app_components,
         discover,
@@ -193,15 +194,18 @@ def build_app(
             render_modifiers(sliced)
         ),
     }
+    owned = [python_root / package]
     if kotlin:
         artifacts.update(kotlin_artifacts)
+        owned.append(native / GENERATED_RELATIVE)
+    stale = _stale(owned, artifacts)
 
     if check:
         drifted = [
             str(artifact)
             for artifact, expected in artifacts.items()
             if _read(artifact) != expected
-        ]
+        ] + [str(path) for path in stale]
         if drifted:
             for artifact in drifted:
                 print(f"gen.py: drift detected: {artifact}", file=sys.stderr)
@@ -212,6 +216,8 @@ def build_app(
     for path, content in artifacts.items():
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8")
+    for path in stale:
+        path.unlink()
     manual = [
         name
         for name in sliced["components"]
@@ -227,6 +233,28 @@ def build_app(
         )
     )
     return 0
+
+
+def _stale(owned: list[Path], artifacts: dict[Path, str]) -> list[Path]:
+    """Sources in the generator's own folders that this generation no longer writes.
+
+    The app's slice and its Kotlin are build output the generator owns whole,
+    so a file the catalog stopped producing would otherwise linger and compile.
+
+    Args:
+        owned: Folders only the generator writes.
+        artifacts: What this generation writes.
+
+    Returns:
+        The leftover Python and Kotlin sources, sorted.
+    """
+    return sorted(
+        path
+        for folder in owned
+        if folder.is_dir()
+        for path in folder.rglob("*")
+        if path.suffix in {".py", ".kt"} and path not in artifacts
+    )
 
 
 def _slicing_problem(registry: dict[str, Any], used: set[str], app: Path) -> str | None:

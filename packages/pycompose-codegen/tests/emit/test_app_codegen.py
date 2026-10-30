@@ -450,3 +450,23 @@ def test_the_python_root_still_works_alone(tmp_path: Path) -> None:
     assert build_app(root) == 0
     assert (root / "components" / "components.py").is_file()
     assert (root / MODELS).is_file()
+
+
+def test_a_file_the_catalog_stopped_generating_is_removed(tmp_path: Path) -> None:
+    """The slice and its Kotlin are the generator's own; a leftover would compile."""
+    from pycompose_codegen.emit.main import build_app
+
+    root = tmp_path / "app"
+    root.mkdir()
+    (root / "view.py").write_text("from components import Button\n")
+    assert build_app(root) == 0
+    kotlin = root / SLICE / "renderer/src/main/kotlin/com/pycompose/renderer/generated"
+    leftovers = (root / "components" / "generated_components.py", kotlin / "Old.kt")
+    for leftover in leftovers:
+        leftover.write_text("stale\n")
+
+    assert build_app(root, check=True) == 1
+    assert build_app(root) == 0
+
+    assert not any(leftover.exists() for leftover in leftovers)
+    assert build_app(root, check=True) == 0
