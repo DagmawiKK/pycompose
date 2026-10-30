@@ -46,15 +46,16 @@ DIRECT_ARGUMENTS = {
 }
 """Wire prop types whose native argument the type alone decides."""
 
-DECODE_CLASSIFIERS = {
-    "alignment": "androidx.compose.ui.Alignment",
-    "horizontal": "androidx.compose.ui.Alignment.Horizontal",
-    "vertical": "androidx.compose.ui.Alignment.Vertical",
-    "arrangement": "androidx.compose.foundation.layout.Arrangement.Vertical",
-    "textStyle": "androidx.compose.ui.text.TextStyle",
-    "color": COLOR,
-}
-"""Wire decode tokens whose pinned Kotlin type is fixed by the decoder table."""
+NAMED_CLASSIFIERS = frozenset(
+    {
+        "androidx.compose.ui.Alignment",
+        "androidx.compose.ui.Alignment.Horizontal",
+        "androidx.compose.ui.Alignment.Vertical",
+        "androidx.compose.foundation.layout.Arrangement.Vertical",
+    }
+)
+"""Constant families an app names by string (``centerHorizontally``) rather than
+building their value: the layout vocabulary every screen spells."""
 
 
 @dataclass(frozen=True)
@@ -120,8 +121,6 @@ def _prop_argument(
     if kind in {"value", "enum"} and "valueType" in spec:
         family = spec["valueType"]
         return Argument(name, "value", families.get(family, family))
-    if kind == "enum" and spec.get("decode") in DECODE_CLASSIFIERS:
-        return Argument(name, "value", DECODE_CLASSIFIERS[spec["decode"]])
     if kind == "actionId":
         return Argument(name, "function", arity=len(spec.get("payload", [])))
     direct = DIRECT_ARGUMENTS.get(kind)

@@ -216,7 +216,7 @@ def test_a_decision_cannot_backdate_a_candidate(tmp_path: Path) -> None:
         )
 
 
-def test_a_constant_family_derives_a_decoded_enum(tmp_path: Path) -> None:
+def test_a_constant_family_derives_a_named_enum(tmp_path: Path) -> None:
     found = synthetic(tmp_path)
     registry = catalog(
         family(
@@ -247,9 +247,10 @@ def test_a_constant_family_derives_a_decoded_enum(tmp_path: Path) -> None:
     )
     assert item.entry["props"]["contentAlignment"] == {
         "type": "enum",
+        "valueType": "Alignment",
         "values": ["topStart", "bottomEnd"],
-        "decode": "alignment",
         "default": "topStart",
+        "nativeDefault": "androidx.compose.ui.Alignment.TopStart",
     }
 
 

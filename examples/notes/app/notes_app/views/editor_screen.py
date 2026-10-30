@@ -97,7 +97,7 @@ def back_bar(*, title: str) -> Node:
         A Row declaration.
     """
     return Row(
-        vertical_alignment="center",
+        vertical_alignment="centerVertically",
         children=[
             IconButton(
                 on_click=LeaveEditor(),

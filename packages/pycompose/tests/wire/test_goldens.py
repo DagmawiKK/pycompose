@@ -10,7 +10,7 @@ from hypothesis import given
 from hypothesis import strategies as st
 from readable import readable
 
-from pycompose.contract.catalog import REGISTRY
+from pycompose.contract.catalog import REGISTRY, SCHEMA_VERSION
 from pycompose.core import Node
 from pycompose.foundation import Box, Column, LazyColumn, Row, Spacer
 from pycompose.material3 import Button, Text, TextField
@@ -23,7 +23,7 @@ from pycompose.wire import emit_ir, to_json_bytes, validate_ir
 def test_golden_screen_rebuilds_match_packaged_fixture_exactly() -> None:
     expected = read_golden("component_screen.json")
     for _ in range(2):
-        snapshot = emit_ir(State(root=component_screen()), "1.0.0")
+        snapshot = emit_ir(State(root=component_screen()), SCHEMA_VERSION)
         assert validate_ir(snapshot).snapshot is snapshot
         assert to_json_bytes(snapshot) == expected
 

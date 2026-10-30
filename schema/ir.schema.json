@@ -538,24 +538,7 @@
           "additionalProperties": false,
           "properties": {
             "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomLeft",
-                "bottomRight",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerLeft",
-                "centerRight",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topLeft",
-                "topRight",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "label": {
               "default": "AnimatedContent",
@@ -1199,18 +1182,7 @@
           "additionalProperties": false,
           "properties": {
             "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "modifier": {
               "properties": {
@@ -1708,12 +1680,7 @@
           "additionalProperties": false,
           "properties": {
             "horizontalAlignment": {
-              "default": "start",
-              "enum": [
-                "center",
-                "end",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
             "modifier": {
               "properties": {
@@ -1734,6 +1701,9 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "type": "object"
@@ -3680,12 +3650,7 @@
           "additionalProperties": false,
           "properties": {
             "itemHorizontalAlignment": {
-              "default": "start",
-              "enum": [
-                "center",
-                "end",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
             "maxItemsInEachColumn": {
               "default": 2147483647,
@@ -3703,6 +3668,9 @@
                 }
               },
               "type": "object"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "type": "object"
@@ -3723,12 +3691,7 @@
           "additionalProperties": false,
           "properties": {
             "itemVerticalAlignment": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_AlignmentVertical"
             },
             "maxItemsInEachRow": {
               "default": 2147483647,
@@ -3746,6 +3709,9 @@
                 }
               },
               "type": "object"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "type": "object"
@@ -4022,24 +3988,7 @@
           "additionalProperties": false,
           "properties": {
             "alignment": {
-              "default": "center",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomLeft",
-                "bottomRight",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerLeft",
-                "centerRight",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topLeft",
-                "topRight",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "contentDescription": {
               "anyOf": [
@@ -4404,15 +4353,7 @@
               "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "spaceAround",
-                "spaceBetween",
-                "spaceEvenly",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_ArrangementVertical"
             },
             "window": {
               "type": "string"
@@ -6576,24 +6517,7 @@
           "additionalProperties": false,
           "properties": {
             "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomLeft",
-                "bottomRight",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerLeft",
-                "centerRight",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topLeft",
-                "topRight",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "isRefreshing": {
               "type": "boolean"
@@ -6802,12 +6726,7 @@
               "type": "object"
             },
             "verticalAlignment": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_AlignmentVertical"
             }
           },
           "type": "object"
@@ -9069,23 +8988,7 @@
               "type": "string"
             },
             "style": {
-              "anyOf": [
-                {
-                  "default": "bodyMedium",
-                  "enum": [
-                    "bodyLarge",
-                    "bodyMedium",
-                    "bodySmall",
-                    "headlineMedium",
-                    "titleLarge",
-                    "titleMedium",
-                    "titleSmall"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_TextStyle"
-                }
-              ]
+              "$ref": "#/definitions/Family_TextStyle"
             },
             "text": {
               "type": "string"
@@ -9521,15 +9424,7 @@
               "$ref": "#/definitions/Action"
             },
             "position": {
-              "default": "above",
-              "enum": [
-                "above",
-                "below",
-                "end",
-                "left",
-                "right",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_TooltipAnchorPosition"
             },
             "visible": {
               "type": "boolean"
@@ -9906,6 +9801,13 @@
         }
       ]
     },
+    "Family_ArrangementVertical": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_ArrangementVertical"
+        }
+      ]
+    },
     "Family_BorderStroke": {
       "oneOf": [
         {
@@ -10256,6 +10158,9 @@
           "$ref": "#/definitions/Value_CutCornerShape"
         },
         {
+          "$ref": "#/definitions/Value_NamedShape"
+        },
+        {
           "$ref": "#/definitions/Value_RoundedCornerShape"
         },
         {
@@ -10387,6 +10292,13 @@
         }
       ]
     },
+    "Family_TooltipAnchorPosition": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_TooltipAnchorPosition"
+        }
+      ]
+    },
     "Family_TopAppBarColors": {
       "oneOf": [
         {
@@ -10460,23 +10372,7 @@
           "additionalProperties": false,
           "properties": {
             "alignment": {
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomLeft",
-                "bottomRight",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerLeft",
-                "centerRight",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topLeft",
-                "topRight",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "type": {
               "const": "boxAlign"
@@ -10512,18 +10408,7 @@
           "additionalProperties": false,
           "properties": {
             "shape": {
-              "anyOf": [
-                {
-                  "enum": [
-                    "circle",
-                    "rectangle",
-                    "rounded"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_Shape"
-                }
-              ]
+              "$ref": "#/definitions/Family_Shape"
             },
             "type": {
               "const": "clip"
@@ -10539,13 +10424,7 @@
           "additionalProperties": false,
           "properties": {
             "alignment": {
-              "enum": [
-                "centerHorizontally",
-                "end",
-                "left",
-                "right",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
             "type": {
               "const": "columnAlign"
@@ -10749,11 +10628,7 @@
           "additionalProperties": false,
           "properties": {
             "alignment": {
-              "enum": [
-                "bottom",
-                "centerVertically",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_AlignmentVertical"
             },
             "type": {
               "const": "rowAlign"
@@ -11566,7 +11441,7 @@
             "horizontalAlignment": {
               "default": "start",
               "enum": [
-                "center",
+                "centerHorizontally",
                 "end",
                 "start"
               ]
@@ -11590,6 +11465,17 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "top"
+              ]
             }
           },
           "type": "object"
@@ -11688,9 +11574,8 @@
           "properties": {
             "shape": {
               "enum": [
-                "circle",
-                "rectangle",
-                "rounded"
+                "circleShape",
+                "rectangleShape"
               ]
             },
             "type": {
@@ -11952,7 +11837,7 @@
               "default": "top",
               "enum": [
                 "bottom",
-                "center",
+                "centerVertically",
                 "top"
               ]
             }
@@ -12283,7 +12168,7 @@
             "horizontalAlignment": {
               "default": "start",
               "enum": [
-                "center",
+                "centerHorizontally",
                 "end",
                 "start"
               ]
@@ -12307,6 +12192,17 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "top"
+              ]
             }
           },
           "type": "object"
@@ -12512,9 +12408,8 @@
           "properties": {
             "shape": {
               "enum": [
-                "circle",
-                "rectangle",
-                "rounded"
+                "circleShape",
+                "rectangleShape"
               ]
             },
             "type": {
@@ -12788,7 +12683,7 @@
               "default": "top",
               "enum": [
                 "bottom",
-                "center",
+                "centerVertically",
                 "top"
               ]
             }
@@ -13036,18 +12931,7 @@
           "additionalProperties": false,
           "properties": {
             "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "modifier": {
               "properties": {
@@ -13190,12 +13074,7 @@
           "additionalProperties": false,
           "properties": {
             "horizontalAlignment": {
-              "default": "start",
-              "enum": [
-                "center",
-                "end",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
             "modifier": {
               "properties": {
@@ -13216,6 +13095,9 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "type": "object"
@@ -13372,15 +13254,7 @@
               "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "spaceAround",
-                "spaceBetween",
-                "spaceEvenly",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_ArrangementVertical"
             },
             "window": {
               "type": "string"
@@ -13436,18 +13310,7 @@
           "additionalProperties": false,
           "properties": {
             "shape": {
-              "anyOf": [
-                {
-                  "enum": [
-                    "circle",
-                    "rectangle",
-                    "rounded"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_Shape"
-                }
-              ]
+              "$ref": "#/definitions/Family_Shape"
             },
             "type": {
               "const": "clip"
@@ -13787,12 +13650,7 @@
               "type": "object"
             },
             "verticalAlignment": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_AlignmentVertical"
             }
           },
           "type": "object"
@@ -13918,23 +13776,7 @@
               "type": "string"
             },
             "style": {
-              "anyOf": [
-                {
-                  "default": "bodyMedium",
-                  "enum": [
-                    "bodyLarge",
-                    "bodyMedium",
-                    "bodySmall",
-                    "headlineMedium",
-                    "titleLarge",
-                    "titleMedium",
-                    "titleSmall"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_TextStyle"
-                }
-              ]
+              "$ref": "#/definitions/Family_TextStyle"
             },
             "text": {
               "type": "string"
@@ -14059,18 +13901,7 @@
           "additionalProperties": false,
           "properties": {
             "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "modifier": {
               "properties": {
@@ -14213,12 +14044,7 @@
           "additionalProperties": false,
           "properties": {
             "horizontalAlignment": {
-              "default": "start",
-              "enum": [
-                "center",
-                "end",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
             "modifier": {
               "properties": {
@@ -14239,6 +14065,9 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "type": "object"
@@ -14395,15 +14224,7 @@
               "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "spaceAround",
-                "spaceBetween",
-                "spaceEvenly",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_ArrangementVertical"
             },
             "window": {
               "type": "string"
@@ -14459,18 +14280,7 @@
           "additionalProperties": false,
           "properties": {
             "shape": {
-              "anyOf": [
-                {
-                  "enum": [
-                    "circle",
-                    "rectangle",
-                    "rounded"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_Shape"
-                }
-              ]
+              "$ref": "#/definitions/Family_Shape"
             },
             "type": {
               "const": "clip"
@@ -14810,12 +14620,7 @@
               "type": "object"
             },
             "verticalAlignment": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_AlignmentVertical"
             }
           },
           "type": "object"
@@ -14941,23 +14746,7 @@
               "type": "string"
             },
             "style": {
-              "anyOf": [
-                {
-                  "default": "bodyMedium",
-                  "enum": [
-                    "bodyLarge",
-                    "bodyMedium",
-                    "bodySmall",
-                    "headlineMedium",
-                    "titleLarge",
-                    "titleMedium",
-                    "titleSmall"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_TextStyle"
-                }
-              ]
+              "$ref": "#/definitions/Family_TextStyle"
             },
             "text": {
               "type": "string"
@@ -15082,18 +14871,7 @@
           "additionalProperties": false,
           "properties": {
             "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "modifier": {
               "properties": {
@@ -15236,12 +15014,7 @@
           "additionalProperties": false,
           "properties": {
             "horizontalAlignment": {
-              "default": "start",
-              "enum": [
-                "center",
-                "end",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
             "modifier": {
               "properties": {
@@ -15262,6 +15035,9 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "type": "object"
@@ -15418,15 +15194,7 @@
               "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "spaceAround",
-                "spaceBetween",
-                "spaceEvenly",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_ArrangementVertical"
             },
             "window": {
               "type": "string"
@@ -15482,18 +15250,7 @@
           "additionalProperties": false,
           "properties": {
             "shape": {
-              "anyOf": [
-                {
-                  "enum": [
-                    "circle",
-                    "rectangle",
-                    "rounded"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_Shape"
-                }
-              ]
+              "$ref": "#/definitions/Family_Shape"
             },
             "type": {
               "const": "clip"
@@ -15833,12 +15590,7 @@
               "type": "object"
             },
             "verticalAlignment": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_AlignmentVertical"
             }
           },
           "type": "object"
@@ -15964,23 +15716,7 @@
               "type": "string"
             },
             "style": {
-              "anyOf": [
-                {
-                  "default": "bodyMedium",
-                  "enum": [
-                    "bodyLarge",
-                    "bodyMedium",
-                    "bodySmall",
-                    "headlineMedium",
-                    "titleLarge",
-                    "titleMedium",
-                    "titleSmall"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_TextStyle"
-                }
-              ]
+              "$ref": "#/definitions/Family_TextStyle"
             },
             "text": {
               "type": "string"
@@ -16105,18 +15841,7 @@
           "additionalProperties": false,
           "properties": {
             "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "modifier": {
               "properties": {
@@ -16259,12 +15984,7 @@
           "additionalProperties": false,
           "properties": {
             "horizontalAlignment": {
-              "default": "start",
-              "enum": [
-                "center",
-                "end",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
             "modifier": {
               "properties": {
@@ -16285,6 +16005,9 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "type": "object"
@@ -16441,15 +16164,7 @@
               "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "spaceAround",
-                "spaceBetween",
-                "spaceEvenly",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_ArrangementVertical"
             },
             "window": {
               "type": "string"
@@ -16505,18 +16220,7 @@
           "additionalProperties": false,
           "properties": {
             "shape": {
-              "anyOf": [
-                {
-                  "enum": [
-                    "circle",
-                    "rectangle",
-                    "rounded"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_Shape"
-                }
-              ]
+              "$ref": "#/definitions/Family_Shape"
             },
             "type": {
               "const": "clip"
@@ -16856,12 +16560,7 @@
               "type": "object"
             },
             "verticalAlignment": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_AlignmentVertical"
             }
           },
           "type": "object"
@@ -16987,23 +16686,7 @@
               "type": "string"
             },
             "style": {
-              "anyOf": [
-                {
-                  "default": "bodyMedium",
-                  "enum": [
-                    "bodyLarge",
-                    "bodyMedium",
-                    "bodySmall",
-                    "headlineMedium",
-                    "titleLarge",
-                    "titleMedium",
-                    "titleSmall"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_TextStyle"
-                }
-              ]
+              "$ref": "#/definitions/Family_TextStyle"
             },
             "text": {
               "type": "string"
@@ -17128,18 +16811,7 @@
           "additionalProperties": false,
           "properties": {
             "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "modifier": {
               "properties": {
@@ -17282,12 +16954,7 @@
           "additionalProperties": false,
           "properties": {
             "horizontalAlignment": {
-              "default": "start",
-              "enum": [
-                "center",
-                "end",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
             "modifier": {
               "properties": {
@@ -17308,6 +16975,9 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "type": "object"
@@ -17464,15 +17134,7 @@
               "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "spaceAround",
-                "spaceBetween",
-                "spaceEvenly",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_ArrangementVertical"
             },
             "window": {
               "type": "string"
@@ -17528,18 +17190,7 @@
           "additionalProperties": false,
           "properties": {
             "shape": {
-              "anyOf": [
-                {
-                  "enum": [
-                    "circle",
-                    "rectangle",
-                    "rounded"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_Shape"
-                }
-              ]
+              "$ref": "#/definitions/Family_Shape"
             },
             "type": {
               "const": "clip"
@@ -17879,12 +17530,7 @@
               "type": "object"
             },
             "verticalAlignment": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_AlignmentVertical"
             }
           },
           "type": "object"
@@ -18010,23 +17656,7 @@
               "type": "string"
             },
             "style": {
-              "anyOf": [
-                {
-                  "default": "bodyMedium",
-                  "enum": [
-                    "bodyLarge",
-                    "bodyMedium",
-                    "bodySmall",
-                    "headlineMedium",
-                    "titleLarge",
-                    "titleMedium",
-                    "titleSmall"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_TextStyle"
-                }
-              ]
+              "$ref": "#/definitions/Family_TextStyle"
             },
             "text": {
               "type": "string"
@@ -18151,18 +17781,7 @@
           "additionalProperties": false,
           "properties": {
             "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "modifier": {
               "properties": {
@@ -18305,12 +17924,7 @@
           "additionalProperties": false,
           "properties": {
             "horizontalAlignment": {
-              "default": "start",
-              "enum": [
-                "center",
-                "end",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
             "modifier": {
               "properties": {
@@ -18331,6 +17945,9 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "type": "object"
@@ -18487,15 +18104,7 @@
               "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "spaceAround",
-                "spaceBetween",
-                "spaceEvenly",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_ArrangementVertical"
             },
             "window": {
               "type": "string"
@@ -18551,18 +18160,7 @@
           "additionalProperties": false,
           "properties": {
             "shape": {
-              "anyOf": [
-                {
-                  "enum": [
-                    "circle",
-                    "rectangle",
-                    "rounded"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_Shape"
-                }
-              ]
+              "$ref": "#/definitions/Family_Shape"
             },
             "type": {
               "const": "clip"
@@ -18902,12 +18500,7 @@
               "type": "object"
             },
             "verticalAlignment": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_AlignmentVertical"
             }
           },
           "type": "object"
@@ -19033,23 +18626,7 @@
               "type": "string"
             },
             "style": {
-              "anyOf": [
-                {
-                  "default": "bodyMedium",
-                  "enum": [
-                    "bodyLarge",
-                    "bodyMedium",
-                    "bodySmall",
-                    "headlineMedium",
-                    "titleLarge",
-                    "titleMedium",
-                    "titleSmall"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_TextStyle"
-                }
-              ]
+              "$ref": "#/definitions/Family_TextStyle"
             },
             "text": {
               "type": "string"
@@ -19174,18 +18751,7 @@
           "additionalProperties": false,
           "properties": {
             "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "modifier": {
               "properties": {
@@ -19328,12 +18894,7 @@
           "additionalProperties": false,
           "properties": {
             "horizontalAlignment": {
-              "default": "start",
-              "enum": [
-                "center",
-                "end",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
             "modifier": {
               "properties": {
@@ -19354,6 +18915,9 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "type": "object"
@@ -19510,15 +19074,7 @@
               "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "spaceAround",
-                "spaceBetween",
-                "spaceEvenly",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_ArrangementVertical"
             },
             "window": {
               "type": "string"
@@ -19574,18 +19130,7 @@
           "additionalProperties": false,
           "properties": {
             "shape": {
-              "anyOf": [
-                {
-                  "enum": [
-                    "circle",
-                    "rectangle",
-                    "rounded"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_Shape"
-                }
-              ]
+              "$ref": "#/definitions/Family_Shape"
             },
             "type": {
               "const": "clip"
@@ -19925,12 +19470,7 @@
               "type": "object"
             },
             "verticalAlignment": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_AlignmentVertical"
             }
           },
           "type": "object"
@@ -20056,23 +19596,7 @@
               "type": "string"
             },
             "style": {
-              "anyOf": [
-                {
-                  "default": "bodyMedium",
-                  "enum": [
-                    "bodyLarge",
-                    "bodyMedium",
-                    "bodySmall",
-                    "headlineMedium",
-                    "titleLarge",
-                    "titleMedium",
-                    "titleSmall"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_TextStyle"
-                }
-              ]
+              "$ref": "#/definitions/Family_TextStyle"
             },
             "text": {
               "type": "string"
@@ -20197,18 +19721,7 @@
           "additionalProperties": false,
           "properties": {
             "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "modifier": {
               "properties": {
@@ -20351,12 +19864,7 @@
           "additionalProperties": false,
           "properties": {
             "horizontalAlignment": {
-              "default": "start",
-              "enum": [
-                "center",
-                "end",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
             "modifier": {
               "properties": {
@@ -20377,6 +19885,9 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "type": "object"
@@ -20580,15 +20091,7 @@
               "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "spaceAround",
-                "spaceBetween",
-                "spaceEvenly",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_ArrangementVertical"
             },
             "window": {
               "type": "string"
@@ -20701,18 +20204,7 @@
           "additionalProperties": false,
           "properties": {
             "shape": {
-              "anyOf": [
-                {
-                  "enum": [
-                    "circle",
-                    "rectangle",
-                    "rounded"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_Shape"
-                }
-              ]
+              "$ref": "#/definitions/Family_Shape"
             },
             "type": {
               "const": "clip"
@@ -21058,12 +20550,7 @@
               "type": "object"
             },
             "verticalAlignment": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_AlignmentVertical"
             }
           },
           "type": "object"
@@ -21189,23 +20676,7 @@
               "type": "string"
             },
             "style": {
-              "anyOf": [
-                {
-                  "default": "bodyMedium",
-                  "enum": [
-                    "bodyLarge",
-                    "bodyMedium",
-                    "bodySmall",
-                    "headlineMedium",
-                    "titleLarge",
-                    "titleMedium",
-                    "titleSmall"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_TextStyle"
-                }
-              ]
+              "$ref": "#/definitions/Family_TextStyle"
             },
             "text": {
               "type": "string"
@@ -21330,18 +20801,7 @@
           "additionalProperties": false,
           "properties": {
             "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "modifier": {
               "properties": {
@@ -21484,12 +20944,7 @@
           "additionalProperties": false,
           "properties": {
             "horizontalAlignment": {
-              "default": "start",
-              "enum": [
-                "center",
-                "end",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
             "modifier": {
               "properties": {
@@ -21510,6 +20965,9 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "type": "object"
@@ -21713,15 +21171,7 @@
               "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "spaceAround",
-                "spaceBetween",
-                "spaceEvenly",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_ArrangementVertical"
             },
             "window": {
               "type": "string"
@@ -21877,18 +21327,7 @@
           "additionalProperties": false,
           "properties": {
             "shape": {
-              "anyOf": [
-                {
-                  "enum": [
-                    "circle",
-                    "rectangle",
-                    "rounded"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_Shape"
-                }
-              ]
+              "$ref": "#/definitions/Family_Shape"
             },
             "type": {
               "const": "clip"
@@ -22237,12 +21676,7 @@
               "type": "object"
             },
             "verticalAlignment": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_AlignmentVertical"
             }
           },
           "type": "object"
@@ -22368,23 +21802,7 @@
               "type": "string"
             },
             "style": {
-              "anyOf": [
-                {
-                  "default": "bodyMedium",
-                  "enum": [
-                    "bodyLarge",
-                    "bodyMedium",
-                    "bodySmall",
-                    "headlineMedium",
-                    "titleLarge",
-                    "titleMedium",
-                    "titleSmall"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_TextStyle"
-                }
-              ]
+              "$ref": "#/definitions/Family_TextStyle"
             },
             "text": {
               "type": "string"
@@ -22603,7 +22021,7 @@
             "horizontalAlignment": {
               "default": "start",
               "enum": [
-                "center",
+                "centerHorizontally",
                 "end",
                 "start"
               ]
@@ -22627,6 +22045,17 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "top"
+              ]
             }
           },
           "type": "object"
@@ -22764,9 +22193,8 @@
           "properties": {
             "shape": {
               "enum": [
-                "circle",
-                "rectangle",
-                "rounded"
+                "circleShape",
+                "rectangleShape"
               ]
             },
             "type": {
@@ -23031,7 +22459,7 @@
               "default": "top",
               "enum": [
                 "bottom",
-                "center",
+                "centerVertically",
                 "top"
               ]
             }
@@ -23230,18 +22658,7 @@
           "additionalProperties": false,
           "properties": {
             "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "modifier": {
               "properties": {
@@ -23384,12 +22801,7 @@
           "additionalProperties": false,
           "properties": {
             "horizontalAlignment": {
-              "default": "start",
-              "enum": [
-                "center",
-                "end",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
             "modifier": {
               "properties": {
@@ -23410,6 +22822,9 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "type": "object"
@@ -23613,15 +23028,7 @@
               "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "spaceAround",
-                "spaceBetween",
-                "spaceEvenly",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_ArrangementVertical"
             },
             "window": {
               "type": "string"
@@ -23829,18 +23236,7 @@
           "additionalProperties": false,
           "properties": {
             "shape": {
-              "anyOf": [
-                {
-                  "enum": [
-                    "circle",
-                    "rectangle",
-                    "rounded"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_Shape"
-                }
-              ]
+              "$ref": "#/definitions/Family_Shape"
             },
             "type": {
               "const": "clip"
@@ -24192,12 +23588,7 @@
               "type": "object"
             },
             "verticalAlignment": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_AlignmentVertical"
             }
           },
           "type": "object"
@@ -24323,23 +23714,7 @@
               "type": "string"
             },
             "style": {
-              "anyOf": [
-                {
-                  "default": "bodyMedium",
-                  "enum": [
-                    "bodyLarge",
-                    "bodyMedium",
-                    "bodySmall",
-                    "headlineMedium",
-                    "titleLarge",
-                    "titleMedium",
-                    "titleSmall"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_TextStyle"
-                }
-              ]
+              "$ref": "#/definitions/Family_TextStyle"
             },
             "text": {
               "type": "string"
@@ -24464,18 +23839,7 @@
           "additionalProperties": false,
           "properties": {
             "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "modifier": {
               "properties": {
@@ -24618,12 +23982,7 @@
           "additionalProperties": false,
           "properties": {
             "horizontalAlignment": {
-              "default": "start",
-              "enum": [
-                "center",
-                "end",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
             "modifier": {
               "properties": {
@@ -24644,6 +24003,9 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "type": "object"
@@ -24900,15 +24262,7 @@
               "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "spaceAround",
-                "spaceBetween",
-                "spaceEvenly",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_ArrangementVertical"
             },
             "window": {
               "type": "string"
@@ -25116,18 +24470,7 @@
           "additionalProperties": false,
           "properties": {
             "shape": {
-              "anyOf": [
-                {
-                  "enum": [
-                    "circle",
-                    "rectangle",
-                    "rounded"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_Shape"
-                }
-              ]
+              "$ref": "#/definitions/Family_Shape"
             },
             "type": {
               "const": "clip"
@@ -25482,12 +24825,7 @@
               "type": "object"
             },
             "verticalAlignment": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_AlignmentVertical"
             }
           },
           "type": "object"
@@ -25613,23 +24951,7 @@
               "type": "string"
             },
             "style": {
-              "anyOf": [
-                {
-                  "default": "bodyMedium",
-                  "enum": [
-                    "bodyLarge",
-                    "bodyMedium",
-                    "bodySmall",
-                    "headlineMedium",
-                    "titleLarge",
-                    "titleMedium",
-                    "titleSmall"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_TextStyle"
-                }
-              ]
+              "$ref": "#/definitions/Family_TextStyle"
             },
             "text": {
               "type": "string"
@@ -25754,18 +25076,7 @@
           "additionalProperties": false,
           "properties": {
             "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "modifier": {
               "properties": {
@@ -26046,12 +25357,7 @@
           "additionalProperties": false,
           "properties": {
             "horizontalAlignment": {
-              "default": "start",
-              "enum": [
-                "center",
-                "end",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
             "modifier": {
               "properties": {
@@ -26072,6 +25378,9 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "type": "object"
@@ -26564,15 +25873,7 @@
               "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "spaceAround",
-                "spaceBetween",
-                "spaceEvenly",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_ArrangementVertical"
             },
             "window": {
               "type": "string"
@@ -26847,18 +26148,7 @@
           "additionalProperties": false,
           "properties": {
             "shape": {
-              "anyOf": [
-                {
-                  "enum": [
-                    "circle",
-                    "rectangle",
-                    "rounded"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_Shape"
-                }
-              ]
+              "$ref": "#/definitions/Family_Shape"
             },
             "type": {
               "const": "clip"
@@ -27436,12 +26726,7 @@
               "type": "object"
             },
             "verticalAlignment": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_AlignmentVertical"
             }
           },
           "type": "object"
@@ -27633,23 +26918,7 @@
               "type": "string"
             },
             "style": {
-              "anyOf": [
-                {
-                  "default": "bodyMedium",
-                  "enum": [
-                    "bodyLarge",
-                    "bodyMedium",
-                    "bodySmall",
-                    "headlineMedium",
-                    "titleLarge",
-                    "titleMedium",
-                    "titleSmall"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_TextStyle"
-                }
-              ]
+              "$ref": "#/definitions/Family_TextStyle"
             },
             "text": {
               "type": "string"
@@ -27947,24 +27216,7 @@
           "additionalProperties": false,
           "properties": {
             "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomLeft",
-                "bottomRight",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerLeft",
-                "centerRight",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topLeft",
-                "topRight",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "label": {
               "default": "AnimatedContent",
@@ -28608,18 +27860,7 @@
           "additionalProperties": false,
           "properties": {
             "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "modifier": {
               "properties": {
@@ -29117,12 +28358,7 @@
           "additionalProperties": false,
           "properties": {
             "horizontalAlignment": {
-              "default": "start",
-              "enum": [
-                "center",
-                "end",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
             "modifier": {
               "properties": {
@@ -29143,6 +28379,9 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "type": "object"
@@ -31089,12 +30328,7 @@
           "additionalProperties": false,
           "properties": {
             "itemHorizontalAlignment": {
-              "default": "start",
-              "enum": [
-                "center",
-                "end",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
             "maxItemsInEachColumn": {
               "default": 2147483647,
@@ -31112,6 +30346,9 @@
                 }
               },
               "type": "object"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "type": "object"
@@ -31132,12 +30369,7 @@
           "additionalProperties": false,
           "properties": {
             "itemVerticalAlignment": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_AlignmentVertical"
             },
             "maxItemsInEachRow": {
               "default": 2147483647,
@@ -31155,6 +30387,9 @@
                 }
               },
               "type": "object"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
             }
           },
           "type": "object"
@@ -31431,24 +30666,7 @@
           "additionalProperties": false,
           "properties": {
             "alignment": {
-              "default": "center",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomLeft",
-                "bottomRight",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerLeft",
-                "centerRight",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topLeft",
-                "topRight",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "contentDescription": {
               "anyOf": [
@@ -31813,15 +31031,7 @@
               "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "spaceAround",
-                "spaceBetween",
-                "spaceEvenly",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_ArrangementVertical"
             },
             "window": {
               "type": "string"
@@ -32522,23 +31732,7 @@
           "additionalProperties": false,
           "properties": {
             "alignment": {
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomLeft",
-                "bottomRight",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerLeft",
-                "centerRight",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topLeft",
-                "topRight",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "type": {
               "const": "boxAlign"
@@ -32574,18 +31768,7 @@
           "additionalProperties": false,
           "properties": {
             "shape": {
-              "anyOf": [
-                {
-                  "enum": [
-                    "circle",
-                    "rectangle",
-                    "rounded"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_Shape"
-                }
-              ]
+              "$ref": "#/definitions/Family_Shape"
             },
             "type": {
               "const": "clip"
@@ -32601,13 +31784,7 @@
           "additionalProperties": false,
           "properties": {
             "alignment": {
-              "enum": [
-                "centerHorizontally",
-                "end",
-                "left",
-                "right",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
             "type": {
               "const": "columnAlign"
@@ -32811,11 +31988,7 @@
           "additionalProperties": false,
           "properties": {
             "alignment": {
-              "enum": [
-                "bottom",
-                "centerVertically",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_AlignmentVertical"
             },
             "type": {
               "const": "rowAlign"
@@ -35037,24 +34210,7 @@
           "additionalProperties": false,
           "properties": {
             "contentAlignment": {
-              "default": "topStart",
-              "enum": [
-                "bottomCenter",
-                "bottomEnd",
-                "bottomLeft",
-                "bottomRight",
-                "bottomStart",
-                "center",
-                "centerEnd",
-                "centerLeft",
-                "centerRight",
-                "centerStart",
-                "topCenter",
-                "topEnd",
-                "topLeft",
-                "topRight",
-                "topStart"
-              ]
+              "$ref": "#/definitions/Family_Alignment"
             },
             "isRefreshing": {
               "type": "boolean"
@@ -35263,12 +34419,7 @@
               "type": "object"
             },
             "verticalAlignment": {
-              "default": "top",
-              "enum": [
-                "bottom",
-                "center",
-                "top"
-              ]
+              "$ref": "#/definitions/Family_AlignmentVertical"
             }
           },
           "type": "object"
@@ -37530,23 +36681,7 @@
               "type": "string"
             },
             "style": {
-              "anyOf": [
-                {
-                  "default": "bodyMedium",
-                  "enum": [
-                    "bodyLarge",
-                    "bodyMedium",
-                    "bodySmall",
-                    "headlineMedium",
-                    "titleLarge",
-                    "titleMedium",
-                    "titleSmall"
-                  ]
-                },
-                {
-                  "$ref": "#/definitions/Family_TextStyle"
-                }
-              ]
+              "$ref": "#/definitions/Family_TextStyle"
             },
             "text": {
               "type": "string"
@@ -37982,15 +37117,7 @@
               "$ref": "#/definitions/Action"
             },
             "position": {
-              "default": "above",
-              "enum": [
-                "above",
-                "below",
-                "end",
-                "left",
-                "right",
-                "start"
-              ]
+              "$ref": "#/definitions/Family_TooltipAnchorPosition"
             },
             "visible": {
               "type": "boolean"
@@ -38420,7 +37547,7 @@
             "horizontalAlignment": {
               "default": "start",
               "enum": [
-                "center",
+                "centerHorizontally",
                 "end",
                 "start"
               ]
@@ -38444,6 +37571,17 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "top"
+              ]
             }
           },
           "type": "object"
@@ -38581,9 +37719,8 @@
           "properties": {
             "shape": {
               "enum": [
-                "circle",
-                "rectangle",
-                "rounded"
+                "circleShape",
+                "rectangleShape"
               ]
             },
             "type": {
@@ -38848,7 +37985,7 @@
               "default": "top",
               "enum": [
                 "bottom",
-                "center",
+                "centerVertically",
                 "top"
               ]
             }
@@ -39190,7 +38327,7 @@
             "horizontalAlignment": {
               "default": "start",
               "enum": [
-                "center",
+                "centerHorizontally",
                 "end",
                 "start"
               ]
@@ -39214,6 +38351,17 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "top"
+              ]
             }
           },
           "type": "object"
@@ -39419,9 +38567,8 @@
           "properties": {
             "shape": {
               "enum": [
-                "circle",
-                "rectangle",
-                "rounded"
+                "circleShape",
+                "rectangleShape"
               ]
             },
             "type": {
@@ -39695,7 +38842,7 @@
               "default": "top",
               "enum": [
                 "bottom",
-                "center",
+                "centerVertically",
                 "top"
               ]
             }
@@ -40086,7 +39233,7 @@
             "horizontalAlignment": {
               "default": "start",
               "enum": [
-                "center",
+                "centerHorizontally",
                 "end",
                 "start"
               ]
@@ -40110,6 +39257,17 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "top"
+              ]
             }
           },
           "type": "object"
@@ -40315,9 +39473,8 @@
           "properties": {
             "shape": {
               "enum": [
-                "circle",
-                "rectangle",
-                "rounded"
+                "circleShape",
+                "rectangleShape"
               ]
             },
             "type": {
@@ -40591,7 +39748,7 @@
               "default": "top",
               "enum": [
                 "bottom",
-                "center",
+                "centerVertically",
                 "top"
               ]
             }
@@ -40982,7 +40139,7 @@
             "horizontalAlignment": {
               "default": "start",
               "enum": [
-                "center",
+                "centerHorizontally",
                 "end",
                 "start"
               ]
@@ -41006,6 +40163,17 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "top"
+              ]
             }
           },
           "type": "object"
@@ -41211,9 +40379,8 @@
           "properties": {
             "shape": {
               "enum": [
-                "circle",
-                "rectangle",
-                "rounded"
+                "circleShape",
+                "rectangleShape"
               ]
             },
             "type": {
@@ -41487,7 +40654,7 @@
               "default": "top",
               "enum": [
                 "bottom",
-                "center",
+                "centerVertically",
                 "top"
               ]
             }
@@ -41878,7 +41045,7 @@
             "horizontalAlignment": {
               "default": "start",
               "enum": [
-                "center",
+                "centerHorizontally",
                 "end",
                 "start"
               ]
@@ -41902,6 +41069,17 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "top"
+              ]
             }
           },
           "type": "object"
@@ -42107,9 +41285,8 @@
           "properties": {
             "shape": {
               "enum": [
-                "circle",
-                "rectangle",
-                "rounded"
+                "circleShape",
+                "rectangleShape"
               ]
             },
             "type": {
@@ -42383,7 +41560,7 @@
               "default": "top",
               "enum": [
                 "bottom",
-                "center",
+                "centerVertically",
                 "top"
               ]
             }
@@ -42774,7 +41951,7 @@
             "horizontalAlignment": {
               "default": "start",
               "enum": [
-                "center",
+                "centerHorizontally",
                 "end",
                 "start"
               ]
@@ -42798,6 +41975,17 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "top"
+              ]
             }
           },
           "type": "object"
@@ -43003,9 +42191,8 @@
           "properties": {
             "shape": {
               "enum": [
-                "circle",
-                "rectangle",
-                "rounded"
+                "circleShape",
+                "rectangleShape"
               ]
             },
             "type": {
@@ -43279,7 +42466,7 @@
               "default": "top",
               "enum": [
                 "bottom",
-                "center",
+                "centerVertically",
                 "top"
               ]
             }
@@ -43670,7 +42857,7 @@
             "horizontalAlignment": {
               "default": "start",
               "enum": [
-                "center",
+                "centerHorizontally",
                 "end",
                 "start"
               ]
@@ -43694,6 +42881,17 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "top"
+              ]
             }
           },
           "type": "object"
@@ -43899,9 +43097,8 @@
           "properties": {
             "shape": {
               "enum": [
-                "circle",
-                "rectangle",
-                "rounded"
+                "circleShape",
+                "rectangleShape"
               ]
             },
             "type": {
@@ -44175,7 +43372,7 @@
               "default": "top",
               "enum": [
                 "bottom",
-                "center",
+                "centerVertically",
                 "top"
               ]
             }
@@ -44566,7 +43763,7 @@
             "horizontalAlignment": {
               "default": "start",
               "enum": [
-                "center",
+                "centerHorizontally",
                 "end",
                 "start"
               ]
@@ -44590,6 +43787,17 @@
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "verticalArrangement": {
+              "default": "top",
+              "enum": [
+                "bottom",
+                "center",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "top"
+              ]
             }
           },
           "type": "object"
@@ -44795,9 +44003,8 @@
           "properties": {
             "shape": {
               "enum": [
-                "circle",
-                "rectangle",
-                "rounded"
+                "circleShape",
+                "rectangleShape"
               ]
             },
             "type": {
@@ -45071,7 +44278,7 @@
               "default": "top",
               "enum": [
                 "bottom",
-                "center",
+                "centerVertically",
                 "top"
               ]
             }
@@ -45420,6 +44627,30 @@
       "required": [
         "type",
         "text"
+      ],
+      "type": "object"
+    },
+    "Value_ArrangementVertical": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "Bottom",
+            "Center",
+            "SpaceAround",
+            "SpaceBetween",
+            "SpaceEvenly",
+            "Top"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "ArrangementVertical"
+        }
+      },
+      "required": [
+        "type",
+        "name"
       ],
       "type": "object"
     },
@@ -45777,6 +45008,26 @@
       "required": [
         "type",
         "weight"
+      ],
+      "type": "object"
+    },
+    "Value_NamedShape": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "CircleShape",
+            "RectangleShape"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "NamedShape"
+        }
+      },
+      "required": [
+        "type",
+        "name"
       ],
       "type": "object"
     },
@@ -46507,6 +45758,30 @@
         },
         "type": {
           "const": "ToggleableState"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
+    "Value_TooltipAnchorPosition": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "Above",
+            "Below",
+            "End",
+            "Left",
+            "Right",
+            "Start"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "TooltipAnchorPosition"
         }
       },
       "required": [

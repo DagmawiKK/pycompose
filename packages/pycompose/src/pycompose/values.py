@@ -16,6 +16,7 @@ __all__ = [
     "AlignmentVertical",
     "AndroidExternalSurfaceZOrder",
     "AnnotatedString",
+    "ArrangementVertical",
     "BorderStroke",
     "Color",
     "ContentScale",
@@ -31,6 +32,7 @@ __all__ = [
     "FontFamily",
     "FontStyle",
     "FontWeight",
+    "NamedShape",
     "NavigationItemIconPosition",
     "NavigationSuiteType",
     "Offset",
@@ -53,6 +55,7 @@ __all__ = [
     "TimePickerDisplayMode",
     "TimePickerLayoutType",
     "ToggleableState",
+    "TooltipAnchorPosition",
     "WindowInsets",
     "assistChipColors",
     "assistChipElevation",
@@ -128,11 +131,15 @@ DEFINITIONS: dict[str, dict[str, object]] = json.loads(
     'ng","values":["Behind","MediaOverlay","OnTop"]}},"since":"1.23.0'
     '"},"AnnotatedString":{"family":"AnnotatedString","parameters":{"'
     'text":{"required":true,"type":"string"}},"since":"1.12.0"},'
-    '"BorderStroke":{"family":"BorderStroke","parameters":{"brush":{"'
-    'required":true,"type":"value","valueType":"Brush"},"width":{"min'
-    'imum":0,"required":true,"type":"value","valueType":"Dp"}},"since'
-    '":"1.12.0"},"Color":{"family":"Color","parameters":{"color":{"ma'
-    'ximum":4294967295,"minimum":0,'
+    '"ArrangementVertical":{"family":"ArrangementVertical",'
+    '"parameters":{"name":{"required":true,"type":"string",'
+    '"values":["Bottom","Center",'
+    '"SpaceAround","SpaceBetween","SpaceEvenly","Top"]}},"since":"1.2'
+    '3.0"},"BorderStroke":{"family":"BorderStroke","parameters":{"bru'
+    'sh":{"required":true,"type":"value","valueType":"Brush"},"width"'
+    ':{"minimum":0,"required":true,"type":"value","valueType":"Dp"}},'
+    '"since":"1.12.0"},"Color":{"family":"Color","parameters":{"color'
+    '":{"maximum":4294967295,"minimum":0,'
     '"required":true,"type":"long"}},"since":"1.11.0"},"ContentScale"'
     ':{"family":"ContentScale","parameters":{"name":{"required":true,'
     '"type":"string","values":["Crop","FillBounds","FillHeight","Fill'
@@ -169,7 +176,10 @@ DEFINITIONS: dict[str, dict[str, object]] = json.loads(
     '"values":["Italic","Normal"]}},"since":"1.13.0"},"FontWeight":{"'
     'family":"FontWeight","parameters":{"weight":{"maximum":1000,"min'
     'imum":1,"required":true,"type":"int"}},'
-    '"since":"1.11.0"},"NavigationItemIconPosition":{"family":"Naviga'
+    '"since":"1.11.0"},"NamedShape":{"family":"Shape",'
+    '"parameters":{"name":{"required":true,"type":"string",'
+    '"values":["CircleShape","RectangleShape"]}},'
+    '"since":"1.23.0"},"NavigationItemIconPosition":{"family":"Naviga'
     'tionItemIconPosition","parameters":{"name":{"required":true,"typ'
     'e":"string","values":["Start","Top"]}},"since":"1.23.0"},'
     '"NavigationSuiteType":{"family":"NavigationSuiteType","parameter'
@@ -263,6 +273,10 @@ DEFINITIONS: dict[str, dict[str, object]] = json.loads(
     'leState":{"family":"ToggleableState",'
     '"parameters":{"name":{"required":true,"type":"string",'
     '"values":["Indeterminate","Off","On"]}},"since":"1.12.0"},'
+    '"TooltipAnchorPosition":{"family":"TooltipAnchorPosition","param'
+    'eters":{"name":{"required":true,"type":"string",'
+    '"values":["Above","Below",'
+    '"End","Left","Right","Start"]}},"since":"1.23.0"},'
     '"WindowInsets":{"family":"WindowInsets","parameters":{"bottom":{'
     '"minimum":0,"type":"value","valueType":"Dp"},"left":{"minimum":0'
     ',"type":"value","valueType":"Dp"},"right":{"minimum":0,'
@@ -884,6 +898,16 @@ _AndroidExternalSurfaceZOrderName = Literal[
 ]
 
 
+_ArrangementVerticalName = Literal[
+    "Bottom",
+    "Center",
+    "SpaceAround",
+    "SpaceBetween",
+    "SpaceEvenly",
+    "Top",
+]
+
+
 _ContentScaleName = Literal[
     "Crop",
     "FillBounds",
@@ -1188,6 +1212,12 @@ _MaterialIconName = Literal[
 ]
 
 
+_NamedShapeName = Literal[
+    "CircleShape",
+    "RectangleShape",
+]
+
+
 _NavigationItemIconPositionName = Literal[
     "Start",
     "Top",
@@ -1353,6 +1383,16 @@ _ToggleableStateName = Literal[
 ]
 
 
+_TooltipAnchorPositionName = Literal[
+    "Above",
+    "Below",
+    "End",
+    "Left",
+    "Right",
+    "Start",
+]
+
+
 def Alignment(
     name: _AlignmentName,
 ) -> dict[str, JsonValue]:
@@ -1448,6 +1488,26 @@ def AnnotatedString(
         "AnnotatedString",
         {
             "text": text,
+        },
+        DEFINITIONS,
+    )
+
+
+def ArrangementVertical(
+    name: _ArrangementVerticalName,
+) -> dict[str, JsonValue]:
+    """Construct ArrangementVertical data for native evaluation.
+
+    Args:
+        name: Native name argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "ArrangementVertical",
+        {
+            "name": name,
         },
         DEFINITIONS,
     )
@@ -1757,6 +1817,26 @@ def FontWeight(
         "FontWeight",
         {
             "weight": weight,
+        },
+        DEFINITIONS,
+    )
+
+
+def NamedShape(
+    name: _NamedShapeName,
+) -> dict[str, JsonValue]:
+    """Construct Shape data for native evaluation.
+
+    Args:
+        name: Native name argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "NamedShape",
+        {
+            "name": name,
         },
         DEFINITIONS,
     )
@@ -2225,6 +2305,26 @@ def ToggleableState(
     """
     return construct(
         "ToggleableState",
+        {
+            "name": name,
+        },
+        DEFINITIONS,
+    )
+
+
+def TooltipAnchorPosition(
+    name: _TooltipAnchorPositionName,
+) -> dict[str, JsonValue]:
+    """Construct TooltipAnchorPosition data for native evaluation.
+
+    Args:
+        name: Native name argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "TooltipAnchorPosition",
         {
             "name": name,
         },

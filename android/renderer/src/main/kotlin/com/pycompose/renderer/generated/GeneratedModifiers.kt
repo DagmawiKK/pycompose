@@ -51,7 +51,7 @@ object GeneratedModifiers {
                 )
             "clip" ->
                 Modifier.clip(
-                    shape = op.getValue("shape").let { value -> if (value is JsonObject) com.pycompose.renderer.generated.ValueResolver.shape(value).getOrThrow() else com.pycompose.renderer.PropResolver.shape(value.jsonPrimitive.content).getOrThrow() },
+                    shape = op.getValue("shape").let { value -> com.pycompose.renderer.generated.ValueResolver.shape(value).getOrThrow() },
                 )
             "fillMaxWidth" ->
                 Modifier.fillMaxWidth(
@@ -129,7 +129,7 @@ object GeneratedModifiers {
                     is androidx.compose.foundation.layout.BoxScope ->
                         with(scope) {
                             Modifier.align(
-                                alignment = com.pycompose.renderer.PropResolver.alignment(op.getValue("alignment").jsonPrimitive.content).getOrThrow(),
+                                alignment = com.pycompose.renderer.generated.ValueResolver.alignment(op.getValue("alignment")).getOrThrow(),
                             )
                         }
                     else -> null
@@ -139,7 +139,7 @@ object GeneratedModifiers {
                     is androidx.compose.foundation.layout.ColumnScope ->
                         with(scope) {
                             Modifier.align(
-                                alignment = com.pycompose.renderer.PropResolver.horizontal(op.getValue("alignment").jsonPrimitive.content).getOrThrow(),
+                                alignment = com.pycompose.renderer.generated.ValueResolver.alignmentHorizontal(op.getValue("alignment")).getOrThrow(),
                             )
                         }
                     else -> null
@@ -220,7 +220,7 @@ object GeneratedModifiers {
                     is androidx.compose.foundation.layout.RowScope ->
                         with(scope) {
                             Modifier.align(
-                                alignment = com.pycompose.renderer.PropResolver.vertical(op.getValue("alignment").jsonPrimitive.content).getOrThrow(),
+                                alignment = com.pycompose.renderer.generated.ValueResolver.alignmentVertical(op.getValue("alignment")).getOrThrow(),
                             )
                         }
                     else -> null

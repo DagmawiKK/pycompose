@@ -2,6 +2,7 @@
 
 import pytest
 
+from pycompose.contract.catalog import SCHEMA_VERSION
 from pycompose.core import Node
 from pycompose.state import State
 from pycompose.wire import emit_ir, to_json_bytes, validate_ir
@@ -14,19 +15,20 @@ def test_imported_builtins_preserve_the_native_contract() -> None:
 
     node = Column(
         id="screen",
-        horizontal_alignment="center",
+        horizontal_alignment="centerHorizontally",
         modifier=Modifier().padding(8).fill_max_width(),
         children=(Text(id="name", text="Ada"),),
     )
     assert isinstance(node, Node)
-    candidate = emit_ir(State(root=node), "1.0.0")
+    candidate = emit_ir(State(root=node), SCHEMA_VERSION)
     assert validate_ir(candidate).snapshot is candidate
     assert to_json_bytes(candidate) == (
         b'{"root":{"children":[{"id":"1","props":{"text":"Ada"},'
-        b'"type":"Text"}],"id":"0","props":{"horizontalAlignment":"center",'
+        b'"type":"Text"}],"id":"0","props":{"horizontalAlignment":'
+        b'{"name":"CenterHorizontally","type":"AlignmentHorizontal"},'
         b'"modifier":{"operations":[{"type":"padding","value":8},'
         b'{"fraction":1,"type":"fillMaxWidth"}]}},"type":"Column"},'
-        b'"schemaVersion":"1.0.0","version":"0.1.0"}'
+        b'"schemaVersion":"1.23.0","version":"0.1.0"}'
     )
 
 

@@ -167,7 +167,7 @@
         "horizontalAlignment": {
           "values": [
             "start",
-            "center",
+            "centerHorizontally",
             "end"
           ]
         },
@@ -381,7 +381,7 @@
         "itemHorizontalAlignment": {
           "values": [
             "start",
-            "center",
+            "centerHorizontally",
             "end"
           ]
         },
@@ -408,7 +408,7 @@
         "itemVerticalAlignment": {
           "values": [
             "top",
-            "center",
+            "centerVertically",
             "bottom"
           ]
         },
@@ -526,6 +526,7 @@
         "userScrollEnabled": null,
         "verticalArrangement": {
           "type": "enum",
+          "valueType": "ArrangementVertical",
           "values": [
             "top",
             "center",
@@ -534,8 +535,8 @@
             "spaceBetween",
             "spaceAround"
           ],
-          "decode": "arrangement",
-          "default": "top"
+          "default": "top",
+          "nativeDefault": "androidx.compose.foundation.layout.Arrangement.Top"
         }
       }
     }
@@ -902,7 +903,7 @@
         "verticalAlignment": {
           "values": [
             "top",
-            "center",
+            "centerVertically",
             "bottom"
           ]
         }
@@ -1189,7 +1190,6 @@
             "titleSmall",
             "headlineMedium"
           ],
-          "decode": "textStyle",
           "default": "bodyMedium"
         },
         "resource": {

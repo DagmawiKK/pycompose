@@ -30,10 +30,10 @@ def _alias(name: str, prop: str) -> str:
 
 
 def _parameter(name: str, prop: str, spec: dict[str, Any]) -> str:
-    if "valueType" in spec:
-        kind = "JsonValue"
-    elif spec["type"] == "enum":
+    if spec["type"] == "enum":
         kind = _alias(name, prop)
+    elif "valueType" in spec:
+        kind = "JsonValue"
     else:
         kind = TYPES[spec["type"]]
     if spec.get("required"):
@@ -123,7 +123,7 @@ def render_operations(registry: dict[str, Any]) -> str:
     methods: list[str] = []
     for name, modifier in operations.items():
         for prop, spec in modifier["props"].items():
-            if spec["type"] == "enum" and "valueType" not in spec:
+            if spec["type"] == "enum":
                 aliases += [
                     f"{_alias(name, prop)} = Literal[",
                     *(f"    {json.dumps(v)}," for v in spec["values"]),

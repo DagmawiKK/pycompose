@@ -98,22 +98,13 @@ closed for the same reason the state kinds are: the host must not be asked to
 fulfil a request whose semantics it does not understand.
 """
 
-DECODED_TYPES = ("enum", "color", "resource")
+DECODED_TYPES = ("resource",)
 """Prop types whose Kotlin type is not the wire type, and so need a decoder."""
 
-DECODERS = (
-    "alignment",
-    "arrangement",
-    "color",
-    "horizontal",
-    "resourceFont",
-    "resourceImage",
-    "resourceText",
-    "textStyle",
-    "tooltipPosition",
-    "vertical",
-)
-"""The host resolvers a prop may name."""
+DECODERS = ("resourceFont", "resourceImage", "resourceText")
+"""The host resolvers a prop may name: resources, which load off the main thread.
+
+Every other family a prop names crosses the wire as its tagged value."""
 
 STATE_STREAMS = {"drawer": ("progress",), "scroll": ("offset", "progress")}
 """Streams each state family's holder exposes to expressions.
@@ -139,7 +130,7 @@ HOST_VALUES = {
         "position",
         {
             "type": "enum",
-            "decode": "tooltipPosition",
+            "valueType": "TooltipAnchorPosition",
             "values": ["above", "below", "left", "right", "start", "end"],
             "default": "above",
         },

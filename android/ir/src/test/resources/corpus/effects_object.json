@@ -95,7 +95,10 @@
    {
     "id": "6",
     "props": {
-     "style": "titleLarge",
+     "style": {
+      "name": "titleLarge",
+      "type": "ThemeTypography"
+     },
      "text": "Corpus"
     },
     "slot": "topBar",

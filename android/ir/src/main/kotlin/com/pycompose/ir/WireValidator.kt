@@ -39,6 +39,9 @@ internal class ValidationCache {
 }
 
 internal object WireValidator {
+    /** Prop types a value family makes tagged-only. */
+    private val TAGGED = setOf("color", "enum")
+
     fun validate(
         root: JsonObject,
         cache: ValidationCache? = null,
@@ -131,9 +134,9 @@ internal object WireValidator {
             ValueParser.bounds(value, rule.minimum, rule.maximum)
             return
         }
-        if (rule.type == "value" || (rule.type == "color" && rule.valueType != null)) {
-            // A value prop, and a colour of a family, is always its family's
-            // tagged object: a bare string names no family to resolve against.
+        if (rule.type == "value" || (rule.type in TAGGED && rule.valueType != null)) {
+            // A value prop, and a colour or named constant of a family, is
+            // always its family's tagged object.
             error("$path must be its family's tagged value object")
         }
         legacyProperty(value, rule, path, actionIds)

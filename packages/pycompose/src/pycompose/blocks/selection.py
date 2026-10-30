@@ -140,7 +140,7 @@ class Checkbox(Component):
         """
         return Row(
             id=self.id,
-            vertical_alignment="center",
+            vertical_alignment="centerVertically",
             children=[
                 material3.Checkbox(
                     checked=view.value(self),
@@ -220,7 +220,7 @@ class Radio(_Choice):
         pick = SetText(component=self.id, value=choice)
         return Row(
             id=f"choice{index}",
-            vertical_alignment="center",
+            vertical_alignment="centerVertically",
             modifier=Modifier()
             .fill_max_width()
             .clickable(on_click=pick, enabled=self.interactive),

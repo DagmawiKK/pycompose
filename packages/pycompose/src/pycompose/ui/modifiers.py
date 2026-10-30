@@ -11,7 +11,9 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import cast
 
+from pycompose.contract.catalog import REGISTRY
 from pycompose.core.props import JsonValue
+from pycompose.core.values import named_value
 from pycompose.errors import IrValidationError
 from pycompose.ui.generated_modifiers import GeneratedOperations
 from pycompose.ui.modifier_operation import _Operation
@@ -51,6 +53,14 @@ class Modifier(GeneratedOperations):
         operations = cast(
             tuple[FrozenJsonValue, ...], self.values.get("operations", ())
         )
+        rules = REGISTRY.modifiers.get(name, {})
+        for key, value in props.items():
+            rule = rules.get(key)
+            if rule is not None and rule.type == "enum" and rule.value_type:
+                props[key] = cast(
+                    "JsonValue",
+                    named_value(rule.value_type, value, REGISTRY.value_types),
+                )
         operation = freeze_json({"type": name, **props})
         return Modifier({"operations": (*operations, operation)})
 

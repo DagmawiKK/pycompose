@@ -38,10 +38,20 @@ def _kt_type(prop: dict[str, Any]) -> str:
     }[prop["type"]] + suffix
 
 
+def _modelled_default(prop: dict[str, Any]) -> bool:
+    """Whether the model holds the prop's default; a named constant's is native.
+
+    An app names a constant by string, but the wire carries it tagged, so an
+    absent one stays absent in the model and the adapter applies the native
+    default it declares.
+    """
+    return "default" in prop and not (prop["type"] == "enum" and "valueType" in prop)
+
+
 def _kt_default(prop: dict[str, Any]) -> str:
     if prop.get("nullable"):
         return "" if prop.get("required") else " = OptionalValue.Absent"
-    if "default" not in prop:
+    if not _modelled_default(prop):
         return "" if prop.get("required", False) else " = null"
     value = prop["default"]
     if "valueType" in prop:
@@ -67,7 +77,7 @@ def _kt_props(name: str, props: dict[str, Any], base: str = "UiProps") -> list[s
             "?"
             if not prop.get("nullable")
             and not prop.get("required", False)
-            and "default" not in prop
+            and not _modelled_default(prop)
             else ""
         )
         override = "override " if field == "modifier" and base == "UiProps" else ""
@@ -244,7 +254,8 @@ def _kt_rules(props: dict[str, Any]) -> list[str]:
             kotlin_string(prop["type"]),
             f"required = {str(prop.get('required', False)).lower()}",
         ]
-        if "values" in prop:
+        # A family's constants are checked by its value parser, not by name.
+        if "values" in prop and "valueType" not in prop:
             args.append(
                 "values = setOf("
                 + ", ".join(kotlin_string(value) for value in prop["values"])

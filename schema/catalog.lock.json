@@ -118,6 +118,7 @@
       "props": {
         "contentAlignment": {
           "type": "enum",
+          "valueType": "Alignment",
           "values": [
             "bottomCenter",
             "bottomEnd",
@@ -135,8 +136,8 @@
             "topRight",
             "topStart"
           ],
-          "decode": "alignment",
-          "default": "topStart"
+          "default": "topStart",
+          "nativeDefault": "androidx.compose.ui.Alignment.Companion.TopStart"
         },
         "label": {
           "type": "string",
@@ -675,6 +676,7 @@
       "props": {
         "contentAlignment": {
           "type": "enum",
+          "valueType": "Alignment",
           "values": [
             "topStart",
             "topCenter",
@@ -686,8 +688,8 @@
             "bottomCenter",
             "bottomEnd"
           ],
-          "decode": "alignment",
-          "default": "topStart"
+          "default": "topStart",
+          "nativeDefault": "androidx.compose.ui.Alignment.Companion.TopStart"
         },
         "modifier": {
           "type": "modifier"
@@ -1164,13 +1166,28 @@
       "props": {
         "horizontalAlignment": {
           "type": "enum",
+          "valueType": "AlignmentHorizontal",
           "values": [
             "start",
-            "center",
+            "centerHorizontally",
             "end"
           ],
-          "decode": "horizontal",
-          "default": "start"
+          "default": "start",
+          "nativeDefault": "androidx.compose.ui.Alignment.Companion.Start"
+        },
+        "verticalArrangement": {
+          "type": "enum",
+          "valueType": "ArrangementVertical",
+          "values": [
+            "bottom",
+            "center",
+            "spaceAround",
+            "spaceBetween",
+            "spaceEvenly",
+            "top"
+          ],
+          "default": "top",
+          "nativeDefault": "androidx.compose.foundation.layout.Arrangement.Top"
         },
         "modifier": {
           "type": "modifier"
@@ -3261,13 +3278,28 @@
       "props": {
         "itemHorizontalAlignment": {
           "type": "enum",
+          "valueType": "AlignmentHorizontal",
           "values": [
             "start",
-            "center",
+            "centerHorizontally",
             "end"
           ],
-          "decode": "horizontal",
-          "default": "start"
+          "default": "start",
+          "nativeDefault": "androidx.compose.ui.Alignment.Companion.Start"
+        },
+        "verticalArrangement": {
+          "type": "enum",
+          "valueType": "ArrangementVertical",
+          "values": [
+            "bottom",
+            "center",
+            "spaceAround",
+            "spaceBetween",
+            "spaceEvenly",
+            "top"
+          ],
+          "default": "top",
+          "nativeDefault": "androidx.compose.foundation.layout.Arrangement.Top"
         },
         "modifier": {
           "type": "modifier"
@@ -3302,13 +3334,28 @@
       "props": {
         "itemVerticalAlignment": {
           "type": "enum",
+          "valueType": "AlignmentVertical",
           "values": [
             "top",
-            "center",
+            "centerVertically",
             "bottom"
           ],
-          "decode": "vertical",
-          "default": "top"
+          "default": "top",
+          "nativeDefault": "androidx.compose.ui.Alignment.Companion.Top"
+        },
+        "verticalArrangement": {
+          "type": "enum",
+          "valueType": "ArrangementVertical",
+          "values": [
+            "bottom",
+            "center",
+            "spaceAround",
+            "spaceBetween",
+            "spaceEvenly",
+            "top"
+          ],
+          "default": "top",
+          "nativeDefault": "androidx.compose.foundation.layout.Arrangement.Top"
         },
         "modifier": {
           "type": "modifier"
@@ -3616,6 +3663,7 @@
       "props": {
         "alignment": {
           "type": "enum",
+          "valueType": "Alignment",
           "values": [
             "bottomCenter",
             "bottomEnd",
@@ -3633,8 +3681,8 @@
             "topRight",
             "topStart"
           ],
-          "decode": "alignment",
-          "default": "center"
+          "default": "center",
+          "nativeDefault": "androidx.compose.ui.Alignment.Companion.Center"
         },
         "contentDescription": {
           "type": "string",
@@ -4005,6 +4053,7 @@
         },
         "verticalArrangement": {
           "type": "enum",
+          "valueType": "ArrangementVertical",
           "values": [
             "top",
             "center",
@@ -4013,8 +4062,8 @@
             "spaceBetween",
             "spaceAround"
           ],
-          "decode": "arrangement",
-          "default": "top"
+          "default": "top",
+          "nativeDefault": "androidx.compose.foundation.layout.Arrangement.Top"
         }
       },
       "children": {
@@ -6176,6 +6225,7 @@
       "props": {
         "contentAlignment": {
           "type": "enum",
+          "valueType": "Alignment",
           "values": [
             "bottomCenter",
             "bottomEnd",
@@ -6193,8 +6243,8 @@
             "topRight",
             "topStart"
           ],
-          "decode": "alignment",
-          "default": "topStart"
+          "default": "topStart",
+          "nativeDefault": "androidx.compose.ui.Alignment.Companion.TopStart"
         },
         "isRefreshing": {
           "type": "boolean",
@@ -6378,13 +6428,14 @@
       "props": {
         "verticalAlignment": {
           "type": "enum",
+          "valueType": "AlignmentVertical",
           "values": [
             "top",
-            "center",
+            "centerVertically",
             "bottom"
           ],
-          "decode": "vertical",
-          "default": "top"
+          "default": "top",
+          "nativeDefault": "androidx.compose.ui.Alignment.Companion.Top"
         },
         "modifier": {
           "type": "modifier"
@@ -8703,7 +8754,6 @@
             "titleSmall",
             "headlineMedium"
           ],
-          "decode": "textStyle",
           "default": "bodyMedium"
         },
         "text": {
@@ -9266,7 +9316,7 @@
         },
         "position": {
           "type": "enum",
-          "decode": "tooltipPosition",
+          "valueType": "TooltipAnchorPosition",
           "values": [
             "above",
             "below",
@@ -9757,9 +9807,8 @@
           "valueType": "Shape",
           "required": true,
           "values": [
-            "rectangle",
-            "circle",
-            "rounded"
+            "rectangleShape",
+            "circleShape"
           ]
         }
       },
@@ -10016,6 +10065,7 @@
       "props": {
         "alignment": {
           "type": "enum",
+          "valueType": "Alignment",
           "values": [
             "bottomCenter",
             "bottomEnd",
@@ -10033,7 +10083,6 @@
             "topRight",
             "topStart"
           ],
-          "decode": "alignment",
           "required": true
         }
       },
@@ -10056,6 +10105,7 @@
       "props": {
         "alignment": {
           "type": "enum",
+          "valueType": "AlignmentHorizontal",
           "values": [
             "centerHorizontally",
             "end",
@@ -10063,7 +10113,6 @@
             "right",
             "start"
           ],
-          "decode": "horizontal",
           "required": true
         }
       },
@@ -10086,12 +10135,12 @@
       "props": {
         "alignment": {
           "type": "enum",
+          "valueType": "AlignmentVertical",
           "values": [
             "bottom",
             "centerVertically",
             "top"
           ],
-          "decode": "vertical",
           "required": true
         }
       },
@@ -16855,6 +16904,92 @@
           "androidx.compose.material.icons.sharp",
           "androidx.compose.material.icons.twotone"
         ]
+      }
+    },
+    "ArrangementVertical": {
+      "family": "ArrangementVertical",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.foundation.layout.Arrangement.Vertical",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/foundation/layout/Arrangement",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Bottom",
+            "Center",
+            "SpaceAround",
+            "SpaceBetween",
+            "SpaceEvenly",
+            "Top"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.foundation.layout.Arrangement"
+      }
+    },
+    "TooltipAnchorPosition": {
+      "family": "TooltipAnchorPosition",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.material3.TooltipAnchorPosition",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/material3/TooltipAnchorPosition$Companion",
+        "members": "public properties"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Above",
+            "Below",
+            "End",
+            "Left",
+            "Right",
+            "Start"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.material3.TooltipAnchorPosition"
+      }
+    },
+    "NamedShape": {
+      "family": "Shape",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.ui.graphics.Shape",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/ui/graphics/RectangleShapeKt",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "CircleShape",
+            "RectangleShape"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.ui.graphics",
+        "owners": {
+          "CircleShape": "androidx.compose.foundation.shape"
+        }
       }
     },
     "AndroidExternalSurfaceZOrder": {

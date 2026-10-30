@@ -4,6 +4,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.dp
+import com.pycompose.renderer.generated.ValueResolver
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
@@ -27,8 +28,6 @@ class ResolutionTest {
         assertTrue(PropResolver.dp(Double.NaN).isFailure)
         assertTrue(PropResolver.dp(-1.0).isFailure)
         assertEquals(8.dp, PropResolver.dp(8.0).getOrThrow())
-        assertTrue(PropResolver.horizontal("bad").isFailure)
-        assertTrue(PropResolver.durationMs(-1).isFailure)
     }
 
     @Test
@@ -36,17 +35,29 @@ class ResolutionTest {
     fun `tooltip positions preserve logical and absolute directions`() {
         val positions =
             mapOf(
-                "above" to TooltipAnchorPosition.Above,
-                "below" to TooltipAnchorPosition.Below,
-                "left" to TooltipAnchorPosition.Left,
-                "right" to TooltipAnchorPosition.Right,
-                "start" to TooltipAnchorPosition.Start,
-                "end" to TooltipAnchorPosition.End,
+                "Above" to TooltipAnchorPosition.Above,
+                "Below" to TooltipAnchorPosition.Below,
+                "Left" to TooltipAnchorPosition.Left,
+                "Right" to TooltipAnchorPosition.Right,
+                "Start" to TooltipAnchorPosition.Start,
+                "End" to TooltipAnchorPosition.End,
             )
-        positions.forEach { (wire, native) ->
-            assertEquals(native, TooltipPropResolver.tooltipPosition(wire).getOrThrow())
+        val resolved = mutableMapOf<String, Result<TooltipAnchorPosition>>()
+        compose.setContent {
+            (positions.keys + "Invalid").forEach { name ->
+                val tagged =
+                    buildJsonObject {
+                        put("type", "TooltipAnchorPosition")
+                        put("name", name)
+                    }
+                resolved[name] = ValueResolver.tooltipAnchorPosition(tagged)
+            }
         }
-        assertTrue(TooltipPropResolver.tooltipPosition("invalid").isFailure)
+        compose.waitForIdle()
+        positions.forEach { (name, native) ->
+            assertEquals(native, resolved.getValue(name).getOrThrow())
+        }
+        assertTrue(resolved.getValue("Invalid").isFailure)
     }
 
     @Test
@@ -78,7 +89,7 @@ class ResolutionTest {
                 .parseToJsonElement(
                     """{"operations":[
                 {"type":"padding","value":8},{"type":"padding","value":4},
-                {"type":"clip","shape":"circle"}
+                {"type":"clip","shape":{"type":"NamedShape","name":"CircleShape"}}
             ]}""",
                 ).jsonObject
         compose.setContent {

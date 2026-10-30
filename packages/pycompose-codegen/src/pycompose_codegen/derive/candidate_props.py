@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose_codegen.derive.component_face import DECODE_CLASSIFIERS
+from pycompose_codegen.derive.component_face import NAMED_CLASSIFIERS
 from pycompose_codegen.derive.propose_lookup import source_name
 from pycompose_codegen.emit.defaults import render_default
 
@@ -36,9 +36,6 @@ PAYLOAD_NAMES = {
     "onValueChange": "value",
 }
 """Single-argument callbacks whose payload a semantic name makes legible."""
-
-DECODE_TOKENS = {classifier: token for token, classifier in DECODE_CLASSIFIERS.items()}
-"""Pinned classifier back to its wire decode token."""
 
 
 def scope_for(classifier: str) -> str:
@@ -253,13 +250,12 @@ def _value_prop(
 ) -> dict[str, Any] | None:
     """Derive a value-family prop through the approved encoding for it."""
     classifier = source_name(family["kotlinType"])
-    token = DECODE_TOKENS.get(classifier)
     if spec["family"] == "Color":
         return _color_prop(name, parameter, spec, review)
     if spec["family"] == "Dp":
         return _dp_prop(parameter, spec, review)
-    if token is not None and family.get("kind") == "constant":
-        return _enum_prop(name, parameter, spec, family, token, review)
+    if classifier in NAMED_CLASSIFIERS and family.get("kind") == "constant":
+        return _enum_prop(name, parameter, spec, family, review)
     return _plain_value_prop(name, parameter, spec, review)
 
 
@@ -359,10 +355,13 @@ def _enum_prop(
     parameter: str,
     spec: dict[str, Any],
     family: dict[str, Any],
-    token: str,
     review: list[str],
 ) -> dict[str, Any] | None:
-    """Derive a constant family as a decoded wire enum."""
+    """Derive a constant family an app names by string.
+
+    The app writes a constant's name camelCased; the wire carries the family's
+    tagged constant, and an absent prop takes the native default it names.
+    """
     values = (family.get("parameters") or {}).get("name", {}).get("values")
     if not values:
         raise CandidateError(
@@ -370,12 +369,12 @@ def _enum_prop(
         )
     prop: dict[str, Any] = {
         "type": "enum",
+        "valueType": spec["family"],
         "values": [_camel(value) for value in values],
-        "decode": token,
     }
     if spec["required"]:
         prop["required"] = True
-        review.append(f"{parameter}: decoded {token} constant")
+        review.append(f"{parameter}: named {spec['family']} constant")
         return prop
     symbol = (spec.get("default") or {}).get("symbol")
     last = str(symbol).rsplit(".", 1)[-1] if symbol else ""
@@ -385,7 +384,8 @@ def _enum_prop(
         )
         return None
     prop["default"] = _camel(last)
-    review.append(f"{parameter}: decoded {token} constant, default {_camel(last)}")
+    prop["nativeDefault"] = symbol
+    review.append(f"{parameter}: named {spec['family']} constant, default {last}")
     return prop
 
 

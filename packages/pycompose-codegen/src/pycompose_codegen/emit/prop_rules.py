@@ -262,12 +262,14 @@ def _validate_defaults(
     if "nativeDefault" in prop:
         if not isinstance(prop["nativeDefault"], str) or not prop["nativeDefault"]:
             die(f"prop {name}.{prop_name} 'nativeDefault' must be Kotlin source")
-        if ptype not in {"value", "dp"}:
+        if ptype not in {"value", "dp"} and not (
+            ptype == "enum" and "valueType" in prop
+        ):
             # Anything else that carried one would never be read, and the
             # stated default would quietly differ from the pinned one.
             die(
                 f"prop {name}.{prop_name} 'nativeDefault' is read only for "
-                "value and dp props"
+                "value, dp and named-constant props"
             )
     if ptype == "dp" and not (
         prop.get("required") or "default" in prop or "nativeDefault" in prop

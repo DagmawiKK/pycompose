@@ -69,20 +69,47 @@ _BoxContentAlignment = Literal[
 
 _ColumnHorizontalAlignment = Literal[
     "start",
-    "center",
+    "centerHorizontally",
     "end",
+]
+
+_ColumnVerticalArrangement = Literal[
+    "bottom",
+    "center",
+    "spaceAround",
+    "spaceBetween",
+    "spaceEvenly",
+    "top",
 ]
 
 _FlowColumnItemHorizontalAlignment = Literal[
     "start",
-    "center",
+    "centerHorizontally",
     "end",
+]
+
+_FlowColumnVerticalArrangement = Literal[
+    "bottom",
+    "center",
+    "spaceAround",
+    "spaceBetween",
+    "spaceEvenly",
+    "top",
 ]
 
 _FlowRowItemVerticalAlignment = Literal[
     "top",
-    "center",
+    "centerVertically",
     "bottom",
+]
+
+_FlowRowVerticalArrangement = Literal[
+    "bottom",
+    "center",
+    "spaceAround",
+    "spaceBetween",
+    "spaceEvenly",
+    "top",
 ]
 
 _ImageImageVectorAlignment = Literal[
@@ -114,7 +141,7 @@ _LazyColumnVerticalArrangement = Literal[
 
 _RowVerticalAlignment = Literal[
     "top",
-    "center",
+    "centerVertically",
     "bottom",
 ]
 
@@ -364,6 +391,7 @@ class Column(Component):
         offset: int | float | None = None,
         on_scroll_idle: ActionTarget | None = None,
         scrollable: bool | None = None,
+        vertical_arrangement: _ColumnVerticalArrangement | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered Column.
@@ -376,6 +404,7 @@ class Column(Component):
             offset: Native offset; None uses its default.
             on_scroll_idle: Native onScrollIdle; None uses its default.
             scrollable: Native scrollable; None uses its default.
+            vertical_arrangement: Native verticalArrangement; None uses its default.
             children: Ordered child nodes with stable keys.
 
         Raises:
@@ -390,6 +419,8 @@ class Column(Component):
             props["on_scroll_idle"] = on_scroll_idle
         if scrollable is not None:
             props["scrollable"] = scrollable
+        if vertical_arrangement is not None:
+            props["vertical_arrangement"] = vertical_arrangement
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -525,6 +556,7 @@ class FlowColumn(Component):
         item_horizontal_alignment: _FlowColumnItemHorizontalAlignment | None = None,
         max_items_in_each_column: int | None = None,
         modifier: Modifier | None = None,
+        vertical_arrangement: _FlowColumnVerticalArrangement | None = None,
         children: Content = (),
         content: Content | None = None,
     ) -> None:
@@ -538,6 +570,7 @@ class FlowColumn(Component):
             max_items_in_each_column: Native maxItemsInEachColumn; None uses its
                 default.
             modifier: Native modifier; None uses its default.
+            vertical_arrangement: Native verticalArrangement; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
 
@@ -549,6 +582,8 @@ class FlowColumn(Component):
             props["item_horizontal_alignment"] = item_horizontal_alignment
         if max_items_in_each_column is not None:
             props["max_items_in_each_column"] = max_items_in_each_column
+        if vertical_arrangement is not None:
+            props["vertical_arrangement"] = vertical_arrangement
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -576,6 +611,7 @@ class FlowRow(Component):
         item_vertical_alignment: _FlowRowItemVerticalAlignment | None = None,
         max_items_in_each_row: int | None = None,
         modifier: Modifier | None = None,
+        vertical_arrangement: _FlowRowVerticalArrangement | None = None,
         children: Content = (),
         content: Content | None = None,
     ) -> None:
@@ -588,6 +624,7 @@ class FlowRow(Component):
                 default.
             max_items_in_each_row: Native maxItemsInEachRow; None uses its default.
             modifier: Native modifier; None uses its default.
+            vertical_arrangement: Native verticalArrangement; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
 
@@ -599,6 +636,8 @@ class FlowRow(Component):
             props["item_vertical_alignment"] = item_vertical_alignment
         if max_items_in_each_row is not None:
             props["max_items_in_each_row"] = max_items_in_each_row
+        if vertical_arrangement is not None:
+            props["vertical_arrangement"] = vertical_arrangement
         if content is not None:
             if children:
                 raise IrValidationError(

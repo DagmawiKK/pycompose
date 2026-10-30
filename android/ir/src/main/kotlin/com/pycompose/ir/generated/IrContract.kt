@@ -33,7 +33,7 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
-                "contentAlignment" to PropertyRule("enum", required = false, values = setOf("bottomCenter", "bottomEnd", "bottomLeft", "bottomRight", "bottomStart", "center", "centerEnd", "centerLeft", "centerRight", "centerStart", "topCenter", "topEnd", "topLeft", "topRight", "topStart")),
+                "contentAlignment" to PropertyRule("enum", required = false, valueType = "Alignment"),
                 "label" to PropertyRule("string", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
                 "targetState" to PropertyRule("string", required = true),
@@ -174,7 +174,7 @@ object IrContract {
             minimumChildren = 0,
             since = "1.0.0",
             props = mapOf(
-                "contentAlignment" to PropertyRule("enum", required = false, values = setOf("topStart", "topCenter", "topEnd", "centerStart", "center", "centerEnd", "bottomStart", "bottomCenter", "bottomEnd")),
+                "contentAlignment" to PropertyRule("enum", required = false, valueType = "Alignment"),
                 "modifier" to PropertyRule("modifier", required = false),
             ),
         ),
@@ -287,11 +287,12 @@ object IrContract {
             minimumChildren = 0,
             since = "1.0.0",
             props = mapOf(
-                "horizontalAlignment" to PropertyRule("enum", required = false, values = setOf("start", "center", "end")),
+                "horizontalAlignment" to PropertyRule("enum", required = false, valueType = "AlignmentHorizontal"),
                 "modifier" to PropertyRule("modifier", required = false),
                 "offset" to PropertyRule("number", required = false),
                 "onScrollIdle" to PropertyRule("actionId", required = false),
                 "scrollable" to PropertyRule("boolean", required = false),
+                "verticalArrangement" to PropertyRule("enum", required = false, valueType = "ArrangementVertical"),
             ),
         ),
         "Crossfade" to ComponentRule(
@@ -735,9 +736,10 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
-                "itemHorizontalAlignment" to PropertyRule("enum", required = false, values = setOf("start", "center", "end")),
+                "itemHorizontalAlignment" to PropertyRule("enum", required = false, valueType = "AlignmentHorizontal"),
                 "maxItemsInEachColumn" to PropertyRule("integer", required = false, minimum = 1.0, maximum = 2147483647.0),
                 "modifier" to PropertyRule("modifier", required = false),
+                "verticalArrangement" to PropertyRule("enum", required = false, valueType = "ArrangementVertical"),
             ),
         ),
         "FlowRow" to ComponentRule(
@@ -746,9 +748,10 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
-                "itemVerticalAlignment" to PropertyRule("enum", required = false, values = setOf("top", "center", "bottom")),
+                "itemVerticalAlignment" to PropertyRule("enum", required = false, valueType = "AlignmentVertical"),
                 "maxItemsInEachRow" to PropertyRule("integer", required = false, minimum = 1.0, maximum = 2147483647.0),
                 "modifier" to PropertyRule("modifier", required = false),
+                "verticalArrangement" to PropertyRule("enum", required = false, valueType = "ArrangementVertical"),
             ),
         ),
         "HorizontalDivider" to ComponentRule(
@@ -824,7 +827,7 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
-                "alignment" to PropertyRule("enum", required = false, values = setOf("bottomCenter", "bottomEnd", "bottomLeft", "bottomRight", "bottomStart", "center", "centerEnd", "centerLeft", "centerRight", "centerStart", "topCenter", "topEnd", "topLeft", "topRight", "topStart")),
+                "alignment" to PropertyRule("enum", required = false, valueType = "Alignment"),
                 "contentDescription" to PropertyRule("string", required = true, nullable = true),
                 "contentScale" to PropertyRule("value", required = false, valueType = "ContentScale"),
                 "imageVector" to PropertyRule("value", required = true, valueType = "ImageVector"),
@@ -902,7 +905,7 @@ object IrContract {
                 "itemOffset" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483647.0),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onScrollIdle" to PropertyRule("actionId", required = false),
-                "verticalArrangement" to PropertyRule("enum", required = false, values = setOf("top", "center", "bottom", "spaceEvenly", "spaceBetween", "spaceAround")),
+                "verticalArrangement" to PropertyRule("enum", required = false, valueType = "ArrangementVertical"),
                 "window" to PropertyRule("string", required = false),
             ),
         ),
@@ -1379,7 +1382,7 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
-                "contentAlignment" to PropertyRule("enum", required = false, values = setOf("bottomCenter", "bottomEnd", "bottomLeft", "bottomRight", "bottomStart", "center", "centerEnd", "centerLeft", "centerRight", "centerStart", "topCenter", "topEnd", "topLeft", "topRight", "topStart")),
+                "contentAlignment" to PropertyRule("enum", required = false, valueType = "Alignment"),
                 "isRefreshing" to PropertyRule("boolean", required = true),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onRefresh" to PropertyRule("actionId", required = true),
@@ -1423,7 +1426,7 @@ object IrContract {
             since = "1.0.0",
             props = mapOf(
                 "modifier" to PropertyRule("modifier", required = false),
-                "verticalAlignment" to PropertyRule("enum", required = false, values = setOf("top", "center", "bottom")),
+                "verticalAlignment" to PropertyRule("enum", required = false, valueType = "AlignmentVertical"),
             ),
         ),
         "Scaffold" to ComponentRule(
@@ -1898,7 +1901,7 @@ object IrContract {
                 "locale" to PropertyRule("string", required = false, since = "1.1.0"),
                 "modifier" to PropertyRule("modifier", required = false),
                 "resource" to PropertyRule("resource", required = false, values = setOf("string", "asset"), since = "1.1.0"),
-                "style" to PropertyRule("enum", required = false, values = setOf("bodyLarge", "bodyMedium", "bodySmall", "titleLarge", "titleMedium", "titleSmall", "headlineMedium"), valueType = "TextStyle"),
+                "style" to PropertyRule("enum", required = false, valueType = "TextStyle"),
                 "text" to PropertyRule("string", required = true),
             ),
         ),
@@ -2012,7 +2015,7 @@ object IrContract {
                 "isPersistent" to PropertyRule("boolean", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onVisibilityChange" to PropertyRule("actionId", required = false),
-                "position" to PropertyRule("enum", required = false, values = setOf("above", "below", "left", "right", "start", "end")),
+                "position" to PropertyRule("enum", required = false, valueType = "TooltipAnchorPosition"),
                 "visible" to PropertyRule("boolean", required = false),
             ),
         ),
@@ -2103,17 +2106,17 @@ object IrContract {
                 "brush" to PropertyRule("value", required = true, since = "1.11.0", valueType = "Brush"),
         ),
         "boxAlign" to mapOf(
-                "alignment" to PropertyRule("enum", required = true, values = setOf("bottomCenter", "bottomEnd", "bottomLeft", "bottomRight", "bottomStart", "center", "centerEnd", "centerLeft", "centerRight", "centerStart", "topCenter", "topEnd", "topLeft", "topRight", "topStart")),
+                "alignment" to PropertyRule("enum", required = true, valueType = "Alignment"),
         ),
         "clickable" to mapOf(
                 "enabled" to PropertyRule("boolean", required = false),
                 "onClick" to PropertyRule("actionId", required = true),
         ),
         "clip" to mapOf(
-                "shape" to PropertyRule("enum", required = true, values = setOf("rectangle", "circle", "rounded"), valueType = "Shape"),
+                "shape" to PropertyRule("enum", required = true, valueType = "Shape"),
         ),
         "columnAlign" to mapOf(
-                "alignment" to PropertyRule("enum", required = true, values = setOf("centerHorizontally", "end", "left", "right", "start")),
+                "alignment" to PropertyRule("enum", required = true, valueType = "AlignmentHorizontal"),
         ),
         "fillMaxColumnWidth" to mapOf(
                 "fraction" to PropertyRule("number", required = false),
@@ -2144,7 +2147,7 @@ object IrContract {
                 "zIndexInOverlay" to PropertyRule("number", required = false),
         ),
         "rowAlign" to mapOf(
-                "alignment" to PropertyRule("enum", required = true, values = setOf("bottom", "centerVertically", "top")),
+                "alignment" to PropertyRule("enum", required = true, valueType = "AlignmentVertical"),
         ),
         "semantics" to mapOf(
                 "contentDescription" to PropertyRule("string", required = false),

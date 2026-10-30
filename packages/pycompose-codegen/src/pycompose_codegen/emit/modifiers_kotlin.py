@@ -33,11 +33,6 @@ def _argument(name: str, spec: dict[str, Any], parameter: str) -> str:
     present = f'op.getValue("{name}")'
     if "valueType" in spec:
         decoded = resolver_call(spec["valueType"], present) + ".getOrThrow()"
-    elif "decode" in spec:
-        decoded = (
-            f"com.pycompose.renderer.PropResolver.{spec['decode']}"
-            f"({present}.jsonPrimitive.content).getOrThrow()"
-        )
     else:
         decoded = f"{present}.jsonPrimitive.{READS[spec['type']]}"
         decoded += NARROW.get(spec.get("nativeType", ""), "")
@@ -46,7 +41,7 @@ def _argument(name: str, spec: dict[str, Any], parameter: str) -> str:
     if "default" in spec:
         fallback = (
             kotlin_string(spec["default"])
-            if isinstance(spec["default"], str) and "decode" not in spec
+            if isinstance(spec["default"], str)
             else _literal(spec)
         )
     elif "nativeDefault" in spec:
@@ -59,11 +54,6 @@ def _argument(name: str, spec: dict[str, Any], parameter: str) -> str:
 def _literal(spec: dict[str, Any]) -> str:
     """A scalar default, spelled as the parameter's Kotlin type."""
     value = spec["default"]
-    if "decode" in spec:
-        return (
-            f"com.pycompose.renderer.PropResolver.{spec['decode']}"
-            f"({kotlin_string(value)}).getOrThrow()"
-        )
     if isinstance(value, bool):
         return "true" if value else "false"
     if spec.get("nativeType") == "Float":
@@ -80,22 +70,14 @@ def _resolved(family: str, value: str) -> str:
 def _decoded(spec: dict[str, Any], argument: dict[str, Any]) -> str:
     """The Kotlin value one prop of a direct call passes, read from ``value``.
 
-    A family's tagged object goes through its resolver. A dp also rides the wire
-    as a bare number (ADR-0036), and an enumerated family as one of its names,
-    which the legacy decoder reads.
+    A family's tagged object goes through its resolver; a dp also rides the
+    wire as a bare number (ADR-0036).
     """
     if "valueType" in spec:
         family = spec["valueType"]
-        if spec["type"] == "dp" and family == "Dp":
-            bare = "com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double)"
-        elif spec["type"] == "enum":
-            decoder = family[:1].lower() + family[1:]
-            bare = (
-                f"com.pycompose.renderer.PropResolver.{decoder}"
-                "(value.jsonPrimitive.content)"
-            )
-        else:
+        if spec["type"] != "dp" or family != "Dp":
             return _resolved(family, "value")
+        bare = "com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double)"
         return (
             f"if (value is JsonObject) {_resolved(family, 'value')} "
             f"else {bare}.getOrThrow()"

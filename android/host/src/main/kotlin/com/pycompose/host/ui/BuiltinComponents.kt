@@ -10,7 +10,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import com.pycompose.host.resources.ResourceResolver
 import com.pycompose.renderer.ComponentRegistry
-import com.pycompose.renderer.PropResolver
 import com.pycompose.renderer.generated.ValueResolver
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -137,27 +136,9 @@ object BuiltinComponents {
             )
         }
 
-    @Composable private fun textStyle(value: JsonElement): androidx.compose.ui.text.TextStyle {
-        if (value is JsonObject) return ValueResolver.textStyle(value).getOrThrow()
-        return legacyTextStyle((value as JsonPrimitive).content)
-    }
-
-    @Composable private fun legacyTextStyle(value: String) =
-        with(MaterialTheme.typography) {
-            PropResolver
-                .enum(
-                    value,
-                    mapOf(
-                        "bodyLarge" to bodyLarge,
-                        "bodyMedium" to bodyMedium,
-                        "bodySmall" to bodySmall,
-                        "titleLarge" to titleLarge,
-                        "titleMedium" to titleMedium,
-                        "titleSmall" to titleSmall,
-                        "headlineMedium" to headlineMedium,
-                    ),
-                ).getOrDefault(bodyMedium)
-        }
+    @Composable private fun textStyle(value: JsonElement?): androidx.compose.ui.text.TextStyle =
+        value?.let { ValueResolver.textStyle(it).getOrThrow() }
+            ?: MaterialTheme.typography.bodyMedium
 }
 
 /** Resolve theme-aware color data for the hand-written native adapters. */

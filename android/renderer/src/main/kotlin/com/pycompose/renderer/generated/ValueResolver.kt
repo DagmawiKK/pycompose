@@ -21,6 +21,7 @@ import com.pycompose.ir.generated.AlignmentHorizontalValue
 import com.pycompose.ir.generated.AlignmentVerticalValue
 import com.pycompose.ir.generated.AndroidExternalSurfaceZOrderValue
 import com.pycompose.ir.generated.AnnotatedStringValue
+import com.pycompose.ir.generated.ArrangementVerticalValue
 import com.pycompose.ir.generated.BorderStrokeValue
 import com.pycompose.ir.generated.BrushValue
 import com.pycompose.ir.generated.ButtonColorsValue
@@ -76,6 +77,7 @@ import com.pycompose.ir.generated.TimePickerColorsValue
 import com.pycompose.ir.generated.TimePickerDisplayModeValue
 import com.pycompose.ir.generated.TimePickerLayoutTypeValue
 import com.pycompose.ir.generated.ToggleableStateValue
+import com.pycompose.ir.generated.TooltipAnchorPositionValue
 import com.pycompose.ir.generated.TopAppBarColorsValue
 import com.pycompose.ir.generated.WindowInsetsValue
 import com.pycompose.ir.generated.ValueContract
@@ -84,6 +86,7 @@ import com.pycompose.ir.generated.WireAlignmentHorizontal
 import com.pycompose.ir.generated.WireAlignmentVertical
 import com.pycompose.ir.generated.WireAndroidExternalSurfaceZOrder
 import com.pycompose.ir.generated.WireAnnotatedString
+import com.pycompose.ir.generated.WireArrangementVertical
 import com.pycompose.ir.generated.WireBorderStroke
 import com.pycompose.ir.generated.WireColor
 import com.pycompose.ir.generated.WireContentScale
@@ -99,6 +102,7 @@ import com.pycompose.ir.generated.WireFilterQuality
 import com.pycompose.ir.generated.WireFontFamily
 import com.pycompose.ir.generated.WireFontStyle
 import com.pycompose.ir.generated.WireFontWeight
+import com.pycompose.ir.generated.WireNamedShape
 import com.pycompose.ir.generated.WireNavigationItemIconPosition
 import com.pycompose.ir.generated.WireNavigationSuiteType
 import com.pycompose.ir.generated.WireOffset
@@ -121,6 +125,7 @@ import com.pycompose.ir.generated.WireThemeTypography
 import com.pycompose.ir.generated.WireTimePickerDisplayMode
 import com.pycompose.ir.generated.WireTimePickerLayoutType
 import com.pycompose.ir.generated.WireToggleableState
+import com.pycompose.ir.generated.WireTooltipAnchorPosition
 import com.pycompose.ir.generated.WireWindowInsets
 import com.pycompose.ir.generated.WireassistChipColors
 import com.pycompose.ir.generated.WireassistChipElevation
@@ -281,6 +286,28 @@ object ValueResolver {
                 androidx.compose.ui.text.AnnotatedString(
                     text = value.text,
                 )
+            }
+        }
+
+    @Composable
+    fun arrangementVertical(value: JsonElement): Result<androidx.compose.foundation.layout.Arrangement.Vertical> {
+        val parsed = runCatching { ValueContract.readArrangementVertical(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(arrangementVertical(parsed))
+    }
+
+    @Composable
+    fun arrangementVertical(value: ArrangementVerticalValue): androidx.compose.foundation.layout.Arrangement.Vertical =
+        when (value) {
+            is WireArrangementVertical -> {
+                when (value.name) {
+                    "Bottom" -> androidx.compose.foundation.layout.Arrangement.Bottom
+                    "Center" -> androidx.compose.foundation.layout.Arrangement.Center
+                    "SpaceAround" -> androidx.compose.foundation.layout.Arrangement.SpaceAround
+                    "SpaceBetween" -> androidx.compose.foundation.layout.Arrangement.SpaceBetween
+                    "SpaceEvenly" -> androidx.compose.foundation.layout.Arrangement.SpaceEvenly
+                    "Top" -> androidx.compose.foundation.layout.Arrangement.Top
+                    else -> error("Unknown native constant")
+                }
             }
         }
 
@@ -1569,6 +1596,13 @@ object ValueResolver {
                     size = dp(value.size),
                 )
             }
+            is WireNamedShape -> {
+                when (value.name) {
+                    "CircleShape" -> androidx.compose.foundation.shape.CircleShape
+                    "RectangleShape" -> androidx.compose.ui.graphics.RectangleShape
+                    else -> error("Unknown native constant")
+                }
+            }
             is WireRoundedCornerShape -> {
                 androidx.compose.foundation.shape.RoundedCornerShape(
                     size = dp(value.size),
@@ -2018,6 +2052,30 @@ object ValueResolver {
                     "Indeterminate" -> androidx.compose.ui.state.ToggleableState.Indeterminate
                     "Off" -> androidx.compose.ui.state.ToggleableState.Off
                     "On" -> androidx.compose.ui.state.ToggleableState.On
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    fun tooltipAnchorPosition(value: JsonElement): Result<androidx.compose.material3.TooltipAnchorPosition> {
+        val parsed = runCatching { ValueContract.readTooltipAnchorPosition(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(tooltipAnchorPosition(parsed))
+    }
+
+    @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+    fun tooltipAnchorPosition(value: TooltipAnchorPositionValue): androidx.compose.material3.TooltipAnchorPosition =
+        when (value) {
+            is WireTooltipAnchorPosition -> {
+                when (value.name) {
+                    "Above" -> androidx.compose.material3.TooltipAnchorPosition.Above
+                    "Below" -> androidx.compose.material3.TooltipAnchorPosition.Below
+                    "End" -> androidx.compose.material3.TooltipAnchorPosition.End
+                    "Left" -> androidx.compose.material3.TooltipAnchorPosition.Left
+                    "Right" -> androidx.compose.material3.TooltipAnchorPosition.Right
+                    "Start" -> androidx.compose.material3.TooltipAnchorPosition.Start
                     else -> error("Unknown native constant")
                 }
             }

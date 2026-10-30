@@ -13,7 +13,7 @@ from pycompose.core import Node, Props
 from pycompose.core.expressions import Expression
 from pycompose.core.ids import call_location, call_site
 from pycompose.core.props import JsonValue, props_from_kwargs, to_snake_case
-from pycompose.core.values import _Unset
+from pycompose.core.values import _Unset, named_value
 from pycompose.errors import IrValidationError
 from pycompose.ui.modifiers import Modifier
 from pycompose.utils.json_canonical import FrozenJsonValue, freeze_json
@@ -160,8 +160,15 @@ class Component(Node):
         declared = REGISTRY.components.get(self.component_type)
         for key, value in wire.items():
             rule = declared.props.get(key) if declared is not None else None
-            if isinstance(value, str) and rule is not None and rule.type == "color":
+            if not isinstance(value, str) or rule is None:
+                continue
+            if rule.type == "color":
                 wire[key] = _hex_color(value, id or "", key)
+            elif rule.type == "enum" and rule.value_type is not None:
+                wire[key] = cast(
+                    "JsonValue",
+                    named_value(rule.value_type, value, REGISTRY.value_types),
+                )
         if modifier is not None:
             wire["modifier"] = freeze_json(
                 modifier.values if isinstance(modifier, Modifier) else modifier

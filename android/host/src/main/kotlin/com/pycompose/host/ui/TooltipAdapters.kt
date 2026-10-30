@@ -10,7 +10,7 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TooltipScope
 import androidx.compose.ui.unit.dp
 import com.pycompose.renderer.ComponentRegistry
-import com.pycompose.renderer.TooltipPropResolver
+import com.pycompose.renderer.generated.ValueResolver
 import com.pycompose.renderer.tooltipState
 import com.pycompose.ir.generated.PlainTooltip as PlainTooltipNode
 import com.pycompose.ir.generated.RichTooltip as RichTooltipNode
@@ -29,9 +29,8 @@ internal fun ComponentRegistry.Builder.tooltips(): ComponentRegistry.Builder =
         TooltipBox(
             positionProvider =
                 TooltipDefaults.rememberTooltipPositionProvider(
-                    TooltipPropResolver
-                        .tooltipPosition(box.props.position)
-                        .getOrDefault(TooltipAnchorPosition.Above),
+                    box.props.position?.let { ValueResolver.tooltipAnchorPosition(it).getOrThrow() }
+                        ?: TooltipAnchorPosition.Above,
                 ),
             tooltip = context.slotIn<TooltipScope>(box.children, "tooltip") ?: {},
             state = state,

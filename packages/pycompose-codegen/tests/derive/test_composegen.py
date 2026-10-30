@@ -379,7 +379,7 @@ def test_the_host_builds_a_value_from_a_prop_it_names() -> None:
     )
     assert rule["policy"] == "hostValue"
     assert rule["prop"] == "position"
-    assert rule["spec"]["decode"] == "tooltipPosition"
+    assert rule["spec"]["valueType"] == "TooltipAnchorPosition"
 
 
 def test_an_overload_with_several_holders_binds_the_one_named() -> None:

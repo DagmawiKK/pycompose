@@ -83,6 +83,6 @@ def component_screen() -> Node:
         modifier=Modifier()
         .padding(16)
         .fill_max_width()
-        .clip("rounded")
+        .clip("circleShape")
         .clickable("submit"),
     )

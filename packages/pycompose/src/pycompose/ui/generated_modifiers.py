@@ -29,6 +29,10 @@ _BoxAlignAlignment = Literal[
     "topRight",
     "topStart",
 ]
+_ClipShape = Literal[
+    "rectangleShape",
+    "circleShape",
+]
 _ColumnAlignAlignment = Literal[
     "centerHorizontally",
     "end",
@@ -174,7 +178,7 @@ class GeneratedOperations:
     @_Operation
     def clip(
         self,
-        shape: JsonValue,
+        shape: _ClipShape,
     ) -> Modifier:
         """Native ``androidx.compose.ui.draw.clip``.
 

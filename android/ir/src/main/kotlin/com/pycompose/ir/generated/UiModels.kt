@@ -60,7 +60,7 @@ data class AlertDialog(
 
 @Serializable
 data class AnimatedContentProps(
-    val `contentAlignment`: String = "topStart",
+    val `contentAlignment`: JsonElement? = null,
     val `label`: String = "AnimatedContent",
     override val `modifier`: JsonObject? = null,
     val `targetState`: String,
@@ -289,7 +289,7 @@ data class BottomSheetScaffold(
 
 @Serializable
 data class BoxProps(
-    val `contentAlignment`: String = "topStart",
+    val `contentAlignment`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
 ) : UiProps
 
@@ -466,11 +466,12 @@ data class CircularProgressIndicatorProgress(
 
 @Serializable
 data class ColumnProps(
-    val `horizontalAlignment`: String = "start",
+    val `horizontalAlignment`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `offset`: Double? = null,
     val `onScrollIdle`: String? = null,
     val `scrollable`: Boolean? = null,
+    val `verticalArrangement`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -1154,9 +1155,10 @@ data class FloatingActionButton(
 
 @Serializable
 data class FlowColumnProps(
-    val `itemHorizontalAlignment`: String = "start",
+    val `itemHorizontalAlignment`: JsonElement? = null,
     val `maxItemsInEachColumn`: Long = 2147483647L,
     override val `modifier`: JsonObject? = null,
+    val `verticalArrangement`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -1173,9 +1175,10 @@ data class FlowColumn(
 
 @Serializable
 data class FlowRowProps(
-    val `itemVerticalAlignment`: String = "top",
+    val `itemVerticalAlignment`: JsonElement? = null,
     val `maxItemsInEachRow`: Long = 2147483647L,
     override val `modifier`: JsonObject? = null,
+    val `verticalArrangement`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -1299,7 +1302,7 @@ data class Image(
 
 @Serializable
 data class ImageImageVectorProps(
-    val `alignment`: String = "center",
+    val `alignment`: JsonElement? = null,
     val `contentDescription`: String?,
     val `contentScale`: JsonElement? = null,
     val `imageVector`: JsonElement,
@@ -1417,7 +1420,7 @@ data class LazyColumnProps(
     val `itemOffset`: Long? = null,
     override val `modifier`: JsonObject? = null,
     val `onScrollIdle`: String? = null,
-    val `verticalArrangement`: String = "top",
+    val `verticalArrangement`: JsonElement? = null,
     val `window`: String? = null,
 ) : UiProps
 
@@ -2174,7 +2177,7 @@ data class PrimaryTabRow(
 
 @Serializable
 data class PullToRefreshBoxProps(
-    val `contentAlignment`: String = "topStart",
+    val `contentAlignment`: JsonElement? = null,
     val `isRefreshing`: Boolean,
     override val `modifier`: JsonObject? = null,
     val `onRefresh`: String,
@@ -2242,7 +2245,7 @@ data class RichTooltip(
 @Serializable
 data class RowProps(
     override val `modifier`: JsonObject? = null,
-    val `verticalAlignment`: String = "top",
+    val `verticalAlignment`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -2965,7 +2968,7 @@ data class TextProps(
     val `locale`: String? = null,
     override val `modifier`: JsonObject? = null,
     val `resource`: String? = null,
-    val `style`: JsonElement = JsonPrimitive("bodyMedium"),
+    val `style`: JsonElement? = null,
     val `text`: String,
 ) : UiProps
 
@@ -3135,7 +3138,7 @@ data class TooltipBoxProps(
     val `isPersistent`: Boolean = false,
     override val `modifier`: JsonObject? = null,
     val `onVisibilityChange`: String? = null,
-    val `position`: String = "above",
+    val `position`: JsonElement? = null,
     val `visible`: Boolean? = null,
 ) : UiProps
 

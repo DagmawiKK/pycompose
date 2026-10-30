@@ -1,9 +1,8 @@
-"""Prop passing: scalars, dp, callbacks, decoders and import hygiene."""
+"""Prop passing: scalars, dp, callbacks, named constants and import hygiene."""
 
 from __future__ import annotations
 
 import json
-import pathlib
 import re
 from pathlib import Path
 from typing import Any
@@ -65,7 +64,7 @@ def test_a_dp_prop_that_is_always_present_wraps_at_the_call(spec: dict) -> None:
             lambda registry: registry["components"]["Text"]["props"]["text"].update(
                 {"nativeDefault": "androidx.compose.material3.LocalTextStyle.current"}
             ),
-            "'nativeDefault' is read only for value and dp props",
+            "'nativeDefault' is read only for value, dp and named-constant props",
         ),
     ],
 )
@@ -167,16 +166,13 @@ def test_the_generated_file_imports_only_what_it_uses() -> None:
             assert re.search(rf"\b{re.escape(simple)}\b", body), f"unused: {line}"
 
 
-def test_every_enum_color_and_resource_prop_declares_its_decoder() -> None:
-    """Without a `decode`, a generator cannot tell one enum family from another.
+def test_every_enum_color_and_resource_prop_names_how_it_resolves() -> None:
+    """A named constant or a colour resolves through its value family.
 
-    `PropResolver` knows how to turn `"start"` into an `Alignment.Horizontal`,
-    but nothing in the data says `["start","center","end"]` means *horizontal*
-    rather than some other family with the same three values. Declared per prop,
-    never inferred from the value set: inference breaks silently the day two
-    families share a value set, and the failure is a wrong alignment rather than
-    an error. A state-held prop never reaches a native parameter, so the adapter
-    resolves it through its holder instead and needs no decoder.
+    Declared per prop, never inferred from the value set: two families may
+    share a value set, and the failure would be a wrong alignment rather than an
+    error. A resource names its loader. A state-held prop never reaches a
+    native parameter, so it needs neither.
     """
     registry = components()
     for name, entry in sorted(registry.items()):
@@ -184,95 +180,56 @@ def test_every_enum_color_and_resource_prop_declares_its_decoder() -> None:
         for prop, spec in entry["props"].items():
             if prop in held:
                 continue
-            if spec["type"] in {"enum", "resource"}:
-                assert spec.get(
-                    "decode"
-                ), f"{name}.{prop} is a {spec['type']} with no decoder"
-            if spec["type"] == "color":
-                # A colour is its family's tagged value: its resolver, not a decoder.
-                assert spec.get("valueType") == "Color", f"{name}.{prop}"
+            if spec["type"] in {"enum", "color"}:
+                assert "valueType" in spec, f"{name}.{prop}"
                 assert "decode" not in spec, f"{name}.{prop}"
+            if spec["type"] == "resource":
+                assert spec.get("decode"), f"{name}.{prop} has no loader"
 
 
-def test_a_decoder_binds_to_a_resolver_that_exists() -> None:
-    """A typo'd decoder name generates Kotlin that does not compile."""
-    from pycompose_codegen.emit.adapters.policy import (
-        RESOLVER_FALLBACK,
-        RESOLVER_OWNER,
-        RESOLVER_RETURN,
-    )
+def named_example(style: dict[str, Any]) -> str:
+    """Render a minimal generated entry carrying a named-constant prop.
 
-    declared = {
-        spec["decode"]
-        for entry in components().values()
-        for spec in entry["props"].values()
-        if spec.get("decode")
-    }
-    assert declared, "expected the catalog to declare decoders"
-    for decoder in declared:
-        assert decoder in RESOLVER_RETURN, decoder
-        assert decoder in RESOLVER_FALLBACK, decoder
-    # Non-resource decoders must exist on their declared native resolver.
-    for decoder in declared - {"resourceText", "resourceImage", "resourceFont"}:
-        source = (
-            pathlib.Path("android/renderer/src/main/kotlin")
-            / "com/pycompose/renderer/PropResolver.kt"
-        ).read_text()
-        assert f"fun {decoder}(" in source, f"{decoder} has no resolver"
-        assert f"object {RESOLVER_OWNER.get(decoder, 'PropResolver')}" in source
+    Text is hand-written by design, so a minimal entry is rendered for real and
+    the assertion covers the generator's own emission.
 
-
-def test_tooltip_position_uses_its_native_decoder() -> None:
-    """Experimental positions have a declared resolver, never a guessed alignment."""
-    from pycompose_codegen.emit.adapters.assemble import render
-
-    entry = {
-        "props": {"position": components()["TooltipBox"]["props"]["position"]},
-        "children": {"allowed": False},
-    }
-    adapter = render("Tooltip", entry)
-    assert "com.pycompose.renderer.TooltipPropResolver.tooltipPosition(" in adapter
-    assert "androidx.compose.material3.TooltipAnchorPosition.Above" in adapter
-
-
-def decoded_example() -> tuple[str, str]:
-    """Return a component that is generated and carries a decoded prop.
-
-    Text and Image both declare `wrapper` and so are hand-written by design;
-    testing decoded output through them would assert nothing about the
-    generator. A minimal entry is rendered for real instead, so the assertion
-    covers the generator's own emission rather than a hand-written adapter.
+    Args:
+        style: The ``style`` prop's schema entry.
 
     Returns:
-        The component name and its rendered adapter.
+        The rendered adapter, empty when the entry is not generated.
     """
-    from pycompose_codegen.emit.adapters.assemble import render as render_one
-
     entry = {
         "children": {"allowed": False},
-        "props": {
-            "style": {
-                "type": "enum",
-                "values": ["bodyLarge", "bodyMedium"],
-                "decode": "textStyle",
-                "default": "bodyMedium",
-            },
-            "text": {"type": "string", "required": True},
-        },
+        "props": {"style": style, "text": {"type": "string", "required": True}},
     }
-    return "Text", render_one("Text", entry)
+    return render("Text", entry)
 
 
-def test_a_decoded_prop_becomes_a_local_not_an_inline_call() -> None:
-    """`textStyle` reads MaterialTheme, which is only in scope in composition.
-
-    Inlining it into an argument list makes the call non-composable, which the
-    compiler rejects -- so decoded props bind to a `val` first.
-    """
-    name, block = decoded_example()
-    assert block, f"{name} should render"
-    assert "val styleValue: androidx.compose.ui.text.TextStyle = " in block
+def test_a_named_constant_resolves_its_tag_or_takes_the_native_default() -> None:
+    """``textStyle`` reads MaterialTheme, so it binds to a local in composition."""
+    default = "androidx.compose.material3.MaterialTheme.typography.bodyMedium"
+    block = named_example(
+        {
+            "type": "enum",
+            "valueType": "TextStyle",
+            "values": ["bodyLarge", "bodyMedium"],
+            "default": "bodyMedium",
+            "nativeDefault": default,
+        }
+    )
+    assert (
+        "val styleValue = model.props.style?.let { "
+        "com.pycompose.renderer.generated.ValueResolver.textStyle(it).getOrThrow() }"
+        f" ?: {default}"
+    ) in block
     assert "style = styleValue" in block
+
+
+def test_an_optional_named_constant_needs_a_native_default() -> None:
+    """Absent, the parameter must take something; nothing is guessed."""
+    style = {"type": "enum", "valueType": "TextStyle", "values": ["bodyLarge"]}
+    assert named_example(style) == ""
 
 
 def test_a_resource_prop_needs_a_wrapper() -> None:
@@ -296,21 +253,6 @@ def test_a_resource_prop_needs_a_wrapper() -> None:
         },
     }
     assert render_one("Icon", entry) == ""
-
-
-def test_an_optional_decoded_prop_is_not_passed_to_a_non_null_resolver() -> None:
-    """`PropResolver.color` takes a String; a nullable would not compile."""
-    from pycompose_codegen.emit.adapters.assemble import render as render_one
-
-    entry = {
-        "children": {"allowed": False},
-        "props": {
-            "text": {"type": "string", "required": True},
-            "color": {"type": "color", "decode": "color"},
-        },
-    }
-    block = render_one("Text", entry)
-    assert "model.props.color?.takeIf" in block
 
 
 def test_a_wrapped_component_is_not_reduced_to_resolved_values() -> None:

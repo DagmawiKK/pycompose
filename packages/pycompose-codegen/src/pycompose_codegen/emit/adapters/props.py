@@ -1,8 +1,8 @@
 """One prop into the call's fragments, by the shape its entry declares.
 
-A scalar is passed as the model holds it, a decoded family through its resolver,
-a value-typed prop through its value resolver, a callback as a dispatch, a dp
-through Kotlin's own conversion and a provider as a lambda the host fills.
+A scalar is passed as the model holds it, a value-typed prop through its
+family's resolver, a callback as a dispatch, a dp through Kotlin's own
+conversion and a provider as a lambda the host fills.
 """
 
 from __future__ import annotations
@@ -13,12 +13,8 @@ from pycompose_codegen.emit.adapters.fragments import Fragments
 from pycompose_codegen.emit.adapters.policy import (
     NUMERIC_CONVERSIONS,
     NUMERIC_KOTLIN,
-    RESOLVER_FALLBACK,
-    RESOLVER_OWNER,
-    RESOLVER_RETURN,
     SCALAR_KOTLIN,
     camel,
-    qualify,
 )
 from pycompose_codegen.emit.values import resolver_call
 
@@ -44,8 +40,8 @@ def render_prop(prop: str, spec: dict[str, Any], out: Fragments) -> bool:
         emitted = render_value(prop_name, spec, out)
     elif prop_type == "color" and "valueType" in spec:
         emitted = out.add(_color(prop_name, spec))
-    elif spec.get("decode") is not None:
-        emitted = out.add(_decoded(prop_name, spec, spec["decode"]))
+    elif prop_type == "enum" and "valueType" in spec:
+        emitted = out.add(_named(prop_name, spec))
     elif spec.get("content") is not None:
         emitted = _render_slot(prop_name, spec, out)
     elif prop_type == "actionId":
@@ -70,8 +66,8 @@ def _render_scalar(prop_name: str, spec: dict[str, Any], out: Fragments) -> bool
         False when the prop's type has no Kotlin mapping this generator knows.
     """
     if spec["type"] not in SCALAR_KOTLIN:
-        # An enum, color or resource with no decode. Refused rather than
-        # guessed: the value set does not say which resolver family it is.
+        # An enum or colour with no value family, or a resource: refused, as
+        # no resolver says what its values are natively.
         return False
     if "indexOf" in spec:
         # Compose reads its items at this index while measuring and throws
@@ -224,57 +220,23 @@ def render_value(prop_name: str, spec: dict[str, Any], out: Fragments) -> bool:
     )
 
 
-def _decoded(
-    prop_name: str, spec: dict[str, Any], decoder: str
-) -> tuple[str, str] | None:
-    """Render one enum, color or resource prop through its declared resolver.
-
-    ``PropResolver`` already knows how to turn ``"start"`` into an
-    ``Alignment.Horizontal``; what it could not know was *which* family a given
-    prop's values belonged to. That is what the schema's ``decode`` field says
-    now, so this emits a call rather than guessing.
-
-    The result is bound to a local rather than inlined because a resolver call
-    inside an argument list runs a lambda, and Compose composable parameters
-    (``textStyle`` reads ``MaterialTheme``) are only legal in a composable
-    scope -- not inside a nested argument expression.
+def _named(prop_name: str, spec: dict[str, Any]) -> tuple[str, str]:
+    """Render a named-constant prop: its tagged constant, or its native default.
 
     Args:
         prop_name: The camelCase Kotlin property name.
         spec: The prop's schema entry.
-        decoder: The resolver the schema named.
 
     Returns:
-        A ``(local declaration, argument)`` pair, or ``(None, "")`` when the
-        prop cannot be rendered.
+        The local declaration and the argument naming it.
     """
-    declared = RESOLVER_RETURN.get(decoder)
-    # A declared fallback wins: it is the value the hand-written adapter used for
-    # exactly this parameter, and a per-decoder default is a guess about the rest.
-    declared_fallback = spec.get("fallback") or RESOLVER_FALLBACK.get(decoder)
-    if declared is None or declared_fallback is None:
-        return None
-    returns = qualify(declared)
-    fallback = qualify(declared_fallback)
-
-    # An optional prop is nullable in the model, so an absent value must not
-    # reach a resolver that takes a non-null String.
-    optional = not spec.get("required") and "default" not in spec
     wire = f"model.props.{prop_name}"
-    access = f"{wire}?.takeIf {{ it.isNotEmpty() }}" if optional else wire
-    value = f"{prop_name}Value"
-
-    resolver = qualify(RESOLVER_OWNER.get(decoder, "PropResolver"))
-
-    if decoder == "textStyle":
-        # The adapter body is already composable, so a plain local is enough;
-        # the resolver itself is what must run in composition.
-        return (
-            f"val {value}: {returns} = {resolver}" f".textStyle({access}, {fallback})",
-            f"{prop_name} = {value}",
-        )
-    resolved = f"{resolver}.{decoder}({access}).getOrDefault({fallback})"
-    return f"val {value}: {returns} = {resolved}", f"{prop_name} = {value}"
+    if spec.get("required"):
+        resolved = resolver_call(spec["valueType"], wire) + ".getOrThrow()"
+    else:
+        tagged = resolver_call(spec["valueType"], "it") + ".getOrThrow()"
+        resolved = f"{wire}?.let {{ {tagged} }} ?: {spec['nativeDefault']}"
+    return f"val {prop_name}Value = {resolved}", f"{prop_name} = {prop_name}Value"
 
 
 def _color(prop_name: str, spec: dict[str, Any]) -> tuple[str, str]:
@@ -292,11 +254,11 @@ def _color(prop_name: str, spec: dict[str, Any]) -> tuple[str, str]:
     Returns:
         The local declaration and the argument naming it.
     """
-    fallback = qualify(spec.get("fallback") or RESOLVER_FALLBACK["color"])
+    fallback = spec.get("fallback", "androidx.compose.ui.graphics.Color.Unspecified")
     tagged = resolver_call(spec["valueType"], "wire")
     value = f"{prop_name}Value"
     return (
-        f"val {value}: {qualify(RESOLVER_RETURN['color'])} = "
+        f"val {value}: androidx.compose.ui.graphics.Color = "
         f"when (val wire = model.props.{prop_name}) {{\n"
         "                    is JsonObject -> context.expressionColor(wire) "
         f"?: {tagged}.getOrDefault({fallback})\n"
@@ -371,12 +333,6 @@ def _render_provider(
             f"{resolver_call(spec['valueType'], f'model.props.{prop_name}')}"
             ".getOrThrow()"
         )
-    elif spec.get("decode") is not None:
-        decoded = _decoded(prop_name, spec, spec["decode"])
-        if decoded is None:
-            return False
-        local, _ = decoded
-        wire = RESOLVER_RETURN.get(spec["decode"])
     elif spec["type"] in SCALAR_KOTLIN:
         wire = SCALAR_KOTLIN[spec["type"]]
         local = f"val {prop_name}Value = model.props.{prop_name}"

@@ -24,6 +24,8 @@ sealed interface AndroidExternalSurfaceZOrderValue
 
 sealed interface AnnotatedStringValue
 
+sealed interface ArrangementVerticalValue
+
 sealed interface BorderStrokeValue
 
 sealed interface BrushValue
@@ -134,6 +136,8 @@ sealed interface TimePickerLayoutTypeValue
 
 sealed interface ToggleableStateValue
 
+sealed interface TooltipAnchorPositionValue
+
 sealed interface TopAppBarColorsValue
 
 sealed interface WindowInsetsValue
@@ -162,6 +166,11 @@ data class WireAnnotatedString(
     val supplied: Set<String>,
     val text: String,
 ) : AnnotatedStringValue
+
+data class WireArrangementVertical(
+    val supplied: Set<String>,
+    val name: String,
+) : ArrangementVerticalValue
 
 data class WireBorderStroke(
     val supplied: Set<String>,
@@ -240,6 +249,11 @@ data class WireFontWeight(
     val supplied: Set<String>,
     val weight: Int,
 ) : FontWeightValue
+
+data class WireNamedShape(
+    val supplied: Set<String>,
+    val name: String,
+) : ShapeValue
 
 data class WireNavigationItemIconPosition(
     val supplied: Set<String>,
@@ -360,6 +374,11 @@ data class WireToggleableState(
     val supplied: Set<String>,
     val name: String,
 ) : ToggleableStateValue
+
+data class WireTooltipAnchorPosition(
+    val supplied: Set<String>,
+    val name: String,
+) : TooltipAnchorPositionValue
 
 data class WireWindowInsets(
     val supplied: Set<String>,
@@ -984,11 +1003,15 @@ object ValueContract {
             "ng\",\"values\":[\"Behind\",\"MediaOverlay\",\"OnTop\"]}},\"since\":\"1.23.0",
             "\"},\"AnnotatedString\":{\"family\":\"AnnotatedString\",\"parameters\":{\"",
             "text\":{\"required\":true,\"type\":\"string\"}},\"since\":\"1.12.0\"},",
-            "\"BorderStroke\":{\"family\":\"BorderStroke\",\"parameters\":{\"brush\":{\"",
-            "required\":true,\"type\":\"value\",\"valueType\":\"Brush\"},\"width\":{\"min",
-            "imum\":0,\"required\":true,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since",
-            "\":\"1.12.0\"},\"Color\":{\"family\":\"Color\",\"parameters\":{\"color\":{\"ma",
-            "ximum\":4294967295,\"minimum\":0,",
+            "\"ArrangementVertical\":{\"family\":\"ArrangementVertical\",",
+            "\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\",",
+            "\"values\":[\"Bottom\",\"Center\",",
+            "\"SpaceAround\",\"SpaceBetween\",\"SpaceEvenly\",\"Top\"]}},\"since\":\"1.2",
+            "3.0\"},\"BorderStroke\":{\"family\":\"BorderStroke\",\"parameters\":{\"bru",
+            "sh\":{\"required\":true,\"type\":\"value\",\"valueType\":\"Brush\"},\"width\"",
+            ":{\"minimum\":0,\"required\":true,\"type\":\"value\",\"valueType\":\"Dp\"}},",
+            "\"since\":\"1.12.0\"},\"Color\":{\"family\":\"Color\",\"parameters\":{\"color",
+            "\":{\"maximum\":4294967295,\"minimum\":0,",
             "\"required\":true,\"type\":\"long\"}},\"since\":\"1.11.0\"},\"ContentScale\"",
             ":{\"family\":\"ContentScale\",\"parameters\":{\"name\":{\"required\":true,",
             "\"type\":\"string\",\"values\":[\"Crop\",\"FillBounds\",\"FillHeight\",\"Fill",
@@ -1025,7 +1048,10 @@ object ValueContract {
             "\"values\":[\"Italic\",\"Normal\"]}},\"since\":\"1.13.0\"},\"FontWeight\":{\"",
             "family\":\"FontWeight\",\"parameters\":{\"weight\":{\"maximum\":1000,\"min",
             "imum\":1,\"required\":true,\"type\":\"int\"}},",
-            "\"since\":\"1.11.0\"},\"NavigationItemIconPosition\":{\"family\":\"Naviga",
+            "\"since\":\"1.11.0\"},\"NamedShape\":{\"family\":\"Shape\",",
+            "\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\",",
+            "\"values\":[\"CircleShape\",\"RectangleShape\"]}},",
+            "\"since\":\"1.23.0\"},\"NavigationItemIconPosition\":{\"family\":\"Naviga",
             "tionItemIconPosition\",\"parameters\":{\"name\":{\"required\":true,\"typ",
             "e\":\"string\",\"values\":[\"Start\",\"Top\"]}},\"since\":\"1.23.0\"},",
             "\"NavigationSuiteType\":{\"family\":\"NavigationSuiteType\",\"parameter",
@@ -1119,6 +1145,10 @@ object ValueContract {
             "leState\":{\"family\":\"ToggleableState\",",
             "\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\",",
             "\"values\":[\"Indeterminate\",\"Off\",\"On\"]}},\"since\":\"1.12.0\"},",
+            "\"TooltipAnchorPosition\":{\"family\":\"TooltipAnchorPosition\",\"param",
+            "eters\":{\"name\":{\"required\":true,\"type\":\"string\",",
+            "\"values\":[\"Above\",\"Below\",",
+            "\"End\",\"Left\",\"Right\",\"Start\"]}},\"since\":\"1.23.0\"},",
             "\"WindowInsets\":{\"family\":\"WindowInsets\",\"parameters\":{\"bottom\":{",
             "\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"left\":{\"minimum\":0",
             ",\"type\":\"value\",\"valueType\":\"Dp\"},\"right\":{\"minimum\":0,",
@@ -1753,6 +1783,18 @@ object ValueContract {
             "AnnotatedString" -> WireAnnotatedString(
                 supplied = data.keys,
                 text = data.getValue("text").jsonPrimitive.content,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readArrangementVertical(value: JsonElement): ArrangementVerticalValue {
+        ValueParser.validate(value, "ArrangementVertical", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "ArrangementVertical" -> WireArrangementVertical(
+                supplied = data.keys,
+                name = data.getValue("name").jsonPrimitive.content,
             )
             else -> error("Unknown value constructor")
         }
@@ -2530,6 +2572,10 @@ object ValueContract {
                 supplied = data.keys,
                 size = readDp(data.getValue("size")),
             )
+            "NamedShape" -> WireNamedShape(
+                supplied = data.keys,
+                name = data.getValue("name").jsonPrimitive.content,
+            )
             "RoundedCornerShape" -> WireRoundedCornerShape(
                 supplied = data.keys,
                 size = readDp(data.getValue("size")),
@@ -2856,6 +2902,18 @@ object ValueContract {
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
             "ToggleableState" -> WireToggleableState(
+                supplied = data.keys,
+                name = data.getValue("name").jsonPrimitive.content,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readTooltipAnchorPosition(value: JsonElement): TooltipAnchorPositionValue {
+        ValueParser.validate(value, "TooltipAnchorPosition", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "TooltipAnchorPosition" -> WireTooltipAnchorPosition(
                 supplied = data.keys,
                 name = data.getValue("name").jsonPrimitive.content,
             )

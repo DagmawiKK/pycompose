@@ -10,7 +10,7 @@ from __future__ import annotations
 from typing import Any
 
 from pycompose.contract.registry_types import CONSUMERS, SLOT_KINDS
-from pycompose_codegen.emit.adapters.policy import DECODED, MECHANICAL
+from pycompose_codegen.emit.adapters.policy import MECHANICAL
 from pycompose_codegen.emit.state_families import (
     STATE_CONSTRUCTOR_PROPS,
     attach_gate,
@@ -108,26 +108,20 @@ def _mechanical_prop(spec: dict[str, Any]) -> bool:
         True when the adapter can resolve it from its declared type.
     """
     if "valueType" in spec:
-        if spec["type"] == "value" and (
-            spec.get("required") or "nativeDefault" in spec
-        ):
-            return True
-        # A colour prop takes its tagged value or an expression over streams,
-        # and falls back to its declared colour when absent.
-        return spec.get("type") == "color"
+        # A value or a named constant needs a native default for its absent
+        # branch; a colour, which may also be an expression over streams,
+        # always has its declared fallback.
+        declared = bool(spec.get("required") or "nativeDefault" in spec)
+        return spec["type"] == "color" or (
+            spec["type"] in {"value", "enum"} and declared
+        )
     if spec.get("type") in MECHANICAL:
         return True
     # A dp prop carries a plain number and needs no decoder, but only a prop
     # with some default to fall back to can be rendered at all.
-    if spec.get("type") == "dp" and _dp_renderable(spec):
-        return True
-    if spec.get("type") == "resource":
-        # A resource loads off the Compose thread with its own diagnostics, so
-        # only a wrapper (Text's, Image's) renders one; see WRAPPERS.
-        return False
-    # Decodable types need a named resolver; without one they cannot be
-    # rendered at all rather than rendered wrongly.
-    return spec.get("type") in DECODED and bool(spec.get("decode"))
+    # A resource loads off the Compose thread with its own diagnostics, so only
+    # a wrapper (Text's, Image's) renders one; see WRAPPERS.
+    return spec.get("type") == "dp" and _dp_renderable(spec)
 
 
 def _dp_renderable(spec: dict[str, Any]) -> bool:

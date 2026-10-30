@@ -33,11 +33,12 @@ ROOT = Path(__file__).resolve().parents[4]
 
 def test_text_constructs_a_registry_valid_node() -> None:
     text = Text(id="title", text="Hello", style="titleLarge")
-    candidate = emit_ir(State(root=text), "1.0.0")
+    candidate = emit_ir(State(root=text), SCHEMA_VERSION)
     assert validate_ir(candidate).snapshot is candidate
     assert to_json_bytes(candidate) == (
-        b'{"root":{"id":"0","props":{"style":"titleLarge","text":"Hello"},'
-        b'"type":"Text"},"schemaVersion":"1.0.0","version":"0.1.0"}'
+        b'{"root":{"id":"0","props":{"style":{"name":"titleLarge",'
+        b'"type":"ThemeTypography"},"text":"Hello"},"type":"Text"},'
+        b'"schemaVersion":"1.23.0","version":"0.1.0"}'
     )
 
 
@@ -45,7 +46,7 @@ def test_text_constructs_a_registry_valid_node() -> None:
     "component,props",
     [
         (Text, {"text": "Hi"}),
-        (Column, {"horizontal_alignment": "center"}),
+        (Column, {"horizontal_alignment": "centerHorizontally"}),
         (Row, {"vertical_alignment": "bottom"}),
         (Box, {"content_alignment": "center"}),
         (Spacer, {}),
@@ -97,7 +98,7 @@ def test_modifier_chain_preserves_order_and_duplicates() -> None:
         empty.padding(8)
         .fill_max_width(0.5)
         .size(48, 24)
-        .clip("circle")
+        .clip("circleShape")
         .clickable("increment")
         .padding(4)
     )
@@ -107,13 +108,13 @@ def test_modifier_chain_preserves_order_and_duplicates() -> None:
             {"type": "padding", "value": 8},
             {"type": "fillMaxWidth", "fraction": 0.5},
             {"type": "size", "width": 48, "height": 24},
-            {"type": "clip", "shape": "circle"},
+            {"type": "clip", "shape": {"type": "NamedShape", "name": "CircleShape"}},
             {"type": "clickable", "onClick": "increment", "enabled": True},
             {"type": "padding", "value": 4},
         ]
     }
     assert empty.to_wire() == {"operations": []}
-    candidate = emit_ir(State(root=node), "1.0.0")
+    candidate = emit_ir(State(root=node), SCHEMA_VERSION)
     assert validate_ir(candidate).snapshot is candidate
 
 
@@ -312,7 +313,7 @@ def test_components_and_modifier_data_are_frozen() -> None:
 
 
 def test_component_screen_matches_golden_and_generated_schema() -> None:
-    candidate = emit_ir(State(root=component_screen()), "1.0.0")
+    candidate = emit_ir(State(root=component_screen()), SCHEMA_VERSION)
     assert validate_ir(candidate).snapshot is candidate
     actual = to_json_bytes(candidate)
     expected = read_golden("component_screen.json")

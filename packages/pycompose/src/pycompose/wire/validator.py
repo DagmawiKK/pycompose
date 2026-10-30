@@ -65,7 +65,10 @@ _TYPE_CHECKS: dict[str, Callable[[object, PropDef], bool]] = {
     and not isinstance(value, bool),
     "dp": lambda value, _: _is_native_float(value),
     "modifier": lambda value, _: isinstance(value, Mapping),
-    "enum": lambda value, prop: isinstance(value, str) and value in prop.values,
+    # A named constant of a value family crosses the wire only tagged.
+    "enum": lambda value, prop: isinstance(value, str)
+    and prop.value_type is None
+    and value in prop.values,
     "actionId": lambda value, _: isinstance(value, ActionBinding)
     or (isinstance(value, str) and value in REGISTRY.actions),
 }

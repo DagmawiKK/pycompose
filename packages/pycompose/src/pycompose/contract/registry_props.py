@@ -59,15 +59,8 @@ class PropDef:
             compile.
         nullable_payload: The payload fields that may carry null: a derived
             family's ``onSelectedDateMillisChange`` reports a cleared selection.
-        decode: Which host resolver decodes this prop's value, for the prop
-            types whose Kotlin type is not the wire type: ``enum``, ``color``
-            and ``resource``. ``PropResolver`` already knows how to turn
-            ``"start"`` into an ``Alignment.Horizontal``, but nothing in the
-            data says ``['start','center','end']`` means *horizontal* rather
-            than some other family with the same three values. Declared per
-            prop rather than inferred from the value set, because inference
-            breaks silently the day two families share a value set, and the
-            failure is a wrong alignment rather than an error.
+        decode: Which host loader reads a ``resource`` prop off the main
+            thread. Every other family crosses the wire as its tagged value.
         value_type: Optional approved native value family for tagged inputs.
         native_default: Native default provider used by generated adapters.
         native_type: The narrower native Kotlin type when the wire type is

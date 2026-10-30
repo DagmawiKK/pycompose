@@ -122,7 +122,7 @@ def task_row(*, task: Task) -> Node:
     """
     return Row(
         id="row",
-        vertical_alignment="center",
+        vertical_alignment="centerVertically",
         modifier=Modifier().padding(4),
         children=[
             Checkbox(
@@ -187,7 +187,7 @@ def screen(state: Todo) -> Node:
                 Spacer(modifier=Modifier().size(12)),
                 Row(
                     id="entry",
-                    vertical_alignment="center",
+                    vertical_alignment="centerVertically",
                     children=[
                         TextField(
                             id="draft",

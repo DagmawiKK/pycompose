@@ -131,7 +131,7 @@ def previews_row(*, previews: bool) -> Node:
         A Row pairing the label with the Switch.
     """
     return Row(
-        vertical_alignment="center",
+        vertical_alignment="centerVertically",
         children=[
             Text(
                 text="Show note previews",
@@ -207,7 +207,7 @@ def about_sheet(*, open: bool, notes: list[Note]) -> Node:
                 modifier=Modifier().padding(20).fill_max_width(),
                 children=[
                     Row(
-                        vertical_alignment="center",
+                        vertical_alignment="centerVertically",
                         children=[
                             Icon(
                                 image_vector=materialIcon(name="Filled.Info"),
@@ -284,7 +284,7 @@ def note_row(*, note: Note, previews: bool) -> Node:
         modifier=Modifier().padding(PaddingValues(bottom=Dp(8))).fill_max_width(),
         children=[
             Row(
-                vertical_alignment="center",
+                vertical_alignment="centerVertically",
                 modifier=Modifier().padding(10),
                 children=[
                     Column(modifier=Modifier().fill_max_width(0.75), children=caption),

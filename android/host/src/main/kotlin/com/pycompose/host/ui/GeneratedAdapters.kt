@@ -337,7 +337,7 @@ object GeneratedAdapters {
             }
             .register("AnimatedContent") { node, modifier, context ->
                 val model = node as AnimatedContentNode
-                val contentAlignmentValue: androidx.compose.ui.Alignment = com.pycompose.renderer.PropResolver.alignment(model.props.contentAlignment).getOrDefault(androidx.compose.ui.Alignment.TopStart)
+                val contentAlignmentValue = model.props.contentAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignment(it).getOrThrow() } ?: androidx.compose.ui.Alignment.Companion.TopStart
                 val keyed = context.keyedContent(model.id, model.props.targetState, model.children)
                 AnimatedContent(
                     modifier = modifier,
@@ -510,7 +510,7 @@ object GeneratedAdapters {
             }
             .register("Box") { node, modifier, context ->
                 val model = node as BoxNode
-                val contentAlignmentValue: androidx.compose.ui.Alignment = com.pycompose.renderer.PropResolver.alignment(model.props.contentAlignment).getOrDefault(androidx.compose.ui.Alignment.TopStart)
+                val contentAlignmentValue = model.props.contentAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignment(it).getOrThrow() } ?: androidx.compose.ui.Alignment.Companion.TopStart
                 Box(
                     modifier = modifier,
                     contentAlignment = contentAlignmentValue,
@@ -669,12 +669,14 @@ object GeneratedAdapters {
             }
             .register("Column") { node, modifier, context ->
                 val model = node as ColumnNode
-                val horizontalAlignmentValue: androidx.compose.ui.Alignment.Horizontal = com.pycompose.renderer.PropResolver.horizontal(model.props.horizontalAlignment).getOrDefault(androidx.compose.ui.Alignment.Start)
+                val horizontalAlignmentValue = model.props.horizontalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentHorizontal(it).getOrThrow() } ?: androidx.compose.ui.Alignment.Companion.Start
+                val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() } ?: androidx.compose.foundation.layout.Arrangement.Top
                 val scrollStateValue = context.scrollState(model.props.offset, model.props.onScrollIdle)
                 context.publish(model.id, scrollStateValue)
                 Column(
                     modifier = scrollStateValue.attachTo(modifier, model.props.scrollable),
                     horizontalAlignment = horizontalAlignmentValue,
+                    verticalArrangement = verticalArrangementValue,
                     content = { context.childrenIn(this, model.children) },
                 )
             }
@@ -1236,20 +1238,24 @@ object GeneratedAdapters {
             }
             .register("FlowColumn") { node, modifier, context ->
                 val model = node as FlowColumnNode
-                val itemHorizontalAlignmentValue: androidx.compose.ui.Alignment.Horizontal = com.pycompose.renderer.PropResolver.horizontal(model.props.itemHorizontalAlignment).getOrDefault(androidx.compose.ui.Alignment.Start)
+                val itemHorizontalAlignmentValue = model.props.itemHorizontalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentHorizontal(it).getOrThrow() } ?: androidx.compose.ui.Alignment.Companion.Start
+                val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() } ?: androidx.compose.foundation.layout.Arrangement.Top
                 FlowColumn(
                     modifier = modifier,
                     itemHorizontalAlignment = itemHorizontalAlignmentValue,
+                    verticalArrangement = verticalArrangementValue,
                     maxItemsInEachColumn = model.props.maxItemsInEachColumn.toInt(),
                     content = { context.childrenIn(this, model.children) },
                 )
             }
             .register("FlowRow") { node, modifier, context ->
                 val model = node as FlowRowNode
-                val itemVerticalAlignmentValue: androidx.compose.ui.Alignment.Vertical = com.pycompose.renderer.PropResolver.vertical(model.props.itemVerticalAlignment).getOrDefault(androidx.compose.ui.Alignment.Top)
+                val itemVerticalAlignmentValue = model.props.itemVerticalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentVertical(it).getOrThrow() } ?: androidx.compose.ui.Alignment.Companion.Top
+                val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() } ?: androidx.compose.foundation.layout.Arrangement.Top
                 FlowRow(
                     modifier = modifier,
                     itemVerticalAlignment = itemVerticalAlignmentValue,
+                    verticalArrangement = verticalArrangementValue,
                     maxItemsInEachRow = model.props.maxItemsInEachRow.toInt(),
                     content = { context.childrenIn(this, model.children) },
                 )
@@ -1316,7 +1322,7 @@ object GeneratedAdapters {
             }
             .register("ImageImageVector") { node, modifier, context ->
                 val model = node as ImageImageVectorNode
-                val alignmentValue: androidx.compose.ui.Alignment = com.pycompose.renderer.PropResolver.alignment(model.props.alignment).getOrDefault(androidx.compose.ui.Alignment.TopStart)
+                val alignmentValue = model.props.alignment?.let { com.pycompose.renderer.generated.ValueResolver.alignment(it).getOrThrow() } ?: androidx.compose.ui.Alignment.Companion.Center
                 val contentScaleWire = model.props.contentScale
                 val contentScaleValue = if (contentScaleWire != null) com.pycompose.renderer.generated.ValueResolver.contentScale(contentScaleWire).getOrThrow() else androidx.compose.ui.layout.ContentScale.Companion.Fit
                 val imageVectorValue = com.pycompose.renderer.generated.ValueResolver.imageVector(model.props.imageVector).getOrThrow()
@@ -1411,7 +1417,7 @@ object GeneratedAdapters {
             }
             .register("LazyColumn") { node, modifier, context ->
                 val model = node as LazyColumnNode
-                val verticalArrangementValue: androidx.compose.foundation.layout.Arrangement.Vertical = com.pycompose.renderer.PropResolver.arrangement(model.props.verticalArrangement).getOrDefault(androidx.compose.foundation.layout.Arrangement.Top)
+                val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() } ?: androidx.compose.foundation.layout.Arrangement.Top
                 val stateValue = context.lazyListState(model.props.firstVisibleIndex, model.props.onScrollIdle)
                 context.RequestWindows(stateValue, model.props.window, model.props.itemOffset, model.children.unslotted().size)
                 LazyColumn(
@@ -1993,7 +1999,7 @@ object GeneratedAdapters {
             }
             .register("PullToRefreshBox") { node, modifier, context ->
                 val model = node as PullToRefreshBoxNode
-                val contentAlignmentValue: androidx.compose.ui.Alignment = com.pycompose.renderer.PropResolver.alignment(model.props.contentAlignment).getOrDefault(androidx.compose.ui.Alignment.TopStart)
+                val contentAlignmentValue = model.props.contentAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignment(it).getOrThrow() } ?: androidx.compose.ui.Alignment.Companion.TopStart
                 PullToRefreshBox(
                     modifier = modifier,
                     contentAlignment = contentAlignmentValue,
@@ -2018,7 +2024,7 @@ object GeneratedAdapters {
             }
             .register("Row") { node, modifier, context ->
                 val model = node as RowNode
-                val verticalAlignmentValue: androidx.compose.ui.Alignment.Vertical = com.pycompose.renderer.PropResolver.vertical(model.props.verticalAlignment).getOrDefault(androidx.compose.ui.Alignment.Top)
+                val verticalAlignmentValue = model.props.verticalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentVertical(it).getOrThrow() } ?: androidx.compose.ui.Alignment.Companion.Top
                 Row(
                     modifier = modifier,
                     verticalAlignment = verticalAlignmentValue,

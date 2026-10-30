@@ -209,6 +209,9 @@ def _tagged(prop: dict[str, Any], value: dict[str, Any]) -> dict[str, Any]:
         # One colour form crosses the wire, the tagged value, or an expression
         # over holder streams that evaluates to one.
         return {"anyOf": [tagged, {"$ref": "#/definitions/Expression"}]}
+    if prop["type"] == "enum":
+        # A named constant crosses as its tagged constant, never its name.
+        return tagged
     return {"anyOf": [value, tagged]}
 
 

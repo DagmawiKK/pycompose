@@ -58,7 +58,7 @@ class TooltipComponentsTest {
             {"version":"0.1.0","schemaVersion":"1.23.0","root":{
               "id":"root","type":"Column","props":{},"children":[
                 {"id":"rich","type":"TooltipBox","props":{
-                  "visible":true,"isPersistent":true,"hasAction":true,"position":"below"},
+                  "visible":true,"isPersistent":true,"hasAction":true,"position":{"type":"TooltipAnchorPosition","name":"Below"}},
                     "children":[
                   {"id":"rich.anchor","type":"Text","props":{"text":"Rich anchor"}},
                   {"id":"rich.tooltip","type":"RichTooltip","props":{"showCaret":true,

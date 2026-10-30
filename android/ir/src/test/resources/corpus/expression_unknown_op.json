@@ -107,7 +107,10 @@
       },
       "type": "expression"
      },
-     "style": "titleLarge",
+     "style": {
+      "name": "titleLarge",
+      "type": "ThemeTypography"
+     },
      "text": "Corpus"
     },
     "slot": "topBar",

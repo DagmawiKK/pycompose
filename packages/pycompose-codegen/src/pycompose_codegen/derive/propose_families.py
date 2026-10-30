@@ -168,6 +168,18 @@ def _validate_callable(source: Declaration) -> None:
         raise ValueError("nullable/generic return needs an explicit value policy")
 
 
+def _holder(declaration: Declaration, classes: set[str]) -> str:
+    """How Kotlin source names what holds a member.
+
+    A companion is named by its class. A top-level value lives in a file facade
+    (``RectangleShapeKt``) the pin declares no class for and Kotlin cannot
+    name; its member is named by its package instead.
+    """
+    if declaration.owner not in classes and declaration.owner.endswith("Kt"):
+        return declaration.package
+    return declaration.owner.replace("$Companion", "").replace("$", ".")
+
+
 def propose_members(
     found: Inventory,
     owner: str,
@@ -209,6 +221,7 @@ def propose_members(
     required: set[str] = set()
     entries: set[str] = set()
     hierarchy = ancestors(found)
+    classes = {c.classifier for c in found.classes}
     for declaration in found.declarations:
         if declaration.owner not in holders:
             continue
@@ -225,9 +238,7 @@ def propose_members(
             raise ValueError(f"{owner}.{declaration.name}: nullable/generic member")
         if declaration.context_receivers or declaration.receiver:
             continue
-        members[declaration.name] = prefix.rstrip(".") or declaration.owner.replace(
-            "$Companion", ""
-        ).replace("$", ".")
+        members[declaration.name] = prefix.rstrip(".") or _holder(declaration, classes)
         required |= required_opt_ins(declaration, opt_ins)
     if not members and not entries:
         raise ValueError(f"no public {family['family']} members on {owner}")
@@ -239,7 +250,10 @@ def propose_members(
         if members and not entries
         else "enum entries and public properties"
     )
-    holder = prefix.rstrip(".") or primary.replace("$Companion", "").replace("$", ".")
+    holder = prefix.rstrip(".") or next(
+        (_holder(d, classes) for d in found.declarations if d.owner == primary),
+        primary.replace("$Companion", "").replace("$", "."),
+    )
     native: dict[str, Any] = {
         "constantParameter": "name",
         "propertyOwner": holder,

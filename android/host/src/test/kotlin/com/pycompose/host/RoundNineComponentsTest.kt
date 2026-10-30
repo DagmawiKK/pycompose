@@ -44,11 +44,11 @@ class RoundNineComponentsTest {
             {"version":"0.1.0","schemaVersion":"1.23.0","root":{
               "id":"root","type":"Column","props":{},"children":[
                 {"id":"flow.row","type":"FlowRow","props":{
-                  "maxItemsInEachRow":2,"itemVerticalAlignment":"center"},"children":[
+                  "maxItemsInEachRow":2,"itemVerticalAlignment":{"type":"AlignmentVertical","name":"CenterVertically"}},"children":[
                   {"id":"flow.row.one","type":"Text","props":{"text":"Flow one"}},
                   {"id":"flow.row.two","type":"Text","props":{"text":"Flow two"}}]},
                 {"id":"flow.column","type":"FlowColumn","props":{
-                  "maxItemsInEachColumn":2,"itemHorizontalAlignment":"end"},"children":[
+                  "maxItemsInEachColumn":2,"itemHorizontalAlignment":{"type":"AlignmentHorizontal","name":"End"}},"children":[
                   {"id":"flow.column.one","type":"Text","props":{"text":"Flow three"}},
                   {"id":"flow.column.two","type":"Text","props":{"text":"Flow four"}}]},
                 {"id":"lazy.row","type":"LazyRow","props":{},"children":[

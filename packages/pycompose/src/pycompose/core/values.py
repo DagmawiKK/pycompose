@@ -191,3 +191,36 @@ def validate_bounds(value: object, minimum: object, maximum: object) -> None:
                 _require(number >= cast("int | float", minimum), "value below minimum")
             if maximum is not None:
                 _require(number <= cast("int | float", maximum), "value above maximum")
+
+
+def named_value(
+    family: str, value: object, value_types: Mapping[str, Mapping[str, object]]
+) -> object:
+    """The tagged constant a name means in ``family``; anything else as given.
+
+    An app names a constant by its native name camelCased (``centerHorizontally``
+    for ``Alignment.CenterHorizontally``), or as the name itself where that is
+    already camelCase (``bodyLarge``). The wire carries the family's tagged
+    constant. A string that names none is left for the validator to refuse.
+
+    Args:
+        family: The value family the prop takes.
+        value: What the app passed.
+        value_types: The catalog's value constructors.
+
+    Returns:
+        The tagged constant for a name, or ``value`` itself.
+    """
+    if not isinstance(value, str):
+        return value
+    for constructor, spec in sorted(value_types.items()):
+        if spec.get("family") != family:
+            continue
+        parameters = cast(
+            "Mapping[str, Mapping[str, object]]", spec.get("parameters", {})
+        )
+        names = cast("list[str]", parameters.get("name", {}).get("values", []))
+        for name in names:
+            if value in (name, name[:1].lower() + name[1:]):
+                return {"type": constructor, "name": name}
+    return value

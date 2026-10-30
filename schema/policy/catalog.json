@@ -71,9 +71,8 @@
           "valueType": "Shape",
           "required": true,
           "values": [
-            "rectangle",
-            "circle",
-            "rounded"
+            "rectangleShape",
+            "circleShape"
           ]
         }
       }
@@ -6574,6 +6573,92 @@
           "androidx.compose.material.icons.sharp",
           "androidx.compose.material.icons.twotone"
         ]
+      }
+    },
+    "ArrangementVertical": {
+      "family": "ArrangementVertical",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.foundation.layout.Arrangement.Vertical",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/foundation/layout/Arrangement",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Bottom",
+            "Center",
+            "SpaceAround",
+            "SpaceBetween",
+            "SpaceEvenly",
+            "Top"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.foundation.layout.Arrangement"
+      }
+    },
+    "TooltipAnchorPosition": {
+      "family": "TooltipAnchorPosition",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.material3.TooltipAnchorPosition",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/material3/TooltipAnchorPosition$Companion",
+        "members": "public properties"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Above",
+            "Below",
+            "End",
+            "Left",
+            "Right",
+            "Start"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.material3.TooltipAnchorPosition"
+      }
+    },
+    "NamedShape": {
+      "family": "Shape",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.ui.graphics.Shape",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/ui/graphics/RectangleShapeKt",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "CircleShape",
+            "RectangleShape"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.ui.graphics",
+        "owners": {
+          "CircleShape": "androidx.compose.foundation.shape"
+        }
       }
     }
   }

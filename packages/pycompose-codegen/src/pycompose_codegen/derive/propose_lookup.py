@@ -333,6 +333,20 @@ MEMBERS = {
         "",
         ("androidx/compose/ui/AbsoluteAlignment",),
     ),
+    # Arrangement holds the vertical arrangements and those that are both,
+    # which carry the vertical type too.
+    "ArrangementVertical": ("androidx/compose/foundation/layout/Arrangement", "", ()),
+    "TooltipAnchorPosition": (
+        "androidx/compose/material3/TooltipAnchorPosition$Companion",
+        "",
+        (),
+    ),
+    # The named shapes are top-level values, one per file.
+    "NamedShape": (
+        "androidx/compose/ui/graphics/RectangleShapeKt",
+        "",
+        ("androidx/compose/foundation/shape/RoundedCornerShapeKt",),
+    ),
 }
 """Bindings whose wire vocabulary is the public member set of one class.
 
