@@ -65,8 +65,47 @@ def derive(
                 anchor: {"method": d.name, **({"anchor": True} if d.parameters else {})}
                 for anchor, d in table.items()
             },
+            **_anchored(found, holder, value),
         }
     return holders, errors
+
+
+def _anchored(found: Inventory, holder: str, value: str) -> dict[str, Any]:
+    """How a holder is created at an anchor and read back, when the pin says.
+
+    The factory is the one current composable factory taking ``initialValue``
+    of the value enum with every other parameter defaulted; the settled anchor
+    is ``settledValue`` where the holder has one, else ``currentValue``. A
+    holder lacking either is driven only by hand-written code.
+    """
+    slashed = holder.replace(".", "/")
+    enum = value.replace(".", "/")
+    factories = [
+        d
+        for d in found.declarations
+        if d.document.get("category") == "composable-factory"
+        and d.return_type.classifier == slashed
+        and "kotlin/Deprecated" not in d.annotations
+        and any(
+            p.name == "initialValue" and p.type.classifier == enum for p in d.parameters
+        )
+        and all(p.has_default or p.name == "initialValue" for p in d.parameters)
+    ]
+    readable = {
+        d.name
+        for d in found.declarations
+        if d.owner == holder
+        and d.document.get("declarationKind") == "property"
+        and d.document.get("visibility") == "PUBLIC"
+        and d.return_type.classifier == enum
+    }
+    settled = next((n for n in ("settledValue", "currentValue") if n in readable), None)
+    if len(factories) != 1 or settled is None:
+        return {}
+    factory = factories[0]
+    return {
+        "anchored": {"factory": f"{factory.package}.{factory.name}", "settled": settled}
+    }
 
 
 def _holders(members: dict[Key, Declaration], registry: dict[str, Any]) -> set[str]:

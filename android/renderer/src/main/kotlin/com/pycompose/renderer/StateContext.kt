@@ -3,13 +3,19 @@ package com.pycompose.renderer
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SwipeToDismissBoxState
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.TooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import com.pycompose.renderer.generated.driveTo
+import com.pycompose.renderer.generated.rememberAnchored
+import com.pycompose.renderer.generated.settledAnchor
+import kotlinx.serialization.json.JsonPrimitive
 
 /**
  * The node's drawer projection, driven only when [open] changes.
@@ -21,7 +27,20 @@ import androidx.compose.runtime.remember
 fun RenderContext.drawerState(
     open: Boolean?,
     report: String?,
-): DrawerState = rememberHostDrawerState(open, report, observations::observe)
+): DrawerState {
+    // A drawer starts closed: a first "open" opens it, and that settle is reported.
+    val state = rememberAnchored(DrawerValue.Closed)
+    anchored(
+        state,
+        open,
+        seeded = false,
+        settled = { state.settledAnchor == DrawerValue.Open },
+        report = report,
+        field = "open",
+        wire = ::JsonPrimitive,
+    ) { state.driveTo(if (it) DrawerValue.Open else DrawerValue.Closed) }
+    return state
+}
 
 /**
  * The node's sheet projection, including whether its native sheet is composed.
@@ -56,7 +75,26 @@ fun RenderContext.sheetState(
 fun RenderContext.swipeState(
     value: String?,
     report: String?,
-): SwipeToDismissBoxState = rememberHostSwipeState(value, report, observations::observe)
+): SwipeToDismissBoxState {
+    // Created at the first anchor stated, so a pull neither recreates a gesture
+    // in flight nor animates the opening state; that anchor is no report.
+    val initial =
+        remember {
+            value?.anchor<SwipeToDismissBoxValue>()
+                ?: SwipeToDismissBoxValue.Settled
+        }
+    val state = rememberAnchored(initial)
+    anchored(
+        state,
+        value,
+        seeded = true,
+        settled = { state.settledAnchor.wire },
+        report = report,
+        field = "value",
+        wire = ::JsonPrimitive,
+    ) { anchor -> anchor.anchor<SwipeToDismissBoxValue>()?.let { state.driveTo(it) } }
+    return state
+}
 
 /**
  * The node's slider projection; a gesture reports only its finished value.

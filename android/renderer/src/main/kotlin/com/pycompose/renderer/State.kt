@@ -6,13 +6,10 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TooltipState
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,7 +23,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
-import com.pycompose.renderer.generated.driveTo
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.json.JsonPrimitive
 
@@ -83,31 +79,6 @@ internal fun <V : Any> Reconcile(
             }
         }
     }
-}
-
-/**
- * The host-owned drawer state for one node, reconciled to the app's desired value.
- *
- * @param open Desired state; null leaves the state to the app's gestures.
- * @param report Action id settled changes report to; null reports none.
- * @param observation Receives the observed value, the action id and its state.
- */
-@Composable
-internal fun rememberHostDrawerState(
-    open: Boolean?,
-    report: String?,
-    observation: Observation,
-): DrawerState {
-    val state = rememberDrawerState(DrawerValue.Closed)
-    Reconcile(
-        state,
-        open,
-        remember(state) { mutableStateOf<Boolean?>(null) },
-        settled = { state.currentValue == DrawerValue.Open },
-        report = report?.let { id -> { value -> observation("open", id, JsonPrimitive(value)) } },
-        answered = answered(report),
-    ) { state.driveTo(if (it) DrawerValue.Open else DrawerValue.Closed) }
-    return state
 }
 
 /** A native anchor's wire alias: its entry name in lowerCamel, as every anchor family spells it. */

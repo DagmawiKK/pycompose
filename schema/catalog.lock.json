@@ -19299,6 +19299,10 @@
         "Open": {
           "method": "open"
         }
+      },
+      "anchored": {
+        "factory": "androidx.compose.material3.rememberDrawerState",
+        "settled": "currentValue"
       }
     },
     "androidx.compose.material3.SheetState": {
@@ -19316,6 +19320,10 @@
         "PartiallyExpanded": {
           "method": "partialExpand"
         }
+      },
+      "anchored": {
+        "factory": "androidx.compose.material3.rememberStandardBottomSheetState",
+        "settled": "currentValue"
       }
     },
     "androidx.compose.material3.SwipeToDismissBoxState": {
@@ -19333,6 +19341,10 @@
         "Settled": {
           "method": "reset"
         }
+      },
+      "anchored": {
+        "factory": "androidx.compose.material3.rememberSwipeToDismissBoxState",
+        "settled": "settledValue"
       }
     }
   }

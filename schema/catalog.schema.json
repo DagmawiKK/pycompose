@@ -70,6 +70,16 @@
               "anchor": { "const": true }
             }
           }
+        },
+        "anchored": {
+          "type": "object",
+          "description": "How the holder is created at an anchor and read back: its one composable factory taking initialValue, and the property holding its settled anchor.",
+          "required": ["factory", "settled"],
+          "additionalProperties": false,
+          "properties": {
+            "factory": { "$ref": "#/$defs/dottedName" },
+            "settled": { "$ref": "#/$defs/identifier" }
+          }
         }
       }
     },
