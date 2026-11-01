@@ -1589,6 +1589,7 @@ class DatePicker(Component):
         modifier: Modifier | None = None,
         on_displayed_month_millis_change: ActionTarget | None = None,
         on_selected_date_millis_change: ActionTarget | None = None,
+        selectable_dates: JsonValue | None = None,
         selected_date_millis: int | None | _Unset = UNSET,
         show_mode_toggle: bool | None = None,
     ) -> None:
@@ -1604,6 +1605,7 @@ class DatePicker(Component):
                 None uses its default.
             on_selected_date_millis_change: Native onSelectedDateMillisChange; None
                 uses its default.
+            selectable_dates: Native selectableDates; None uses its default.
             selected_date_millis: Native selectedDateMillis; omitted uses its
                 default; None is null.
             show_mode_toggle: Native showModeToggle; None uses its default.
@@ -1617,6 +1619,8 @@ class DatePicker(Component):
             props["on_displayed_month_millis_change"] = on_displayed_month_millis_change
         if on_selected_date_millis_change is not None:
             props["on_selected_date_millis_change"] = on_selected_date_millis_change
+        if selectable_dates is not None:
+            props["selectable_dates"] = selectable_dates
         if not isinstance(selected_date_millis, _Unset):
             props["selected_date_millis"] = selected_date_millis
         if show_mode_toggle is not None:

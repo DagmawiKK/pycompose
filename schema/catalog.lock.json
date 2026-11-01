@@ -1357,6 +1357,11 @@
         "modifier": {
           "type": "modifier"
         },
+        "selectableDates": {
+          "type": "value",
+          "valueType": "SelectableDates",
+          "since": "1.23.0"
+        },
         "displayedMonthMillis": {
           "type": "integer"
         },
@@ -1402,9 +1407,16 @@
             "nativeType": "Long",
             "nullable": true
           }
+        },
+        "arguments": {
+          "selectableDates": {
+            "valueType": "SelectableDates",
+            "default": "androidx.compose.material3.DatePickerDefaults.AllDates"
+          }
         }
       },
       "reshaped": [
+        "selectableDates",
         "displayedMonthMillis",
         "onDisplayedMonthMillisChange",
         "selectedDateMillis",
@@ -19285,6 +19297,173 @@
       "native": {
         "constantParameter": "name",
         "propertyOwner": "androidx.compose.ui.graphics.FilterQuality"
+      }
+    },
+    "SnapLayoutInfoProvider": {
+      "family": "SnapLayoutInfoProvider",
+      "kind": "implementation",
+      "kotlinType": "androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/foundation/gestures/snapping/SnapLayoutInfoProvider",
+        "members": "public value functions"
+      },
+      "parameters": {
+        "calculateApproachOffset": {
+          "type": "program",
+          "signature": {
+            "params": [
+              "number",
+              "number"
+            ],
+            "result": "number"
+          },
+          "native": {
+            "parameters": [
+              {
+                "name": "velocity",
+                "type": "Float"
+              },
+              {
+                "name": "decayOffset",
+                "type": "Float"
+              }
+            ],
+            "result": "Float"
+          }
+        },
+        "calculateSnapOffset": {
+          "type": "program",
+          "signature": {
+            "params": [
+              "number"
+            ],
+            "result": "number"
+          },
+          "native": {
+            "parameters": [
+              {
+                "name": "velocity",
+                "type": "Float"
+              }
+            ],
+            "result": "Float"
+          },
+          "required": true
+        }
+      },
+      "native": {
+        "implements": "androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider"
+      }
+    },
+    "SnapPosition": {
+      "family": "SnapPosition",
+      "kind": "implementation",
+      "kotlinType": "androidx.compose.foundation.gestures.snapping.SnapPosition",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/foundation/gestures/snapping/SnapPosition",
+        "members": "public value functions"
+      },
+      "parameters": {
+        "position": {
+          "type": "program",
+          "signature": {
+            "params": [
+              "integer",
+              "integer",
+              "integer",
+              "integer",
+              "integer",
+              "integer"
+            ],
+            "result": "integer"
+          },
+          "native": {
+            "parameters": [
+              {
+                "name": "layoutSize",
+                "type": "Int"
+              },
+              {
+                "name": "itemSize",
+                "type": "Int"
+              },
+              {
+                "name": "beforeContentPadding",
+                "type": "Int"
+              },
+              {
+                "name": "afterContentPadding",
+                "type": "Int"
+              },
+              {
+                "name": "itemIndex",
+                "type": "Int"
+              },
+              {
+                "name": "itemCount",
+                "type": "Int"
+              }
+            ],
+            "result": "Int"
+          },
+          "required": true
+        }
+      },
+      "native": {
+        "implements": "androidx.compose.foundation.gestures.snapping.SnapPosition"
+      }
+    },
+    "SelectableDates": {
+      "family": "SelectableDates",
+      "kind": "implementation",
+      "kotlinType": "androidx.compose.material3.SelectableDates",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/material3/SelectableDates",
+        "members": "public value functions"
+      },
+      "parameters": {
+        "isSelectableDate": {
+          "type": "program",
+          "signature": {
+            "params": [
+              "integer"
+            ],
+            "result": "boolean"
+          },
+          "native": {
+            "parameters": [
+              {
+                "name": "utcTimeMillis",
+                "type": "Long"
+              }
+            ],
+            "result": "Boolean"
+          }
+        },
+        "isSelectableYear": {
+          "type": "program",
+          "signature": {
+            "params": [
+              "integer"
+            ],
+            "result": "boolean"
+          },
+          "native": {
+            "parameters": [
+              {
+                "name": "year",
+                "type": "Int"
+              }
+            ],
+            "result": "Boolean"
+          }
+        }
+      },
+      "native": {
+        "implements": "androidx.compose.material3.SelectableDates"
       }
     }
   },

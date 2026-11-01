@@ -2,6 +2,8 @@ package com.pycompose.ir
 
 import com.pycompose.ir.generated.ValueContract
 import com.pycompose.program.Expressions
+import com.pycompose.program.Functions
+import com.pycompose.program.Signature
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -9,6 +11,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.doubleOrNull
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.longOrNull
@@ -142,8 +145,23 @@ object ValueParser {
                 require(
                     value is JsonPrimitive && !value.isString && value.booleanOrNull != null,
                 ) { "Expected boolean" }
+            "program" -> program(value, checkNotNull(rule["signature"]).jsonObject)
             else -> number(value, rule)
         }
+    }
+
+    private fun program(
+        value: JsonElement,
+        wanted: JsonObject,
+    ) {
+        val given = Functions.read(value as? JsonObject ?: error("Expected program"), FUNCTIONS)
+        require(
+            given.signature ==
+                Signature(
+                    checkNotNull(wanted["params"]).jsonArray.map { it.jsonPrimitive.content },
+                    checkNotNull(wanted["result"]).jsonPrimitive.content,
+                ),
+        ) { "Program is ${given.signature}; the field calls it as $wanted" }
     }
 
     private fun number(

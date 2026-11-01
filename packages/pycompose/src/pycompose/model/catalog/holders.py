@@ -36,7 +36,8 @@ class StateRule:
         dismiss: Native parameter through which the component announces a
             dismissal it has already carried out, if it has one.
         derived: Kind ``properties``: the holder, factory and properties the
-            pin implies, each property its own value and report (ADR-0058).
+            pin implies, each property its own value and report (ADR-0058),
+            and the factory arguments it takes as values, if any.
     """
 
     native: str
@@ -70,6 +71,8 @@ class StateRule:
                 raise ComponentRegistryError(
                     f"{where}: name holder, factory, properties"
                 )
+            if "arguments" in data:
+                derived["arguments"] = data["arguments"]
             return cls(native=native, kind="properties", derived=derived)
         if not isinstance(kind, str) or kind not in STATE_KINDS:
             raise ComponentRegistryError(

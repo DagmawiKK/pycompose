@@ -734,7 +734,11 @@ object GeneratedAdapters {
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.datePickerColors(colorsWire).getOrThrow() else androidx.compose.material3.DatePickerDefaults.colors()
                 val stateDisplayedMonthMillis = model.props.displayedMonthMillis?.let { Wanted(it) }
                 val stateSelectedDateMillis = model.props.selectedDateMillis.wanted { it.long }
-                val stateValue = androidx.compose.material3.rememberDatePickerState()
+                val stateValue = key(model.props.selectableDates) {
+                    androidx.compose.material3.rememberDatePickerState(
+                        selectableDates = model.props.selectableDates?.let { com.pycompose.renderer.generated.ValueResolver.selectableDates(it).getOrThrow() } ?: androidx.compose.material3.DatePickerDefaults.AllDates,
+                    )
+                }
                 context.reconcileProperty(stateValue, "displayedMonthMillis", stateDisplayedMonthMillis, model.props.onDisplayedMonthMillisChange, { stateValue.displayedMonthMillis }, { stateValue.displayedMonthMillis = it }) { JsonPrimitive(it) }
                 context.reconcileProperty(stateValue, "selectedDateMillis", stateSelectedDateMillis, model.props.onSelectedDateMillisChange, { stateValue.selectedDateMillis }, { stateValue.selectedDateMillis = it }) { JsonPrimitive(it) }
                 DatePicker(
@@ -2778,7 +2782,12 @@ object GeneratedAdapters {
                 val stateIs24hour = model.props.is24hour?.let { Wanted(it) }
                 val stateMinute = model.props.minute?.let { Wanted(it.toInt()) }
                 val stateSeeds = remember { Reseed<androidx.compose.material3.TimePickerState>() }
-                val stateValue = key(stateSeeds.generation) { androidx.compose.material3.rememberTimePickerState(initialHour = stateHour?.value ?: stateSeeds.previous?.hour ?: 0, initialMinute = stateMinute?.value ?: stateSeeds.previous?.minute ?: 0) }
+                val stateValue = key(stateSeeds.generation) {
+                    androidx.compose.material3.rememberTimePickerState(
+                        initialHour = stateHour?.value ?: stateSeeds.previous?.hour ?: 0,
+                        initialMinute = stateMinute?.value ?: stateSeeds.previous?.minute ?: 0,
+                    )
+                }
                 context.reconcileProperty(stateValue, "hour", stateHour, model.props.onHourChange, { stateValue.hour }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
                 context.reconcileProperty(stateValue, "is24hour", stateIs24hour, model.props.onIs24hourChange, { stateValue.is24hour }, { stateValue.is24hour = it }) { JsonPrimitive(it) }
                 context.reconcileProperty(stateValue, "minute", stateMinute, model.props.onMinuteChange, { stateValue.minute }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
@@ -2798,7 +2807,12 @@ object GeneratedAdapters {
                 val stateIs24hour = model.props.is24hour?.let { Wanted(it) }
                 val stateMinute = model.props.minute?.let { Wanted(it.toInt()) }
                 val stateSeeds = remember { Reseed<androidx.compose.material3.TimePickerState>() }
-                val stateValue = key(stateSeeds.generation) { androidx.compose.material3.rememberTimePickerState(initialHour = stateHour?.value ?: stateSeeds.previous?.hour ?: 0, initialMinute = stateMinute?.value ?: stateSeeds.previous?.minute ?: 0) }
+                val stateValue = key(stateSeeds.generation) {
+                    androidx.compose.material3.rememberTimePickerState(
+                        initialHour = stateHour?.value ?: stateSeeds.previous?.hour ?: 0,
+                        initialMinute = stateMinute?.value ?: stateSeeds.previous?.minute ?: 0,
+                    )
+                }
                 context.reconcileProperty(stateValue, "hour", stateHour, model.props.onHourChange, { stateValue.hour }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
                 context.reconcileProperty(stateValue, "is24hour", stateIs24hour, model.props.onIs24hourChange, { stateValue.is24hour }, { stateValue.is24hour = it }) { JsonPrimitive(it) }
                 context.reconcileProperty(stateValue, "minute", stateMinute, model.props.onMinuteChange, { stateValue.minute }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }

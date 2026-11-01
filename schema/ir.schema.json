@@ -1883,6 +1883,9 @@
             "onSelectedDateMillisChange": {
               "$ref": "#/definitions/Action"
             },
+            "selectableDates": {
+              "$ref": "#/definitions/Family_SelectableDates"
+            },
             "selectedDateMillis": {
               "anyOf": [
                 {
@@ -10476,6 +10479,13 @@
         }
       ]
     },
+    "Family_SelectableDates": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_SelectableDates"
+        }
+      ]
+    },
     "Family_Shape": {
       "oneOf": [
         {
@@ -10510,6 +10520,20 @@
       "oneOf": [
         {
           "$ref": "#/definitions/Value_sliderColors"
+        }
+      ]
+    },
+    "Family_SnapLayoutInfoProvider": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_SnapLayoutInfoProvider"
+        }
+      ]
+    },
+    "Family_SnapPosition": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_SnapPosition"
         }
       ]
     },
@@ -13682,6 +13706,41 @@
         "id",
         "type",
         "props"
+      ],
+      "type": "object"
+    },
+    "Program": {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "type": "object"
+        },
+        "params": {
+          "items": {
+            "enum": [
+              "integer",
+              "number",
+              "boolean"
+            ]
+          },
+          "type": "array"
+        },
+        "result": {
+          "enum": [
+            "integer",
+            "number",
+            "boolean"
+          ]
+        },
+        "type": {
+          "const": "program"
+        }
+      },
+      "required": [
+        "type",
+        "params",
+        "result",
+        "body"
       ],
       "type": "object"
     },
@@ -30908,6 +30967,9 @@
             },
             "onSelectedDateMillisChange": {
               "$ref": "#/definitions/Action"
+            },
+            "selectableDates": {
+              "$ref": "#/definitions/Family_SelectableDates"
             },
             "selectedDateMillis": {
               "anyOf": [
@@ -50056,6 +50118,24 @@
       ],
       "type": "object"
     },
+    "Value_SelectableDates": {
+      "additionalProperties": false,
+      "properties": {
+        "isSelectableDate": {
+          "$ref": "#/definitions/Program"
+        },
+        "isSelectableYear": {
+          "$ref": "#/definitions/Program"
+        },
+        "type": {
+          "const": "SelectableDates"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
     "Value_ShortNavigationBarArrangement": {
       "additionalProperties": false,
       "properties": {
@@ -50133,6 +50213,41 @@
         "type",
         "width",
         "height"
+      ],
+      "type": "object"
+    },
+    "Value_SnapLayoutInfoProvider": {
+      "additionalProperties": false,
+      "properties": {
+        "calculateApproachOffset": {
+          "$ref": "#/definitions/Program"
+        },
+        "calculateSnapOffset": {
+          "$ref": "#/definitions/Program"
+        },
+        "type": {
+          "const": "SnapLayoutInfoProvider"
+        }
+      },
+      "required": [
+        "type",
+        "calculateSnapOffset"
+      ],
+      "type": "object"
+    },
+    "Value_SnapPosition": {
+      "additionalProperties": false,
+      "properties": {
+        "position": {
+          "$ref": "#/definitions/Program"
+        },
+        "type": {
+          "const": "SnapPosition"
+        }
+      },
+      "required": [
+        "type",
+        "position"
       ],
       "type": "object"
     },

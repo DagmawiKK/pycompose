@@ -16,6 +16,7 @@ from __future__ import annotations
 from typing import Any
 
 from pycompose_codegen.derive.classpath_dump import Declaration, Inventory, Parameter
+from pycompose_codegen.derive.implementations import implementation_families
 from pycompose_codegen.derive.opt_ins import OptInIndex, opt_in_index, required_opt_ins
 from pycompose_codegen.derive.propose_icons import propose_icons
 from pycompose_codegen.derive.propose_lookup import (
@@ -356,12 +357,12 @@ def propose_vocabulary(
     since: str,
     index: OptInIndex,
 ) -> dict[str, Any] | None:
-    """Propose a member, unit or icon vocabulary, or nothing the tables know.
+    """Propose a member, unit, icon or implementation vocabulary, or nothing known.
 
-    The three differ in what the pin has to show. A member vocabulary is read off
-    one holder's own members, the unit extensions mirror a scalar Kotlin spells
-    as a suffix, and an icon vocabulary is a nested object whose property paths
-    are the labels.
+    They differ in what the pin has to show. A member vocabulary is read off one
+    holder's own members, the unit extensions mirror a scalar Kotlin spells as a
+    suffix, an icon vocabulary is a nested object whose property paths are the
+    labels, and an implementation is an interface of value functions.
 
     Args:
         found: The validated inventory of the current pin.
@@ -372,6 +373,9 @@ def propose_vocabulary(
 
     Returns:
         The proposal, or None when the name is not one of these vocabularies.
+
+    Raises:
+        ValueError: If an implementation family's interface no longer qualifies.
     """
     if name in MEMBERS:
         owner, prefix, also_from = MEMBERS[name]
@@ -391,6 +395,15 @@ def propose_vocabulary(
     if name in ICONS:
         return propose_icons(found, ICONS[name], approved, since=since)
     source = approved.get("source") or {}
+    if approved.get("kind") == "implementation":
+        # An interface of value functions, derived from the pin
+        # (``implementation_families``); its members are re-read each run.
+        derived = implementation_families(found, [source["owner"]], set(), since).get(
+            name
+        )
+        if derived is None:
+            raise ValueError("no longer an interface of value functions")
+        return derived
     if approved.get("kind") == "constant" and "members" in source:
         # A family read off its own holder's members, derived from the pin
         # (``constant_families``) rather than named in the tables above.

@@ -522,6 +522,7 @@ data class DatePickerProps(
     override val `modifier`: JsonObject? = null,
     val `onDisplayedMonthMillisChange`: String? = null,
     val `onSelectedDateMillisChange`: String? = null,
+    val `selectableDates`: JsonElement? = null,
     val `selectedDateMillis`: OptionalValue = OptionalValue.Absent,
     val `showModeToggle`: Boolean = true,
 ) : UiProps

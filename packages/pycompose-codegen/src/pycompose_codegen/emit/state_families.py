@@ -167,7 +167,7 @@ TRANSIENT_FAMILIES: dict[str, dict[str, Any]] = {
 
 
 def property_props(state: dict[str, Any]) -> dict[str, dict[str, Any]]:
-    """A derived family's props: each holder property desired, and its report.
+    """A derived family's props: each factory argument, each property and its report.
 
     A ``properties`` state names its holder's settable scalar properties
     (``pycompose_codegen.derive.property_holders``); each is a prop the app states and
@@ -179,7 +179,10 @@ def property_props(state: dict[str, Any]) -> dict[str, dict[str, Any]]:
     Returns:
         Wire props by name.
     """
-    projected: dict[str, dict[str, Any]] = {}
+    projected: dict[str, dict[str, Any]] = {
+        name: {"type": "value", "valueType": spec["valueType"]}
+        for name, spec in state.get("arguments", {}).items()
+    }
     for name, spec in state["properties"].items():
         nullable = {"nullable": True} if spec.get("nullable") else {}
         projected[name] = {"type": spec["type"], **nullable}

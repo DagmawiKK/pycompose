@@ -11,7 +11,15 @@ from pycompose.model.nodes.props import to_snake_case
 from pycompose.model.nodes.values import FLOAT_MAX, FLOAT_MIN
 from pycompose_codegen.emit.defaults import render_default
 
-KINDS = {"scalar", "record", "factory", "constant", "reference", "operator"}
+KINDS = {
+    "scalar",
+    "record",
+    "factory",
+    "constant",
+    "reference",
+    "operator",
+    "implementation",
+}
 
 
 def validate_definitions(registry: dict[str, Any]) -> None:
@@ -123,7 +131,8 @@ def _validate_default(name: str, field: str, rule: dict[str, Any]) -> None:
             render_default(rule["default"], set())
         except ValueError as exc:
             die(f"{name}.{field}: {exc}")
-    elif not rule.get("required"):
+    elif not rule.get("required") and rule["type"] != "program":
+        # An unset method keeps the interface's own body.
         die(f"missing native default provider: {name}.{field}")
 
 
@@ -136,6 +145,14 @@ def _validate_rule(rule: dict[str, Any], families: set[str]) -> None:
             die(f"unknown value family: {rule.get('valueType')}")
     elif kind == "list":
         _validate_rule(rule["items"], families)
+    elif kind == "program":
+        signature = rule.get("signature") or {}
+        types = {"integer", "number", "boolean"}
+        if (
+            signature.get("result") not in types
+            or not set(signature.get("params", [None])) <= types
+        ):
+            die(f"a program field needs a signature over {sorted(types)}")
     elif kind not in {"int", "long", "float", "double", "string", "boolean"}:
         die(f"unsupported value scalar: {kind}")
 
@@ -156,7 +173,7 @@ def _runtime_contract(registry: dict[str, Any]) -> str:
         return {
             key: rule_contract(value) if key == "items" else value
             for key, value in rule.items()
-            if key not in {"defaultNative", "default"}
+            if key not in {"defaultNative", "default", "native"}
         }
 
     specs = {
@@ -273,6 +290,9 @@ def render_python(registry: dict[str, Any]) -> str:
         not p.get("required") for s in specs.values() for p in s["parameters"].values()
     )
     imports = "UNSET, _Unset, construct" if optional else "construct"
+    programs = any(
+        p["type"] == "program" for s in specs.values() for p in s["parameters"].values()
+    )
     lines = [
         f"# {GENERATED_NOTICE}",
         "# ruff: noqa: N802 -- retain native Compose constructor/factory names.",
@@ -285,6 +305,11 @@ def render_python(registry: dict[str, Any]) -> str:
         "",
         "from pycompose.model.nodes.props import JsonValue",
         f"from pycompose.model.nodes.values import {imports}",
+        *(
+            ["from pycompose.model.programs.functions import HostFunction"]
+            if programs
+            else []
+        ),
         "",
         "__all__ = [",
         *(f'    "{name}",' for name in specs),
@@ -307,6 +332,7 @@ def render_python(registry: dict[str, Any]) -> str:
         "double": "float",
         "string": "str",
         "boolean": "bool",
+        "program": "HostFunction",
     }
     for name, spec in specs.items():
         params = spec["parameters"]
@@ -395,6 +421,8 @@ def parameter_schema(rule: dict[str, Any]) -> dict[str, Any]:
         bounds = {key: rule[key] for key in ("minimum", "maximum") if key in rule}
         if bounds:
             schema = {"allOf": [schema, {"properties": {"value": bounds}}]}
+    elif rule["type"] == "program":
+        schema = {"$ref": "#/definitions/Program"}
     elif rule["type"] == "list":
         schema = {
             "type": "array",

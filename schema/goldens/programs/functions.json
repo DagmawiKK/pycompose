@@ -1,0 +1,462 @@
+[
+ {
+  "calls": [
+   {
+    "args": [
+     0
+    ],
+    "result": true
+   },
+   {
+    "args": [
+     172800000
+    ],
+    "result": false
+   },
+   {
+    "args": [
+     345600000
+    ],
+    "result": true
+   },
+   {
+    "args": [
+     -1
+    ],
+    "result": true
+   },
+   {
+    "args": [
+     1767225600000
+    ],
+    "result": true
+   }
+  ],
+  "name": "weekdays",
+  "program": {
+   "body": {
+    "args": [
+     {
+      "args": [
+       {
+        "args": [
+         {
+          "args": [
+           {
+            "arg": 0
+           },
+           {
+            "integer": 86400000
+           }
+          ],
+          "op": "floorDiv"
+         },
+         {
+          "integer": 3
+         }
+        ],
+        "op": "plus"
+       },
+       {
+        "integer": 7
+       }
+      ],
+      "op": "mod"
+     },
+     {
+      "integer": 5
+     }
+    ],
+    "op": "lt"
+   },
+   "params": [
+    "integer"
+   ],
+   "result": "boolean",
+   "type": "program"
+  }
+ },
+ {
+  "calls": [
+   {
+    "args": [
+     2019
+    ],
+    "result": false
+   },
+   {
+    "args": [
+     2020
+    ],
+    "result": true
+   },
+   {
+    "args": [
+     2029
+    ],
+    "result": true
+   },
+   {
+    "args": [
+     2030
+    ],
+    "result": false
+   }
+  ],
+  "name": "this_decade",
+  "program": {
+   "body": {
+    "args": [
+     {
+      "args": [
+       {
+        "integer": 2020
+       },
+       {
+        "arg": 0
+       }
+      ],
+      "op": "le"
+     },
+     {
+      "args": [
+       {
+        "arg": 0
+       },
+       {
+        "integer": 2030
+       }
+      ],
+      "op": "lt"
+     }
+    ],
+    "op": "and"
+   },
+   "params": [
+    "integer"
+   ],
+   "result": "boolean",
+   "type": "program"
+  }
+ },
+ {
+  "calls": [
+   {
+    "args": [
+     -0.5,
+     4
+    ],
+    "result": 0
+   },
+   {
+    "args": [
+     0.25,
+     4
+    ],
+    "result": 0.25
+   },
+   {
+    "args": [
+     3.0,
+     2
+    ],
+    "result": 1.0
+   },
+   {
+    "args": [
+     0.5,
+     0
+    ],
+    "result": -0.5
+   }
+  ],
+  "name": "eased",
+  "program": {
+   "body": {
+    "args": [
+     {
+      "args": [
+       {
+        "arg": 0
+       },
+       {
+        "number": 0.0
+       }
+      ],
+      "op": "le"
+     },
+     {
+      "number": 0.0
+     },
+     {
+      "args": [
+       {
+        "args": [
+         {
+          "arg": 1
+         },
+         {
+          "integer": 0
+         }
+        ],
+        "op": "ne"
+       },
+       {
+        "args": [
+         {
+          "args": [
+           {
+            "args": [
+             {
+              "args": [
+               {
+                "args": [
+                 {
+                  "args": [
+                   {
+                    "arg": 0
+                   },
+                   {
+                    "number": 1.0
+                   }
+                  ],
+                  "op": "le"
+                 },
+                 {
+                  "arg": 0
+                 },
+                 {
+                  "number": 1.0
+                 }
+                ],
+                "op": "if"
+               },
+               {
+                "args": [
+                 {
+                  "arg": 1
+                 }
+                ],
+                "op": "toNumber"
+               }
+              ],
+              "op": "times"
+             },
+             {
+              "number": 0.0
+             }
+            ],
+            "op": "lt"
+           },
+           {
+            "args": [
+             {
+              "args": [
+               {
+                "args": [
+                 {
+                  "args": [
+                   {
+                    "arg": 0
+                   },
+                   {
+                    "number": 1.0
+                   }
+                  ],
+                  "op": "le"
+                 },
+                 {
+                  "arg": 0
+                 },
+                 {
+                  "number": 1.0
+                 }
+                ],
+                "op": "if"
+               },
+               {
+                "args": [
+                 {
+                  "arg": 1
+                 }
+                ],
+                "op": "toNumber"
+               }
+              ],
+              "op": "times"
+             }
+            ],
+            "op": "neg"
+           },
+           {
+            "args": [
+             {
+              "args": [
+               {
+                "args": [
+                 {
+                  "arg": 0
+                 },
+                 {
+                  "number": 1.0
+                 }
+                ],
+                "op": "le"
+               },
+               {
+                "arg": 0
+               },
+               {
+                "number": 1.0
+               }
+              ],
+              "op": "if"
+             },
+             {
+              "args": [
+               {
+                "arg": 1
+               }
+              ],
+              "op": "toNumber"
+             }
+            ],
+            "op": "times"
+           }
+          ],
+          "op": "if"
+         },
+         {
+          "args": [
+           {
+            "arg": 1
+           }
+          ],
+          "op": "toNumber"
+         }
+        ],
+        "op": "div"
+       },
+       {
+        "args": [
+         {
+          "arg": 0
+         }
+        ],
+        "op": "neg"
+       }
+      ],
+      "op": "if"
+     }
+    ],
+    "op": "if"
+   },
+   "params": [
+    "number",
+    "integer"
+   ],
+   "result": "number",
+   "type": "program"
+  }
+ },
+ {
+  "calls": [
+   {
+    "args": [
+     7,
+     2
+    ],
+    "result": 31
+   },
+   {
+    "args": [
+     -7,
+     2
+    ],
+    "result": -39
+   },
+   {
+    "args": [
+     7,
+     -2
+    ],
+    "result": -41
+   },
+   {
+    "args": [
+     5,
+     0
+    ],
+    "result": -5
+   }
+  ],
+  "name": "floored",
+  "program": {
+   "body": {
+    "args": [
+     {
+      "args": [
+       {
+        "arg": 1
+       },
+       {
+        "integer": 0
+       }
+      ],
+      "op": "ne"
+     },
+     {
+      "args": [
+       {
+        "args": [
+         {
+          "args": [
+           {
+            "arg": 0
+           },
+           {
+            "arg": 1
+           }
+          ],
+          "op": "floorDiv"
+         },
+         {
+          "integer": 10
+         }
+        ],
+        "op": "times"
+       },
+       {
+        "args": [
+         {
+          "arg": 0
+         },
+         {
+          "arg": 1
+         }
+        ],
+        "op": "mod"
+       }
+      ],
+      "op": "plus"
+     },
+     {
+      "args": [
+       {
+        "arg": 0
+       }
+      ],
+      "op": "neg"
+     }
+    ],
+    "op": "if"
+   },
+   "params": [
+    "integer",
+    "integer"
+   ],
+   "result": "integer",
+   "type": "program"
+  }
+ }
+]

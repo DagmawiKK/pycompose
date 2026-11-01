@@ -32,6 +32,7 @@ from pycompose_codegen.derive.core_modifiers import core_modifiers
 from pycompose_codegen.derive.entry_candidates import derive, select
 from pycompose_codegen.derive.families import bound_families
 from pycompose_codegen.derive.holders import derive as derive_holders
+from pycompose_codegen.derive.implementations import implementation_families
 from pycompose_codegen.derive.overloads import extras
 from pycompose_codegen.derive.plain_modifiers import plain_modifiers
 from pycompose_codegen.derive.policy import (
@@ -265,7 +266,7 @@ def generate(
 def derived_families(
     found: Inventory, sections: dict[str, Any]
 ) -> dict[str, dict[str, Any]]:
-    """The constant families planned declarations need and policy lacks.
+    """The constant and implementation families declarations need and policy lacks.
 
     Args:
         found: The pinned inventory.
@@ -281,11 +282,20 @@ def derived_families(
         for parameter in declaration.parameters
     }
     known = {spec.get("kotlinType") for spec in sections["valueTypes"].values()}
+    # A holder's factory takes what a component cannot: the functions it calls.
+    factories = {
+        parameter.type.classifier
+        for declaration in found.declarations
+        if declaration.composable and declaration.name.startswith("remember")
+        for parameter in declaration.parameters
+    }
+    since = sections["schemaVersion"]
     return {
         name: family
-        for name, family in constant_families(
-            found, types, known, sections["schemaVersion"]
-        ).items()
+        for name, family in {
+            **constant_families(found, types, known, since),
+            **implementation_families(found, types | factories, known, since),
+        }.items()
         if name not in taken
     }
 

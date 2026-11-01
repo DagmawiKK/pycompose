@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from pycompose_codegen.emit.defaults import render_default
+from pycompose_codegen.emit.implementations_kotlin import implementation
 from pycompose_codegen.emit.values import (
     _runtime_contract,
     definitions,
@@ -17,6 +18,8 @@ def _kt_type(rule: dict[str, Any]) -> str:
         return str(rule["valueType"]) + "Value"
     if rule["type"] == "list":
         return f"List<{_kt_type(rule['items'])}>"
+    if rule["type"] == "program":
+        return "com.pycompose.program.Function"
     return {
         "int": "Int",
         "long": "Long",
@@ -156,6 +159,11 @@ def _read_parameter(source: str, rule: dict[str, Any]) -> str:
     if kind == "list":
         conversion = _read_parameter("element", rule["items"])
         return f"({source} as JsonArray).map {{ element -> {conversion} }}"
+    if kind == "program":
+        return (
+            f"com.pycompose.program.Functions.read({source}.jsonObject, "
+            "com.pycompose.ir.FUNCTIONS)"
+        )
     conversion = {
         "int": "int",
         "long": "long",
@@ -256,64 +264,68 @@ def render_native(registry: dict[str, Any]) -> str:
         for name, spec in specs.items():
             if spec["family"] != family:
                 continue
-            native = spec["native"]
-            lines.append(f"            is Wire{name} -> {{")
-            if "constants" in native or "propertyOwner" in native:
-                # A vocabulary can live on several holders; a member without an
-                # entry reads through the family's default holder.
-                holders = native.get("owners") or {}
-                choices = native.get("constants") or {
-                    key: holders.get(key, native["propertyOwner"]) + "." + key
-                    for key in spec["parameters"][native["constantParameter"]]["values"]
-                }
-                lines.append(
-                    f"                when (value.{native['constantParameter']}) {{"
-                )
-                lines.extend(
-                    f'                    "{k}" -> {v}' for k, v in choices.items()
-                )
-                lines.extend(
-                    [
-                        '                    else -> error("Unknown native constant")',
-                        "                }",
-                    ]
-                )
-            elif "extension" in native:
-                lines.append(
-                    f"                value.value.toFloat().{native['extension']}"
-                )
-            elif "constant" in native:
-                lines.append(f"                {native['constant']}")
-            elif "operator" in native:
-                # The one family with no factory to pin builds its value from
-                # the operator form itself: start..end over the wire operands.
-                operands = [
-                    _decode_parameter(f"value.{field}", rule)
-                    for field, rule in spec["parameters"].items()
-                ]
-                expression = native["operator"].join(operands)
-                lines.append(f"                {expression}")
-            else:
-                lines.append(f"                {native['call']}(")
-                for field, rule in spec["parameters"].items():
-                    source = f"value.{field}"
-                    if not rule.get("required") or rule.get("nullable"):
-                        converted = _decode_parameter("item", rule)
-                        expression = f"{source}?.let {{ item -> {converted} }}"
-                    else:
-                        expression = _decode_parameter(source, rule)
-                    if not rule.get("required"):
-                        fallback = defaults[name, field]
-                        present = expression + ("" if rule.get("nullable") else "!!")
-                        expression = (
-                            f'if ("{field}" in value.supplied) '
-                            f"{present} else {fallback}"
-                        )
-                    lines.append(f"                    {field} = {expression},")
-                lines.append("                )")
-            lines.append("            }")
+            lines.extend(_constructor(name, spec, defaults))
         lines.extend(["        }", ""])
     return "\n".join([*lines, "}", ""])
+
+
+def _constructor(
+    name: str, spec: dict[str, Any], defaults: dict[tuple[str, str], str]
+) -> list[str]:
+    """One constructor's branch in its family's resolver: wire value to native."""
+    lines: list[str] = []
+    native = spec["native"]
+    lines.append(f"            is Wire{name} -> {{")
+    if "constants" in native or "propertyOwner" in native:
+        # A vocabulary can live on several holders; a member without an
+        # entry reads through the family's default holder.
+        holders = native.get("owners") or {}
+        choices = native.get("constants") or {
+            key: holders.get(key, native["propertyOwner"]) + "." + key
+            for key in spec["parameters"][native["constantParameter"]]["values"]
+        }
+        lines.append(f"                when (value.{native['constantParameter']}) {{")
+        lines.extend(f'                    "{k}" -> {v}' for k, v in choices.items())
+        lines.extend(
+            [
+                '                    else -> error("Unknown native constant")',
+                "                }",
+            ]
+        )
+    elif "extension" in native:
+        lines.append(f"                value.value.toFloat().{native['extension']}")
+    elif "constant" in native:
+        lines.append(f"                {native['constant']}")
+    elif "implements" in native:
+        lines.extend(implementation(spec))
+    elif "operator" in native:
+        # The one family with no factory to pin builds its value from
+        # the operator form itself: start..end over the wire operands.
+        operands = [
+            _decode_parameter(f"value.{field}", rule)
+            for field, rule in spec["parameters"].items()
+        ]
+        expression = native["operator"].join(operands)
+        lines.append(f"                {expression}")
+    else:
+        lines.append(f"                {native['call']}(")
+        for field, rule in spec["parameters"].items():
+            source = f"value.{field}"
+            if not rule.get("required") or rule.get("nullable"):
+                converted = _decode_parameter("item", rule)
+                expression = f"{source}?.let {{ item -> {converted} }}"
+            else:
+                expression = _decode_parameter(source, rule)
+            if not rule.get("required"):
+                fallback = defaults[name, field]
+                present = expression + ("" if rule.get("nullable") else "!!")
+                expression = (
+                    f'if ("{field}" in value.supplied) ' f"{present} else {fallback}"
+                )
+            lines.append(f"                    {field} = {expression},")
+        lines.append("                )")
+    lines.append("            }")
+    return lines
 
 
 def _decode_parameter(source: str, rule: dict[str, Any]) -> str:

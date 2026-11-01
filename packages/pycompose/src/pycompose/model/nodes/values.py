@@ -10,6 +10,7 @@ from typing import cast
 from pycompose.errors import IrValidationError
 from pycompose.model.canonical import JsonValue, check_json, freeze_json, thaw_json
 from pycompose.model.programs.expressions import validate_expression
+from pycompose.model.programs.functions import lower_function, validate_function
 
 
 class _Unset:
@@ -39,7 +40,10 @@ def construct(
         Detached, JSON-only value data.
 
     """
-    data = {"type": name, **{k: v for k, v in parameters.items() if v is not UNSET}}
+    data = {
+        "type": name,
+        **{k: lower_function(v) for k, v in parameters.items() if v is not UNSET},
+    }
     family = definitions[name]["family"]
     validate_value(data, str(family), definitions)
     return cast("dict[str, JsonValue]", thaw_json(freeze_json(data)))
@@ -135,6 +139,14 @@ def _parameter(
             )
     elif kind == "boolean":
         _require(isinstance(value, bool), "value field must be a boolean")
+    elif kind == "program":
+        given = validate_function(value)
+        wanted = cast("Mapping[str, object]", rule["signature"])
+        _require(
+            list(given.params) == wanted["params"] and given.result == wanted["result"],
+            f"program is {given}; the field calls it as "
+            f"({', '.join(cast('list[str]', wanted['params']))}) -> {wanted['result']}",
+        )
     else:
         validate_number(value, rule)
 

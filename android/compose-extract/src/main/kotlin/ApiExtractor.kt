@@ -120,6 +120,9 @@ internal class ApiExtractor(
                 // An inline call compiles into its body, so no call to
                 // this identity appears in the caller's bytecode.
                 "inline" to function.isInline,
+                // An interface member with a body is OPEN; one an implementation
+                // must supply is ABSTRACT.
+                "modality" to function.modality.name,
                 "visibility" to function.visibility.name,
                 "classVisibility" to owner.visibility.name,
                 "jvm" to facts.jvm(signature),

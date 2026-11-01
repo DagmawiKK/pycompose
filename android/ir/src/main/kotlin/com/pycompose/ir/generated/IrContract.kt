@@ -327,6 +327,7 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
                 "onDisplayedMonthMillisChange" to PropertyRule("actionId", required = false),
                 "onSelectedDateMillisChange" to PropertyRule("actionId", required = false),
+                "selectableDates" to PropertyRule("value", required = false, since = "1.23.0", valueType = "SelectableDates"),
                 "selectedDateMillis" to PropertyRule("integer", required = false, nullable = true),
                 "showModeToggle" to PropertyRule("boolean", required = false),
             ),
@@ -2429,6 +2430,29 @@ object IrContract {
     val expressionOps: Set<String> = setOf("times", "plus", "minus", "clamp", "alpha", "mix")
     const val EXPRESSION_DEPTH = 8
     const val EXPRESSION_NODES = 32
+    val functionSignatures: Map<String, Map<List<String>, String>> = mapOf(
+        "plus" to mapOf(listOf("integer", "integer") to "integer", listOf("number", "number") to "number"),
+        "minus" to mapOf(listOf("integer", "integer") to "integer", listOf("number", "number") to "number"),
+        "times" to mapOf(listOf("integer", "integer") to "integer", listOf("number", "number") to "number"),
+        "neg" to mapOf(listOf("integer") to "integer", listOf("number") to "number"),
+        "div" to mapOf(listOf("number", "number") to "number"),
+        "floorDiv" to mapOf(listOf("integer", "integer") to "integer"),
+        "mod" to mapOf(listOf("integer", "integer") to "integer"),
+        "toNumber" to mapOf(listOf("integer") to "number"),
+        "lt" to mapOf(listOf("integer", "integer") to "boolean", listOf("number", "number") to "boolean"),
+        "le" to mapOf(listOf("integer", "integer") to "boolean", listOf("number", "number") to "boolean"),
+        "gt" to mapOf(listOf("integer", "integer") to "boolean", listOf("number", "number") to "boolean"),
+        "ge" to mapOf(listOf("integer", "integer") to "boolean", listOf("number", "number") to "boolean"),
+        "eq" to mapOf(listOf("integer", "integer") to "boolean", listOf("number", "number") to "boolean", listOf("boolean", "boolean") to "boolean"),
+        "ne" to mapOf(listOf("integer", "integer") to "boolean", listOf("number", "number") to "boolean", listOf("boolean", "boolean") to "boolean"),
+        "and" to mapOf(listOf("boolean", "boolean") to "boolean"),
+        "or" to mapOf(listOf("boolean", "boolean") to "boolean"),
+        "not" to mapOf(listOf("boolean") to "boolean"),
+        "if" to mapOf(listOf("boolean", "integer", "integer") to "integer", listOf("boolean", "number", "number") to "number", listOf("boolean", "boolean", "boolean") to "boolean"),
+    )
+    const val FUNCTION_DEPTH = 32
+    const val FUNCTION_NODES = 256
+    const val FUNCTION_ARGUMENTS = 8
     val actionPayloads: Map<String, Map<String, PropertyRule>> = mapOf(
         "increment" to mapOf(
                 "by" to PropertyRule("integer", required = false),

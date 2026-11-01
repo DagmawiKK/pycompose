@@ -5,6 +5,8 @@ adapter remembers the holder through the factory and reconciles each property
 with the renderer's generic ``reconcileProperty``. A property the factory seeds
 is driven by re-creating the holder at the new value rather than by its setter,
 since the factory sets what the setter does not (the TimePicker dial's angle).
+A factory argument (a date picker's ``SelectableDates``) is read the same way:
+the holder is re-created when the app gives a different one.
 """
 
 from __future__ import annotations
@@ -15,6 +17,7 @@ from pycompose_codegen.emit.adapters.policy import camel, pascal
 from pycompose_codegen.emit.literals import kotlin_string
 from pycompose_codegen.emit.rules import DOTTED_NAME, die
 from pycompose_codegen.emit.state_families import property_props, report_name
+from pycompose_codegen.emit.values import resolver_call
 
 DECODE = {
     "integer": "long",
@@ -45,6 +48,17 @@ def properties_locals(state: dict[str, Any]) -> list[str]:
     seeds = f"{native}Seeds"
     lines: list[str] = []
     seeded: list[str] = []
+    keys: list[str] = []
+    for name, spec in state.get("arguments", {}).items():
+        # The factory reads it once, so it is resolved only as the holder is
+        # created; a different one re-creates the holder.
+        wire = f"model.props.{camel(name)}"
+        seeded.append(
+            f"{name} = {wire}?.let "
+            f"{{ {resolver_call(spec['valueType'], 'it')}.getOrThrow() }} "
+            f"?: {spec['default']}"
+        )
+        keys.append(wire)
     for name, spec in state["properties"].items():
         prop = f"model.props.{camel(name)}"
         narrow = NATIVE.get(spec["nativeType"], "")
@@ -60,11 +74,16 @@ def properties_locals(state: dict[str, Any]) -> list[str]:
                 f" ?: {seeds}.previous?.{name}"
                 f" ?: {_literal(spec['seed']['default'], spec['nativeType'])}"
             )
+    if any("seed" in spec for spec in state["properties"].values()):
+        lines.append(f"val {seeds} = remember {{ Reseed<{state['holder']}>() }}")
+        keys.insert(0, f"{seeds}.generation")
     if seeded:
         lines += [
-            f"val {seeds} = remember {{ Reseed<{state['holder']}>() }}",
-            f"val {held} = key({seeds}.generation) "
-            f"{{ {state['factory']}({', '.join(seeded)}) }}",
+            f"val {held} = key({', '.join(keys)}) {{",
+            f"    {state['factory']}(",
+            *(f"        {argument}," for argument in seeded),
+            "    )",
+            "}",
         ]
     else:
         lines.append(f"val {held} = {state['factory']}()")
@@ -101,8 +120,22 @@ def validate_properties(
         props: The component's props, which must carry the projection.
         state: The raw ``state`` object of kind ``properties``.
     """
-    if set(state) != {"native", "kind", "holder", "factory", "properties"}:
-        die(f"{where}: a derived family has native, kind, holder, factory, properties")
+    if (
+        not {"native", "kind", "holder", "factory", "properties"}
+        <= set(state)
+        <= {
+            "native",
+            "kind",
+            "holder",
+            "factory",
+            "properties",
+            "arguments",
+        }
+    ):
+        die(
+            f"{where}: a derived family has native, kind, holder, factory, "
+            "properties and optionally arguments"
+        )
     for key in ("holder", "factory"):
         if not isinstance(state[key], str) or not DOTTED_NAME.fullmatch(state[key]):
             die(f"{where}: {key!r} must be a dotted name")
@@ -110,7 +143,9 @@ def validate_properties(
     if not isinstance(properties, dict) or not properties:
         die(f"{where}: 'properties' must name the holder's properties")
     for prop, spec in property_props(state).items():
-        if props.get(prop) != spec:
+        # A prop newer than its component carries the version it entered at.
+        stated = {k: v for k, v in (props.get(prop) or {}).items() if k != "since"}
+        if stated != spec:
             die(f"{where}: prop {prop!r} must project the holder as {spec}")
 
 
@@ -133,6 +168,8 @@ def property_imports(state: dict[str, Any]) -> set[str]:
             "androidx.compose.runtime.remember",
             "com.pycompose.renderer.Reseed",
         }
+    if state.get("arguments"):
+        qualified.add("androidx.compose.runtime.key")
     for spec in state["properties"].values():
         if spec.get("nullable"):
             qualified.add("com.pycompose.renderer.wanted")

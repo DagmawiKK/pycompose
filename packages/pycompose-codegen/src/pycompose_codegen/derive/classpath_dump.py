@@ -312,6 +312,11 @@ def _validate_declaration(record: dict[str, Any]) -> None:
                 )
     if "inline" in record:
         _require(type(record["inline"]) is bool, "unknown inline semantics")
+    if "modality" in record:
+        _require(
+            record["modality"] in {"FINAL", "OPEN", "ABSTRACT", "SEALED"},
+            "unknown function modality",
+        )
     if disposition == "ui":
         _require(record["composable"] is True, "non-composable UI declaration")
         _require(

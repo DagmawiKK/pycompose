@@ -2,6 +2,7 @@ package com.pycompose.ir
 
 import com.pycompose.ir.generated.IrContract
 import com.pycompose.program.Contract
+import com.pycompose.program.FunctionContract
 
 /** The catalog's limits and vocabulary for the expressions a snapshot carries. */
 val EXPRESSIONS: Contract =
@@ -10,4 +11,13 @@ val EXPRESSIONS: Contract =
         nodes = IrContract.EXPRESSION_NODES,
         operations = IrContract.expressionOps,
         streamNames = IrContract.streamNames,
+    )
+
+/** The catalog's limits and vocabulary for the value functions a snapshot carries. */
+val FUNCTIONS: FunctionContract =
+    FunctionContract(
+        depth = IrContract.FUNCTION_DEPTH,
+        nodes = IrContract.FUNCTION_NODES,
+        arguments = IrContract.FUNCTION_ARGUMENTS,
+        signatures = IrContract.functionSignatures,
     )

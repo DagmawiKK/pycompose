@@ -122,6 +122,30 @@ No loops, recursion or user functions: evaluation is linear in the size."""
 EXPRESSION_LIMITS = {"depth": 8, "nodes": 32}
 """The largest expression a snapshot may carry, checked by both validators."""
 
+_NUMERIC = ("integer", "number")
+_TYPES = ("integer", "number", "boolean")
+
+FUNCTION_SIGNATURES: dict[str, dict[tuple[str, ...], str]] = {
+    **{op: {(t, t): t for t in _NUMERIC} for op in ("plus", "minus", "times")},
+    "neg": {(t,): t for t in _NUMERIC},
+    "div": {("number", "number"): "number"},
+    **{op: {("integer", "integer"): "integer"} for op in ("floorDiv", "mod")},
+    "toNumber": {("integer",): "number"},
+    **{op: {(t, t): "boolean" for t in _NUMERIC} for op in ("lt", "le", "gt", "ge")},
+    **{op: {(t, t): "boolean" for t in _TYPES} for op in ("eq", "ne")},
+    **{op: {("boolean", "boolean"): "boolean"} for op in ("and", "or")},
+    "not": {("boolean",): "boolean"},
+    "if": {("boolean", t, t): t for t in _TYPES},
+}
+"""The closed vocabulary of a value function the host calls: each operation's
+argument types and the type it gives. Arithmetic, comparison, logic and a
+conditional over integers, numbers and booleans; every operation is total and
+there are no loops or calls, so a call costs at most its size. Both checkers
+type a program from this one table."""
+
+FUNCTION_LIMITS = {"depth": 32, "nodes": 256, "arguments": 8}
+"""The largest value function a snapshot may carry, checked by both validators."""
+
 TRANSIENT_HOLDERS = {"snackbar": "androidx.compose.material3.SnackbarHostState"}
 """The native holder each transient family remembers and fulfils requests on."""
 

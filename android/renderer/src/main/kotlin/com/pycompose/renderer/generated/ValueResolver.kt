@@ -60,10 +60,13 @@ import com.pycompose.ir.generated.RichTooltipColorsValue
 import com.pycompose.ir.generated.SegmentedButtonColorsValue
 import com.pycompose.ir.generated.SelectableChipColorsValue
 import com.pycompose.ir.generated.SelectableChipElevationValue
+import com.pycompose.ir.generated.SelectableDatesValue
 import com.pycompose.ir.generated.ShapeValue
 import com.pycompose.ir.generated.ShortNavigationBarArrangementValue
 import com.pycompose.ir.generated.SizeValue
 import com.pycompose.ir.generated.SliderColorsValue
+import com.pycompose.ir.generated.SnapLayoutInfoProviderValue
+import com.pycompose.ir.generated.SnapPositionValue
 import com.pycompose.ir.generated.StrokeCapValue
 import com.pycompose.ir.generated.SwitchColorsValue
 import com.pycompose.ir.generated.TextAlignValue
@@ -109,8 +112,11 @@ import com.pycompose.ir.generated.WireOffset
 import com.pycompose.ir.generated.WirePaddingValues
 import com.pycompose.ir.generated.WireRange
 import com.pycompose.ir.generated.WireRoundedCornerShape
+import com.pycompose.ir.generated.WireSelectableDates
 import com.pycompose.ir.generated.WireShortNavigationBarArrangement
 import com.pycompose.ir.generated.WireSize
+import com.pycompose.ir.generated.WireSnapLayoutInfoProvider
+import com.pycompose.ir.generated.WireSnapPosition
 import com.pycompose.ir.generated.WireSolidColor
 import com.pycompose.ir.generated.WireSp
 import com.pycompose.ir.generated.WireStrokeCap
@@ -1583,6 +1589,27 @@ object ValueResolver {
         }
 
     @Composable
+    fun selectableDates(value: JsonElement): Result<androidx.compose.material3.SelectableDates> {
+        val parsed = runCatching { ValueContract.readSelectableDates(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(selectableDates(parsed))
+    }
+
+    @Composable
+    fun selectableDates(value: SelectableDatesValue): androidx.compose.material3.SelectableDates =
+        when (value) {
+            is WireSelectableDates -> {
+                object : androidx.compose.material3.SelectableDates {
+                    override fun isSelectableDate(utcTimeMillis: Long): Boolean =
+                        value.isSelectableDate?.call(utcTimeMillis)?.let { it as Boolean }
+                            ?: super.isSelectableDate(utcTimeMillis)
+                    override fun isSelectableYear(year: Int): Boolean =
+                        value.isSelectableYear?.call(year.toLong())?.let { it as Boolean }
+                            ?: super.isSelectableYear(year)
+                }
+            }
+        }
+
+    @Composable
     fun shape(value: JsonElement): Result<androidx.compose.ui.graphics.Shape> {
         val parsed = runCatching { ValueContract.readShape(value) }.getOrElse { return Result.failure(it) }
         return Result.success(shape(parsed))
@@ -1677,6 +1704,43 @@ object ValueResolver {
                     disabledInactiveTrackColor = if ("disabledInactiveTrackColor" in value.supplied) value.disabledInactiveTrackColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                     disabledInactiveTickColor = if ("disabledInactiveTickColor" in value.supplied) value.disabledInactiveTickColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                 )
+            }
+        }
+
+    @Composable
+    fun snapLayoutInfoProvider(value: JsonElement): Result<androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider> {
+        val parsed = runCatching { ValueContract.readSnapLayoutInfoProvider(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(snapLayoutInfoProvider(parsed))
+    }
+
+    @Composable
+    fun snapLayoutInfoProvider(value: SnapLayoutInfoProviderValue): androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider =
+        when (value) {
+            is WireSnapLayoutInfoProvider -> {
+                object : androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider {
+                    override fun calculateApproachOffset(velocity: Float, decayOffset: Float): Float =
+                        value.calculateApproachOffset?.call(velocity.toDouble(), decayOffset.toDouble())?.let { (it as Double).toFloat() }
+                            ?: super.calculateApproachOffset(velocity, decayOffset)
+                    override fun calculateSnapOffset(velocity: Float): Float =
+                        value.calculateSnapOffset.call(velocity.toDouble()).let { (it as Double).toFloat() }
+                }
+            }
+        }
+
+    @Composable
+    fun snapPosition(value: JsonElement): Result<androidx.compose.foundation.gestures.snapping.SnapPosition> {
+        val parsed = runCatching { ValueContract.readSnapPosition(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(snapPosition(parsed))
+    }
+
+    @Composable
+    fun snapPosition(value: SnapPositionValue): androidx.compose.foundation.gestures.snapping.SnapPosition =
+        when (value) {
+            is WireSnapPosition -> {
+                object : androidx.compose.foundation.gestures.snapping.SnapPosition {
+                    override fun position(layoutSize: Int, itemSize: Int, beforeContentPadding: Int, afterContentPadding: Int, itemIndex: Int, itemCount: Int): Int =
+                        value.position.call(layoutSize.toLong(), itemSize.toLong(), beforeContentPadding.toLong(), afterContentPadding.toLong(), itemIndex.toLong(), itemCount.toLong()).let { (it as Long).toInt() }
+                }
             }
         }
 

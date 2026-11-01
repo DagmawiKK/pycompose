@@ -301,7 +301,7 @@
     },
     "derivedState": {
       "type": "object",
-      "description": "ADR-0058: a family the pin implies; each property is its own value and report.",
+      "description": "ADR-0058: a family the pin implies; each property is its own value and report, each factory argument its own value.",
       "required": ["native", "kind", "holder", "factory", "properties"],
       "additionalProperties": false,
       "properties": {
@@ -309,6 +309,19 @@
         "kind": { "const": "properties" },
         "holder": { "$ref": "#/$defs/dottedName" },
         "factory": { "$ref": "#/$defs/dottedName" },
+        "arguments": {
+          "type": "object",
+          "description": "Factory parameters taking functions the holder calls while it draws: the family each takes and the default it falls back to.",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["valueType", "default"],
+            "additionalProperties": false,
+            "properties": {
+              "valueType": { "type": "string" },
+              "default": { "$ref": "#/$defs/dottedName" }
+            }
+          }
+        },
         "properties": {
           "type": "object",
           "minProperties": 1,

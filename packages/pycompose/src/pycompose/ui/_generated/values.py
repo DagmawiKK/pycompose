@@ -9,6 +9,7 @@ from typing import Literal
 
 from pycompose.model.nodes.props import JsonValue
 from pycompose.model.nodes.values import UNSET, _Unset, construct
+from pycompose.model.programs.functions import HostFunction
 
 __all__ = [
     "Alignment",
@@ -39,8 +40,11 @@ __all__ = [
     "PaddingValues",
     "Range",
     "RoundedCornerShape",
+    "SelectableDates",
     "ShortNavigationBarArrangement",
     "Size",
+    "SnapLayoutInfoProvider",
+    "SnapPosition",
     "SolidColor",
     "Sp",
     "StrokeCap",
@@ -201,18 +205,32 @@ DEFINITIONS: dict[str, dict[str, object]] = json.loads(
     'equired":true,"type":"float"}},"since":"1.23.0"},'
     '"RoundedCornerShape":{"family":"Shape",'
     '"parameters":{"size":{"minimum":0,"required":true,"type":"value"'
-    ',"valueType":"Dp"}},"since":"1.11.0"},"ShortNavigationBarArrange'
-    'ment":{"family":"ShortNavigationBarArrangement","parameters":{"n'
-    'ame":{"required":true,"type":"string",'
+    ',"valueType":"Dp"}},"since":"1.11.0"},"SelectableDates":{"family'
+    '":"SelectableDates","parameters":{"isSelectableDate":{"signature'
+    '":{"params":["integer"],"result":"boolean"},"type":"program"},"i'
+    'sSelectableYear":{"signature":{"params":["integer"],"result":"bo'
+    'olean"},"type":"program"}},"since":"1.23.0"},'
+    '"ShortNavigationBarArrangement":{"family":"ShortNavigationBarArr'
+    'angement","parameters":{"name":{"required":true,"type":"string",'
     '"values":["Centered","EqualWeight"]}},'
     '"since":"1.23.0"},"Size":{"family":"Size","parameters":{"height"'
     ':{"minimum":0,"required":true,"type":"float"},"width":{"minimum"'
-    ':0,"required":true,"type":"float"}},"since":"1.11.0"},"SolidColo'
-    'r":{"family":"Brush","parameters":{"value":{"required":true,"typ'
-    'e":"value","valueType":"Color"}},"since":"1.11.0"},"Sp":{"family'
-    '":"TextUnit","parameters":{"value":{"required":true,"type":"floa'
-    't"}},"since":"1.11.0"},"StrokeCap":{"family":"StrokeCap","parame'
-    'ters":{"name":{"required":true,"type":"string",'
+    ':0,"required":true,"type":"float"}},"since":"1.11.0"},"SnapLayou'
+    'tInfoProvider":{"family":"SnapLayoutInfoProvider","parameters":{'
+    '"calculateApproachOffset":{"signature":{"params":["number","numb'
+    'er"],"result":"number"},"type":"program"},"calculateSnapOffset":'
+    '{"required":true,"signature":{"params":["number"],'
+    '"result":"number"},"type":"program"}},"since":"1.23.0"},'
+    '"SnapPosition":{"family":"SnapPosition","parameters":{"position"'
+    ':{"required":true,"signature":{"params":["integer","integer","in'
+    'teger","integer","integer","integer"],"result":"integer"},'
+    '"type":"program"}},"since":"1.23.0"},'
+    '"SolidColor":{"family":"Brush",'
+    '"parameters":{"value":{"required":true,"type":"value","valueType'
+    '":"Color"}},"since":"1.11.0"},"Sp":{"family":"TextUnit","paramet'
+    'ers":{"value":{"required":true,"type":"float"}},"since":"1.11.0"'
+    '},"StrokeCap":{"family":"StrokeCap","parameters":{"name":{"requi'
+    'red":true,"type":"string",'
     '"values":["Butt","Round","Square"]}},"since":"1.13.0"},"TextAlig'
     'n":{"family":"TextAlign",'
     '"parameters":{"name":{"required":true,"type":"string",'
@@ -1977,6 +1995,29 @@ def RoundedCornerShape(
     )
 
 
+def SelectableDates(
+    is_selectable_date: HostFunction | _Unset = UNSET,
+    is_selectable_year: HostFunction | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct SelectableDates data for native evaluation.
+
+    Args:
+        is_selectable_date: Native isSelectableDate argument.
+        is_selectable_year: Native isSelectableYear argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "SelectableDates",
+        {
+            "isSelectableDate": is_selectable_date,
+            "isSelectableYear": is_selectable_year,
+        },
+        DEFINITIONS,
+    )
+
+
 def ShortNavigationBarArrangement(
     name: _ShortNavigationBarArrangementName,
 ) -> dict[str, JsonValue]:
@@ -2015,6 +2056,49 @@ def Size(
         {
             "width": width,
             "height": height,
+        },
+        DEFINITIONS,
+    )
+
+
+def SnapLayoutInfoProvider(
+    calculate_snap_offset: HostFunction,
+    calculate_approach_offset: HostFunction | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct SnapLayoutInfoProvider data for native evaluation.
+
+    Args:
+        calculate_snap_offset: Native calculateSnapOffset argument.
+        calculate_approach_offset: Native calculateApproachOffset argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "SnapLayoutInfoProvider",
+        {
+            "calculateSnapOffset": calculate_snap_offset,
+            "calculateApproachOffset": calculate_approach_offset,
+        },
+        DEFINITIONS,
+    )
+
+
+def SnapPosition(
+    position: HostFunction,
+) -> dict[str, JsonValue]:
+    """Construct SnapPosition data for native evaluation.
+
+    Args:
+        position: Native position argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "SnapPosition",
+        {
+            "position": position,
         },
         DEFINITIONS,
     )

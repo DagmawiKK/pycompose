@@ -83,10 +83,12 @@ SURFACE = {
 UI_OWN = [
     "Animate",
     "Fallback",
+    "HostFunction",
     "Intent",
     "Modifier",
     "Node",
     "animate",
+    "host",
     "spring",
     "tween",
 ]

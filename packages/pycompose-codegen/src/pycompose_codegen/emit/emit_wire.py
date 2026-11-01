@@ -67,6 +67,22 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
                 },
                 "additionalProperties": False,
             },
+            # Its shape only; the vocabulary, types and limits are the
+            # validators' (pycompose/model/programs/functions.py, Functions.kt).
+            "Program": {
+                "type": "object",
+                "required": ["type", "params", "result", "body"],
+                "properties": {
+                    "type": {"const": "program"},
+                    "params": {
+                        "type": "array",
+                        "items": {"enum": ["integer", "number", "boolean"]},
+                    },
+                    "result": {"enum": ["integer", "number", "boolean"]},
+                    "body": {"type": "object"},
+                },
+                "additionalProperties": False,
+            },
             **component_defs,
             **json_definitions(registry),
         },

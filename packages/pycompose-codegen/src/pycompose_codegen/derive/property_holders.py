@@ -16,6 +16,7 @@ from typing import Any
 
 from pycompose_codegen.derive.classpath_dump import Inventory
 from pycompose_codegen.derive.classpath_types import Declaration
+from pycompose_codegen.derive.implementations import implementation_members
 
 WIRE = {
     "kotlin/Boolean": ("boolean", "Boolean"),
@@ -98,6 +99,31 @@ def _seed(
     return None
 
 
+def _arguments(
+    found: Inventory, factory: Declaration, defaults: dict[str, Any], seeded: set[str]
+) -> dict[str, dict[str, Any]]:
+    """Factory parameters that take functions the holder calls while it draws.
+
+    ``rememberDatePickerState(selectableDates = ...)`` creates a holder that asks
+    its ``SelectableDates`` about each day; the app gives one written as host
+    functions. Only a parameter whose default names a property can be left to
+    that default when the app gives none.
+    """
+    arguments = {}
+    for parameter in factory.parameters:
+        default = defaults.get(parameter.name) or {}
+        if (
+            parameter.name not in seeded
+            and default.get("kind") == "property"
+            and implementation_members(found, parameter.type.classifier) is not None
+        ):
+            arguments[parameter.name] = {
+                "valueType": parameter.type.classifier.rsplit("/", 1)[-1],
+                "default": default["symbol"],
+            }
+    return arguments
+
+
 def property_holders(
     found: Inventory, defaults: dict[tuple[str, str, str], dict[str, Any]]
 ) -> dict[str, dict[str, Any]]:
@@ -127,17 +153,21 @@ def property_holders(
         own = defaults.get(
             (factory.owner, factory.jvm_name or "", factory.jvm_descriptor or ""), {}
         )
+        held: dict[str, dict[str, Any]] = {
+            d.name: {
+                "type": WIRE[d.return_type.classifier][0],
+                "nativeType": WIRE[d.return_type.classifier][1],
+                **({"nullable": True} if d.return_type.nullable else {}),
+                **({"seed": seed} if (seed := _seed(factory, d, own)) else {}),
+            }
+            for d in sorted(members, key=lambda d: d.name)
+        }
+        seeded = {spec["seed"]["parameter"] for spec in held.values() if "seed" in spec}
+        arguments = _arguments(found, factory, own, seeded)
         holders[classifier] = {
             "holder": classifier.replace("/", "."),
             "factory": f"{factory.package}.{factory.name}",
-            "properties": {
-                d.name: {
-                    "type": WIRE[d.return_type.classifier][0],
-                    "nativeType": WIRE[d.return_type.classifier][1],
-                    **({"nullable": True} if d.return_type.nullable else {}),
-                    **({"seed": seed} if (seed := _seed(factory, d, own)) else {}),
-                }
-                for d in sorted(members, key=lambda d: d.name)
-            },
+            "properties": held,
+            **({"arguments": arguments} if arguments else {}),
         }
     return holders

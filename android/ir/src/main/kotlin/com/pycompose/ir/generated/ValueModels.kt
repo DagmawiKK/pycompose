@@ -102,6 +102,8 @@ sealed interface SelectableChipColorsValue
 
 sealed interface SelectableChipElevationValue
 
+sealed interface SelectableDatesValue
+
 sealed interface ShapeValue
 
 sealed interface ShortNavigationBarArrangementValue
@@ -109,6 +111,10 @@ sealed interface ShortNavigationBarArrangementValue
 sealed interface SizeValue
 
 sealed interface SliderColorsValue
+
+sealed interface SnapLayoutInfoProviderValue
+
+sealed interface SnapPositionValue
 
 sealed interface StrokeCapValue
 
@@ -290,6 +296,12 @@ data class WireRoundedCornerShape(
     val size: DpValue,
 ) : ShapeValue
 
+data class WireSelectableDates(
+    val supplied: Set<String>,
+    val isSelectableDate: com.pycompose.program.Function? = null,
+    val isSelectableYear: com.pycompose.program.Function? = null,
+) : SelectableDatesValue
+
 data class WireShortNavigationBarArrangement(
     val supplied: Set<String>,
     val name: String,
@@ -300,6 +312,17 @@ data class WireSize(
     val width: Double,
     val height: Double,
 ) : SizeValue
+
+data class WireSnapLayoutInfoProvider(
+    val supplied: Set<String>,
+    val calculateApproachOffset: com.pycompose.program.Function? = null,
+    val calculateSnapOffset: com.pycompose.program.Function,
+) : SnapLayoutInfoProviderValue
+
+data class WireSnapPosition(
+    val supplied: Set<String>,
+    val position: com.pycompose.program.Function,
+) : SnapPositionValue
 
 data class WireSolidColor(
     val supplied: Set<String>,
@@ -1073,18 +1096,32 @@ object ValueContract {
             "equired\":true,\"type\":\"float\"}},\"since\":\"1.23.0\"},",
             "\"RoundedCornerShape\":{\"family\":\"Shape\",",
             "\"parameters\":{\"size\":{\"minimum\":0,\"required\":true,\"type\":\"value\"",
-            ",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"ShortNavigationBarArrange",
-            "ment\":{\"family\":\"ShortNavigationBarArrangement\",\"parameters\":{\"n",
-            "ame\":{\"required\":true,\"type\":\"string\",",
+            ",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"SelectableDates\":{\"family",
+            "\":\"SelectableDates\",\"parameters\":{\"isSelectableDate\":{\"signature",
+            "\":{\"params\":[\"integer\"],\"result\":\"boolean\"},\"type\":\"program\"},\"i",
+            "sSelectableYear\":{\"signature\":{\"params\":[\"integer\"],\"result\":\"bo",
+            "olean\"},\"type\":\"program\"}},\"since\":\"1.23.0\"},",
+            "\"ShortNavigationBarArrangement\":{\"family\":\"ShortNavigationBarArr",
+            "angement\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\",",
             "\"values\":[\"Centered\",\"EqualWeight\"]}},",
             "\"since\":\"1.23.0\"},\"Size\":{\"family\":\"Size\",\"parameters\":{\"height\"",
             ":{\"minimum\":0,\"required\":true,\"type\":\"float\"},\"width\":{\"minimum\"",
-            ":0,\"required\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"SolidColo",
-            "r\":{\"family\":\"Brush\",\"parameters\":{\"value\":{\"required\":true,\"typ",
-            "e\":\"value\",\"valueType\":\"Color\"}},\"since\":\"1.11.0\"},\"Sp\":{\"family",
-            "\":\"TextUnit\",\"parameters\":{\"value\":{\"required\":true,\"type\":\"floa",
-            "t\"}},\"since\":\"1.11.0\"},\"StrokeCap\":{\"family\":\"StrokeCap\",\"parame",
-            "ters\":{\"name\":{\"required\":true,\"type\":\"string\",",
+            ":0,\"required\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"SnapLayou",
+            "tInfoProvider\":{\"family\":\"SnapLayoutInfoProvider\",\"parameters\":{",
+            "\"calculateApproachOffset\":{\"signature\":{\"params\":[\"number\",\"numb",
+            "er\"],\"result\":\"number\"},\"type\":\"program\"},\"calculateSnapOffset\":",
+            "{\"required\":true,\"signature\":{\"params\":[\"number\"],",
+            "\"result\":\"number\"},\"type\":\"program\"}},\"since\":\"1.23.0\"},",
+            "\"SnapPosition\":{\"family\":\"SnapPosition\",\"parameters\":{\"position\"",
+            ":{\"required\":true,\"signature\":{\"params\":[\"integer\",\"integer\",\"in",
+            "teger\",\"integer\",\"integer\",\"integer\"],\"result\":\"integer\"},",
+            "\"type\":\"program\"}},\"since\":\"1.23.0\"},",
+            "\"SolidColor\":{\"family\":\"Brush\",",
+            "\"parameters\":{\"value\":{\"required\":true,\"type\":\"value\",\"valueType",
+            "\":\"Color\"}},\"since\":\"1.11.0\"},\"Sp\":{\"family\":\"TextUnit\",\"paramet",
+            "ers\":{\"value\":{\"required\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"",
+            "},\"StrokeCap\":{\"family\":\"StrokeCap\",\"parameters\":{\"name\":{\"requi",
+            "red\":true,\"type\":\"string\",",
             "\"values\":[\"Butt\",\"Round\",\"Square\"]}},\"since\":\"1.13.0\"},\"TextAlig",
             "n\":{\"family\":\"TextAlign\",",
             "\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\",",
@@ -2564,6 +2601,19 @@ object ValueContract {
         }
     }
 
+    fun readSelectableDates(value: JsonElement): SelectableDatesValue {
+        ValueParser.validate(value, "SelectableDates", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "SelectableDates" -> WireSelectableDates(
+                supplied = data.keys,
+                isSelectableDate = data["isSelectableDate"]?.takeUnless { it == JsonNull }?.let { item -> com.pycompose.program.Functions.read(item.jsonObject, com.pycompose.ir.FUNCTIONS) },
+                isSelectableYear = data["isSelectableYear"]?.takeUnless { it == JsonNull }?.let { item -> com.pycompose.program.Functions.read(item.jsonObject, com.pycompose.ir.FUNCTIONS) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
     fun readShape(value: JsonElement): ShapeValue {
         ValueParser.validate(value, "Shape", specs).getOrThrow()
         val data = value.jsonObject
@@ -2629,6 +2679,31 @@ object ValueContract {
                 disabledActiveTickColor = data["disabledActiveTickColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
                 disabledInactiveTrackColor = data["disabledInactiveTrackColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
                 disabledInactiveTickColor = data["disabledInactiveTickColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readSnapLayoutInfoProvider(value: JsonElement): SnapLayoutInfoProviderValue {
+        ValueParser.validate(value, "SnapLayoutInfoProvider", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "SnapLayoutInfoProvider" -> WireSnapLayoutInfoProvider(
+                supplied = data.keys,
+                calculateApproachOffset = data["calculateApproachOffset"]?.takeUnless { it == JsonNull }?.let { item -> com.pycompose.program.Functions.read(item.jsonObject, com.pycompose.ir.FUNCTIONS) },
+                calculateSnapOffset = com.pycompose.program.Functions.read(data.getValue("calculateSnapOffset").jsonObject, com.pycompose.ir.FUNCTIONS),
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readSnapPosition(value: JsonElement): SnapPositionValue {
+        ValueParser.validate(value, "SnapPosition", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "SnapPosition" -> WireSnapPosition(
+                supplied = data.keys,
+                position = com.pycompose.program.Functions.read(data.getValue("position").jsonObject, com.pycompose.ir.FUNCTIONS),
             )
             else -> error("Unknown value constructor")
         }

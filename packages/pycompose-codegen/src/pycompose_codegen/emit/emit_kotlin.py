@@ -216,6 +216,8 @@ def _kt_streams(registry: dict[str, Any]) -> list[str]:
     from pycompose.model.catalog.vocabulary import (
         EXPRESSION_LIMITS,
         EXPRESSION_OPS,
+        FUNCTION_LIMITS,
+        FUNCTION_SIGNATURES,
         STATE_STREAMS,
     )
 
@@ -244,6 +246,22 @@ def _kt_streams(registry: dict[str, Any]) -> list[str]:
         + ")",
         f"    const val EXPRESSION_DEPTH = {EXPRESSION_LIMITS['depth']}",
         f"    const val EXPRESSION_NODES = {EXPRESSION_LIMITS['nodes']}",
+        "    val functionSignatures: Map<String, Map<List<String>, String>> = mapOf(",
+        *(
+            f"        {kotlin_string(op)} to mapOf("
+            + ", ".join(
+                "listOf("
+                + ", ".join(map(kotlin_string, args))
+                + f") to {kotlin_string(result)}"
+                for args, result in signatures.items()
+            )
+            + "),"
+            for op, signatures in FUNCTION_SIGNATURES.items()
+        ),
+        "    )",
+        f"    const val FUNCTION_DEPTH = {FUNCTION_LIMITS['depth']}",
+        f"    const val FUNCTION_NODES = {FUNCTION_LIMITS['nodes']}",
+        f"    const val FUNCTION_ARGUMENTS = {FUNCTION_LIMITS['arguments']}",
     ]
 
 

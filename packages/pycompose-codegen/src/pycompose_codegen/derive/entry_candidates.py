@@ -354,7 +354,11 @@ def _holders(plan: dict[str, Any]) -> dict[str, Any]:
             "native": parameter,
             "kind": spec["kind"],
             # A derived family carries its holder: factory and properties.
-            **{k: spec[k] for k in ("holder", "factory", "properties") if k in spec},
+            **{
+                k: spec[k]
+                for k in ("holder", "factory", "properties", "arguments")
+                if k in spec
+            },
         }
         for parameter, spec in plan["parameters"].items()
         if spec["policy"] == "holder"
