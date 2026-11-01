@@ -86,6 +86,7 @@ chaquopy {
             listOf(
                 providers.gradleProperty("pycomposeSourceDir").getOrElse("src/main/python"),
                 layout.buildDirectory.dir("generated/runtime"),
+                layout.buildDirectory.dir("generated/host"),
             ),
         )
         // Tool caches beside the app's source (.mypy_cache, .pytest_cache and
@@ -123,8 +124,26 @@ val stageRuntime by tasks.registering(Sync::class) {
     }
     into(layout.buildDirectory.dir("generated/runtime"))
 }
+// Bytecode compiled at build time ships without its source, which @host reads; the
+// interpreter that compiles it first keeps each @host definition's source beside it.
+// Without one, Chaquopy ships the .py files themselves and nothing is needed.
+val buildPython = providers.gradleProperty("pycomposeBuildPython").orNull
+val keepHostSources by tasks.registering(Exec::class) {
+    val sources = file(providers.gradleProperty("pycomposeSourceDir").getOrElse("src/main/python"))
+    val table = layout.buildDirectory.file("generated/host/__pycompose_host__.py")
+    inputs.dir(sources)
+    outputs.file(table)
+    onlyIf { buildPython != null }
+    commandLine(
+        buildPython ?: "python3",
+        "-m",
+        "pycompose.ui._sources",
+        sources.path,
+        table.get().asFile.path,
+    )
+}
 tasks.matching { it.name.matches(Regex("merge.*PythonSources")) }.configureEach {
-    dependsOn(stageRuntime)
+    dependsOn(stageRuntime, keepHostSources)
 }
 
 // `pycompose render` names its request; RenderSnapshots renders nothing without it.
