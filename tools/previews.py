@@ -3,9 +3,15 @@
 Every component the lock exposes is composed once on the JVM before an app
 can reach it. The sample is built from the component's types
 alone (``pycompose_codegen.derive.samples``), and Python's validator accepts every
-sample before it is written. The samples are output of the lock, so they are
-written into the build directory, never committed: the host's
-``PreviewRenderTest`` runs this tool itself and renders each one.
+sample before it is written.
+
+Every prop the pin can animate is bound too: one pair of snapshots per
+``(component, prop)``, the second with a moved target, so the host's binding
+path is rendered for each rather than assumed.
+
+The samples are output of the lock, so they are written into the build
+directory, never committed: the host's ``PreviewRenderTest`` and
+``BoundRenderTest`` run this tool themselves and render each one.
 
 The same samples become one ``@Preview`` per component in the host's debug
 source set, so Android Studio shows the whole catalog; that source is
@@ -30,6 +36,7 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from pycompose_cli.commands.validate import validate_file
+from pycompose_codegen.derive.bound_samples import binding_sample
 from pycompose_codegen.derive.samples import modifier_sample, sample
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -88,6 +95,50 @@ def modifier_documents() -> dict[str, dict[str, Any]]:
         for name, entry in sorted(catalog["modifiers"].items())
         if "scoped" not in entry
     }
+
+
+def binding_documents() -> dict[str, dict[str, Any]]:
+    """Return two frames of one bound sample per bindable ``(component, prop)``.
+
+    Each pair is rendered twice: at the target the catalog derives, and at a
+    moved one, so the host travels between them rather than only reading.
+
+    Returns:
+        Two snapshots per pair, by ``Component.prop``.
+    """
+    catalog = json.loads(LOCK.read_text(encoding="utf-8"))
+    pairs = [
+        (name, prop)
+        for name, entry in sorted(catalog["components"].items())
+        for prop, spec in entry["props"].items()
+        if "animation" in spec
+    ]
+    return {
+        f"{name}.{prop}": {
+            "first": _validated(f"{name}.{prop}", binding_sample(catalog, name, prop)),
+            "then": _validated(
+                f"{name}.{prop}", binding_sample(catalog, name, prop, moved=True)
+            ),
+        }
+        for name, prop in pairs
+    }
+
+
+def binding_files(bindings: dict[str, dict[str, Any]]) -> dict[str, str]:
+    """Return every bound sample's file, plus the index the host test reads.
+
+    Args:
+        bindings: Two frames per pair, by ``Component.prop``.
+
+    Returns:
+        File names to contents.
+    """
+    files = {
+        f"binding-{pair}.json": json.dumps(frames, indent=1, sort_keys=True) + "\n"
+        for pair, frames in bindings.items()
+    }
+    files["bindings.txt"] = "".join(f"{pair}\n" for pair in bindings)
+    return files
 
 
 def render(samples: dict[str, dict[str, Any]]) -> dict[str, str]:
@@ -175,11 +226,17 @@ def main() -> int:
     # Modifiers are rendered by the gate too, but not listed as previews.
     for name, text in render({**samples, **modifier_documents()}).items():
         (out / name).write_text(text)
+    bindings = binding_files(binding_documents())
+    for name, text in bindings.items():
+        (out / name).write_text(text)
     if args.out is None:
         # A test run asks for samples only; it never rewrites a source file.
         CATALOG.parent.mkdir(parents=True, exist_ok=True)
         CATALOG.write_text(preview)
-    print(f"previews.py: wrote {len(samples)} samples to {out}")
+    print(
+        f"previews.py: wrote {len(samples)} samples"
+        f" and {len(bindings) - 1} bound pairs to {out}"
+    )
     return 0
 
 

@@ -1,5 +1,7 @@
 package com.pycompose.host.ui
 
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
 import java.io.File
 
 /**
@@ -33,4 +35,20 @@ internal object Samples {
 
     /** One component's sample snapshot. */
     fun source(component: String): String = File(directory, "$component.json").readText()
+
+    /** The `(component, prop)` pairs with a bound sample, in catalog order. */
+    fun bindings(): List<String> =
+        File(directory, "bindings.txt").readLines().filter { it.isNotBlank() }
+
+    /**
+     * One pair's two frames: the snapshot as the catalog derives it, and the
+     * same snapshot with its bound target moved.
+     */
+    fun bindingFrames(pair: String): Pair<String, String> {
+        val frames =
+            Json
+                .parseToJsonElement(File(directory, "binding-$pair.json").readText())
+                .jsonObject
+        return frames.getValue("first").toString() to frames.getValue("then").toString()
+    }
 }
