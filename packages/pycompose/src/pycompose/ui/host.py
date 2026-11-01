@@ -1,9 +1,12 @@
-"""What runs on the host within a frame: values it animates, functions it calls.
+"""What runs on the host within a frame: values it binds, functions it calls.
 
-``animate`` stands where a modifier takes a number, a dp or a colour; Python
-states the target, and the host travels there frame by frame::
+``animate`` and ``follow`` stand where a prop takes a value Python can compute
+once; the host keeps it there frame by frame::
 
     Modifier().alpha(animate(1.0 if state.shown else 0.0, tween(250)))
+    Modifier().shadow(
+        8, ambient_color=follow(Stream("nav", "progress").as_alpha("#000000"))
+    )
 
 ``@host`` compiles a function a parameter calls while it draws, which the host
 then calls with no Python in the frame::
@@ -20,11 +23,20 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from pycompose.model.nodes.props import JsonValue
-from pycompose.model.programs.bindings import Animate, Spring, Tween
+from pycompose.model.programs.bindings import Binding, Spring, Tween
+from pycompose.model.programs.expressions import Expression
 from pycompose.model.programs.functions import HostFunction
 from pycompose.ui._compile import compile_function
 
-__all__ = ["Animate", "HostFunction", "animate", "host", "spring", "tween"]
+__all__ = [
+    "Binding",
+    "HostFunction",
+    "animate",
+    "follow",
+    "host",
+    "spring",
+    "tween",
+]
 
 
 def host(function: Callable[..., object]) -> HostFunction:
@@ -68,14 +80,28 @@ def tween(duration_ms: int = 300, delay_ms: int = 0) -> Tween:
     return Tween(duration_ms, delay_ms)
 
 
-def animate(to: JsonValue, spec: Spring | Tween | None = None) -> Animate:
+def animate(to: JsonValue | Expression, spec: Spring | Tween | None = None) -> Binding:
     """A value the host animates to whenever a snapshot states a new one.
 
     Args:
-        to: The target: a number, or a colour value such as ``Color(...)``.
+        to: The target: a number, a colour value such as ``Color(...)``, or an
+            expression the host evaluates each frame.
         spec: How it travels there; a non-bouncing spring when omitted.
 
     Returns:
         The binding.
     """
-    return Animate(to, spec or Spring())
+    return Binding(to, spec or Spring())
+
+
+def follow(target: JsonValue | Expression) -> Binding:
+    """A value the host reads from its target every frame, with no travel.
+
+    Args:
+        target: What it tracks: a number, a colour, or an expression such as
+            ``Stream(...)``.
+
+    Returns:
+        The binding.
+    """
+    return Binding(target)

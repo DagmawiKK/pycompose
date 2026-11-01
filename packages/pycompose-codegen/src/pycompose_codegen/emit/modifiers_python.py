@@ -40,7 +40,7 @@ def _parameter(name: str, prop: str, spec: dict[str, Any]) -> str:
         kind = TYPES[spec["type"]]
     if animatable(spec["type"], spec.get("valueType")):
         # The host animates to a target the app states with animate().
-        kind += " | Animate"
+        kind += " | Binding"
     if spec.get("required"):
         return f"        {python_name(prop)}: {kind},"
     if "default" in spec:
@@ -150,7 +150,7 @@ def render_operations(registry: dict[str, Any]) -> str:
                 "from typing import TYPE_CHECKING, Literal",
                 "",
                 "from pycompose.model.nodes.props import JsonValue",
-                "from pycompose.model.programs.bindings import Animate, lower_binding",
+                "from pycompose.model.programs.bindings import Binding, lower_binding",
                 "from pycompose.ui.intents import Intent, lower_action",
                 "from pycompose.ui.modifier_operation import _Operation",
                 "",

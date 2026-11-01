@@ -416,18 +416,26 @@
     "Binding": {
       "additionalProperties": false,
       "properties": {
-        "spec": {
+        "phase": {
+          "enum": [
+            "composition",
+            "layout",
+            "draw"
+          ]
+        },
+        "target": {},
+        "travel": {
           "type": "object"
         },
-        "to": {},
         "type": {
-          "const": "animate"
+          "const": "binding"
         }
       },
       "required": [
         "type",
-        "to",
-        "spec"
+        "target",
+        "travel",
+        "phase"
       ],
       "type": "object"
     },

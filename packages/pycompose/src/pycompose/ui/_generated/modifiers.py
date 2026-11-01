@@ -6,7 +6,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Literal
 
 from pycompose.model.nodes.props import JsonValue
-from pycompose.model.programs.bindings import Animate, lower_binding
+from pycompose.model.programs.bindings import Binding, lower_binding
 from pycompose.ui.intents import Intent, lower_action
 from pycompose.ui.modifier_operation import _Operation
 
@@ -109,8 +109,8 @@ class GeneratedOperations:
     def absolute_offset(
         self,
         *,
-        x: int | float | Animate | None = None,
-        y: int | float | Animate | None = None,
+        x: int | float | Binding | None = None,
+        y: int | float | Binding | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.absoluteOffset``.
 
@@ -134,10 +134,10 @@ class GeneratedOperations:
     def absolute_padding(
         self,
         *,
-        left: int | float | Animate | None = None,
-        top: int | float | Animate | None = None,
-        right: int | float | Animate | None = None,
-        bottom: int | float | Animate | None = None,
+        left: int | float | Binding | None = None,
+        top: int | float | Binding | None = None,
+        right: int | float | Binding | None = None,
+        bottom: int | float | Binding | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.absolutePadding``.
 
@@ -177,7 +177,7 @@ class GeneratedOperations:
     @_Operation
     def alpha(
         self,
-        alpha: int | float | Animate,
+        alpha: int | float | Binding,
     ) -> Modifier:
         """Native ``androidx.compose.ui.draw.alpha``.
 
@@ -221,7 +221,7 @@ class GeneratedOperations:
     @_Operation
     def aspect_ratio(
         self,
-        ratio: int | float | Animate,
+        ratio: int | float | Binding,
         *,
         match_height_constraints_first: bool = False,
     ) -> Modifier:
@@ -268,7 +268,7 @@ class GeneratedOperations:
     @_Operation
     def basic_marquee(
         self,
-        velocity: int | float | Animate | None = None,
+        velocity: int | float | Binding | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.basicMarquee``.
 
@@ -404,8 +404,8 @@ class GeneratedOperations:
     def default_min_size(
         self,
         *,
-        min_width: int | float | Animate | None = None,
-        min_height: int | float | Animate | None = None,
+        min_width: int | float | Binding | None = None,
+        min_height: int | float | Binding | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.defaultMinSize``.
 
@@ -439,7 +439,7 @@ class GeneratedOperations:
     @_Operation
     def fill_max_column_width(
         self,
-        fraction: int | float | Animate = 1.0,
+        fraction: int | float | Binding = 1.0,
     ) -> Modifier:
         """Native ``fillMaxColumnWidth``.
 
@@ -462,7 +462,7 @@ class GeneratedOperations:
     @_Operation
     def fill_max_height(
         self,
-        fraction: int | float | Animate = 1.0,
+        fraction: int | float | Binding = 1.0,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.fillMaxHeight``.
 
@@ -483,7 +483,7 @@ class GeneratedOperations:
     @_Operation
     def fill_max_row_height(
         self,
-        fraction: int | float | Animate = 1.0,
+        fraction: int | float | Binding = 1.0,
     ) -> Modifier:
         """Native ``fillMaxRowHeight``.
 
@@ -506,7 +506,7 @@ class GeneratedOperations:
     @_Operation
     def fill_max_size(
         self,
-        fraction: int | float | Animate = 1.0,
+        fraction: int | float | Binding = 1.0,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.fillMaxSize``.
 
@@ -527,7 +527,7 @@ class GeneratedOperations:
     @_Operation
     def fill_max_width(
         self,
-        fraction: int | float | Animate = 1,
+        fraction: int | float | Binding = 1,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.fillMaxWidth``.
 
@@ -603,19 +603,19 @@ class GeneratedOperations:
     def graphics_layer(
         self,
         *,
-        scale_x: int | float | Animate = 1.0,
-        scale_y: int | float | Animate = 1.0,
-        alpha: int | float | Animate = 1.0,
-        translation_x: int | float | Animate = 0.0,
-        translation_y: int | float | Animate = 0.0,
-        shadow_elevation: int | float | Animate = 0.0,
-        rotation_x: int | float | Animate = 0.0,
-        rotation_y: int | float | Animate = 0.0,
-        rotation_z: int | float | Animate = 0.0,
+        scale_x: int | float | Binding = 1.0,
+        scale_y: int | float | Binding = 1.0,
+        alpha: int | float | Binding = 1.0,
+        translation_x: int | float | Binding = 0.0,
+        translation_y: int | float | Binding = 0.0,
+        shadow_elevation: int | float | Binding = 0.0,
+        rotation_x: int | float | Binding = 0.0,
+        rotation_y: int | float | Binding = 0.0,
+        rotation_z: int | float | Binding = 0.0,
         shape: JsonValue | None = None,
         clip: bool = False,
-        ambient_shadow_color: JsonValue | Animate | None = None,
-        spot_shadow_color: JsonValue | Animate | None = None,
+        ambient_shadow_color: JsonValue | Binding | None = None,
+        spot_shadow_color: JsonValue | Binding | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.ui.graphics.graphicsLayer``.
 
@@ -673,7 +673,7 @@ class GeneratedOperations:
     @_Operation
     def height(
         self,
-        height: int | float | Animate,
+        height: int | float | Binding,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.height``.
 
@@ -695,8 +695,8 @@ class GeneratedOperations:
     def height_in(
         self,
         *,
-        min: int | float | Animate | None = None,
-        max: int | float | Animate | None = None,
+        min: int | float | Binding | None = None,
+        max: int | float | Binding | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.heightIn``.
 
@@ -896,8 +896,8 @@ class GeneratedOperations:
     def offset(
         self,
         *,
-        x: int | float | Animate | None = None,
-        y: int | float | Animate | None = None,
+        x: int | float | Binding | None = None,
+        y: int | float | Binding | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.offset``.
 
@@ -952,7 +952,7 @@ class GeneratedOperations:
     @_Operation
     def preferred_frame_rate(
         self,
-        frame_rate: int | float | Animate,
+        frame_rate: int | float | Binding,
     ) -> Modifier:
         """Native ``androidx.compose.ui.preferredFrameRate``.
 
@@ -984,7 +984,7 @@ class GeneratedOperations:
     @_Operation
     def render_in_shared_transition_scope_overlay(
         self,
-        z_index_in_overlay: int | float | Animate = 0.0,
+        z_index_in_overlay: int | float | Binding = 0.0,
     ) -> Modifier:
         """Native ``renderInSharedTransitionScopeOverlay``.
 
@@ -1007,7 +1007,7 @@ class GeneratedOperations:
     @_Operation
     def required_height(
         self,
-        height: int | float | Animate,
+        height: int | float | Binding,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.requiredHeight``.
 
@@ -1029,8 +1029,8 @@ class GeneratedOperations:
     def required_height_in(
         self,
         *,
-        min: int | float | Animate | None = None,
-        max: int | float | Animate | None = None,
+        min: int | float | Binding | None = None,
+        max: int | float | Binding | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.requiredHeightIn``.
 
@@ -1054,10 +1054,10 @@ class GeneratedOperations:
     def required_size_in(
         self,
         *,
-        min_width: int | float | Animate | None = None,
-        min_height: int | float | Animate | None = None,
-        max_width: int | float | Animate | None = None,
-        max_height: int | float | Animate | None = None,
+        min_width: int | float | Binding | None = None,
+        min_height: int | float | Binding | None = None,
+        max_width: int | float | Binding | None = None,
+        max_height: int | float | Binding | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.requiredSizeIn``.
 
@@ -1084,7 +1084,7 @@ class GeneratedOperations:
     @_Operation
     def required_width(
         self,
-        width: int | float | Animate,
+        width: int | float | Binding,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.requiredWidth``.
 
@@ -1106,8 +1106,8 @@ class GeneratedOperations:
     def required_width_in(
         self,
         *,
-        min: int | float | Animate | None = None,
-        max: int | float | Animate | None = None,
+        min: int | float | Binding | None = None,
+        max: int | float | Binding | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.requiredWidthIn``.
 
@@ -1130,7 +1130,7 @@ class GeneratedOperations:
     @_Operation
     def rotate(
         self,
-        degrees: int | float | Animate,
+        degrees: int | float | Binding,
     ) -> Modifier:
         """Native ``androidx.compose.ui.draw.rotate``.
 
@@ -1225,7 +1225,7 @@ class GeneratedOperations:
         heading: bool | None = None,
         live_region: _SemanticsLiveRegion | None = None,
         test_tag: str | None = None,
-        traversal_index: int | float | Animate | None = None,
+        traversal_index: int | float | Binding | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.ui.semantics.semantics``.
 
@@ -1281,11 +1281,11 @@ class GeneratedOperations:
     @_Operation
     def shadow(
         self,
-        elevation: int | float | Animate,
+        elevation: int | float | Binding,
         *,
         shape: JsonValue | None = None,
-        ambient_color: JsonValue | Animate | None = None,
-        spot_color: JsonValue | Animate | None = None,
+        ambient_color: JsonValue | Binding | None = None,
+        spot_color: JsonValue | Binding | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.ui.draw.shadow``.
 
@@ -1312,8 +1312,8 @@ class GeneratedOperations:
     @_Operation
     def size(
         self,
-        width: JsonValue | Animate,
-        height: JsonValue | Animate,
+        width: JsonValue | Binding,
+        height: JsonValue | Binding,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.size``.
 
@@ -1337,10 +1337,10 @@ class GeneratedOperations:
     def size_in(
         self,
         *,
-        min_width: int | float | Animate | None = None,
-        min_height: int | float | Animate | None = None,
-        max_width: int | float | Animate | None = None,
-        max_height: int | float | Animate | None = None,
+        min_width: int | float | Binding | None = None,
+        min_height: int | float | Binding | None = None,
+        max_width: int | float | Binding | None = None,
+        max_height: int | float | Binding | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.sizeIn``.
 
@@ -1517,7 +1517,7 @@ class GeneratedOperations:
     @_Operation
     def weight(
         self,
-        weight: int | float | Animate,
+        weight: int | float | Binding,
         *,
         fill: bool = True,
     ) -> Modifier:
@@ -1544,7 +1544,7 @@ class GeneratedOperations:
     @_Operation
     def width(
         self,
-        width: int | float | Animate,
+        width: int | float | Binding,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.width``.
 
@@ -1566,8 +1566,8 @@ class GeneratedOperations:
     def width_in(
         self,
         *,
-        min: int | float | Animate | None = None,
-        max: int | float | Animate | None = None,
+        min: int | float | Binding | None = None,
+        max: int | float | Binding | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.layout.widthIn``.
 
@@ -1770,7 +1770,7 @@ class GeneratedOperations:
     @_Operation
     def z_index(
         self,
-        z_index: int | float | Animate,
+        z_index: int | float | Binding,
     ) -> Modifier:
         """Native ``androidx.compose.ui.zIndex``.
 

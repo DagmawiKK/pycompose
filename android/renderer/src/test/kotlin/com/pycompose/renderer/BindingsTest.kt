@@ -25,7 +25,9 @@ class BindingsTest {
 
     private fun bound(to: Double): JsonElement =
         Json.parseToJsonElement(
-            """{"type":"animate","to":$to,"spec":{"kind":"tween","durationMs":400,"delayMs":0}}""",
+            """{"type":"binding","target":$to,""" +
+                """"travel":{"kind":"tween","durationMs":400,"delayMs":0},""" +
+                """"phase":"composition"}""",
         )
 
     @Test

@@ -10,7 +10,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
+import com.pycompose.program.Binding
 import com.pycompose.program.Bindings
+import com.pycompose.program.Phase
 import com.pycompose.program.Travel
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -23,6 +25,22 @@ import kotlinx.serialization.json.JsonObject
  */
 
 /**
+ * The binding a prop value carries, or null for a plain value.
+ *
+ * @param wire The prop's wire value: plain, or a binding.
+ */
+private fun bound(wire: JsonElement): Binding? {
+    if (!Bindings.isBinding(wire)) return null
+    val binding = Bindings.read(wire as JsonObject)
+    // The generator resolved where this argument is read; a binding that names
+    // another phase would be read in the wrong one, so it is refused instead.
+    require(binding.phase == Phase.Composition) {
+        "this prop is read in composition; a ${binding.phase.wire} binding cannot stand here"
+    }
+    return binding
+}
+
+/**
  * A Float prop, animated when the app bound it.
  *
  * @param wire The prop's wire value: plain, or a binding.
@@ -33,9 +51,8 @@ fun animatedFloat(
     wire: JsonElement,
     read: @Composable (JsonElement) -> Float,
 ): Float {
-    if (!Bindings.isBinding(wire)) return read(wire)
-    val binding = Bindings.read(wire as JsonObject)
-    return animateFloatAsState(read(binding.to), spec(binding.travel), label = "binding").value
+    val binding = bound(wire) ?: return read(wire)
+    return animateFloatAsState(read(binding.target), spec(binding.travel), label = "binding").value
 }
 
 /**
@@ -49,9 +66,8 @@ fun animatedDp(
     wire: JsonElement,
     read: @Composable (JsonElement) -> Dp,
 ): Dp {
-    if (!Bindings.isBinding(wire)) return read(wire)
-    val binding = Bindings.read(wire as JsonObject)
-    return animateDpAsState(read(binding.to), spec(binding.travel), label = "binding").value
+    val binding = bound(wire) ?: return read(wire)
+    return animateDpAsState(read(binding.target), spec(binding.travel), label = "binding").value
 }
 
 /**
@@ -65,9 +81,8 @@ fun animatedColor(
     wire: JsonElement,
     read: @Composable (JsonElement) -> Color,
 ): Color {
-    if (!Bindings.isBinding(wire)) return read(wire)
-    val binding = Bindings.read(wire as JsonObject)
-    return animateColorAsState(read(binding.to), spec(binding.travel), label = "binding").value
+    val binding = bound(wire) ?: return read(wire)
+    return animateColorAsState(read(binding.target), spec(binding.travel), label = "binding").value
 }
 
 private fun <T> spec(travel: Travel): AnimationSpec<T> =
@@ -79,4 +94,7 @@ private fun <T> spec(travel: Travel): AnimationSpec<T> =
                 delayMillis = travel.delayMs,
                 easing = FastOutSlowInEasing,
             )
+        // A composition-phase follow collapses to its target; one that did not
+        // would have been refused by bound().
+        Travel.None -> error("a binding read in composition travels with a spring or a tween")
     }

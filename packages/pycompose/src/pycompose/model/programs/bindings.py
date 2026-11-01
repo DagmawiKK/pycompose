@@ -1,9 +1,19 @@
-"""Bindings: a value the host animates to, with no Python per frame.
+"""Bindings: a value the host keeps up to date, with no Python per frame.
 
-Python states where a value should end up and how to travel there; the host
-runs the animation with Compose's own ``animate*AsState``, frame by frame, and
-restarts it from wherever it is when a later snapshot states a new target. A
-binding stands where a modifier takes a number, a dp or a colour.
+A binding states a target and how to reach it. Python states it once; the host
+does the rest, frame by frame. One wire form covers all of them::
+
+    follow(target)        the value tracks its target every frame
+    animate(target, spec) the value travels there with a spring or a tween
+
+A binding also names the phase it is read in. Compose invalidates by phase, so
+a value read while drawing redraws only the drawing; the generator resolves the
+phase from what the pin offers and writes it here, and an app overrides it only
+where it knows better.
+
+One canonical form keeps a binding from stating what it need not: a binding with
+no travel, read in composition, *is* its target, so it is written as the target.
+``follow(0.5)`` is ``0.5``, and ``follow(Stream(...))`` is the expression itself.
 """
 
 from __future__ import annotations
@@ -11,13 +21,20 @@ from __future__ import annotations
 import math
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import cast
+from typing import Literal, cast
 
 from pycompose.errors import IrValidationError
 from pycompose.model.nodes.props import JsonValue
+from pycompose.model.programs.expressions import Expression
 
 BINDINGS_SINCE = "1.23.0"
 """The first schema whose envelopes may carry a binding."""
+
+Phase = Literal["composition", "layout", "draw"]
+"""Where the host reads a bound value, and so what it invalidates."""
+
+PHASES: tuple[Phase, ...] = ("composition", "layout", "draw")
+"""Every phase a binding may name. Both validators refuse any other."""
 
 
 def animatable(prop_type: str, value_type: str | None) -> bool:
@@ -88,38 +105,67 @@ class Tween:
         }
 
 
+Spec = Spring | Tween
+"""How a value travels to its target; ``None`` means it is read live."""
+
+
 @dataclass(frozen=True, slots=True)
-class Animate:
-    """A value the host animates to.
+class Binding:
+    """A value the host keeps at its target.
 
     Attributes:
-        to: Where it ends up: a number, or a colour's tagged value.
-        spec: How it travels there.
+        target: Where it ends up: a number, a colour's tagged value, or an
+            expression the host evaluates each frame.
+        travel: How it travels there, or ``None`` to follow the target directly.
+        phase: Where the host reads it, or ``None`` for the generator's choice.
     """
 
-    to: JsonValue
-    spec: Spring | Tween
+    target: JsonValue | Expression
+    travel: Spec | None = None
+    phase: Phase | None = None
 
-    def to_wire(self) -> dict[str, JsonValue]:
-        """Return the binding's wire form.
+    def to_wire(self, resolved: Phase = "composition") -> JsonValue:
+        """Return the binding's wire form, or its target when it need not be one.
+
+        Args:
+            resolved: The phase the generator chose, used when the app stated none.
 
         Returns:
-            ``{"type": "animate", "to": ..., "spec": ...}``.
+            The target itself for a composition-phase follow; otherwise
+            ``{"type": "binding", "target": ..., "travel": ..., "phase": ...}``.
         """
-        return {"type": "animate", "to": self.to, "spec": self.spec.to_wire()}
+        phase = self.phase or resolved
+        target = (
+            self.target.to_wire()
+            if isinstance(self.target, Expression)
+            else self.target
+        )
+        if self.travel is None and phase == "composition":
+            # A follow read in composition is the target itself: one intent,
+            # one wire form.
+            return cast("JsonValue", target)
+        return {
+            "type": "binding",
+            "target": target,
+            "travel": {"kind": "none"}
+            if self.travel is None
+            else self.travel.to_wire(),
+            "phase": phase,
+        }
 
 
-def lower_binding(value: object) -> JsonValue:
+def lower_binding(value: object, phase: Phase = "composition") -> JsonValue:
     """A modifier argument as wire data: a binding as its wire form.
 
     Args:
         value: What the app passed.
+        phase: The phase the generator resolved from the catalog.
 
     Returns:
         The wire value.
     """
-    if isinstance(value, Animate):
-        return value.to_wire()
+    if isinstance(value, Binding):
+        return value.to_wire(phase)
     return cast("JsonValue", value)
 
 
@@ -130,41 +176,47 @@ def is_binding(value: object) -> bool:
         value: A prop value, possibly frozen.
 
     Returns:
-        True for an ``{"type": "animate", ...}`` object.
+        True for an ``{"type": "binding", ...}`` object.
     """
-    return isinstance(value, Mapping) and value.get("type") == "animate"
+    return isinstance(value, Mapping) and value.get("type") == "binding"
 
 
-def check_binding(value: Mapping[str, object]) -> object:
-    """Check a binding's shape and return the target it animates to.
+def check_binding(value: Mapping[str, object]) -> tuple[object, Phase]:
+    """Check a binding's shape and return its target and phase.
 
     Args:
-        value: The ``{"type": "animate", ...}`` object.
+        value: The ``{"type": "binding", ...}`` object.
 
     Returns:
-        Its ``to``, for the caller to check against the prop's type.
+        Its ``target``, for the caller to check against the prop's type, and the
+        phase it names.
 
     Raises:
-        IrValidationError: If the spec or the object's keys are not a binding's.
+        IrValidationError: If the travel or the object's keys are not a binding's.
     """
-    if set(value) != {"type", "to", "spec"}:
-        raise IrValidationError("a binding is {type: animate, to, spec}")
-    spec = value["spec"]
-    if not isinstance(spec, Mapping):
-        raise IrValidationError("a binding's spec is an object")
+    if set(value) != {"type", "target", "travel", "phase"}:
+        raise IrValidationError("a binding is {type: binding, target, travel, phase}")
+    travel = value["travel"]
+    if not isinstance(travel, Mapping):
+        raise IrValidationError("a binding's travel is an object")
+    kind = str(travel.get("kind"))
     numbers = {
+        "none": (),
         "spring": ("dampingRatio", "stiffness"),
         "tween": ("durationMs", "delayMs"),
-    }.get(str(spec.get("kind")))
-    if numbers is None or set(spec) != {"kind", *numbers}:
-        raise IrValidationError("a binding's spec is a spring or a tween")
+    }.get(kind)
+    if numbers is None or set(travel) != {"kind", *numbers}:
+        raise IrValidationError("a binding's travel is none, a spring or a tween")
     for name in numbers:
-        number = spec[name]
+        number = travel[name]
         if (
             not isinstance(number, int | float)
             or isinstance(number, bool)
             or not math.isfinite(number)
             or number < 0
         ):
-            raise IrValidationError("a binding's spec takes nonnegative numbers")
-    return value["to"]
+            raise IrValidationError("a binding's travel takes nonnegative numbers")
+    phase = value["phase"]
+    if phase not in PHASES:
+        raise IrValidationError("a binding's phase is composition, layout or draw")
+    return value["target"], cast("Phase", phase)

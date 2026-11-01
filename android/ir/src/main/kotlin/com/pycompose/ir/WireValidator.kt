@@ -244,7 +244,7 @@ private fun target(
             (rule.type == "dp" && rule.valueType in setOf(null, "Dp")) ||
             (rule.type == "color" && rule.valueType == "Color")
     require(animatable) { "A ${rule.type} prop cannot animate" }
-    return Bindings.read(value as JsonObject).to
+    return Bindings.read(value as JsonObject).target
 }
 
 /** Every node, post-order, so a validated subtree knows every id it claims. */

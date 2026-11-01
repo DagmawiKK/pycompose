@@ -81,13 +81,14 @@ SURFACE = {
 """Each public package's names, as its ``__all__`` states them."""
 
 UI_OWN = [
-    "Animate",
+    "Binding",
     "Fallback",
     "HostFunction",
     "Intent",
     "Modifier",
     "Node",
     "animate",
+    "follow",
     "host",
     "spring",
     "tween",

@@ -8,7 +8,7 @@ import json
 import re
 from typing import Any
 
-from pycompose.model.programs.bindings import BINDINGS_SINCE, animatable
+from pycompose.model.programs.bindings import BINDINGS_SINCE, PHASES, animatable
 from pycompose_codegen.emit.rules import (
     SLOT_NAME,
     die,
@@ -44,16 +44,17 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
             "Action": action_schema(action_ids),
             "Node": _node_schema(sorted(component_defs)),
             "ModifierOperation": _modifier_schema(registry),
-            # Its shape only; the specs and the target's type are the
-            # validators' (pycompose/model/programs/bindings.py, Bindings.kt).
+            # Its shape only; the travel and the phase are the validators'
+            # (pycompose/model/programs/bindings.py, Bindings.kt).
             "Binding": {
                 "type": "object",
                 "additionalProperties": False,
-                "required": ["type", "to", "spec"],
+                "required": ["type", "target", "travel", "phase"],
                 "properties": {
-                    "type": {"const": "animate"},
-                    "to": {},
-                    "spec": {"type": "object"},
+                    "type": {"const": "binding"},
+                    "target": {},
+                    "travel": {"type": "object"},
+                    "phase": {"enum": list(PHASES)},
                 },
             },
             # Its shape only; the closed vocabulary, types and limits are the
