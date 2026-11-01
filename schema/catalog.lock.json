@@ -44,12 +44,14 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.AlertDialogDefaults.containerColor"
+          "fallback": "androidx.compose.material3.AlertDialogDefaults.containerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "iconContentColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.AlertDialogDefaults.iconContentColor"
+          "fallback": "androidx.compose.material3.AlertDialogDefaults.iconContentColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "onDismissRequest": {
           "type": "actionId",
@@ -63,16 +65,19 @@
         "textContentColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.AlertDialogDefaults.textContentColor"
+          "fallback": "androidx.compose.material3.AlertDialogDefaults.textContentColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "titleContentColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.AlertDialogDefaults.titleContentColor"
+          "fallback": "androidx.compose.material3.AlertDialogDefaults.titleContentColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "tonalElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.AlertDialogDefaults.TonalElevation"
+          "nativeDefault": "androidx.compose.material3.AlertDialogDefaults.TonalElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -304,7 +309,8 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.BadgeDefaults.containerColor"
+          "fallback": "androidx.compose.material3.BadgeDefaults.containerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "modifier": {
           "type": "modifier"
@@ -391,7 +397,8 @@
           "nativeType": "Int",
           "minimum": -2147483648,
           "maximum": 2147483647,
-          "default": 1
+          "default": 1,
+          "animation": "kotlin.Int"
         },
         "overflow": {
           "type": "enum",
@@ -450,7 +457,8 @@
           "nativeType": "Int",
           "minimum": -2147483648,
           "maximum": 2147483647,
-          "default": 1
+          "default": 1,
+          "animation": "kotlin.Int"
         },
         "onValueChange": {
           "type": "actionId",
@@ -544,7 +552,8 @@
           "type": "color",
           "valueType": "Color",
           "fallback": "androidx.compose.material3.BottomAppBarDefaults.containerColor",
-          "since": "1.23.0"
+          "since": "1.23.0",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "contentPadding": {
           "type": "value",
@@ -555,7 +564,8 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.BottomAppBarDefaults.ContainerElevation",
-          "since": "1.23.0"
+          "since": "1.23.0",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "windowInsets": {
           "type": "value",
@@ -589,7 +599,8 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.BottomAppBarDefaults.containerColor"
+          "fallback": "androidx.compose.material3.BottomAppBarDefaults.containerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "contentPadding": {
           "type": "value",
@@ -598,7 +609,8 @@
         },
         "tonalElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.BottomAppBarDefaults.ContainerElevation"
+          "nativeDefault": "androidx.compose.material3.BottomAppBarDefaults.ContainerElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "windowInsets": {
           "type": "value",
@@ -642,24 +654,29 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface"
+          "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "sheetContainerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.BottomSheetDefaults.ContainerColor"
+          "fallback": "androidx.compose.material3.BottomSheetDefaults.ContainerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "sheetMaxWidth": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.BottomSheetDefaults.SheetMaxWidth"
+          "nativeDefault": "androidx.compose.material3.BottomSheetDefaults.SheetMaxWidth",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "sheetPeekHeight": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.BottomSheetDefaults.SheetPeekHeight"
+          "nativeDefault": "androidx.compose.material3.BottomSheetDefaults.SheetPeekHeight",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "sheetShadowElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.BottomSheetDefaults.Elevation"
+          "nativeDefault": "androidx.compose.material3.BottomSheetDefaults.Elevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "sheetShape": {
           "type": "value",
@@ -672,7 +689,8 @@
         },
         "sheetTonalElevation": {
           "type": "dp",
-          "nativeDefault": "(0).dp"
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -1005,7 +1023,8 @@
         },
         "expandedHeight": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.TopAppBarExpandedHeight"
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.TopAppBarExpandedHeight",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "windowInsets": {
           "type": "value",
@@ -1133,12 +1152,14 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.circularColor"
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.circularColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "gapSize": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularIndicatorTrackGapSize",
-          "since": "1.23.0"
+          "since": "1.23.0",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "strokeCap": {
           "type": "enum",
@@ -1152,12 +1173,14 @@
         },
         "strokeWidth": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularStrokeWidth"
+          "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularStrokeWidth",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "trackColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.circularIndeterminateTrackColor"
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.circularIndeterminateTrackColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "modifier": {
           "type": "modifier"
@@ -1186,11 +1209,13 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.circularColor"
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.circularColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "gapSize": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularIndicatorTrackGapSize"
+          "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularIndicatorTrackGapSize",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "progress": {
           "type": "number",
@@ -1198,7 +1223,8 @@
           "provider": {
             "native": "progress",
             "returns": "Float"
-          }
+          },
+          "animation": "kotlin.Float"
         },
         "strokeCap": {
           "type": "enum",
@@ -1212,12 +1238,14 @@
         },
         "strokeWidth": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularStrokeWidth"
+          "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularStrokeWidth",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "trackColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.circularDeterminateTrackColor"
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.circularDeterminateTrackColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "modifier": {
           "type": "modifier"
@@ -1452,7 +1480,8 @@
         },
         "tonalElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.DatePickerDefaults.TonalElevation"
+          "nativeDefault": "androidx.compose.material3.DatePickerDefaults.TonalElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -1511,7 +1540,8 @@
         "drawerContainerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.DrawerDefaults.standardContainerColor"
+          "fallback": "androidx.compose.material3.DrawerDefaults.standardContainerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "drawerShape": {
           "type": "value",
@@ -1520,7 +1550,8 @@
         },
         "drawerTonalElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.DrawerDefaults.DismissibleDrawerElevation"
+          "nativeDefault": "androidx.compose.material3.DrawerDefaults.DismissibleDrawerElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "windowInsets": {
           "type": "value",
@@ -1622,7 +1653,8 @@
         },
         "shadowElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation"
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "shape": {
           "type": "value",
@@ -1631,7 +1663,8 @@
         },
         "tonalElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation"
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -1670,7 +1703,8 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.MenuDefaults.containerColor"
+          "fallback": "androidx.compose.material3.MenuDefaults.containerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "expanded": {
           "type": "boolean",
@@ -1682,7 +1716,8 @@
         },
         "shadowElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.MenuDefaults.ShadowElevation"
+          "nativeDefault": "androidx.compose.material3.MenuDefaults.ShadowElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "shape": {
           "type": "value",
@@ -1691,7 +1726,8 @@
         },
         "tonalElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.MenuDefaults.TonalElevation"
+          "nativeDefault": "androidx.compose.material3.MenuDefaults.TonalElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -2348,7 +2384,8 @@
       "props": {
         "shadowElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation"
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "shape": {
           "type": "value",
@@ -2357,7 +2394,8 @@
         },
         "tonalElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation"
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -2398,11 +2436,13 @@
         },
         "shadowElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation"
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "tonalElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation"
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -2445,7 +2485,8 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.MenuDefaults.containerColor"
+          "fallback": "androidx.compose.material3.MenuDefaults.containerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "expanded": {
           "type": "boolean",
@@ -2461,7 +2502,8 @@
         },
         "shadowElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.MenuDefaults.ShadowElevation"
+          "nativeDefault": "androidx.compose.material3.MenuDefaults.ShadowElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "shape": {
           "type": "value",
@@ -2470,7 +2512,8 @@
         },
         "tonalElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.MenuDefaults.TonalElevation"
+          "nativeDefault": "androidx.compose.material3.MenuDefaults.TonalElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -2561,7 +2604,8 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor"
+          "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "elevation": {
           "type": "value",
@@ -2643,7 +2687,8 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor"
+          "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "elevation": {
           "type": "value",
@@ -3305,7 +3350,8 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor"
+          "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "elevation": {
           "type": "value",
@@ -3416,7 +3462,8 @@
           "minimum": 1,
           "maximum": 2147483647,
           "default": 2147483647,
-          "nativeType": "Int"
+          "nativeType": "Int",
+          "animation": "kotlin.Int"
         }
       },
       "children": {
@@ -3472,7 +3519,8 @@
           "minimum": 1,
           "maximum": 2147483647,
           "default": 2147483647,
-          "nativeType": "Int"
+          "nativeType": "Int",
+          "animation": "kotlin.Int"
         }
       },
       "children": {
@@ -3498,11 +3546,13 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.DividerDefaults.color"
+          "fallback": "androidx.compose.material3.DividerDefaults.color",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "thickness": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.DividerDefaults.Thickness"
+          "nativeDefault": "androidx.compose.material3.DividerDefaults.Thickness",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -3538,7 +3588,8 @@
         "tint": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.LocalContentColor.current"
+          "fallback": "androidx.compose.material3.LocalContentColor.current",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "modifier": {
           "type": "modifier"
@@ -4037,7 +4088,8 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor"
+          "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "elevation": {
           "type": "value",
@@ -4119,7 +4171,8 @@
       "props": {
         "collapsedHeight": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.LargeAppBarCollapsedHeight"
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.LargeAppBarCollapsedHeight",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "colors": {
           "type": "value",
@@ -4128,7 +4181,8 @@
         },
         "expandedHeight": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.LargeAppBarExpandedHeight"
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.LargeAppBarExpandedHeight",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "windowInsets": {
           "type": "value",
@@ -4334,7 +4388,8 @@
         "selectedContentColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "(androidx.compose.material3.LocalContentColor).current"
+          "fallback": "(androidx.compose.material3.LocalContentColor).current",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "modifier": {
           "type": "modifier"
@@ -4411,12 +4466,14 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearColor"
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "gapSize": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.LinearIndicatorTrackGapSize",
-          "since": "1.23.0"
+          "since": "1.23.0",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "progress": {
           "type": "number",
@@ -4425,7 +4482,8 @@
             "native": "progress",
             "returns": "Float"
           },
-          "since": "1.20.0"
+          "since": "1.20.0",
+          "animation": "kotlin.Float"
         },
         "strokeCap": {
           "type": "enum",
@@ -4441,7 +4499,8 @@
         "trackColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor"
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "modifier": {
           "type": "modifier"
@@ -4473,11 +4532,13 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearColor"
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "gapSize": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.LinearIndicatorTrackGapSize"
+          "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.LinearIndicatorTrackGapSize",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "strokeCap": {
           "type": "enum",
@@ -4492,7 +4553,8 @@
         "trackColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor"
+          "fallback": "androidx.compose.material3.ProgressIndicatorDefaults.linearTrackColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "modifier": {
           "type": "modifier"
@@ -4518,11 +4580,13 @@
       "props": {
         "shadowElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.ListItemDefaults.Elevation"
+          "nativeDefault": "androidx.compose.material3.ListItemDefaults.Elevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "tonalElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.ListItemDefaults.Elevation"
+          "nativeDefault": "androidx.compose.material3.ListItemDefaults.Elevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -4571,7 +4635,8 @@
       "props": {
         "collapsedHeight": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.MediumAppBarCollapsedHeight"
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.MediumAppBarCollapsedHeight",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "colors": {
           "type": "value",
@@ -4580,7 +4645,8 @@
         },
         "expandedHeight": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.MediumAppBarExpandedHeight"
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.MediumAppBarExpandedHeight",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "windowInsets": {
           "type": "value",
@@ -4627,13 +4693,15 @@
           "type": "color",
           "valueType": "Color",
           "fallback": "androidx.compose.material3.BottomSheetDefaults.ContainerColor",
-          "since": "1.23.0"
+          "since": "1.23.0",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "scrimColor": {
           "type": "color",
           "valueType": "Color",
           "fallback": "androidx.compose.material3.BottomSheetDefaults.ScrimColor",
-          "since": "1.23.0"
+          "since": "1.23.0",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "shape": {
           "type": "value",
@@ -4649,12 +4717,14 @@
         "sheetMaxWidth": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.BottomSheetDefaults.SheetMaxWidth",
-          "since": "1.23.0"
+          "since": "1.23.0",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "(0).dp",
-          "since": "1.23.0"
+          "since": "1.23.0",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -4738,7 +4808,8 @@
         "drawerContainerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.DrawerDefaults.modalContainerColor"
+          "fallback": "androidx.compose.material3.DrawerDefaults.modalContainerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "drawerShape": {
           "type": "value",
@@ -4747,7 +4818,8 @@
         },
         "drawerTonalElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.DrawerDefaults.ModalDrawerElevation"
+          "nativeDefault": "androidx.compose.material3.DrawerDefaults.ModalDrawerElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "windowInsets": {
           "type": "value",
@@ -4784,7 +4856,8 @@
         "scrimColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.DrawerDefaults.scrimColor"
+          "fallback": "androidx.compose.material3.DrawerDefaults.scrimColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "modifier": {
           "type": "modifier"
@@ -4858,7 +4931,8 @@
         "expandedHeaderTopPadding": {
           "type": "dp",
           "nativeDefault": "(0).dp",
-          "since": "1.23.0"
+          "since": "1.23.0",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "expandedShape": {
           "type": "value",
@@ -5000,7 +5074,8 @@
       "props": {
         "space": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.SegmentedButtonDefaults.BorderWidth"
+          "nativeDefault": "androidx.compose.material3.SegmentedButtonDefaults.BorderWidth",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -5028,11 +5103,13 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.NavigationBarDefaults.containerColor"
+          "fallback": "androidx.compose.material3.NavigationBarDefaults.containerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "tonalElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.NavigationBarDefaults.Elevation"
+          "nativeDefault": "androidx.compose.material3.NavigationBarDefaults.Elevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "windowInsets": {
           "type": "value",
@@ -5239,7 +5316,8 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.NavigationRailDefaults.ContainerColor"
+          "fallback": "androidx.compose.material3.NavigationRailDefaults.ContainerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "windowInsets": {
           "type": "value",
@@ -5506,13 +5584,15 @@
           "type": "color",
           "valueType": "Color",
           "fallback": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.containerColor",
-          "since": "1.23.0"
+          "since": "1.23.0",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "contentColor": {
           "type": "color",
           "valueType": "Color",
           "fallback": "androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.contentColor",
-          "since": "1.23.0"
+          "since": "1.23.0",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "navigationItemVerticalArrangement": {
           "type": "enum",
@@ -6252,7 +6332,8 @@
           "nativeType": "Int",
           "minimum": -2147483648,
           "maximum": 2147483647,
-          "default": 1
+          "default": 1,
+          "animation": "kotlin.Int"
         },
         "onValueChange": {
           "type": "actionId",
@@ -6380,7 +6461,8 @@
         "drawerContainerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.DrawerDefaults.standardContainerColor"
+          "fallback": "androidx.compose.material3.DrawerDefaults.standardContainerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "drawerShape": {
           "type": "value",
@@ -6389,7 +6471,8 @@
         },
         "drawerTonalElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.DrawerDefaults.PermanentDrawerElevation"
+          "nativeDefault": "androidx.compose.material3.DrawerDefaults.PermanentDrawerElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "windowInsets": {
           "type": "value",
@@ -6451,16 +6534,19 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.TooltipDefaults.plainTooltipContainerColor"
+          "fallback": "androidx.compose.material3.TooltipDefaults.plainTooltipContainerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "contentColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.TooltipDefaults.plainTooltipContentColor"
+          "fallback": "androidx.compose.material3.TooltipDefaults.plainTooltipContentColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "maxWidth": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.TooltipDefaults.plainTooltipMaxWidth"
+          "nativeDefault": "androidx.compose.material3.TooltipDefaults.plainTooltipMaxWidth",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -6496,20 +6582,24 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.TabRowDefaults.primaryContainerColor"
+          "fallback": "androidx.compose.material3.TabRowDefaults.primaryContainerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "contentColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.TabRowDefaults.primaryContentColor"
+          "fallback": "androidx.compose.material3.TabRowDefaults.primaryContentColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "edgePadding": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.TabRowDefaults.ScrollableTabRowEdgeStartPadding"
+          "nativeDefault": "androidx.compose.material3.TabRowDefaults.ScrollableTabRowEdgeStartPadding",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "minTabWidth": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.TabRowDefaults.ScrollableTabRowMinTabWidth"
+          "nativeDefault": "androidx.compose.material3.TabRowDefaults.ScrollableTabRowMinTabWidth",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "selectedTabIndex": {
           "type": "integer",
@@ -6517,7 +6607,8 @@
           "minimum": -2147483648,
           "maximum": 2147483647,
           "required": true,
-          "indexOf": "tabs"
+          "indexOf": "tabs",
+          "animation": "kotlin.Int"
         },
         "modifier": {
           "type": "modifier"
@@ -6548,12 +6639,14 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.TabRowDefaults.primaryContainerColor"
+          "fallback": "androidx.compose.material3.TabRowDefaults.primaryContainerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "contentColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.TabRowDefaults.primaryContentColor"
+          "fallback": "androidx.compose.material3.TabRowDefaults.primaryContentColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "selectedTabIndex": {
           "type": "integer",
@@ -6561,7 +6654,8 @@
           "minimum": -2147483648,
           "maximum": 2147483647,
           "required": true,
-          "indexOf": "tabs"
+          "indexOf": "tabs",
+          "animation": "kotlin.Int"
         },
         "modifier": {
           "type": "modifier"
@@ -6726,7 +6820,8 @@
       "props": {
         "maxWidth": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.TooltipDefaults.richTooltipMaxWidth"
+          "nativeDefault": "androidx.compose.material3.TooltipDefaults.richTooltipMaxWidth",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -6738,22 +6833,26 @@
         "containerColor": {
           "type": "color",
           "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
-          "valueType": "Color"
+          "valueType": "Color",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "contentColor": {
           "type": "color",
           "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
-          "valueType": "Color"
+          "valueType": "Color",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "titleContentColor": {
           "type": "color",
           "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
-          "valueType": "Color"
+          "valueType": "Color",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "actionContentColor": {
           "type": "color",
           "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
-          "valueType": "Color"
+          "valueType": "Color",
+          "animation": "androidx.compose.ui.graphics.Color"
         }
       },
       "children": {
@@ -6828,7 +6927,8 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.MaterialTheme.colorScheme.background"
+          "fallback": "androidx.compose.material3.MaterialTheme.colorScheme.background",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "contentWindowInsets": {
           "type": "value",
@@ -6905,7 +7005,8 @@
         },
         "shadowElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation"
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "shape": {
           "type": "value",
@@ -6914,7 +7015,8 @@
         },
         "tonalElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation"
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "windowInsets": {
           "type": "value",
@@ -7113,20 +7215,24 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.TabRowDefaults.secondaryContainerColor"
+          "fallback": "androidx.compose.material3.TabRowDefaults.secondaryContainerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "contentColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.TabRowDefaults.secondaryContentColor"
+          "fallback": "androidx.compose.material3.TabRowDefaults.secondaryContentColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "edgePadding": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.TabRowDefaults.ScrollableTabRowEdgeStartPadding"
+          "nativeDefault": "androidx.compose.material3.TabRowDefaults.ScrollableTabRowEdgeStartPadding",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "minTabWidth": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.TabRowDefaults.ScrollableTabRowMinTabWidth"
+          "nativeDefault": "androidx.compose.material3.TabRowDefaults.ScrollableTabRowMinTabWidth",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "selectedTabIndex": {
           "type": "integer",
@@ -7134,7 +7240,8 @@
           "minimum": -2147483648,
           "maximum": 2147483647,
           "required": true,
-          "indexOf": "tabs"
+          "indexOf": "tabs",
+          "animation": "kotlin.Int"
         },
         "modifier": {
           "type": "modifier"
@@ -7165,12 +7272,14 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.TabRowDefaults.secondaryContainerColor"
+          "fallback": "androidx.compose.material3.TabRowDefaults.secondaryContainerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "contentColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.TabRowDefaults.secondaryContentColor"
+          "fallback": "androidx.compose.material3.TabRowDefaults.secondaryContentColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "selectedTabIndex": {
           "type": "integer",
@@ -7178,7 +7287,8 @@
           "minimum": -2147483648,
           "maximum": 2147483647,
           "required": true,
-          "indexOf": "tabs"
+          "indexOf": "tabs",
+          "animation": "kotlin.Int"
         },
         "modifier": {
           "type": "modifier"
@@ -7540,12 +7650,14 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.ShortNavigationBarDefaults.containerColor"
+          "fallback": "androidx.compose.material3.ShortNavigationBarDefaults.containerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "contentColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.ShortNavigationBarDefaults.contentColor"
+          "fallback": "androidx.compose.material3.ShortNavigationBarDefaults.contentColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "windowInsets": {
           "type": "value",
@@ -7667,7 +7779,8 @@
       "props": {
         "space": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.SegmentedButtonDefaults.BorderWidth"
+          "nativeDefault": "androidx.compose.material3.SegmentedButtonDefaults.BorderWidth",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -7825,12 +7938,14 @@
           "nativeType": "Int",
           "minimum": -2147483648,
           "maximum": 2147483647,
-          "default": 0
+          "default": 0,
+          "animation": "kotlin.Int"
         },
         "value": {
           "type": "number",
           "nativeType": "Float",
-          "required": true
+          "required": true,
+          "animation": "kotlin.Float"
         },
         "modifier": {
           "type": "modifier"
@@ -7897,7 +8012,8 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor"
+          "fallback": "androidx.compose.material3.FloatingActionButtonDefaults.containerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "elevation": {
           "type": "value",
@@ -7977,7 +8093,8 @@
         "actionContentColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.SnackbarDefaults.actionContentColor"
+          "fallback": "androidx.compose.material3.SnackbarDefaults.actionContentColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "actionOnNewLine": {
           "type": "boolean",
@@ -7986,17 +8103,20 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.SnackbarDefaults.color"
+          "fallback": "androidx.compose.material3.SnackbarDefaults.color",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "contentColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.SnackbarDefaults.contentColor"
+          "fallback": "androidx.compose.material3.SnackbarDefaults.contentColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "dismissActionContentColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.SnackbarDefaults.dismissActionContentColor"
+          "fallback": "androidx.compose.material3.SnackbarDefaults.dismissActionContentColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "shape": {
           "type": "value",
@@ -8112,7 +8232,8 @@
       "props": {
         "shadowElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation"
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "shape": {
           "type": "value",
@@ -8121,7 +8242,8 @@
         },
         "tonalElevation": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation"
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -8482,11 +8604,13 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface"
+          "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "shadowElevation": {
           "type": "dp",
-          "nativeDefault": "(0).dp"
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "shape": {
           "type": "value",
@@ -8495,7 +8619,8 @@
         },
         "tonalElevation": {
           "type": "dp",
-          "nativeDefault": "(0).dp"
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -8531,7 +8656,8 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface"
+          "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "enabled": {
           "type": "boolean",
@@ -8549,7 +8675,8 @@
         },
         "shadowElevation": {
           "type": "dp",
-          "nativeDefault": "(0).dp"
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "shape": {
           "type": "value",
@@ -8558,7 +8685,8 @@
         },
         "tonalElevation": {
           "type": "dp",
-          "nativeDefault": "(0).dp"
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -8631,7 +8759,8 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface"
+          "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "enabled": {
           "type": "boolean",
@@ -8643,7 +8772,8 @@
         },
         "shadowElevation": {
           "type": "dp",
-          "nativeDefault": "(0).dp"
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "shape": {
           "type": "value",
@@ -8652,7 +8782,8 @@
         },
         "tonalElevation": {
           "type": "dp",
-          "nativeDefault": "(0).dp"
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -8725,7 +8856,8 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface"
+          "fallback": "(androidx.compose.material3.MaterialTheme.colorScheme).surface",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "enabled": {
           "type": "boolean",
@@ -8741,7 +8873,8 @@
         },
         "shadowElevation": {
           "type": "dp",
-          "nativeDefault": "(0).dp"
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "shape": {
           "type": "value",
@@ -8750,7 +8883,8 @@
         },
         "tonalElevation": {
           "type": "dp",
-          "nativeDefault": "(0).dp"
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -8987,7 +9121,8 @@
         "selectedContentColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "(androidx.compose.material3.LocalContentColor).current"
+          "fallback": "(androidx.compose.material3.LocalContentColor).current",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "modifier": {
           "type": "modifier"
@@ -9075,7 +9210,8 @@
         "selectedContentColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "(androidx.compose.material3.LocalContentColor).current"
+          "fallback": "(androidx.compose.material3.LocalContentColor).current",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "modifier": {
           "type": "modifier"
@@ -9141,7 +9277,8 @@
       "props": {
         "color": {
           "type": "color",
-          "valueType": "Color"
+          "valueType": "Color",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "style": {
           "type": "enum",
@@ -9212,7 +9349,8 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.ui.graphics.Color.Companion.Unspecified"
+          "fallback": "androidx.compose.ui.graphics.Color.Companion.Unspecified",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "fontFamily": {
           "type": "enum",
@@ -9261,7 +9399,8 @@
           "nativeType": "Int",
           "minimum": -2147483648,
           "maximum": 2147483647,
-          "default": 1
+          "default": 1,
+          "animation": "kotlin.Int"
         },
         "overflow": {
           "type": "enum",
@@ -9715,7 +9854,8 @@
         "containerColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.TimePickerDialogDefaults.containerColor"
+          "fallback": "androidx.compose.material3.TimePickerDialogDefaults.containerColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "onDismissRequest": {
           "type": "actionId",
@@ -9860,7 +10000,8 @@
         },
         "expandedHeight": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.TopAppBarExpandedHeight"
+          "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.TopAppBarExpandedHeight",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "windowInsets": {
           "type": "value",
@@ -9987,11 +10128,13 @@
         "color": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.material3.DividerDefaults.color"
+          "fallback": "androidx.compose.material3.DividerDefaults.color",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "thickness": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.material3.DividerDefaults.Thickness"
+          "nativeDefault": "androidx.compose.material3.DividerDefaults.Thickness",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "modifier": {
           "type": "modifier"
@@ -10241,7 +10384,8 @@
           "type": "number",
           "default": 1,
           "minimum": 0,
-          "maximum": 1
+          "maximum": 1,
+          "animation": "kotlin.Float"
         }
       },
       "call": {
@@ -10267,13 +10411,15 @@
           "type": "dp",
           "valueType": "Dp",
           "required": true,
-          "minimum": 0
+          "minimum": 0,
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "height": {
           "type": "dp",
           "valueType": "Dp",
           "required": true,
-          "minimum": 0
+          "minimum": 0,
+          "animation": "androidx.compose.ui.unit.Dp"
         }
       },
       "call": {
@@ -10446,7 +10592,8 @@
           "type": "string"
         },
         "traversalIndex": {
-          "type": "number"
+          "type": "number",
+          "animation": "kotlin.Float"
         }
       },
       "call": {
@@ -10562,11 +10709,13 @@
       "props": {
         "x": {
           "type": "dp",
-          "nativeDefault": "(0).dp"
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "y": {
           "type": "dp",
-          "nativeDefault": "(0).dp"
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp"
         }
       },
       "call": {
@@ -10595,19 +10744,23 @@
       "props": {
         "left": {
           "type": "dp",
-          "nativeDefault": "(0).dp"
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "top": {
           "type": "dp",
-          "nativeDefault": "(0).dp"
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "right": {
           "type": "dp",
-          "nativeDefault": "(0).dp"
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "bottom": {
           "type": "dp",
-          "nativeDefault": "(0).dp"
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp"
         }
       },
       "call": {
@@ -10645,7 +10798,8 @@
         "alpha": {
           "type": "number",
           "nativeType": "Float",
-          "required": true
+          "required": true,
+          "animation": "kotlin.Float"
         }
       },
       "call": {
@@ -10671,7 +10825,8 @@
         "ratio": {
           "type": "number",
           "nativeType": "Float",
-          "required": true
+          "required": true,
+          "animation": "kotlin.Float"
         },
         "matchHeightConstraintsFirst": {
           "type": "boolean",
@@ -10704,7 +10859,8 @@
       "props": {
         "velocity": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.foundation.MarqueeDefaults.Velocity"
+          "nativeDefault": "androidx.compose.foundation.MarqueeDefaults.Velocity",
+          "animation": "androidx.compose.ui.unit.Dp"
         }
       },
       "call": {
@@ -10759,11 +10915,13 @@
       "props": {
         "minWidth": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "minHeight": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp"
         }
       },
       "call": {
@@ -10808,7 +10966,8 @@
         "fraction": {
           "type": "number",
           "nativeType": "Float",
-          "default": 1.0
+          "default": 1.0,
+          "animation": "kotlin.Float"
         }
       },
       "call": {
@@ -10834,7 +10993,8 @@
         "fraction": {
           "type": "number",
           "nativeType": "Float",
-          "default": 1.0
+          "default": 1.0,
+          "animation": "kotlin.Float"
         }
       },
       "call": {
@@ -10930,47 +11090,56 @@
         "scaleX": {
           "type": "number",
           "nativeType": "Float",
-          "default": 1.0
+          "default": 1.0,
+          "animation": "kotlin.Float"
         },
         "scaleY": {
           "type": "number",
           "nativeType": "Float",
-          "default": 1.0
+          "default": 1.0,
+          "animation": "kotlin.Float"
         },
         "alpha": {
           "type": "number",
           "nativeType": "Float",
-          "default": 1.0
+          "default": 1.0,
+          "animation": "kotlin.Float"
         },
         "translationX": {
           "type": "number",
           "nativeType": "Float",
-          "default": 0.0
+          "default": 0.0,
+          "animation": "kotlin.Float"
         },
         "translationY": {
           "type": "number",
           "nativeType": "Float",
-          "default": 0.0
+          "default": 0.0,
+          "animation": "kotlin.Float"
         },
         "shadowElevation": {
           "type": "number",
           "nativeType": "Float",
-          "default": 0.0
+          "default": 0.0,
+          "animation": "kotlin.Float"
         },
         "rotationX": {
           "type": "number",
           "nativeType": "Float",
-          "default": 0.0
+          "default": 0.0,
+          "animation": "kotlin.Float"
         },
         "rotationY": {
           "type": "number",
           "nativeType": "Float",
-          "default": 0.0
+          "default": 0.0,
+          "animation": "kotlin.Float"
         },
         "rotationZ": {
           "type": "number",
           "nativeType": "Float",
-          "default": 0.0
+          "default": 0.0,
+          "animation": "kotlin.Float"
         },
         "shape": {
           "type": "value",
@@ -10984,12 +11153,14 @@
         "ambientShadowColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.ui.graphics.DefaultShadowColor"
+          "fallback": "androidx.compose.ui.graphics.DefaultShadowColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "spotShadowColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.ui.graphics.DefaultShadowColor"
+          "fallback": "androidx.compose.ui.graphics.DefaultShadowColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         }
       },
       "call": {
@@ -11077,7 +11248,8 @@
       "props": {
         "height": {
           "type": "dp",
-          "required": true
+          "required": true,
+          "animation": "androidx.compose.ui.unit.Dp"
         }
       },
       "call": {
@@ -11102,11 +11274,13 @@
       "props": {
         "min": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "max": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp"
         }
       },
       "call": {
@@ -11250,11 +11424,13 @@
       "props": {
         "x": {
           "type": "dp",
-          "nativeDefault": "(0).dp"
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "y": {
           "type": "dp",
-          "nativeDefault": "(0).dp"
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp"
         }
       },
       "call": {
@@ -11299,7 +11475,8 @@
         "frameRate": {
           "type": "number",
           "nativeType": "Float",
-          "required": true
+          "required": true,
+          "animation": "kotlin.Float"
         }
       },
       "call": {
@@ -11339,7 +11516,8 @@
       "props": {
         "height": {
           "type": "dp",
-          "required": true
+          "required": true,
+          "animation": "androidx.compose.ui.unit.Dp"
         }
       },
       "call": {
@@ -11364,11 +11542,13 @@
       "props": {
         "min": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "max": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp"
         }
       },
       "call": {
@@ -11397,19 +11577,23 @@
       "props": {
         "minWidth": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "minHeight": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "maxWidth": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "maxHeight": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp"
         }
       },
       "call": {
@@ -11446,7 +11630,8 @@
       "props": {
         "width": {
           "type": "dp",
-          "required": true
+          "required": true,
+          "animation": "androidx.compose.ui.unit.Dp"
         }
       },
       "call": {
@@ -11471,11 +11656,13 @@
       "props": {
         "min": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "max": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp"
         }
       },
       "call": {
@@ -11505,7 +11692,8 @@
         "degrees": {
           "type": "number",
           "nativeType": "Float",
-          "required": true
+          "required": true,
+          "animation": "kotlin.Float"
         }
       },
       "call": {
@@ -11615,7 +11803,8 @@
       "props": {
         "elevation": {
           "type": "dp",
-          "required": true
+          "required": true,
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "shape": {
           "type": "value",
@@ -11625,12 +11814,14 @@
         "ambientColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.ui.graphics.DefaultShadowColor"
+          "fallback": "androidx.compose.ui.graphics.DefaultShadowColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         },
         "spotColor": {
           "type": "color",
           "valueType": "Color",
-          "fallback": "androidx.compose.ui.graphics.DefaultShadowColor"
+          "fallback": "androidx.compose.ui.graphics.DefaultShadowColor",
+          "animation": "androidx.compose.ui.graphics.Color"
         }
       },
       "call": {
@@ -11667,19 +11858,23 @@
       "props": {
         "minWidth": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "minHeight": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "maxWidth": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "maxHeight": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp"
         }
       },
       "call": {
@@ -11841,7 +12036,8 @@
       "props": {
         "width": {
           "type": "dp",
-          "required": true
+          "required": true,
+          "animation": "androidx.compose.ui.unit.Dp"
         }
       },
       "call": {
@@ -11866,11 +12062,13 @@
       "props": {
         "min": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp"
         },
         "max": {
           "type": "dp",
-          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified"
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp"
         }
       },
       "call": {
@@ -12138,7 +12336,8 @@
         "zIndex": {
           "type": "number",
           "nativeType": "Float",
-          "required": true
+          "required": true,
+          "animation": "kotlin.Float"
         }
       },
       "call": {
@@ -12301,7 +12500,8 @@
         "fraction": {
           "type": "number",
           "nativeType": "Float",
-          "default": 1.0
+          "default": 1.0,
+          "animation": "kotlin.Float"
         }
       },
       "scoped": [
@@ -12327,7 +12527,8 @@
         "fraction": {
           "type": "number",
           "nativeType": "Float",
-          "default": 1.0
+          "default": 1.0,
+          "animation": "kotlin.Float"
         }
       },
       "scoped": [
@@ -12465,7 +12666,8 @@
         "zIndexInOverlay": {
           "type": "number",
           "nativeType": "Float",
-          "default": 0.0
+          "default": 0.0,
+          "animation": "kotlin.Float"
         }
       },
       "scoped": [
@@ -12524,7 +12726,8 @@
           "nativeType": "Int",
           "minimum": -2147483648,
           "maximum": 2147483647,
-          "required": true
+          "required": true,
+          "animation": "kotlin.Int"
         },
         "matchContentSize": {
           "type": "boolean",
@@ -12551,7 +12754,8 @@
         "weight": {
           "type": "number",
           "nativeType": "Float",
-          "required": true
+          "required": true,
+          "animation": "kotlin.Float"
         },
         "fill": {
           "type": "boolean",
@@ -19465,6 +19669,77 @@
       "native": {
         "implements": "androidx.compose.material3.SelectableDates"
       }
+    }
+  },
+  "converters": {
+    "androidx.compose.ui.geometry.Offset": {
+      "expression": "Offset.VectorConverter",
+      "imports": [
+        "androidx.compose.ui.geometry.Offset",
+        "androidx.compose.animation.core.VectorConverter"
+      ]
+    },
+    "androidx.compose.ui.geometry.Rect": {
+      "expression": "Rect.VectorConverter",
+      "imports": [
+        "androidx.compose.ui.geometry.Rect",
+        "androidx.compose.animation.core.VectorConverter"
+      ]
+    },
+    "androidx.compose.ui.geometry.Size": {
+      "expression": "Size.VectorConverter",
+      "imports": [
+        "androidx.compose.ui.geometry.Size",
+        "androidx.compose.animation.core.VectorConverter"
+      ]
+    },
+    "androidx.compose.ui.graphics.Color": {
+      "expression": "Color.colorVectorConverter(ColorSpaces.Srgb)",
+      "imports": [
+        "androidx.compose.ui.graphics.Color",
+        "androidx.compose.animation.VectorConverter as colorVectorConverter",
+        "androidx.compose.ui.graphics.colorspace.ColorSpaces"
+      ]
+    },
+    "androidx.compose.ui.unit.Dp": {
+      "expression": "Dp.VectorConverter",
+      "imports": [
+        "androidx.compose.ui.unit.Dp",
+        "androidx.compose.animation.core.VectorConverter"
+      ]
+    },
+    "androidx.compose.ui.unit.DpOffset": {
+      "expression": "DpOffset.VectorConverter",
+      "imports": [
+        "androidx.compose.ui.unit.DpOffset",
+        "androidx.compose.animation.core.VectorConverter"
+      ]
+    },
+    "androidx.compose.ui.unit.IntOffset": {
+      "expression": "IntOffset.VectorConverter",
+      "imports": [
+        "androidx.compose.ui.unit.IntOffset",
+        "androidx.compose.animation.core.VectorConverter"
+      ]
+    },
+    "androidx.compose.ui.unit.IntSize": {
+      "expression": "IntSize.VectorConverter",
+      "imports": [
+        "androidx.compose.ui.unit.IntSize",
+        "androidx.compose.animation.core.VectorConverter"
+      ]
+    },
+    "kotlin.Float": {
+      "expression": "Float.VectorConverter",
+      "imports": [
+        "androidx.compose.animation.core.VectorConverter"
+      ]
+    },
+    "kotlin.Int": {
+      "expression": "Int.VectorConverter",
+      "imports": [
+        "androidx.compose.animation.core.VectorConverter"
+      ]
     }
   },
   "holders": {

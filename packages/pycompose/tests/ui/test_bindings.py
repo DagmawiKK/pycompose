@@ -70,8 +70,8 @@ def test_a_released_envelope_refuses_a_binding() -> None:
         validate_ir(snapshot)
 
 
-def test_only_a_number_a_dp_or_a_colour_animates() -> None:
-    with pytest.raises(IrValidationError, match="cannot animate"):
+def test_a_prop_the_pin_gives_no_converter_is_refused() -> None:
+    with pytest.raises(IrValidationError, match="no animation converter"):
         Modifier().test_tag(animate(1.0))  # type: ignore[arg-type]
 
 

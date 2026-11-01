@@ -10,6 +10,7 @@ data class PropertyRule(
     val since: String = "1.0.0",
     val valueType: String? = null,
     val nullable: Boolean = false,
+    val animation: Boolean = false,
 )
 
 /** Registered component structure and property constraints. */

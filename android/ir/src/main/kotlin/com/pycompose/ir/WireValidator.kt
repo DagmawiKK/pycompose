@@ -239,11 +239,7 @@ private fun target(
     rule: PropertyRule?,
 ): JsonElement {
     if (rule == null || !Bindings.isBinding(value)) return value
-    val animatable =
-        rule.type == "number" ||
-            (rule.type == "dp" && rule.valueType in setOf(null, "Dp")) ||
-            (rule.type == "color" && rule.valueType == "Color")
-    require(animatable) { "A ${rule.type} prop cannot animate" }
+    require(rule.animation) { "A ${rule.type} prop has no animation converter" }
     return Bindings.read(value as JsonObject).target
 }
 

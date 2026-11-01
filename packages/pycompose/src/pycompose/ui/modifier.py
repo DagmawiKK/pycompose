@@ -50,22 +50,28 @@ class Modifier(GeneratedOperations):
     # A slotted dataclass is a new class, so the conveniences below name it in
     # super(): the zero-argument form would still see the class before slots.
 
-    def _append(self, name: str, **props: JsonValue) -> Modifier:
+    def _append(self, name: str, **props: JsonValue | Binding) -> Modifier:
         operations = cast(
             tuple[FrozenJsonValue, ...], self.values.get("operations", ())
         )
         rules = REGISTRY.modifiers.get(name, {})
         for key, value in props.items():
+            rule = rules.get(key)
             if isinstance(value, Binding):
                 # An animatable prop arrives already lowered; this one is not.
-                raise IrValidationError("prop cannot animate", modifier=name, prop=key)
-            rule = rules.get(key)
+                kind = rule.type if rule is not None else "unknown"
+                raise IrValidationError(
+                    f"no animation converter for a {kind} prop",
+                    modifier=name,
+                    prop=key,
+                )
             if rule is not None and rule.type == "enum" and rule.value_type:
                 props[key] = cast(
                     "JsonValue",
                     named_value(rule.value_type, value, REGISTRY.value_types),
                 )
-        operation = freeze_json({"type": name, **props})
+        # Every binding was lowered above; what remains is plain wire data.
+        operation = freeze_json(cast("JsonValue", {"type": name, **props}))
         return Modifier({"operations": (*operations, operation)})
 
     @_Operation

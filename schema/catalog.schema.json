@@ -41,6 +41,12 @@
       "type": "object",
       "additionalProperties": { "$ref": "#/$defs/valueType" }
     },
+    "converters": {
+      "type": "object",
+      "description": "Derived from the pin by composegen: every public property returning a TwoWayConverter, keyed by the Kotlin type it animates.",
+      "propertyNames": { "$ref": "#/$defs/dottedName" },
+      "additionalProperties": { "$ref": "#/$defs/converter" }
+    },
     "holders": {
       "type": "object",
       "description": "Derived from pinned sources by tools/schema/holders.py when composegen generates the lock; never hand-edited.",
@@ -49,6 +55,20 @@
     }
   },
   "$defs": {
+    "converter": {
+      "type": "object",
+      "description": "One animation converter the pin declares: how generated Kotlin names it, and what it imports.",
+      "required": ["expression", "imports"],
+      "additionalProperties": false,
+      "properties": {
+        "expression": { "type": "string", "minLength": 1 },
+        "imports": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
     "holder": {
       "type": "object",
       "description": "One native state holder: its value enum and, per enum entry, the public suspend member driving it there.",
@@ -109,6 +129,11 @@
         "since": { "$ref": "#/$defs/semver" },
         "nativeDefault": { "type": "string" },
         "nativeType": { "type": "string" },
+        "animation": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The Kotlin type the host animates this prop as, when the pin declares a TwoWayConverter for it; absent when it declares none or a state holder owns the value."
+        },
         "nullable": { "type": "boolean" },
         "required": { "type": "boolean" },
         "content": { "$ref": "#/$defs/content" },

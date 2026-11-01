@@ -78,6 +78,8 @@ class PropDef:
             states directly.
         index_of: The slot whose items this integer indexes, for a native
             parameter that throws outside them; the host clamps and reports.
+        animation: The Kotlin type the host animates the prop as, when the pin
+            gives that type a ``TwoWayConverter``; None offers no binding.
         description: What the prop means, for the generated code's
             documentation; the runtime only carries it.
     """
@@ -103,6 +105,7 @@ class PropDef:
     provider: ProviderDef | None = None
     protocol: str | None = None
     index_of: str | None = None
+    animation: str | None = None
     description: str | None = None
 
     def __post_init__(self) -> None:
@@ -202,6 +205,7 @@ class PropDef:
             value_type=cast("str | None", data.get("valueType")),
             native_default=cast("str | None", data.get("nativeDefault")),
             native_type=cast("str | None", data.get("nativeType")),
+            animation=cast("str | None", data.get("animation")),
             fallback=cast("str | None", data.get("fallback")),
             nullable=cast("bool", data.get("nullable", False)),
             provider=(
@@ -228,6 +232,7 @@ class PropDef:
                     "valueType": self.value_type,
                     "nativeDefault": self.native_default,
                     "nativeType": self.native_type,
+                    "animation": self.animation,
                     "fallback": self.fallback,
                     "nullable": True if self.nullable else None,
                     "protocol": self.protocol,

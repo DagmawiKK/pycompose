@@ -143,8 +143,13 @@ def validate_properties(
     if not isinstance(properties, dict) or not properties:
         die(f"{where}: 'properties' must name the holder's properties")
     for prop, spec in property_props(state).items():
-        # A prop newer than its component carries the version it entered at.
-        stated = {k: v for k, v in (props.get(prop) or {}).items() if k != "since"}
+        # A prop newer than its component carries the version it entered at,
+        # and the wire may annotate the type it animates as.
+        stated = {
+            k: v
+            for k, v in (props.get(prop) or {}).items()
+            if k not in {"since", "animation"}
+        }
         if stated != spec:
             die(f"{where}: prop {prop!r} must project the holder as {spec}")
 

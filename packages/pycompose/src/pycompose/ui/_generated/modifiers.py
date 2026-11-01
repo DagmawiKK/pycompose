@@ -102,7 +102,7 @@ class GeneratedOperations:
 
     __slots__ = ()
 
-    def _append(self, name: str, **props: JsonValue) -> Modifier:
+    def _append(self, name: str, **props: JsonValue | Binding) -> Modifier:
         raise NotImplementedError
 
     @_Operation
@@ -1437,7 +1437,7 @@ class GeneratedOperations:
     @_Operation
     def tab_indicator_offset(
         self,
-        selected_tab_index: int,
+        selected_tab_index: int | Binding,
         *,
         match_content_size: bool = False,
     ) -> Modifier:
@@ -1453,7 +1453,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "selectedTabIndex": selected_tab_index,
+            "selectedTabIndex": lower_binding(selected_tab_index),
             "matchContentSize": match_content_size,
         }
         return self._append(

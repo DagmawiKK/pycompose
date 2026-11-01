@@ -285,6 +285,8 @@ def _kt_rules(props: dict[str, Any]) -> list[str]:
             args.append(f"valueType = {kotlin_string(prop['valueType'])}")
         if prop.get("nullable"):
             args.append("nullable = true")
+        if prop.get("animation"):
+            args.append("animation = true")
         args.extend(
             f"{field} = {float(prop[field])}"
             for field in ("minimum", "maximum")

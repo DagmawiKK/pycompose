@@ -28,6 +28,7 @@ from pycompose_codegen.derive.classpath_dump import (
 from pycompose_codegen.derive.component_binding import spell, stamped
 from pycompose_codegen.derive.components import propose_components
 from pycompose_codegen.derive.constant_families import constant_families
+from pycompose_codegen.derive.converters import annotate, converters
 from pycompose_codegen.derive.core_modifiers import core_modifiers
 from pycompose_codegen.derive.entry_candidates import derive, select
 from pycompose_codegen.derive.families import bound_families
@@ -63,6 +64,7 @@ ORDER = (
     "effects",
     "lifecycle",
     "valueTypes",
+    "converters",
     "holders",
 )
 """Section order in the lock, so a diff reads the same way every time."""
@@ -257,6 +259,10 @@ def generate(
     lock["holders"] = holders
     if LOCK.is_file():
         carried(lock, json.loads(LOCK.read_text(encoding="utf-8")))
+    # Which types Compose can animate is a pin fact, and every prop records the
+    # one it would be animated as; a prop the pin gives no converter keeps none.
+    lock["converters"] = converters(found)
+    annotate(lock)
     # What policy keeps -- held entries, value families -- still answers to the pin.
     report.errors.extend(compare(lock, found))
     report.errors.extend(compare_values(lock, found, source_defaults(directory)))

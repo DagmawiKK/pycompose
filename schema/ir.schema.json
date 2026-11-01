@@ -12887,9 +12887,16 @@
               "type": "boolean"
             },
             "selectedTabIndex": {
-              "maximum": 2147483647,
-              "minimum": -2147483648,
-              "type": "integer"
+              "anyOf": [
+                {
+                  "maximum": 2147483647,
+                  "minimum": -2147483648,
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "tabIndicatorOffset"
@@ -36585,9 +36592,16 @@
               "type": "boolean"
             },
             "selectedTabIndex": {
-              "maximum": 2147483647,
-              "minimum": -2147483648,
-              "type": "integer"
+              "anyOf": [
+                {
+                  "maximum": 2147483647,
+                  "minimum": -2147483648,
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "type": {
               "const": "tabIndicatorOffset"

@@ -1,10 +1,12 @@
 package com.pycompose.renderer
 
+import androidx.compose.animation.core.VectorConverter
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.unit.Dp
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
@@ -35,7 +37,12 @@ class BindingsTest {
         var wire by mutableStateOf(bound(0.0))
         var seen = -1f
         compose.mainClock.autoAdvance = false
-        compose.setContent { seen = animatedFloat(wire) { it.jsonPrimitive.double.toFloat() } }
+        compose.setContent {
+            seen =
+                bindingState(wire, Float.VectorConverter) {
+                    it.jsonPrimitive.double.toFloat()
+                }.value
+        }
         compose.mainClock.advanceTimeByFrame()
         assertEquals(0f, seen)
 
@@ -57,9 +64,26 @@ class BindingsTest {
         var seen = -1f
         compose.setContent {
             seen =
-                animatedFloat(JsonPrimitive(0.25)) { it.jsonPrimitive.double.toFloat() }
+                bindingState(JsonPrimitive(0.25), Float.VectorConverter) {
+                    it.jsonPrimitive.double.toFloat()
+                }.value
         }
         compose.waitForIdle()
         assertEquals(0.25f, seen)
+    }
+
+    @Test
+    fun `the converter decides the type, not the call site`() {
+        var seen: Dp? = null
+        compose.setContent {
+            seen =
+                bindingState(
+                    bound(8.0),
+                    Dp.VectorConverter,
+                ) { Dp(it.jsonPrimitive.double.toFloat()) }
+                    .value
+        }
+        compose.waitForIdle()
+        assertEquals(Dp(8f), seen)
     }
 }

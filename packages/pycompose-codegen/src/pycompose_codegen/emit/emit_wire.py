@@ -178,7 +178,7 @@ def _operation_prop(prop: dict[str, Any], version: str | None) -> dict[str, Any]
     """A modifier prop's schema: its value, or a binding the host animates to."""
     schema = _prop_schema(prop)
     bound = version is None or version_key(version) >= version_key(BINDINGS_SINCE)
-    if bound and animatable(prop["type"], prop.get("valueType")):
+    if bound and animatable(prop):
         return {"anyOf": [schema, {"$ref": "#/definitions/Binding"}]}
     return schema
 

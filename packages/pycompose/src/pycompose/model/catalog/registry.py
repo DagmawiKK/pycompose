@@ -41,6 +41,11 @@ from pycompose.model.catalog.modifiers import (
     parse_modifiers,
 )
 from pycompose.model.catalog.props import InteractionRule, PropDef
+from pycompose.model.catalog.sections import (
+    Sections,
+    parse_sections,
+    render_sections,
+)
 from pycompose.model.catalog.vocabulary import (
     ADAPTERS,
     CONSUMERS,
@@ -197,34 +202,6 @@ class AbstractComponentRegistry(ABC):
         ...
 
 
-def _named_objects(
-    data: Mapping[str, object], section: str
-) -> dict[str, Mapping[str, object]]:
-    """Parse an optional section of named objects the runtime carries but does not read.
-
-    Args:
-        data: The parsed registry JSON.
-        section: The section's key, e.g. ``valueTypes`` or ``holders``.
-
-    Returns:
-        Each entry's object, by name; empty when the section is absent.
-
-    Raises:
-        ComponentRegistryError: If the section is present but malformed.
-    """
-    value = data.get(section)
-    if value is None:
-        return {}
-    if not isinstance(value, Mapping):
-        raise ComponentRegistryError(f"{section!r} must be an object")
-    entries: dict[str, Mapping[str, object]] = {}
-    for name, spec in value.items():
-        if not isinstance(spec, Mapping):
-            raise ComponentRegistryError(f"{section}.{name} must be an object")
-        entries[name] = dict(spec)
-    return entries
-
-
 @dataclass(frozen=True, slots=True)
 class Registry(AbstractComponentRegistry):
     """Frozen, in-memory view of the component registry.
@@ -243,12 +220,10 @@ class Registry(AbstractComponentRegistry):
             entered at and the scopes declaring it (``weight`` on rows and
             columns). Codegen-only.
         supported_schema_versions: Explicit compatible wire versions, when declared.
-        value_types: The declared encodings for structured values, by name.
-            Material3 carries thousands of parameters typed ``Color``, ``Dp`` or
-            ``Shape``; these say how each family crosses as JSON, so a new
-            Compose type costs one entry rather than a new mechanism.
-        holders: Each native state holder's derived drive table, by class.
-            Host codegen reads it; the Python runtime only carries it.
+        sections: The sections the runtime carries and never reads: each
+            value family's JSON encoding, each animation converter the pin
+            declares, and each state holder's derived drive table. Codegen
+            reads them off the lock; the runtime round-trips them.
     """
 
     schema_version: str
@@ -264,10 +239,7 @@ class Registry(AbstractComponentRegistry):
         default_factory=dict
     )
     supported_schema_versions: tuple[str, ...] = ()
-    value_types: Mapping[str, Mapping[str, object]] = dataclass_field(
-        default_factory=dict
-    )
-    holders: Mapping[str, Mapping[str, object]] = dataclass_field(default_factory=dict)
+    sections: Sections = dataclass_field(default_factory=dict)
     _own: dict[str, ComponentSpec] = dataclass_field(
         default_factory=dict, init=False, repr=False, compare=False
     )
@@ -276,10 +248,7 @@ class Registry(AbstractComponentRegistry):
     )
 
     def __post_init__(self) -> None:
-        object.__setattr__(
-            self, "value_types", MappingProxyType(dict(self.value_types))
-        )
-        object.__setattr__(self, "holders", MappingProxyType(dict(self.holders)))
+        object.__setattr__(self, "sections", MappingProxyType(dict(self.sections)))
         object.__setattr__(
             self, "supported_schema_versions", tuple(self.supported_schema_versions)
         )
@@ -298,6 +267,16 @@ class Registry(AbstractComponentRegistry):
                 }
             ),
         )
+
+    @property
+    def value_types(self) -> Mapping[str, Mapping[str, object]]:
+        """The declared encodings for structured values, by name.
+
+        Material3 carries thousands of parameters typed ``Color``, ``Dp`` or
+        ``Shape``; these say how each family crosses as JSON, so a new Compose
+        type costs one entry rather than a new mechanism.
+        """
+        return self.sections.get("valueTypes", {})
 
     def extend(self, components: Mapping[str, Mapping[str, object]]) -> None:
         """Add the components an app's own libraries bring.
@@ -380,8 +359,7 @@ class Registry(AbstractComponentRegistry):
             modifiers=parse_modifiers(data.get("modifiers", {})),
             derived_modifiers=derived_modifiers(data.get("modifiers", {})),
             supported_schema_versions=tuple(supported),
-            value_types=_named_objects(data, "valueTypes"),
-            holders=_named_objects(data, "holders"),
+            sections=parse_sections(data),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -415,12 +393,7 @@ class Registry(AbstractComponentRegistry):
             )
         if self.supported_schema_versions:
             result["supportedSchemaVersions"] = list(self.supported_schema_versions)
-        for section, entries in (
-            ("valueTypes", self.value_types),
-            ("holders", self.holders),
-        ):
-            if entries:
-                result[section] = {name: dict(spec) for name, spec in entries.items()}
+        render_sections(result, self.sections)
         return result
 
     def component(self, name: str) -> ComponentDef:

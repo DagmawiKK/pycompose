@@ -53,7 +53,22 @@ data class Binding(
     val target: JsonElement,
     val travel: Travel,
     val phase: Phase,
-)
+) {
+    /**
+     * This binding, if the call site reads it in the phase it names.
+     *
+     * The generator resolved the phase from the pin; a binding naming another one would be read
+     * in the wrong phase, so the mismatch is refused rather than silently mis-read.
+     *
+     * @param read The phase the call site reads its prop in.
+     */
+    fun at(read: Phase): Binding {
+        require(phase == read) {
+            "this prop is read in ${read.wire}; a ${phase.wire} binding cannot stand here"
+        }
+        return this
+    }
+}
 
 /** Bindings' wire form, checked exactly as Python checks it. */
 object Bindings {

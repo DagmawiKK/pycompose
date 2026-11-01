@@ -166,8 +166,12 @@ def _validate_operation(operation: object, intents: Intents | None) -> None:
         value = item
         if declared is not None and is_binding(item):
             # The host reads the target; the target is what is checked.
-            if not animatable(declared.type, declared.value_type):
-                raise IrValidationError("prop cannot animate", modifier=name, prop=key)
+            if not animatable(declared):
+                raise IrValidationError(
+                    f"no animation converter for a {declared.type} prop",
+                    modifier=name,
+                    prop=key,
+                )
             value, _phase = check_binding(cast("Mapping[str, object]", item))
         if declared is None or not validate_prop(value, declared, intents=intents):
             raise IrValidationError("invalid modifier prop", modifier=name, prop=key)

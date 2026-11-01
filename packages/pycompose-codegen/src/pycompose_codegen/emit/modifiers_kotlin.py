@@ -10,7 +10,7 @@ them, which the renderer reports.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 from pycompose.model.programs.bindings import animatable
 from pycompose_codegen.emit.literals import GENERATED_NOTICE, kotlin_string
@@ -30,19 +30,30 @@ NARROW = {"Float": ".toFloat()", "Int": ".toInt()"}
 """From the wire's Kotlin type (Double, Long) to the parameter's own."""
 
 
-def _argument(name: str, spec: dict[str, Any], parameter: str) -> str:
+def _converter(spec: dict[str, Any], converters: dict[str, dict[str, Any]]) -> str:
+    """The Kotlin expression naming a prop type's animation converter."""
+    entry = converters.get(cast("str", spec.get("animation")))
+    if entry is None:
+        die(f"an animatable prop of type {spec.get('animation')!r} has no converter")
+    return cast("str", entry["expression"])
+
+
+def _argument(
+    name: str,
+    spec: dict[str, Any],
+    parameter: str,
+    converters: dict[str, dict[str, Any]],
+) -> str:
     """One named argument, decoded from the operation's JSON."""
     present = f'op.getValue("{name}")'
     if "valueType" in spec:
         decode = resolver_call(spec["valueType"], "value") + ".getOrThrow()"
-        native = {"Color": "Color", "Dp": "Dp"}.get(spec["valueType"], "")
     else:
         decode = f"value.jsonPrimitive.{READS[spec['type']]}"
         decode += NARROW.get(spec.get("nativeType", ""), "")
-        native = spec.get("nativeType", "Double")
     decoded = (
-        _animated(native, present, decode)
-        if animatable(spec["type"], spec.get("valueType"))
+        _animated(_converter(spec, converters), present, decode)
+        if animatable(spec)
         else decode.replace("value", present, 1)
     )
     if spec.get("required"):
@@ -103,11 +114,17 @@ def _decoded(spec: dict[str, Any], argument: dict[str, Any]) -> str:
     return decoded + NARROW.get(native, "")
 
 
-def _passed(prop: str, spec: dict[str, Any], argument: dict[str, Any]) -> str:
+def _passed(
+    prop: str,
+    spec: dict[str, Any],
+    argument: dict[str, Any],
+    converters: dict[str, dict[str, Any]],
+) -> str:
     """One argument of a direct call: the prop's value, or its default when absent."""
     native = argument["type"].rsplit(".", 1)[-1]
-    if animatable(spec["type"], spec.get("valueType")):
-        decode = _animated(native, "wire", _decoded(spec, argument))
+    if animatable(spec):
+        converter = _converter(spec, converters)
+        decode = _animated(converter, "wire", _decoded(spec, argument))
         present = f'op.getValue("{prop}").let {{ wire -> {decode} }}'
     else:
         present = f'op.getValue("{prop}").let {{ value -> {_decoded(spec, argument)} }}'
@@ -135,14 +152,19 @@ def _passed(prop: str, spec: dict[str, Any], argument: dict[str, Any]) -> str:
     return f'if ("{prop}" in op) {present} else {fallback}'
 
 
-def _direct(name: str, modifier: dict[str, Any]) -> list[str]:
+def _direct(
+    name: str,
+    modifier: dict[str, Any],
+    converters: dict[str, dict[str, Any]],
+) -> list[str]:
     """The branch of one operation that calls its resolved function."""
     call = modifier["call"]
     function = call["function"].rsplit(".", 1)[-1]
     if "block" in call:
         return _block(name, modifier, function)
     arguments = [
-        f"{argument['parameter']} = {_passed(prop, modifier['props'][prop], argument)}"
+        f"{argument['parameter']} = "
+        f"{_passed(prop, modifier['props'][prop], argument, converters)}"
         for prop, argument in call["arguments"].items()
     ]
     bare = call.get("bare", {})
@@ -232,6 +254,12 @@ def _imports(registry: dict[str, Any]) -> list[str]:
                 f"{package}.{argument['source']['name']}"
                 for argument in call["arguments"].values()
             )
+    converters = registry.get("converters", {})
+    for modifier in registry.get("modifiers", {}).values():
+        for spec in modifier.get("props", {}).values():
+            entry = converters.get(spec.get("animation"))
+            if entry is not None:
+                names.update(entry["imports"])
     return [f"import {name}" for name in sorted(names)]
 
 
@@ -250,11 +278,12 @@ def render_modifiers(registry: dict[str, Any]) -> str:
         for name, modifier in sorted(modifiers.items())
         if "scoped" in modifier
     }
+    converters = registry.get("converters", {})
     direct = [
         line
         for name, modifier in sorted(modifiers.items())
         if "call" in modifier
-        for line in _direct(name, modifier)
+        for line in _direct(name, modifier, converters)
     ]
     markers = sorted(
         {
@@ -278,7 +307,7 @@ def render_modifiers(registry: dict[str, Any]) -> str:
                 f"                            Modifier.{declaration['native']}(",
                 *(
                     f"                                "
-                    f"{_argument(prop, spec, renamed.get(prop, prop))},"
+                    f"{_argument(prop, spec, renamed.get(prop, prop), converters)},"
                     for prop, spec in modifier["props"].items()
                 ),
                 "                            )",

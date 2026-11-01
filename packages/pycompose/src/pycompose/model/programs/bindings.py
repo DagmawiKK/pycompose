@@ -24,6 +24,7 @@ from dataclasses import dataclass
 from typing import Literal, cast
 
 from pycompose.errors import IrValidationError
+from pycompose.model.catalog.props import PropDef
 from pycompose.model.nodes.props import JsonValue
 from pycompose.model.programs.expressions import Expression
 
@@ -37,22 +38,21 @@ PHASES: tuple[Phase, ...] = ("composition", "layout", "draw")
 """Every phase a binding may name. Both validators refuse any other."""
 
 
-def animatable(prop_type: str, value_type: str | None) -> bool:
-    """Whether the host can animate a prop of this type.
+def animatable(prop: PropDef | Mapping[str, object]) -> bool:
+    """Whether the catalog gives this prop an animation converter.
 
-    A number, a dp (bare, or its ``Dp`` value) and a colour animate; a family
-    built from several dp values, ``PaddingValues`` say, does not.
+    The pin declares one ``TwoWayConverter`` per type Compose can animate, and
+    the lock records on each prop the Kotlin type it would be animated as. A
+    prop with no recorded type has no converter, and is offered no binding.
 
     Args:
-        prop_type: The prop's catalog type.
-        value_type: Its value family, if it has one.
+        prop: A prop's catalog entry, or its parsed definition.
 
     Returns:
-        True when a binding may stand for it.
+        True when the lock records an animation type for it.
     """
-    if prop_type == "dp":
-        return value_type in {None, "Dp"}
-    return prop_type == "number" or (prop_type == "color" and value_type == "Color")
+    animation = prop.get("animation") if isinstance(prop, Mapping) else prop.animation
+    return isinstance(animation, str)
 
 
 @dataclass(frozen=True, slots=True)

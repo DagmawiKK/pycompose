@@ -38,7 +38,7 @@ def _parameter(name: str, prop: str, spec: dict[str, Any]) -> str:
         kind = "JsonValue"
     else:
         kind = TYPES[spec["type"]]
-    if animatable(spec["type"], spec.get("valueType")):
+    if animatable(spec):
         # The host animates to a target the app states with animate().
         kind += " | Binding"
     if spec.get("required"):
@@ -54,7 +54,7 @@ def _given(prop: str, spec: dict[str, Any]) -> str:
     """The wire value of one argument: an action lowered, a binding written out."""
     if spec["type"] == "actionId":
         return f"lower_action({python_name(prop)})"
-    if animatable(spec["type"], spec.get("valueType")):
+    if animatable(spec):
         return f"lower_binding({python_name(prop)})"
     return python_name(prop)
 
@@ -165,7 +165,9 @@ def render_operations(registry: dict[str, Any]) -> str:
                 "",
                 "    __slots__ = ()",
                 "",
-                "    def _append(self, name: str, **props: JsonValue) -> Modifier:",
+                "    def _append("
+                "self, name: str, **props: JsonValue | Binding"
+                ") -> Modifier:",
                 "        raise NotImplementedError",
                 "",
                 *methods,
