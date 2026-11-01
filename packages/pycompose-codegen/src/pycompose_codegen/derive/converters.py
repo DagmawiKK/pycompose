@@ -206,15 +206,16 @@ def _owner(declaration: Declaration) -> str:
 
 
 def annotate(lock: dict[str, Any]) -> None:
-    """Record on every prop the Kotlin type the host animates it as.
+    """Record on every prop what a binding needs: its Kotlin type and its phase.
 
-    Two gates decide it, and only two. Capability: the pin must declare a
-    converter for the prop's type. Authority: Python must be the sole author of
-    the value; a prop a state holder fills is the user's, and reconciling the
-    two is a later protocol, so it is left unannotated rather than offered.
+    Two gates decide whether it is offered at all. Capability: the pin must
+    declare a converter for the prop's type. Authority: Python must be the sole
+    author of the value; a prop a state holder fills is the user's, and
+    reconciling the two is a later protocol, so it is left unannotated rather
+    than offered.
 
     Args:
-        lock: The assembled lock; its props gain ``animation`` in place.
+        lock: The assembled lock; its props gain ``animation`` and ``phase``.
     """
     table = lock["converters"]
     families = lock["valueTypes"]
@@ -244,9 +245,13 @@ def _mark(
         families: The lock's value families.
         table: The pin's converters, by animated Kotlin type.
     """
+    call = entry.get("call") or {}
     kotlin = kotlin_type(prop, spec, entry, families)
     if kotlin in table:
         spec["animation"] = kotlin
+        # The call states where its arguments are read; a prop read in
+        # composition is the default, and every other phase must say so.
+        spec["phase"] = call.get("phase", "composition")
 
 
 def kotlin_type(
@@ -275,6 +280,19 @@ def kotlin_type(
     argument = (entry.get("call") or {}).get("arguments", {}).get(prop)
     if argument is not None and argument.get("type"):
         return cast("str", argument["type"])
+    return stated_type(spec, families)
+
+
+def stated_type(spec: dict[str, Any], families: dict[str, Any]) -> str | None:
+    """The Kotlin type the lock states for a prop's value, when it states one.
+
+    Args:
+        spec: The prop's lock entry.
+        families: The lock's value families.
+
+    Returns:
+        A dotted Kotlin type, or None when the wire type names none.
+    """
     family = spec.get("valueType")
     if family is not None:
         return cast("str | None", families.get(family, {}).get("kotlinType"))

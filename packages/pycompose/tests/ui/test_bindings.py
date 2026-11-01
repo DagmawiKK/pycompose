@@ -9,7 +9,7 @@ from pycompose.errors import IrValidationError
 from pycompose.host.wire import emit_ir, validate_ir
 from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.snapshot import Snapshot
-from pycompose.ui import Box, Color, Modifier, animate, follow, spring, tween
+from pycompose.ui import Binding, Box, Color, Modifier, animate, follow, spring, tween
 
 
 def test_a_binding_crosses_the_wire_as_its_target_its_travel_and_its_phase() -> None:
@@ -111,3 +111,42 @@ def test_an_unknown_phase_is_refused() -> None:
                 ]
             }
         )
+
+
+def test_a_layout_prop_animates_where_the_pin_defers_it() -> None:
+    # offset's props are read inside a lambda that answers where the node goes,
+    # so the binding states the phase the generator resolved from the pin.
+    modifier = Modifier().offset(x=animate(8, tween(100)))
+    assert modifier.to_wire()["operations"] == [
+        {
+            "type": "offset",
+            "x": {
+                "type": "binding",
+                "target": 8,
+                "travel": {"kind": "tween", "durationMs": 100, "delayMs": 0},
+                "phase": "layout",
+            },
+        }
+    ]
+
+
+def test_a_follow_in_layout_is_still_a_binding() -> None:
+    # It collapses only in composition, where reading the target *is* the
+    # follow; a deferred call site needs the host to keep it there.
+    modifier = Modifier().offset(y=follow(4))
+    assert modifier.to_wire()["operations"] == [
+        {
+            "type": "offset",
+            "y": {
+                "type": "binding",
+                "target": 4,
+                "travel": {"kind": "none"},
+                "phase": "layout",
+            },
+        }
+    ]
+
+
+def test_a_binding_stating_another_phase_than_its_call_site_is_refused() -> None:
+    with pytest.raises(IrValidationError, match="read in layout"):
+        Modifier().offset(x=Binding(8, tween(100), "composition"))

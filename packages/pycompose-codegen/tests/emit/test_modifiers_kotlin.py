@@ -28,7 +28,22 @@ def test_a_click_dispatches_its_action_id_rather_than_running_python() -> None:
 
 def test_semantics_sets_the_receivers_members() -> None:
     assert "Modifier.semantics(properties = {" in SOURCE
-    assert "contentDescription = it.jsonPrimitive.content" in SOURCE
+    assert "contentDescriptionValue?.let { contentDescription = it }" in SOURCE
     assert '"radioButton" -> androidx.compose.ui.semantics.Role.RadioButton' in SOURCE
     assert "heading()" in SOURCE
     assert "import androidx.compose.ui.semantics.traversalIndex" in SOURCE
+
+
+def test_a_bound_prop_is_read_in_the_phase_the_pin_defers_it_to() -> None:
+    """``graphicsLayer`` draws, so its bound props redraw alone."""
+    assert "com.pycompose.program.Phase.Draw" in SOURCE
+    assert "Modifier.graphicsLayer(block = {" in SOURCE
+    assert "alpha = alphaState?.value ?: 1.0f" in SOURCE
+
+
+def test_a_layout_prop_is_read_where_the_pin_answers_with_it() -> None:
+    """``offset`` asks for an ``IntOffset``; the props are read laying out."""
+    assert "com.pycompose.program.Phase.Layout" in SOURCE
+    assert "Modifier.offset(offset = {" in SOURCE
+    assert "x = (xState?.value ?: (0).dp).roundToPx()," in SOURCE
+    assert "import androidx.compose.ui.unit.IntOffset" in SOURCE

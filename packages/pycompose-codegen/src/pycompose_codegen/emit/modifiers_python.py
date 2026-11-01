@@ -55,7 +55,8 @@ def _given(prop: str, spec: dict[str, Any]) -> str:
     if spec["type"] == "actionId":
         return f"lower_action({python_name(prop)})"
     if animatable(spec):
-        return f"lower_binding({python_name(prop)})"
+        phase = json.dumps(spec.get("phase", "composition"))
+        return f"lower_binding({python_name(prop)}, {phase})"
     return python_name(prop)
 
 

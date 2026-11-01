@@ -122,8 +122,8 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "x": lower_binding(x),
-            "y": lower_binding(y),
+            "x": lower_binding(x, "layout"),
+            "y": lower_binding(y, "layout"),
         }
         return self._append(
             "absoluteOffset",
@@ -151,10 +151,10 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "left": lower_binding(left),
-            "top": lower_binding(top),
-            "right": lower_binding(right),
-            "bottom": lower_binding(bottom),
+            "left": lower_binding(left, "composition"),
+            "top": lower_binding(top, "composition"),
+            "right": lower_binding(right, "composition"),
+            "bottom": lower_binding(bottom, "composition"),
         }
         return self._append(
             "absolutePadding",
@@ -188,7 +188,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "alpha": lower_binding(alpha),
+            "alpha": lower_binding(alpha, "composition"),
         }
         return self._append(
             "alpha",
@@ -236,7 +236,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "ratio": lower_binding(ratio),
+            "ratio": lower_binding(ratio, "composition"),
             "matchHeightConstraintsFirst": match_height_constraints_first,
         }
         return self._append(
@@ -279,7 +279,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "velocity": lower_binding(velocity),
+            "velocity": lower_binding(velocity, "composition"),
         }
         return self._append(
             "basicMarquee",
@@ -417,8 +417,8 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "minWidth": lower_binding(min_width),
-            "minHeight": lower_binding(min_height),
+            "minWidth": lower_binding(min_width, "composition"),
+            "minHeight": lower_binding(min_height, "composition"),
         }
         return self._append(
             "defaultMinSize",
@@ -452,7 +452,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "fraction": lower_binding(fraction),
+            "fraction": lower_binding(fraction, "composition"),
         }
         return self._append(
             "fillMaxColumnWidth",
@@ -473,7 +473,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "fraction": lower_binding(fraction),
+            "fraction": lower_binding(fraction, "composition"),
         }
         return self._append(
             "fillMaxHeight",
@@ -496,7 +496,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "fraction": lower_binding(fraction),
+            "fraction": lower_binding(fraction, "composition"),
         }
         return self._append(
             "fillMaxRowHeight",
@@ -517,7 +517,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "fraction": lower_binding(fraction),
+            "fraction": lower_binding(fraction, "composition"),
         }
         return self._append(
             "fillMaxSize",
@@ -538,7 +538,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "fraction": lower_binding(fraction),
+            "fraction": lower_binding(fraction, "composition"),
         }
         return self._append(
             "fillMaxWidth",
@@ -640,19 +640,19 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "scaleX": lower_binding(scale_x),
-            "scaleY": lower_binding(scale_y),
-            "alpha": lower_binding(alpha),
-            "translationX": lower_binding(translation_x),
-            "translationY": lower_binding(translation_y),
-            "shadowElevation": lower_binding(shadow_elevation),
-            "rotationX": lower_binding(rotation_x),
-            "rotationY": lower_binding(rotation_y),
-            "rotationZ": lower_binding(rotation_z),
+            "scaleX": lower_binding(scale_x, "draw"),
+            "scaleY": lower_binding(scale_y, "draw"),
+            "alpha": lower_binding(alpha, "draw"),
+            "translationX": lower_binding(translation_x, "draw"),
+            "translationY": lower_binding(translation_y, "draw"),
+            "shadowElevation": lower_binding(shadow_elevation, "draw"),
+            "rotationX": lower_binding(rotation_x, "draw"),
+            "rotationY": lower_binding(rotation_y, "draw"),
+            "rotationZ": lower_binding(rotation_z, "draw"),
             "shape": shape,
             "clip": clip,
-            "ambientShadowColor": lower_binding(ambient_shadow_color),
-            "spotShadowColor": lower_binding(spot_shadow_color),
+            "ambientShadowColor": lower_binding(ambient_shadow_color, "draw"),
+            "spotShadowColor": lower_binding(spot_shadow_color, "draw"),
         }
         return self._append(
             "graphicsLayer",
@@ -684,7 +684,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "height": lower_binding(height),
+            "height": lower_binding(height, "composition"),
         }
         return self._append(
             "height",
@@ -708,8 +708,8 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "min": lower_binding(min),
-            "max": lower_binding(max),
+            "min": lower_binding(min, "composition"),
+            "max": lower_binding(max, "composition"),
         }
         return self._append(
             "heightIn",
@@ -909,8 +909,8 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "x": lower_binding(x),
-            "y": lower_binding(y),
+            "x": lower_binding(x, "layout"),
+            "y": lower_binding(y, "layout"),
         }
         return self._append(
             "offset",
@@ -963,7 +963,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "frameRate": lower_binding(frame_rate),
+            "frameRate": lower_binding(frame_rate, "composition"),
         }
         return self._append(
             "preferredFrameRate",
@@ -997,7 +997,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "zIndexInOverlay": lower_binding(z_index_in_overlay),
+            "zIndexInOverlay": lower_binding(z_index_in_overlay, "composition"),
         }
         return self._append(
             "renderInSharedTransitionScopeOverlay",
@@ -1018,7 +1018,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "height": lower_binding(height),
+            "height": lower_binding(height, "composition"),
         }
         return self._append(
             "requiredHeight",
@@ -1042,8 +1042,8 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "min": lower_binding(min),
-            "max": lower_binding(max),
+            "min": lower_binding(min, "composition"),
+            "max": lower_binding(max, "composition"),
         }
         return self._append(
             "requiredHeightIn",
@@ -1071,10 +1071,10 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "minWidth": lower_binding(min_width),
-            "minHeight": lower_binding(min_height),
-            "maxWidth": lower_binding(max_width),
-            "maxHeight": lower_binding(max_height),
+            "minWidth": lower_binding(min_width, "composition"),
+            "minHeight": lower_binding(min_height, "composition"),
+            "maxWidth": lower_binding(max_width, "composition"),
+            "maxHeight": lower_binding(max_height, "composition"),
         }
         return self._append(
             "requiredSizeIn",
@@ -1095,7 +1095,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "width": lower_binding(width),
+            "width": lower_binding(width, "composition"),
         }
         return self._append(
             "requiredWidth",
@@ -1119,8 +1119,8 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "min": lower_binding(min),
-            "max": lower_binding(max),
+            "min": lower_binding(min, "composition"),
+            "max": lower_binding(max, "composition"),
         }
         return self._append(
             "requiredWidthIn",
@@ -1141,7 +1141,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "degrees": lower_binding(degrees),
+            "degrees": lower_binding(degrees, "composition"),
         }
         return self._append(
             "rotate",
@@ -1250,7 +1250,7 @@ class GeneratedOperations:
             "heading": heading,
             "liveRegion": live_region,
             "testTag": test_tag,
-            "traversalIndex": lower_binding(traversal_index),
+            "traversalIndex": lower_binding(traversal_index, "composition"),
         }
         return self._append(
             "semantics",
@@ -1299,10 +1299,10 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "elevation": lower_binding(elevation),
+            "elevation": lower_binding(elevation, "composition"),
             "shape": shape,
-            "ambientColor": lower_binding(ambient_color),
-            "spotColor": lower_binding(spot_color),
+            "ambientColor": lower_binding(ambient_color, "composition"),
+            "spotColor": lower_binding(spot_color, "composition"),
         }
         return self._append(
             "shadow",
@@ -1325,8 +1325,8 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "width": lower_binding(width),
-            "height": lower_binding(height),
+            "width": lower_binding(width, "composition"),
+            "height": lower_binding(height, "composition"),
         }
         return self._append(
             "size",
@@ -1354,10 +1354,10 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "minWidth": lower_binding(min_width),
-            "minHeight": lower_binding(min_height),
-            "maxWidth": lower_binding(max_width),
-            "maxHeight": lower_binding(max_height),
+            "minWidth": lower_binding(min_width, "composition"),
+            "minHeight": lower_binding(min_height, "composition"),
+            "maxWidth": lower_binding(max_width, "composition"),
+            "maxHeight": lower_binding(max_height, "composition"),
         }
         return self._append(
             "sizeIn",
@@ -1453,7 +1453,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "selectedTabIndex": lower_binding(selected_tab_index),
+            "selectedTabIndex": lower_binding(selected_tab_index, "composition"),
             "matchContentSize": match_content_size,
         }
         return self._append(
@@ -1533,7 +1533,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "weight": lower_binding(weight),
+            "weight": lower_binding(weight, "composition"),
             "fill": fill,
         }
         return self._append(
@@ -1555,7 +1555,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "width": lower_binding(width),
+            "width": lower_binding(width, "composition"),
         }
         return self._append(
             "width",
@@ -1579,8 +1579,8 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "min": lower_binding(min),
-            "max": lower_binding(max),
+            "min": lower_binding(min, "composition"),
+            "max": lower_binding(max, "composition"),
         }
         return self._append(
             "widthIn",
@@ -1781,7 +1781,7 @@ class GeneratedOperations:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
-            "zIndex": lower_binding(z_index),
+            "zIndex": lower_binding(z_index, "composition"),
         }
         return self._append(
             "zIndex",

@@ -1,155 +1,23 @@
 """Kotlin for every modifier operation: ``GeneratedModifiers.apply``.
 
 An operation policy declares calls the ``Modifier`` extension the pin resolved
-it to (its ``call``). An operation a composition scope declares
-(``RowScope.weight``) applies on the receiver its node's parent lambda carries:
-the generated code matches the receiver against the scopes declaring it and
-calls the member there, or returns null when the node is not inside any of
-them, which the renderer reports.
+it to (its ``call``). A call that defers its props to a block is rendered in
+:mod:`.modifier_blocks`; every other is one call with named arguments. An
+operation a composition scope declares (``RowScope.weight``) applies on the
+receiver its node's parent lambda carries: the generated code matches the
+receiver against the scopes declaring it and calls the member there, or returns
+null when the node is not inside any of them, which the renderer reports.
 """
 
 from __future__ import annotations
 
-from typing import Any, cast
+from typing import Any
 
-from pycompose.model.programs.bindings import animatable
 from pycompose_codegen.emit.literals import GENERATED_NOTICE, kotlin_string
-from pycompose_codegen.emit.modifier_bindings import animated as _animated
+from pycompose_codegen.emit.modifier_blocks import block, result
+from pycompose_codegen.emit.modifier_values import argument as _argument
+from pycompose_codegen.emit.modifier_values import passed
 from pycompose_codegen.emit.rules import die
-from pycompose_codegen.emit.values import resolver_call
-
-READS = {
-    "number": "double",
-    "integer": "long",
-    "boolean": "boolean",
-    "string": "content",
-}
-"""How a scalar is read off its ``JsonPrimitive``."""
-
-NARROW = {"Float": ".toFloat()", "Int": ".toInt()"}
-"""From the wire's Kotlin type (Double, Long) to the parameter's own."""
-
-
-def _converter(spec: dict[str, Any], converters: dict[str, dict[str, Any]]) -> str:
-    """The Kotlin expression naming a prop type's animation converter."""
-    entry = converters.get(cast("str", spec.get("animation")))
-    if entry is None:
-        die(f"an animatable prop of type {spec.get('animation')!r} has no converter")
-    return cast("str", entry["expression"])
-
-
-def _argument(
-    name: str,
-    spec: dict[str, Any],
-    parameter: str,
-    converters: dict[str, dict[str, Any]],
-) -> str:
-    """One named argument, decoded from the operation's JSON."""
-    present = f'op.getValue("{name}")'
-    if "valueType" in spec:
-        decode = resolver_call(spec["valueType"], "value") + ".getOrThrow()"
-    else:
-        decode = f"value.jsonPrimitive.{READS[spec['type']]}"
-        decode += NARROW.get(spec.get("nativeType", ""), "")
-    decoded = (
-        _animated(_converter(spec, converters), present, decode)
-        if animatable(spec)
-        else decode.replace("value", present, 1)
-    )
-    if spec.get("required"):
-        return f"{parameter} = {decoded}"
-    if "default" in spec:
-        fallback = (
-            kotlin_string(spec["default"])
-            if isinstance(spec["default"], str)
-            else _literal(spec)
-        )
-    elif "nativeDefault" in spec:
-        fallback = spec["nativeDefault"]
-    else:
-        die(f"scoped modifier prop {name!r} has no default to fall back on")
-    return f'{parameter} = if ("{name}" in op) {decoded} else {fallback}'
-
-
-def _literal(spec: dict[str, Any]) -> str:
-    """A scalar default, spelled as the parameter's Kotlin type."""
-    value = spec["default"]
-    if isinstance(value, bool):
-        return "true" if value else "false"
-    if spec.get("nativeType") == "Float":
-        return f"{float(value)}f"
-    if spec.get("nativeType") == "Int":
-        return str(int(value))
-    return repr(value)
-
-
-def _resolved(family: str, value: str) -> str:
-    return resolver_call(family, value) + ".getOrThrow()"
-
-
-def _decoded(spec: dict[str, Any], argument: dict[str, Any]) -> str:
-    """The Kotlin value one prop of a direct call passes, read from ``value``.
-
-    A family's tagged object goes through its resolver; a dp also rides the
-    wire as a bare number (ADR-0036).
-    """
-    if "valueType" in spec:
-        family = spec["valueType"]
-        if spec["type"] != "dp" or family != "Dp":
-            return _resolved(family, "value")
-        bare = "com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double)"
-        return (
-            f"if (value is JsonObject) {_resolved(family, 'value')} "
-            f"else {bare}.getOrThrow()"
-        )
-    if spec["type"] == "actionId":
-        return "{ dispatch(value.jsonPrimitive.content) }"
-    if spec["type"] == "dp":
-        return (
-            "com.pycompose.renderer.PropResolver"
-            ".dp(value.jsonPrimitive.double).getOrThrow()"
-        )
-    decoded = f"value.jsonPrimitive.{READS[spec['type']]}"
-    native = argument["type"].rsplit(".", 1)[-1]
-    return decoded + NARROW.get(native, "")
-
-
-def _passed(
-    prop: str,
-    spec: dict[str, Any],
-    argument: dict[str, Any],
-    converters: dict[str, dict[str, Any]],
-) -> str:
-    """One argument of a direct call: the prop's value, or its default when absent."""
-    native = argument["type"].rsplit(".", 1)[-1]
-    if animatable(spec):
-        converter = _converter(spec, converters)
-        decode = _animated(converter, "wire", _decoded(spec, argument))
-        present = f'op.getValue("{prop}").let {{ wire -> {decode} }}'
-    else:
-        present = f'op.getValue("{prop}").let {{ value -> {_decoded(spec, argument)} }}'
-    if spec.get("required"):
-        return present
-    native_default = spec.get("nativeDefault") or spec.get("fallback")
-    if "default" not in spec or ("valueType" in spec and native_default):
-        # A value, a colour or a named constant falls back on what the pin names.
-        if native_default is None:
-            die(f"modifier prop {prop!r} has no default to fall back on")
-        return f'if ("{prop}" in op) {present} else {native_default}'
-    default = spec["default"]
-    if native == "Dp":
-        fallback = f"androidx.compose.ui.unit.Dp({float(default)}f)"
-    elif isinstance(default, str):
-        fallback = kotlin_string(default)
-    elif isinstance(default, bool):
-        fallback = "true" if default else "false"
-    elif native == "Float":
-        fallback = f"{float(default)}f"
-    elif native == "Double":
-        fallback = repr(float(default))
-    else:
-        fallback = repr(default)
-    return f'if ("{prop}" in op) {present} else {fallback}'
 
 
 def _direct(
@@ -161,10 +29,12 @@ def _direct(
     call = modifier["call"]
     function = call["function"].rsplit(".", 1)[-1]
     if "block" in call:
-        return _block(name, modifier, function)
+        if "result" in call["block"]:
+            return result(name, modifier, function, converters)
+        return block(name, modifier, function, converters)
     arguments = [
         f"{argument['parameter']} = "
-        f"{_passed(prop, modifier['props'][prop], argument, converters)}"
+        f"{passed(prop, modifier['props'][prop], argument, converters)}"
         for prop, argument in call["arguments"].items()
     ]
     bare = call.get("bare", {})
@@ -197,43 +67,6 @@ def _direct(
     ]
 
 
-def _block(name: str, modifier: dict[str, Any], function: str) -> list[str]:
-    """The branch of an operation whose call sets members of a receiver block."""
-    call = modifier["call"]
-    lines = [
-        f"            {kotlin_string(name)} ->",
-        f"                Modifier.{function}({call['block']['parameter']} = {{",
-    ]
-    for prop, argument in call["arguments"].items():
-        spec = modifier["props"][prop]
-        member = argument["source"]["name"]
-        if argument["member"] == "function":
-            flag = f'op["{prop}"]?.jsonPrimitive?.booleanOrNull == true'
-            lines.append(f"                    if ({flag}) {member}()")
-            continue
-        if "constants" in argument:
-            owner = argument["type"]
-            lines += [
-                f'                    op["{prop}"]?.let {{',
-                f"                        {member} =",
-                "                            when (it.jsonPrimitive.content) {",
-                *(
-                    f"                                {kotlin_string(value)} -> "
-                    f"{owner}.{constant}"
-                    for value, constant in argument["constants"].items()
-                ),
-                f'                                else -> error("unknown {prop}")',
-                "                            }",
-                "                    }",
-            ]
-            continue
-        else:
-            native = argument["type"].rsplit(".", 1)[-1]
-            value = f"it.jsonPrimitive.{READS[spec['type']]}" + NARROW.get(native, "")
-        lines.append(f'                    op["{prop}"]?.let {{ {member} = {value} }}')
-    return [*lines, "                })"]
-
-
 def _imports(registry: dict[str, Any]) -> list[str]:
     """What the direct calls name unqualified: their functions and members."""
     names: set[str] = set()
@@ -248,11 +81,18 @@ def _imports(registry: dict[str, Any]) -> list[str]:
             for spec in modifier.get("props", {}).values()
         ):
             names.add("androidx.compose.ui.unit.dp")
-        if "block" in call:
-            package = call["function"].rsplit(".", 1)[0]
+        deferred = call.get("block")
+        if deferred is not None and "result" in deferred:
+            # The block answers with a value the pin's own function builds.
+            names.add(deferred["result"]["function"])
+        elif deferred is not None:
+            # A member of the receiver needs no import; an extension on it does,
+            # and the pin states which file declares it.
             names.update(
-                f"{package}.{argument['source']['name']}"
+                f"{argument['source']['owner'].rsplit('.', 1)[0]}"
+                f".{argument['source']['name']}"
                 for argument in call["arguments"].values()
+                if argument["source"]["owner"] != deferred["receiver"]
             )
     converters = registry.get("converters", {})
     for modifier in registry.get("modifiers", {}).values():

@@ -172,7 +172,13 @@ def _validate_operation(operation: object, intents: Intents | None) -> None:
                     modifier=name,
                     prop=key,
                 )
-            value, _phase = check_binding(cast("Mapping[str, object]", item))
+            value, phase = check_binding(cast("Mapping[str, object]", item))
+            if declared.phase is not None and phase != declared.phase:
+                raise IrValidationError(
+                    f"this prop is read in {declared.phase}",
+                    modifier=name,
+                    prop=key,
+                )
         if declared is None or not validate_prop(value, declared, intents=intents):
             raise IrValidationError("invalid modifier prop", modifier=name, prop=key)
 

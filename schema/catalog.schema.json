@@ -134,6 +134,11 @@
           "minLength": 1,
           "description": "The Kotlin type the host animates this prop as, when the pin declares a TwoWayConverter for it; absent when it declares none or a state holder owns the value."
         },
+        "phase": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Where the host reads a bound value of this prop, resolved from the pin: drawing inside a graphics block, layout in a block that answers where the node goes, composition in the call."
+        },
         "nullable": { "type": "boolean" },
         "required": { "type": "boolean" },
         "content": { "$ref": "#/$defs/content" },
@@ -189,11 +194,23 @@
         "call": {
           "type": "object",
           "description": "The Modifier extension the operation calls, resolved in the pin: each prop's native parameter, the overload a bare dp calls, or the receiver block and members a block-taking call sets.",
-          "required": ["function", "source", "arguments"],
+          "required": ["function", "source", "phase"],
+          "anyOf": [
+            { "required": ["arguments"] },
+            {
+              "required": ["block"],
+              "properties": { "block": { "required": ["result"] } }
+            }
+          ],
           "additionalProperties": false,
           "properties": {
             "function": { "$ref": "#/$defs/dottedName" },
             "source": { "type": "object" },
+            "phase": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Where the host reads this call's arguments: composition, layout or draw."
+            },
             "arguments": { "type": "object", "additionalProperties": { "type": "object" } },
             "bare": {
               "type": "object",
@@ -213,7 +230,17 @@
               "additionalProperties": false,
               "properties": {
                 "parameter": { "$ref": "#/$defs/identifier" },
-                "receiver": { "$ref": "#/$defs/dottedName" }
+                "receiver": { "$ref": "#/$defs/dottedName" },
+                "result": {
+                  "type": "object",
+                  "required": ["function", "source", "arguments"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "function": { "$ref": "#/$defs/dottedName" },
+                    "source": { "type": "object" },
+                    "arguments": { "type": "object", "additionalProperties": { "type": "object" } }
+                  }
+                }
               }
             }
           }

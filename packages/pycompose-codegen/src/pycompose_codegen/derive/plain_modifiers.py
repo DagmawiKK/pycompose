@@ -18,7 +18,7 @@ from collections import defaultdict
 from typing import Any
 
 from pycompose_codegen.derive.classpath_dump import Declaration, Inventory
-from pycompose_codegen.derive.core_modifiers import MATERIAL_2, MODIFIER
+from pycompose_codegen.derive.core_binding import MATERIAL_2, MODIFIER
 from pycompose_codegen.derive.scoped_modifiers import _parameters, modifier_props
 
 

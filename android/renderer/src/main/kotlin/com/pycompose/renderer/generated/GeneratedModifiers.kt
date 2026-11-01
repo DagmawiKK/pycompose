@@ -82,6 +82,7 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.sensitiveContent
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.layoutId
@@ -106,13 +107,22 @@ object GeneratedModifiers {
         dispatch: (String) -> Unit,
     ): Modifier? =
         when (type) {
-            "absoluteOffset" ->
-                Modifier.absoluteOffset(
-                    x = if ("x" in op) op.getValue("x").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else (0).dp,
-                    y = if ("y" in op) op.getValue("y").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else (0).dp,
-                )
+            "absoluteOffset" -> {
+                val xState =
+                    com.pycompose.renderer.optionalBindingState(
+                        op["x"], Dp.VectorConverter, com.pycompose.program.Phase.Layout,
+                    ) { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }
+                val yState =
+                    com.pycompose.renderer.optionalBindingState(
+                        op["y"], Dp.VectorConverter, com.pycompose.program.Phase.Layout,
+                    ) { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }
+                Modifier.absoluteOffset(offset = {
+                    IntOffset(
+                        x = (xState?.value ?: (0).dp).roundToPx(),
+                        y = (yState?.value ?: (0).dp).roundToPx(),
+                    )
+                })
+            }
             "absolutePadding" ->
                 Modifier.absolutePadding(
                     left = if ("left" in op) op.getValue("left").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
@@ -197,33 +207,69 @@ object GeneratedModifiers {
                 Modifier.focusable(
                     enabled = if ("enabled" in op) op.getValue("enabled").let { value -> value.jsonPrimitive.boolean } else true,
                 )
-            "graphicsLayer" ->
-                Modifier.graphicsLayer(
-                    scaleX = if ("scaleX" in op) op.getValue("scaleX").let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
-                        value.jsonPrimitive.double.toFloat() }.value } else 1.0f,
-                    scaleY = if ("scaleY" in op) op.getValue("scaleY").let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
-                        value.jsonPrimitive.double.toFloat() }.value } else 1.0f,
-                    alpha = if ("alpha" in op) op.getValue("alpha").let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
-                        value.jsonPrimitive.double.toFloat() }.value } else 1.0f,
-                    translationX = if ("translationX" in op) op.getValue("translationX").let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
-                        value.jsonPrimitive.double.toFloat() }.value } else 0.0f,
-                    translationY = if ("translationY" in op) op.getValue("translationY").let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
-                        value.jsonPrimitive.double.toFloat() }.value } else 0.0f,
-                    shadowElevation = if ("shadowElevation" in op) op.getValue("shadowElevation").let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
-                        value.jsonPrimitive.double.toFloat() }.value } else 0.0f,
-                    rotationX = if ("rotationX" in op) op.getValue("rotationX").let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
-                        value.jsonPrimitive.double.toFloat() }.value } else 0.0f,
-                    rotationY = if ("rotationY" in op) op.getValue("rotationY").let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
-                        value.jsonPrimitive.double.toFloat() }.value } else 0.0f,
-                    rotationZ = if ("rotationZ" in op) op.getValue("rotationZ").let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
-                        value.jsonPrimitive.double.toFloat() }.value } else 0.0f,
-                    shape = if ("shape" in op) op.getValue("shape").let { value -> com.pycompose.renderer.generated.ValueResolver.shape(value).getOrThrow() } else androidx.compose.ui.graphics.RectangleShape,
-                    clip = if ("clip" in op) op.getValue("clip").let { value -> value.jsonPrimitive.boolean } else false,
-                    ambientShadowColor = if ("ambientShadowColor" in op) op.getValue("ambientShadowColor").let { wire -> com.pycompose.renderer.bindingState(wire, Color.colorVectorConverter(ColorSpaces.Srgb)) { value ->
-                        com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() }.value } else androidx.compose.ui.graphics.DefaultShadowColor,
-                    spotShadowColor = if ("spotShadowColor" in op) op.getValue("spotShadowColor").let { wire -> com.pycompose.renderer.bindingState(wire, Color.colorVectorConverter(ColorSpaces.Srgb)) { value ->
-                        com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() }.value } else androidx.compose.ui.graphics.DefaultShadowColor,
-                )
+            "graphicsLayer" -> {
+                val scaleXState =
+                    com.pycompose.renderer.optionalBindingState(
+                        op["scaleX"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
+                    ) { value -> value.jsonPrimitive.double.toFloat() }
+                val scaleYState =
+                    com.pycompose.renderer.optionalBindingState(
+                        op["scaleY"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
+                    ) { value -> value.jsonPrimitive.double.toFloat() }
+                val alphaState =
+                    com.pycompose.renderer.optionalBindingState(
+                        op["alpha"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
+                    ) { value -> value.jsonPrimitive.double.toFloat() }
+                val translationXState =
+                    com.pycompose.renderer.optionalBindingState(
+                        op["translationX"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
+                    ) { value -> value.jsonPrimitive.double.toFloat() }
+                val translationYState =
+                    com.pycompose.renderer.optionalBindingState(
+                        op["translationY"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
+                    ) { value -> value.jsonPrimitive.double.toFloat() }
+                val shadowElevationState =
+                    com.pycompose.renderer.optionalBindingState(
+                        op["shadowElevation"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
+                    ) { value -> value.jsonPrimitive.double.toFloat() }
+                val rotationXState =
+                    com.pycompose.renderer.optionalBindingState(
+                        op["rotationX"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
+                    ) { value -> value.jsonPrimitive.double.toFloat() }
+                val rotationYState =
+                    com.pycompose.renderer.optionalBindingState(
+                        op["rotationY"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
+                    ) { value -> value.jsonPrimitive.double.toFloat() }
+                val rotationZState =
+                    com.pycompose.renderer.optionalBindingState(
+                        op["rotationZ"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
+                    ) { value -> value.jsonPrimitive.double.toFloat() }
+                val shapeValue = op["shape"]?.let { value -> com.pycompose.renderer.generated.ValueResolver.shape(value).getOrThrow() }
+                val clipValue = op["clip"]?.let { value -> value.jsonPrimitive.boolean }
+                val ambientShadowColorState =
+                    com.pycompose.renderer.optionalBindingState(
+                        op["ambientShadowColor"], Color.colorVectorConverter(ColorSpaces.Srgb), com.pycompose.program.Phase.Draw,
+                    ) { value -> com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() }
+                val spotShadowColorState =
+                    com.pycompose.renderer.optionalBindingState(
+                        op["spotShadowColor"], Color.colorVectorConverter(ColorSpaces.Srgb), com.pycompose.program.Phase.Draw,
+                    ) { value -> com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() }
+                Modifier.graphicsLayer(block = {
+                    scaleX = scaleXState?.value ?: 1.0f
+                    scaleY = scaleYState?.value ?: 1.0f
+                    alpha = alphaState?.value ?: 1.0f
+                    translationX = translationXState?.value ?: 0.0f
+                    translationY = translationYState?.value ?: 0.0f
+                    shadowElevation = shadowElevationState?.value ?: 0.0f
+                    rotationX = rotationXState?.value ?: 0.0f
+                    rotationY = rotationYState?.value ?: 0.0f
+                    rotationZ = rotationZState?.value ?: 0.0f
+                    shapeValue?.let { shape = it }
+                    clipValue?.let { clip = it }
+                    ambientShadowColor = ambientShadowColorState?.value ?: androidx.compose.ui.graphics.DefaultShadowColor
+                    spotShadowColor = spotShadowColorState?.value ?: androidx.compose.ui.graphics.DefaultShadowColor
+                })
+            }
             "handwritingHandler" ->
                 Modifier.handwritingHandler(
                 )
@@ -261,13 +307,22 @@ object GeneratedModifiers {
             "navigationBarsPadding" ->
                 Modifier.navigationBarsPadding(
                 )
-            "offset" ->
-                Modifier.offset(
-                    x = if ("x" in op) op.getValue("x").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else (0).dp,
-                    y = if ("y" in op) op.getValue("y").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else (0).dp,
-                )
+            "offset" -> {
+                val xState =
+                    com.pycompose.renderer.optionalBindingState(
+                        op["x"], Dp.VectorConverter, com.pycompose.program.Phase.Layout,
+                    ) { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }
+                val yState =
+                    com.pycompose.renderer.optionalBindingState(
+                        op["y"], Dp.VectorConverter, com.pycompose.program.Phase.Layout,
+                    ) { value -> com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }
+                Modifier.offset(offset = {
+                    IntOffset(
+                        x = (xState?.value ?: (0).dp).roundToPx(),
+                        y = (yState?.value ?: (0).dp).roundToPx(),
+                    )
+                })
+            }
             "padding" ->
                 if (op.getValue("value") is JsonObject) {
                     Modifier.padding(
@@ -339,10 +394,15 @@ object GeneratedModifiers {
             "selectableGroup" ->
                 Modifier.selectableGroup(
                 )
-            "semantics" ->
+            "semantics" -> {
+                val contentDescriptionValue = op["contentDescription"]?.let { value -> value.jsonPrimitive.content }
+                val stateDescriptionValue = op["stateDescription"]?.let { value -> value.jsonPrimitive.content }
+                val testTagValue = op["testTag"]?.let { value -> value.jsonPrimitive.content }
+                val traversalIndexValue = op["traversalIndex"]?.let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
+                        value.jsonPrimitive.double.toFloat() }.value }
                 Modifier.semantics(properties = {
-                    op["contentDescription"]?.let { contentDescription = it.jsonPrimitive.content }
-                    op["stateDescription"]?.let { stateDescription = it.jsonPrimitive.content }
+                    contentDescriptionValue?.let { contentDescription = it }
+                    stateDescriptionValue?.let { stateDescription = it }
                     op["role"]?.let {
                         role =
                             when (it.jsonPrimitive.content) {
@@ -367,9 +427,10 @@ object GeneratedModifiers {
                                 else -> error("unknown liveRegion")
                             }
                     }
-                    op["testTag"]?.let { testTag = it.jsonPrimitive.content }
-                    op["traversalIndex"]?.let { traversalIndex = it.jsonPrimitive.double.toFloat() }
+                    testTagValue?.let { testTag = it }
+                    traversalIndexValue?.let { traversalIndex = it }
                 })
+            }
             "sensitiveContent" ->
                 Modifier.sensitiveContent(
                     isContentSensitive = if ("isContentSensitive" in op) op.getValue("isContentSensitive").let { value -> value.jsonPrimitive.boolean } else true,

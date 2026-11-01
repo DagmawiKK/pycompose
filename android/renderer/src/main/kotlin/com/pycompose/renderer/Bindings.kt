@@ -5,6 +5,7 @@ import androidx.compose.animation.core.AnimationVector
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.TwoWayConverter
 import androidx.compose.animation.core.animateValueAsState
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
@@ -50,6 +51,27 @@ fun <T, V : AnimationVector> bindingState(
     )
 }
 
+/**
+ * A deferred prop's value, kept at its target, or null when the prop was omitted.
+ *
+ * A call site Compose invokes later -- while laying out or drawing -- declares
+ * its states before the block and reads them inside it, so a frame of animation
+ * invalidates that phase alone.
+ *
+ * @param wire The prop's wire value: plain, a binding, or null when omitted.
+ * @param converter The pin's converter for the prop's type.
+ * @param phase Where the block reads the value.
+ * @param read Reads a plain wire value.
+ * @return The value's state, or null when the prop was omitted.
+ */
+@Composable
+fun <T, V : AnimationVector> optionalBindingState(
+    wire: JsonElement?,
+    converter: TwoWayConverter<T, V>,
+    phase: Phase,
+    read: @Composable (JsonElement) -> T,
+): State<T>? = if (wire == null) null else bindingState(wire, converter, phase, read)
+
 /** The binding a prop value carries, or null for a plain value. */
 private fun bound(wire: JsonElement): Binding? {
     if (!Bindings.isBinding(wire)) return null
@@ -65,7 +87,6 @@ private fun <T> spec(travel: Travel): AnimationSpec<T> =
                 delayMillis = travel.delayMs,
                 easing = FastOutSlowInEasing,
             )
-        // A composition-phase follow collapses to its target; one that did not
-        // would have been refused by bound().
-        Travel.None -> error("a binding read in composition travels with a spring or a tween")
+        // A follow is read live: the target, held without travelling to it.
+        Travel.None -> snap()
     }
