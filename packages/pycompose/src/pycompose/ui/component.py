@@ -15,6 +15,7 @@ from pycompose.model.nodes.ids import call_location, call_site
 from pycompose.model.nodes.props import JsonValue, props_from_kwargs, to_snake_case
 from pycompose.model.nodes.values import _Unset, named_value
 from pycompose.model.programs.expressions import Expression
+from pycompose.ui._bound import lower_prop
 from pycompose.ui._generated.values import Color
 from pycompose.ui._rules import validate_component
 from pycompose.ui.intents import Intent, lower_action
@@ -153,7 +154,10 @@ class Component(Node):
                 )
         # A control may take an app action itself; it binds nothing of its own.
         # An expression is wire data from here on; emission resolves its keys.
-        values = {name: lower_action(value) for name, value in props.items()}
+        values = {
+            name: lower_prop(self.component_type, name, lower_action(value))
+            for name, value in props.items()
+        }
         wire = cast(
             "dict[str, JsonValue | FrozenJsonValue]", props_from_kwargs(**values)
         )

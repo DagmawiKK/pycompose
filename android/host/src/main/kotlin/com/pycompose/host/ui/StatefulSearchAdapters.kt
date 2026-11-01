@@ -10,7 +10,6 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.unit.dp
 import com.pycompose.ir.generated.UiNode
 import com.pycompose.renderer.ComponentRegistry
 import com.pycompose.renderer.LocalHostSearchState
@@ -92,9 +91,9 @@ internal fun ComponentRegistry.Builder.sharedSearchBars(): ComponentRegistry.Bui
                     search.props.shape?.let { ValueResolver.shape(it).getOrThrow() }
                         ?: SearchBarDefaults.inputFieldShape,
                 tonalElevation =
-                    search.props.tonalElevation?.dp ?: SearchBarDefaults.TonalElevation,
+                    dpProp(search.props.tonalElevation, SearchBarDefaults.TonalElevation),
                 shadowElevation =
-                    search.props.shadowElevation?.dp ?: SearchBarDefaults.ShadowElevation,
+                    dpProp(search.props.shadowElevation, SearchBarDefaults.ShadowElevation),
             )
             context.slot(search.children, "expandedBar")?.invoke()
         }
@@ -165,9 +164,9 @@ private fun ComponentRegistry.Builder.dockedExpandedBars(): ComponentRegistry.Bu
                     docked.props.shape?.let { ValueResolver.shape(it).getOrThrow() }
                         ?: SearchBarDefaults.dockedShape,
                 tonalElevation =
-                    docked.props.tonalElevation?.dp ?: SearchBarDefaults.TonalElevation,
+                    dpProp(docked.props.tonalElevation, SearchBarDefaults.TonalElevation),
                 shadowElevation =
-                    docked.props.shadowElevation?.dp ?: SearchBarDefaults.ShadowElevation,
+                    dpProp(docked.props.shadowElevation, SearchBarDefaults.ShadowElevation),
                 content = { context.childrenIn(this, docked.children) },
             )
         }
@@ -194,9 +193,9 @@ private fun ComponentRegistry.Builder.fullScreenExpandedBars(): ComponentRegistr
                     full.props.collapsedShape?.let { ValueResolver.shape(it).getOrThrow() }
                         ?: SearchBarDefaults.inputFieldShape,
                 tonalElevation =
-                    full.props.tonalElevation?.dp ?: SearchBarDefaults.TonalElevation,
+                    dpProp(full.props.tonalElevation, SearchBarDefaults.TonalElevation),
                 shadowElevation =
-                    full.props.shadowElevation?.dp ?: SearchBarDefaults.ShadowElevation,
+                    dpProp(full.props.shadowElevation, SearchBarDefaults.ShadowElevation),
                 windowInsets = { SearchBarDefaults.fullScreenWindowInsets },
                 content = { context.childrenIn(this, full.children) },
             )

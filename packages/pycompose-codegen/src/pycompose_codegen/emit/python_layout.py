@@ -87,17 +87,28 @@ def docstring_arg(field: str, description: str) -> list[str]:
     ]
 
 
-def assignment(indent: str, keyword: str) -> list[str]:
+def assignment(indent: str, keyword: str, value: str | None = None) -> list[str]:
     """``props["keyword"] = keyword``, wrapped as the formatter wraps a long one.
 
     Args:
         indent: The statement's indentation.
         keyword: The prop's Python name.
+        value: What to store, when it is not the argument itself.
 
     Returns:
         The statement's lines.
     """
-    line = f'{indent}props["{keyword}"] = {keyword}'
+    stored = keyword if value is None else value
+    line = f'{indent}props["{keyword}"] = {stored}'
     if len(line) <= COLUMNS:
         return [line]
-    return [f'{indent}props["{keyword}"] = (', f"{indent}    {keyword}", f"{indent})"]
+    head, opened, arguments = stored.partition("(")
+    if opened and arguments.endswith(")"):
+        # A call that does not fit splits at its parentheses, as the formatter
+        # splits it: the assignment and the call's head stay on the first line.
+        return [
+            f'{indent}props["{keyword}"] = {head}(',
+            f"{indent}    {arguments[:-1]}",
+            f"{indent})",
+        ]
+    return [f'{indent}props["{keyword}"] = (', f"{indent}    {stored}", f"{indent})"]

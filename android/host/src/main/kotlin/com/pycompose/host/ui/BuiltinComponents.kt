@@ -6,13 +6,11 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import com.pycompose.host.resources.ResourceResolver
 import com.pycompose.renderer.ComponentRegistry
 import com.pycompose.renderer.generated.ValueResolver
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import com.pycompose.ir.generated.Image as ImageNode
 import com.pycompose.ir.generated.SearchBarInputField as SearchBarInputFieldNode
@@ -34,12 +32,12 @@ object BuiltinComponents {
         resources: ResourceResolver?,
     ): ComponentRegistry.Builder =
         this
-            .register("Text") { node, modifier, _ ->
+            .register("Text") { node, modifier, context ->
                 val text = node as TextNode
                 ResourceText(
                     text.props,
                     modifier,
-                    nativeColor(text.props.color),
+                    context.nativeColor(text.props.color),
                     textStyle(text.props.style),
                     resources,
                 )
@@ -140,11 +138,3 @@ object BuiltinComponents {
         value?.let { ValueResolver.textStyle(it).getOrThrow() }
             ?: MaterialTheme.typography.bodyMedium
 }
-
-/** Resolve theme-aware color data for the hand-written native adapters. */
-@Composable
-internal fun nativeColor(value: JsonElement?): Color =
-    when (value) {
-        is JsonObject -> ValueResolver.color(value).getOrDefault(Color.Unspecified)
-        else -> Color.Unspecified
-    }

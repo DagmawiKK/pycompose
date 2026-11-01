@@ -11,6 +11,7 @@ from pycompose.errors import IrValidationError
 from pycompose.model.nodes.node import Node
 from pycompose.model.nodes.props import JsonValue
 from pycompose.model.nodes.values import UNSET, _Unset
+from pycompose.model.programs.bindings import Binding, lower_binding
 from pycompose.model.programs.expressions import Expression
 from pycompose.ui.component import ActionTarget, Component, PropValue
 from pycompose.ui.composition import Content, content_nodes, slot_nodes
@@ -392,14 +393,14 @@ class AlertDialog(Component):
         self,
         *,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
-        icon_content_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
+        icon_content_color: JsonValue | Expression | Binding | None = None,
         modifier: Modifier | None = None,
         on_dismiss_request: ActionTarget,
         shape: JsonValue | None = None,
-        text_content_color: JsonValue | Expression | None = None,
-        title_content_color: JsonValue | Expression | None = None,
-        tonal_elevation: int | float | None = None,
+        text_content_color: JsonValue | Expression | Binding | None = None,
+        title_content_color: JsonValue | Expression | Binding | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         confirm_button: Content | None = None,
         dismiss_button: Content | None = None,
         icon: Content | None = None,
@@ -426,18 +427,24 @@ class AlertDialog(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if icon_content_color is not None:
-            props["icon_content_color"] = icon_content_color
+            props["icon_content_color"] = lower_binding(
+                icon_content_color, "composition"
+            )
         props["on_dismiss_request"] = on_dismiss_request
         if shape is not None:
             props["shape"] = shape
         if text_content_color is not None:
-            props["text_content_color"] = text_content_color
+            props["text_content_color"] = lower_binding(
+                text_content_color, "composition"
+            )
         if title_content_color is not None:
-            props["title_content_color"] = title_content_color
+            props["title_content_color"] = lower_binding(
+                title_content_color, "composition"
+            )
         if tonal_elevation is not None:
-            props["tonal_elevation"] = tonal_elevation
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         slotted: tuple[Node, ...] = ()
         if confirm_button is not None:
             slotted += slot_nodes(
@@ -632,7 +639,7 @@ class Badge(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
         modifier: Modifier | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -652,7 +659,7 @@ class Badge(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -761,7 +768,7 @@ class BasicText(Component):
         self,
         *,
         id: str | None = None,
-        min_lines: int | None = None,
+        min_lines: int | Binding | None = None,
         modifier: Modifier | None = None,
         overflow: _TextOverflow | None = None,
         soft_wrap: bool | None = None,
@@ -781,7 +788,7 @@ class BasicText(Component):
         """
         props: dict[str, PropValue] = {}
         if min_lines is not None:
-            props["min_lines"] = min_lines
+            props["min_lines"] = lower_binding(min_lines, "composition")
         if overflow is not None:
             props["overflow"] = overflow
         if soft_wrap is not None:
@@ -803,7 +810,7 @@ class BasicTextField(Component):
         *,
         id: str | None = None,
         enabled: bool | None = None,
-        min_lines: int | None = None,
+        min_lines: int | Binding | None = None,
         modifier: Modifier | None = None,
         on_focus: ActionTarget | None = None,
         on_hover: ActionTarget | None = None,
@@ -834,7 +841,7 @@ class BasicTextField(Component):
         if enabled is not None:
             props["enabled"] = enabled
         if min_lines is not None:
-            props["min_lines"] = min_lines
+            props["min_lines"] = lower_binding(min_lines, "composition")
         if on_focus is not None:
             props["on_focus"] = on_focus
         if on_hover is not None:
@@ -862,10 +869,10 @@ class BottomAppBar(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
         content_padding: JsonValue | None = None,
         modifier: Modifier | None = None,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         window_insets: JsonValue | None = None,
         children: Content = (),
     ) -> None:
@@ -886,11 +893,11 @@ class BottomAppBar(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if content_padding is not None:
             props["content_padding"] = content_padding
         if tonal_elevation is not None:
-            props["tonal_elevation"] = tonal_elevation
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if window_insets is not None:
             props["window_insets"] = window_insets
         if contents and children:
@@ -911,10 +918,10 @@ class BottomAppBarActions(Component):
         self,
         *,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
         content_padding: JsonValue | None = None,
         modifier: Modifier | None = None,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         window_insets: JsonValue | None = None,
         actions: Content | None = None,
         floating_action_button: Content | None = None,
@@ -933,11 +940,11 @@ class BottomAppBarActions(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if content_padding is not None:
             props["content_padding"] = content_padding
         if tonal_elevation is not None:
-            props["tonal_elevation"] = tonal_elevation
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if window_insets is not None:
             props["window_insets"] = window_insets
         slotted: tuple[Node, ...] = ()
@@ -962,15 +969,15 @@ class BottomSheetScaffold(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
         modifier: Modifier | None = None,
-        sheet_container_color: JsonValue | Expression | None = None,
-        sheet_max_width: int | float | None = None,
-        sheet_peek_height: int | float | None = None,
-        sheet_shadow_elevation: int | float | None = None,
+        sheet_container_color: JsonValue | Expression | Binding | None = None,
+        sheet_max_width: int | float | Binding | None = None,
+        sheet_peek_height: int | float | Binding | None = None,
+        sheet_shadow_elevation: int | float | Binding | None = None,
         sheet_shape: JsonValue | None = None,
         sheet_swipe_enabled: bool | None = None,
-        sheet_tonal_elevation: int | float | None = None,
+        sheet_tonal_elevation: int | float | Binding | None = None,
         children: Content = (),
         sheet_content: Content | None = None,
         top_bar: Content | None = None,
@@ -1001,21 +1008,27 @@ class BottomSheetScaffold(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if sheet_container_color is not None:
-            props["sheet_container_color"] = sheet_container_color
+            props["sheet_container_color"] = lower_binding(
+                sheet_container_color, "composition"
+            )
         if sheet_max_width is not None:
-            props["sheet_max_width"] = sheet_max_width
+            props["sheet_max_width"] = lower_binding(sheet_max_width, "composition")
         if sheet_peek_height is not None:
-            props["sheet_peek_height"] = sheet_peek_height
+            props["sheet_peek_height"] = lower_binding(sheet_peek_height, "composition")
         if sheet_shadow_elevation is not None:
-            props["sheet_shadow_elevation"] = sheet_shadow_elevation
+            props["sheet_shadow_elevation"] = lower_binding(
+                sheet_shadow_elevation, "composition"
+            )
         if sheet_shape is not None:
             props["sheet_shape"] = sheet_shape
         if sheet_swipe_enabled is not None:
             props["sheet_swipe_enabled"] = sheet_swipe_enabled
         if sheet_tonal_elevation is not None:
-            props["sheet_tonal_elevation"] = sheet_tonal_elevation
+            props["sheet_tonal_elevation"] = lower_binding(
+                sheet_tonal_elevation, "composition"
+            )
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -1297,7 +1310,7 @@ class CenterAlignedTopAppBar(Component):
         *,
         id: str | None = None,
         colors: JsonValue | None = None,
-        expanded_height: int | float | None = None,
+        expanded_height: int | float | Binding | None = None,
         modifier: Modifier | None = None,
         window_insets: JsonValue | None = None,
         actions: Content | None = None,
@@ -1320,7 +1333,7 @@ class CenterAlignedTopAppBar(Component):
         if colors is not None:
             props["colors"] = colors
         if expanded_height is not None:
-            props["expanded_height"] = expanded_height
+            props["expanded_height"] = lower_binding(expanded_height, "composition")
         if window_insets is not None:
             props["window_insets"] = window_insets
         slotted: tuple[Node, ...] = ()
@@ -1406,12 +1419,12 @@ class _CircularProgressIndicator(Component):
         self,
         *,
         id: str | None = None,
-        color: JsonValue | Expression | None = None,
-        gap_size: int | float | None = None,
+        color: JsonValue | Expression | Binding | None = None,
+        gap_size: int | float | Binding | None = None,
         modifier: Modifier | None = None,
         stroke_cap: _StrokeCap | None = None,
-        stroke_width: int | float | None = None,
-        track_color: JsonValue | Expression | None = None,
+        stroke_width: int | float | Binding | None = None,
+        track_color: JsonValue | Expression | Binding | None = None,
     ) -> None:
         """Construct a registered CircularProgressIndicator.
 
@@ -1426,15 +1439,15 @@ class _CircularProgressIndicator(Component):
         """
         props: dict[str, PropValue] = {}
         if color is not None:
-            props["color"] = color
+            props["color"] = lower_binding(color, "composition")
         if gap_size is not None:
-            props["gap_size"] = gap_size
+            props["gap_size"] = lower_binding(gap_size, "composition")
         if stroke_cap is not None:
             props["stroke_cap"] = stroke_cap
         if stroke_width is not None:
-            props["stroke_width"] = stroke_width
+            props["stroke_width"] = lower_binding(stroke_width, "composition")
         if track_color is not None:
-            props["track_color"] = track_color
+            props["track_color"] = lower_binding(track_color, "composition")
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
@@ -1448,25 +1461,25 @@ class CircularProgressIndicator(_CircularProgressIndicator):
         cls,
         *,
         id: str | None = None,
-        color: JsonValue | Expression | None = None,
-        gap_size: int | float | None = None,
+        color: JsonValue | Expression | Binding | None = None,
+        gap_size: int | float | Binding | None = None,
         modifier: Modifier | None = None,
         stroke_cap: _StrokeCap | None = None,
-        stroke_width: int | float | None = None,
-        track_color: JsonValue | Expression | None = None,
+        stroke_width: int | float | Binding | None = None,
+        track_color: JsonValue | Expression | Binding | None = None,
     ) -> CircularProgressIndicator: ...
     @overload
     def __new__(
         cls,
         *,
         id: str | None = None,
-        color: JsonValue | Expression | None = None,
-        gap_size: int | float | None = None,
+        color: JsonValue | Expression | Binding | None = None,
+        gap_size: int | float | Binding | None = None,
         modifier: Modifier | None = None,
-        progress: int | float,
+        progress: int | float | Binding,
         stroke_cap: _StrokeCap | None = None,
-        stroke_width: int | float | None = None,
-        track_color: JsonValue | Expression | None = None,
+        stroke_width: int | float | Binding | None = None,
+        track_color: JsonValue | Expression | Binding | None = None,
     ) -> CircularProgressIndicatorProgress: ...
     def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
         """Construct the overload the keywords select.
@@ -1642,7 +1655,7 @@ class DatePickerDialog(Component):
         modifier: Modifier | None = None,
         on_dismiss_request: ActionTarget,
         shape: JsonValue | None = None,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         children: Content = (),
         content: Content | None = None,
         confirm_button: Content | None = None,
@@ -1673,7 +1686,7 @@ class DatePickerDialog(Component):
         if shape is not None:
             props["shape"] = shape
         if tonal_elevation is not None:
-            props["tonal_elevation"] = tonal_elevation
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -1747,9 +1760,9 @@ class DismissibleDrawerSheet(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        drawer_container_color: JsonValue | Expression | None = None,
+        drawer_container_color: JsonValue | Expression | Binding | None = None,
         drawer_shape: JsonValue | None = None,
-        drawer_tonal_elevation: int | float | None = None,
+        drawer_tonal_elevation: int | float | Binding | None = None,
         modifier: Modifier | None = None,
         window_insets: JsonValue | None = None,
         children: Content = (),
@@ -1775,11 +1788,15 @@ class DismissibleDrawerSheet(Component):
         """
         props: dict[str, PropValue] = {}
         if drawer_container_color is not None:
-            props["drawer_container_color"] = drawer_container_color
+            props["drawer_container_color"] = lower_binding(
+                drawer_container_color, "composition"
+            )
         if drawer_shape is not None:
             props["drawer_shape"] = drawer_shape
         if drawer_tonal_elevation is not None:
-            props["drawer_tonal_elevation"] = drawer_tonal_elevation
+            props["drawer_tonal_elevation"] = lower_binding(
+                drawer_tonal_elevation, "composition"
+            )
         if window_insets is not None:
             props["window_insets"] = window_insets
         if content is not None:
@@ -1870,9 +1887,9 @@ class DockedSearchBar(Component):
         expanded: bool,
         modifier: Modifier | None = None,
         on_expanded_change: ActionTarget,
-        shadow_elevation: int | float | None = None,
+        shadow_elevation: int | float | Binding | None = None,
         shape: JsonValue | None = None,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         children: Content = (),
         content: Content | None = None,
         input_field: Content | None = None,
@@ -1899,11 +1916,11 @@ class DockedSearchBar(Component):
         props["expanded"] = expanded
         props["on_expanded_change"] = on_expanded_change
         if shadow_elevation is not None:
-            props["shadow_elevation"] = shadow_elevation
+            props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
         if shape is not None:
             props["shape"] = shape
         if tonal_elevation is not None:
-            props["tonal_elevation"] = tonal_elevation
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -1934,13 +1951,13 @@ class DropdownMenu(Component):
         *contents: Node,
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
-        container_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
         expanded: bool,
         modifier: Modifier | None = None,
         on_dismiss_request: ActionTarget,
-        shadow_elevation: int | float | None = None,
+        shadow_elevation: int | float | Binding | None = None,
         shape: JsonValue | None = None,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         children: Content = (),
         content: Content | None = None,
     ) -> None:
@@ -1967,15 +1984,15 @@ class DropdownMenu(Component):
         if not isinstance(border, _Unset):
             props["border"] = border
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         props["expanded"] = expanded
         props["on_dismiss_request"] = on_dismiss_request
         if shadow_elevation is not None:
-            props["shadow_elevation"] = shadow_elevation
+            props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
         if shape is not None:
             props["shape"] = shape
         if tonal_elevation is not None:
-            props["tonal_elevation"] = tonal_elevation
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -2503,9 +2520,9 @@ class ExpandedDockedSearchBar(Component):
         *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
-        shadow_elevation: int | float | None = None,
+        shadow_elevation: int | float | Binding | None = None,
         shape: JsonValue | None = None,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         children: Content = (),
         content: Content | None = None,
         input_field: Content | None = None,
@@ -2528,11 +2545,11 @@ class ExpandedDockedSearchBar(Component):
         """
         props: dict[str, PropValue] = {}
         if shadow_elevation is not None:
-            props["shadow_elevation"] = shadow_elevation
+            props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
         if shape is not None:
             props["shape"] = shape
         if tonal_elevation is not None:
-            props["tonal_elevation"] = tonal_elevation
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -2565,8 +2582,8 @@ class ExpandedFullScreenSearchBar(Component):
         id: str | None = None,
         collapsed_shape: JsonValue | None = None,
         modifier: Modifier | None = None,
-        shadow_elevation: int | float | None = None,
-        tonal_elevation: int | float | None = None,
+        shadow_elevation: int | float | Binding | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         children: Content = (),
         content: Content | None = None,
         input_field: Content | None = None,
@@ -2591,9 +2608,9 @@ class ExpandedFullScreenSearchBar(Component):
         if collapsed_shape is not None:
             props["collapsed_shape"] = collapsed_shape
         if shadow_elevation is not None:
-            props["shadow_elevation"] = shadow_elevation
+            props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
         if tonal_elevation is not None:
-            props["tonal_elevation"] = tonal_elevation
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -2624,16 +2641,16 @@ class ExposedDropdownMenu(Component):
         *contents: Node,
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
-        container_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
         expanded: bool,
         match_anchor_width: bool | None = None,
         modifier: Modifier | None = None,
         offset: int | float | None = None,
         on_dismiss_request: ActionTarget,
         on_scroll_idle: ActionTarget | None = None,
-        shadow_elevation: int | float | None = None,
+        shadow_elevation: int | float | Binding | None = None,
         shape: JsonValue | None = None,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         children: Content = (),
         content: Content | None = None,
     ) -> None:
@@ -2663,7 +2680,7 @@ class ExposedDropdownMenu(Component):
         if not isinstance(border, _Unset):
             props["border"] = border
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         props["expanded"] = expanded
         if match_anchor_width is not None:
             props["match_anchor_width"] = match_anchor_width
@@ -2673,11 +2690,11 @@ class ExposedDropdownMenu(Component):
         if on_scroll_idle is not None:
             props["on_scroll_idle"] = on_scroll_idle
         if shadow_elevation is not None:
-            props["shadow_elevation"] = shadow_elevation
+            props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
         if shape is not None:
             props["shape"] = shape
         if tonal_elevation is not None:
-            props["tonal_elevation"] = tonal_elevation
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -2751,7 +2768,7 @@ class ExtendedFloatingActionButton(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
         elevation: JsonValue | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
@@ -2783,7 +2800,7 @@ class ExtendedFloatingActionButton(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if elevation is not None:
             props["elevation"] = elevation
         props["on_click"] = on_click
@@ -2820,7 +2837,7 @@ class ExtendedFloatingActionButtonText(Component):
         self,
         *,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
         elevation: JsonValue | None = None,
         expanded: bool | None = None,
         modifier: Modifier | None = None,
@@ -2850,7 +2867,7 @@ class ExtendedFloatingActionButtonText(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if elevation is not None:
             props["elevation"] = elevation
         if expanded is not None:
@@ -3324,7 +3341,7 @@ class FloatingActionButton(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
         elevation: JsonValue | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
@@ -3356,7 +3373,7 @@ class FloatingActionButton(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if elevation is not None:
             props["elevation"] = elevation
         props["on_click"] = on_click
@@ -3393,7 +3410,7 @@ class FlowColumn(Component):
         *contents: Node,
         id: str | None = None,
         item_horizontal_alignment: _FlowColumnItemHorizontalAlignment | None = None,
-        max_items_in_each_column: int | None = None,
+        max_items_in_each_column: int | Binding | None = None,
         modifier: Modifier | None = None,
         vertical_arrangement: _ArrangementVertical | None = None,
         children: Content = (),
@@ -3420,7 +3437,9 @@ class FlowColumn(Component):
         if item_horizontal_alignment is not None:
             props["item_horizontal_alignment"] = item_horizontal_alignment
         if max_items_in_each_column is not None:
-            props["max_items_in_each_column"] = max_items_in_each_column
+            props["max_items_in_each_column"] = lower_binding(
+                max_items_in_each_column, "composition"
+            )
         if vertical_arrangement is not None:
             props["vertical_arrangement"] = vertical_arrangement
         if content is not None:
@@ -3448,7 +3467,7 @@ class FlowRow(Component):
         *contents: Node,
         id: str | None = None,
         item_vertical_alignment: _FlowRowItemVerticalAlignment | None = None,
-        max_items_in_each_row: int | None = None,
+        max_items_in_each_row: int | Binding | None = None,
         modifier: Modifier | None = None,
         vertical_arrangement: _ArrangementVertical | None = None,
         children: Content = (),
@@ -3474,7 +3493,9 @@ class FlowRow(Component):
         if item_vertical_alignment is not None:
             props["item_vertical_alignment"] = item_vertical_alignment
         if max_items_in_each_row is not None:
-            props["max_items_in_each_row"] = max_items_in_each_row
+            props["max_items_in_each_row"] = lower_binding(
+                max_items_in_each_row, "composition"
+            )
         if vertical_arrangement is not None:
             props["vertical_arrangement"] = vertical_arrangement
         if content is not None:
@@ -3501,9 +3522,9 @@ class HorizontalDivider(Component):
         self,
         *,
         id: str | None = None,
-        color: JsonValue | Expression | None = None,
+        color: JsonValue | Expression | Binding | None = None,
         modifier: Modifier | None = None,
-        thickness: int | float | None = None,
+        thickness: int | float | Binding | None = None,
     ) -> None:
         """Construct a registered HorizontalDivider.
 
@@ -3515,9 +3536,9 @@ class HorizontalDivider(Component):
         """
         props: dict[str, PropValue] = {}
         if color is not None:
-            props["color"] = color
+            props["color"] = lower_binding(color, "composition")
         if thickness is not None:
-            props["thickness"] = thickness
+            props["thickness"] = lower_binding(thickness, "composition")
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
@@ -3534,7 +3555,7 @@ class Icon(Component):
         content_description: str | None,
         image_vector: JsonValue,
         modifier: Modifier | None = None,
-        tint: JsonValue | Expression | None = None,
+        tint: JsonValue | Expression | Binding | None = None,
     ) -> None:
         """Construct a registered Icon.
 
@@ -3549,7 +3570,7 @@ class Icon(Component):
         props["content_description"] = content_description
         props["image_vector"] = image_vector
         if tint is not None:
-            props["tint"] = tint
+            props["tint"] = lower_binding(tint, "composition")
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
@@ -3912,7 +3933,7 @@ class LargeFloatingActionButton(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
         elevation: JsonValue | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
@@ -3942,7 +3963,7 @@ class LargeFloatingActionButton(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if elevation is not None:
             props["elevation"] = elevation
         props["on_click"] = on_click
@@ -3972,9 +3993,9 @@ class LargeTopAppBar(Component):
         self,
         *,
         id: str | None = None,
-        collapsed_height: int | float | None = None,
+        collapsed_height: int | float | Binding | None = None,
         colors: JsonValue | None = None,
-        expanded_height: int | float | None = None,
+        expanded_height: int | float | Binding | None = None,
         modifier: Modifier | None = None,
         window_insets: JsonValue | None = None,
         actions: Content | None = None,
@@ -3996,11 +4017,11 @@ class LargeTopAppBar(Component):
         """
         props: dict[str, PropValue] = {}
         if collapsed_height is not None:
-            props["collapsed_height"] = collapsed_height
+            props["collapsed_height"] = lower_binding(collapsed_height, "composition")
         if colors is not None:
             props["colors"] = colors
         if expanded_height is not None:
-            props["expanded_height"] = expanded_height
+            props["expanded_height"] = lower_binding(expanded_height, "composition")
         if window_insets is not None:
             props["window_insets"] = window_insets
         slotted: tuple[Node, ...] = ()
@@ -4174,7 +4195,7 @@ class LeadingIconTab(Component):
         on_hover: ActionTarget | None = None,
         on_press: ActionTarget | None = None,
         selected: bool,
-        selected_content_color: JsonValue | Expression | None = None,
+        selected_content_color: JsonValue | Expression | Binding | None = None,
         icon: Content | None = None,
         text: Content | None = None,
     ) -> None:
@@ -4206,7 +4227,9 @@ class LeadingIconTab(Component):
             props["on_press"] = on_press
         props["selected"] = selected
         if selected_content_color is not None:
-            props["selected_content_color"] = selected_content_color
+            props["selected_content_color"] = lower_binding(
+                selected_content_color, "composition"
+            )
         slotted: tuple[Node, ...] = ()
         if icon is not None:
             slotted += slot_nodes(icon, key="icon", slot="icon")
@@ -4240,12 +4263,12 @@ class _LinearProgressIndicator(Component):
         self,
         *,
         id: str | None = None,
-        color: JsonValue | Expression | None = None,
-        gap_size: int | float | None = None,
+        color: JsonValue | Expression | Binding | None = None,
+        gap_size: int | float | Binding | None = None,
         modifier: Modifier | None = None,
-        progress: int | float,
+        progress: int | float | Binding,
         stroke_cap: _StrokeCap | None = None,
-        track_color: JsonValue | Expression | None = None,
+        track_color: JsonValue | Expression | Binding | None = None,
     ) -> None:
         """Construct a registered LinearProgressIndicator.
 
@@ -4260,14 +4283,14 @@ class _LinearProgressIndicator(Component):
         """
         props: dict[str, PropValue] = {}
         if color is not None:
-            props["color"] = color
+            props["color"] = lower_binding(color, "composition")
         if gap_size is not None:
-            props["gap_size"] = gap_size
-        props["progress"] = progress
+            props["gap_size"] = lower_binding(gap_size, "composition")
+        props["progress"] = lower_binding(progress, "composition")
         if stroke_cap is not None:
             props["stroke_cap"] = stroke_cap
         if track_color is not None:
-            props["track_color"] = track_color
+            props["track_color"] = lower_binding(track_color, "composition")
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
@@ -4281,23 +4304,23 @@ class LinearProgressIndicator(_LinearProgressIndicator):
         cls,
         *,
         id: str | None = None,
-        color: JsonValue | Expression | None = None,
-        gap_size: int | float | None = None,
+        color: JsonValue | Expression | Binding | None = None,
+        gap_size: int | float | Binding | None = None,
         modifier: Modifier | None = None,
-        progress: int | float,
+        progress: int | float | Binding,
         stroke_cap: _StrokeCap | None = None,
-        track_color: JsonValue | Expression | None = None,
+        track_color: JsonValue | Expression | Binding | None = None,
     ) -> LinearProgressIndicator: ...
     @overload
     def __new__(
         cls,
         *,
         id: str | None = None,
-        color: JsonValue | Expression | None = None,
-        gap_size: int | float | None = None,
+        color: JsonValue | Expression | Binding | None = None,
+        gap_size: int | float | Binding | None = None,
         modifier: Modifier | None = None,
         stroke_cap: _StrokeCap | None = None,
-        track_color: JsonValue | Expression | None = None,
+        track_color: JsonValue | Expression | Binding | None = None,
     ) -> LinearProgressIndicatorWithoutProgress: ...
     def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
         """Construct the overload the keywords select.
@@ -4323,8 +4346,8 @@ class ListItem(Component):
         *,
         id: str | None = None,
         modifier: Modifier | None = None,
-        shadow_elevation: int | float | None = None,
-        tonal_elevation: int | float | None = None,
+        shadow_elevation: int | float | Binding | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         headline_content: Content | None = None,
         leading_content: Content | None = None,
         overline_content: Content | None = None,
@@ -4346,9 +4369,9 @@ class ListItem(Component):
         """
         props: dict[str, PropValue] = {}
         if shadow_elevation is not None:
-            props["shadow_elevation"] = shadow_elevation
+            props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
         if tonal_elevation is not None:
-            props["tonal_elevation"] = tonal_elevation
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         slotted: tuple[Node, ...] = ()
         if headline_content is not None:
             slotted += slot_nodes(
@@ -4393,9 +4416,9 @@ class MediumTopAppBar(Component):
         self,
         *,
         id: str | None = None,
-        collapsed_height: int | float | None = None,
+        collapsed_height: int | float | Binding | None = None,
         colors: JsonValue | None = None,
-        expanded_height: int | float | None = None,
+        expanded_height: int | float | Binding | None = None,
         modifier: Modifier | None = None,
         window_insets: JsonValue | None = None,
         actions: Content | None = None,
@@ -4417,11 +4440,11 @@ class MediumTopAppBar(Component):
         """
         props: dict[str, PropValue] = {}
         if collapsed_height is not None:
-            props["collapsed_height"] = collapsed_height
+            props["collapsed_height"] = lower_binding(collapsed_height, "composition")
         if colors is not None:
             props["colors"] = colors
         if expanded_height is not None:
-            props["expanded_height"] = expanded_height
+            props["expanded_height"] = lower_binding(expanded_height, "composition")
         if window_insets is not None:
             props["window_insets"] = window_insets
         slotted: tuple[Node, ...] = ()
@@ -4448,17 +4471,17 @@ class ModalBottomSheet(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
         modifier: Modifier | None = None,
         on_open_change: ActionTarget | None = None,
         on_value_change: ActionTarget | None = None,
         open: bool | None = None,
-        scrim_color: JsonValue | Expression | None = None,
+        scrim_color: JsonValue | Expression | Binding | None = None,
         shape: JsonValue | None = None,
         sheet_gestures_enabled: bool | None = None,
-        sheet_max_width: int | float | None = None,
+        sheet_max_width: int | float | Binding | None = None,
         skip_partially_expanded: bool | None = None,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         value: _ModalBottomSheetValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -4492,7 +4515,7 @@ class ModalBottomSheet(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if on_open_change is not None:
             props["on_open_change"] = on_open_change
         if on_value_change is not None:
@@ -4500,17 +4523,17 @@ class ModalBottomSheet(Component):
         if open is not None:
             props["open"] = open
         if scrim_color is not None:
-            props["scrim_color"] = scrim_color
+            props["scrim_color"] = lower_binding(scrim_color, "composition")
         if shape is not None:
             props["shape"] = shape
         if sheet_gestures_enabled is not None:
             props["sheet_gestures_enabled"] = sheet_gestures_enabled
         if sheet_max_width is not None:
-            props["sheet_max_width"] = sheet_max_width
+            props["sheet_max_width"] = lower_binding(sheet_max_width, "composition")
         if skip_partially_expanded is not None:
             props["skip_partially_expanded"] = skip_partially_expanded
         if tonal_elevation is not None:
-            props["tonal_elevation"] = tonal_elevation
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if value is not None:
             props["value"] = value
         if content is not None:
@@ -4542,9 +4565,9 @@ class ModalDrawerSheet(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        drawer_container_color: JsonValue | Expression | None = None,
+        drawer_container_color: JsonValue | Expression | Binding | None = None,
         drawer_shape: JsonValue | None = None,
-        drawer_tonal_elevation: int | float | None = None,
+        drawer_tonal_elevation: int | float | Binding | None = None,
         modifier: Modifier | None = None,
         window_insets: JsonValue | None = None,
         children: Content = (),
@@ -4570,11 +4593,15 @@ class ModalDrawerSheet(Component):
         """
         props: dict[str, PropValue] = {}
         if drawer_container_color is not None:
-            props["drawer_container_color"] = drawer_container_color
+            props["drawer_container_color"] = lower_binding(
+                drawer_container_color, "composition"
+            )
         if drawer_shape is not None:
             props["drawer_shape"] = drawer_shape
         if drawer_tonal_elevation is not None:
-            props["drawer_tonal_elevation"] = drawer_tonal_elevation
+            props["drawer_tonal_elevation"] = lower_binding(
+                drawer_tonal_elevation, "composition"
+            )
         if window_insets is not None:
             props["window_insets"] = window_insets
         if content is not None:
@@ -4606,7 +4633,7 @@ class ModalNavigationDrawer(Component):
         modifier: Modifier | None = None,
         on_open_change: ActionTarget | None = None,
         open: bool | None = None,
-        scrim_color: JsonValue | Expression | None = None,
+        scrim_color: JsonValue | Expression | Binding | None = None,
         children: Content = (),
         content: Content | None = None,
         drawer: Content | None = None,
@@ -4636,7 +4663,7 @@ class ModalNavigationDrawer(Component):
         if open is not None:
             props["open"] = open
         if scrim_color is not None:
-            props["scrim_color"] = scrim_color
+            props["scrim_color"] = lower_binding(scrim_color, "composition")
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -4669,7 +4696,7 @@ class ModalWideNavigationRail(Component):
         id: str | None = None,
         arrangement: _ArrangementVertical | None = None,
         collapsed_shape: JsonValue | None = None,
-        expanded_header_top_padding: int | float | None = None,
+        expanded_header_top_padding: int | float | Binding | None = None,
         expanded_shape: JsonValue | None = None,
         hide_on_collapse: bool | None = None,
         modifier: Modifier | None = None,
@@ -4700,7 +4727,9 @@ class ModalWideNavigationRail(Component):
         if collapsed_shape is not None:
             props["collapsed_shape"] = collapsed_shape
         if expanded_header_top_padding is not None:
-            props["expanded_header_top_padding"] = expanded_header_top_padding
+            props["expanded_header_top_padding"] = lower_binding(
+                expanded_header_top_padding, "composition"
+            )
         if expanded_shape is not None:
             props["expanded_shape"] = expanded_shape
         if hide_on_collapse is not None:
@@ -4787,7 +4816,7 @@ class MultiChoiceSegmentedButtonRow(Component):
         *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
-        space: int | float | None = None,
+        space: int | float | Binding | None = None,
         children: Content = (),
         content: Content | None = None,
     ) -> None:
@@ -4806,7 +4835,7 @@ class MultiChoiceSegmentedButtonRow(Component):
         """
         props: dict[str, PropValue] = {}
         if space is not None:
-            props["space"] = space
+            props["space"] = lower_binding(space, "composition")
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -4831,9 +4860,9 @@ class NavigationBar(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
         modifier: Modifier | None = None,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         window_insets: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -4855,9 +4884,9 @@ class NavigationBar(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if tonal_elevation is not None:
-            props["tonal_elevation"] = tonal_elevation
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if window_insets is not None:
             props["window_insets"] = window_insets
         if content is not None:
@@ -4998,7 +5027,7 @@ class NavigationRail(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
         modifier: Modifier | None = None,
         window_insets: JsonValue | None = None,
         children: Content = (),
@@ -5022,7 +5051,7 @@ class NavigationRail(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if window_insets is not None:
             props["window_insets"] = window_insets
         if content is not None:
@@ -5220,8 +5249,8 @@ class NavigationSuiteScaffold(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
-        content_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
+        content_color: JsonValue | Expression | Binding | None = None,
         modifier: Modifier | None = None,
         navigation_item_vertical_arrangement: _ArrangementVertical | None = None,
         primary_action_content_horizontal_alignment: _AlignmentHorizontal | None = None,
@@ -5250,9 +5279,9 @@ class NavigationSuiteScaffold(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if content_color is not None:
-            props["content_color"] = content_color
+            props["content_color"] = lower_binding(content_color, "composition")
         if navigation_item_vertical_arrangement is not None:
             props["navigation_item_vertical_arrangement"] = (
                 navigation_item_vertical_arrangement
@@ -5867,7 +5896,7 @@ class OutlinedTextField(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         is_error: bool | None = None,
-        min_lines: int | None = None,
+        min_lines: int | Binding | None = None,
         modifier: Modifier | None = None,
         on_focus: ActionTarget | None = None,
         on_hover: ActionTarget | None = None,
@@ -5920,7 +5949,7 @@ class OutlinedTextField(Component):
         if is_error is not None:
             props["is_error"] = is_error
         if min_lines is not None:
-            props["min_lines"] = min_lines
+            props["min_lines"] = lower_binding(min_lines, "composition")
         if on_focus is not None:
             props["on_focus"] = on_focus
         if on_hover is not None:
@@ -5973,9 +6002,9 @@ class PermanentDrawerSheet(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        drawer_container_color: JsonValue | Expression | None = None,
+        drawer_container_color: JsonValue | Expression | Binding | None = None,
         drawer_shape: JsonValue | None = None,
-        drawer_tonal_elevation: int | float | None = None,
+        drawer_tonal_elevation: int | float | Binding | None = None,
         modifier: Modifier | None = None,
         window_insets: JsonValue | None = None,
         children: Content = (),
@@ -6001,11 +6030,15 @@ class PermanentDrawerSheet(Component):
         """
         props: dict[str, PropValue] = {}
         if drawer_container_color is not None:
-            props["drawer_container_color"] = drawer_container_color
+            props["drawer_container_color"] = lower_binding(
+                drawer_container_color, "composition"
+            )
         if drawer_shape is not None:
             props["drawer_shape"] = drawer_shape
         if drawer_tonal_elevation is not None:
-            props["drawer_tonal_elevation"] = drawer_tonal_elevation
+            props["drawer_tonal_elevation"] = lower_binding(
+                drawer_tonal_elevation, "composition"
+            )
         if window_insets is not None:
             props["window_insets"] = window_insets
         if content is not None:
@@ -6077,9 +6110,9 @@ class PlainTooltip(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
-        content_color: JsonValue | Expression | None = None,
-        max_width: int | float | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
+        content_color: JsonValue | Expression | Binding | None = None,
+        max_width: int | float | Binding | None = None,
         modifier: Modifier | None = None,
         show_caret: bool | None = None,
         children: Content = (),
@@ -6103,11 +6136,11 @@ class PlainTooltip(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if content_color is not None:
-            props["content_color"] = content_color
+            props["content_color"] = lower_binding(content_color, "composition")
         if max_width is not None:
-            props["max_width"] = max_width
+            props["max_width"] = lower_binding(max_width, "composition")
         if show_caret is not None:
             props["show_caret"] = show_caret
         if content is not None:
@@ -6135,12 +6168,12 @@ class PrimaryScrollableTabRow(Component):
         self,
         *,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
-        content_color: JsonValue | Expression | None = None,
-        edge_padding: int | float | None = None,
-        min_tab_width: int | float | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
+        content_color: JsonValue | Expression | Binding | None = None,
+        edge_padding: int | float | Binding | None = None,
+        min_tab_width: int | float | Binding | None = None,
         modifier: Modifier | None = None,
-        selected_tab_index: int,
+        selected_tab_index: int | Binding,
         tabs: Content | None = None,
     ) -> None:
         """Construct a registered PrimaryScrollableTabRow.
@@ -6157,14 +6190,14 @@ class PrimaryScrollableTabRow(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if content_color is not None:
-            props["content_color"] = content_color
+            props["content_color"] = lower_binding(content_color, "composition")
         if edge_padding is not None:
-            props["edge_padding"] = edge_padding
+            props["edge_padding"] = lower_binding(edge_padding, "composition")
         if min_tab_width is not None:
-            props["min_tab_width"] = min_tab_width
-        props["selected_tab_index"] = selected_tab_index
+            props["min_tab_width"] = lower_binding(min_tab_width, "composition")
+        props["selected_tab_index"] = lower_binding(selected_tab_index, "composition")
         slotted: tuple[Node, ...] = ()
         if tabs is not None:
             slotted += slot_nodes(tabs, key="tabs", slot="tabs")
@@ -6181,10 +6214,10 @@ class PrimaryTabRow(Component):
         self,
         *,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
-        content_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
+        content_color: JsonValue | Expression | Binding | None = None,
         modifier: Modifier | None = None,
-        selected_tab_index: int,
+        selected_tab_index: int | Binding,
         tabs: Content | None = None,
     ) -> None:
         """Construct a registered PrimaryTabRow.
@@ -6199,10 +6232,10 @@ class PrimaryTabRow(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if content_color is not None:
-            props["content_color"] = content_color
-        props["selected_tab_index"] = selected_tab_index
+            props["content_color"] = lower_binding(content_color, "composition")
+        props["selected_tab_index"] = lower_binding(selected_tab_index, "composition")
         slotted: tuple[Node, ...] = ()
         if tabs is not None:
             slotted += slot_nodes(tabs, key="tabs", slot="tabs")
@@ -6318,13 +6351,13 @@ class RichTooltip(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        action_content_color: JsonValue | Expression | None = None,
-        container_color: JsonValue | Expression | None = None,
-        content_color: JsonValue | Expression | None = None,
-        max_width: int | float | None = None,
+        action_content_color: JsonValue | Expression | Binding | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
+        content_color: JsonValue | Expression | Binding | None = None,
+        max_width: int | float | Binding | None = None,
         modifier: Modifier | None = None,
         show_caret: bool | None = None,
-        title_content_color: JsonValue | Expression | None = None,
+        title_content_color: JsonValue | Expression | Binding | None = None,
         children: Content = (),
         content: Content | None = None,
         action: Content | None = None,
@@ -6352,17 +6385,21 @@ class RichTooltip(Component):
         """
         props: dict[str, PropValue] = {}
         if action_content_color is not None:
-            props["action_content_color"] = action_content_color
+            props["action_content_color"] = lower_binding(
+                action_content_color, "composition"
+            )
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if content_color is not None:
-            props["content_color"] = content_color
+            props["content_color"] = lower_binding(content_color, "composition")
         if max_width is not None:
-            props["max_width"] = max_width
+            props["max_width"] = lower_binding(max_width, "composition")
         if show_caret is not None:
             props["show_caret"] = show_caret
         if title_content_color is not None:
-            props["title_content_color"] = title_content_color
+            props["title_content_color"] = lower_binding(
+                title_content_color, "composition"
+            )
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -6431,7 +6468,7 @@ class Scaffold(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
         content_window_insets: JsonValue | None = None,
         floating_action_button_position: _FabPosition | None = None,
         modifier: Modifier | None = None,
@@ -6465,7 +6502,7 @@ class Scaffold(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if content_window_insets is not None:
             props["content_window_insets"] = content_window_insets
         if floating_action_button_position is not None:
@@ -6516,9 +6553,9 @@ class SearchBar(Component):
         expanded: bool,
         modifier: Modifier | None = None,
         on_expanded_change: ActionTarget,
-        shadow_elevation: int | float | None = None,
+        shadow_elevation: int | float | Binding | None = None,
         shape: JsonValue | None = None,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         window_insets: JsonValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -6547,11 +6584,11 @@ class SearchBar(Component):
         props["expanded"] = expanded
         props["on_expanded_change"] = on_expanded_change
         if shadow_elevation is not None:
-            props["shadow_elevation"] = shadow_elevation
+            props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
         if shape is not None:
             props["shape"] = shape
         if tonal_elevation is not None:
-            props["tonal_elevation"] = tonal_elevation
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if window_insets is not None:
             props["window_insets"] = window_insets
         if content is not None:
@@ -6712,12 +6749,12 @@ class SecondaryScrollableTabRow(Component):
         self,
         *,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
-        content_color: JsonValue | Expression | None = None,
-        edge_padding: int | float | None = None,
-        min_tab_width: int | float | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
+        content_color: JsonValue | Expression | Binding | None = None,
+        edge_padding: int | float | Binding | None = None,
+        min_tab_width: int | float | Binding | None = None,
         modifier: Modifier | None = None,
-        selected_tab_index: int,
+        selected_tab_index: int | Binding,
         tabs: Content | None = None,
     ) -> None:
         """Construct a registered SecondaryScrollableTabRow.
@@ -6734,14 +6771,14 @@ class SecondaryScrollableTabRow(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if content_color is not None:
-            props["content_color"] = content_color
+            props["content_color"] = lower_binding(content_color, "composition")
         if edge_padding is not None:
-            props["edge_padding"] = edge_padding
+            props["edge_padding"] = lower_binding(edge_padding, "composition")
         if min_tab_width is not None:
-            props["min_tab_width"] = min_tab_width
-        props["selected_tab_index"] = selected_tab_index
+            props["min_tab_width"] = lower_binding(min_tab_width, "composition")
+        props["selected_tab_index"] = lower_binding(selected_tab_index, "composition")
         slotted: tuple[Node, ...] = ()
         if tabs is not None:
             slotted += slot_nodes(tabs, key="tabs", slot="tabs")
@@ -6758,10 +6795,10 @@ class SecondaryTabRow(Component):
         self,
         *,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
-        content_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
+        content_color: JsonValue | Expression | Binding | None = None,
         modifier: Modifier | None = None,
-        selected_tab_index: int,
+        selected_tab_index: int | Binding,
         tabs: Content | None = None,
     ) -> None:
         """Construct a registered SecondaryTabRow.
@@ -6776,10 +6813,10 @@ class SecondaryTabRow(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if content_color is not None:
-            props["content_color"] = content_color
-        props["selected_tab_index"] = selected_tab_index
+            props["content_color"] = lower_binding(content_color, "composition")
+        props["selected_tab_index"] = lower_binding(selected_tab_index, "composition")
         slotted: tuple[Node, ...] = ()
         if tabs is not None:
             slotted += slot_nodes(tabs, key="tabs", slot="tabs")
@@ -7043,8 +7080,8 @@ class ShortNavigationBar(Component):
         *contents: Node,
         id: str | None = None,
         arrangement: _ShortNavigationBarArrangement | None = None,
-        container_color: JsonValue | Expression | None = None,
-        content_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
+        content_color: JsonValue | Expression | Binding | None = None,
         modifier: Modifier | None = None,
         window_insets: JsonValue | None = None,
         children: Content = (),
@@ -7068,9 +7105,9 @@ class ShortNavigationBar(Component):
         if arrangement is not None:
             props["arrangement"] = arrangement
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if content_color is not None:
-            props["content_color"] = content_color
+            props["content_color"] = lower_binding(content_color, "composition")
         if window_insets is not None:
             props["window_insets"] = window_insets
         if contents and children:
@@ -7151,7 +7188,7 @@ class SingleChoiceSegmentedButtonRow(Component):
         *contents: Node,
         id: str | None = None,
         modifier: Modifier | None = None,
-        space: int | float | None = None,
+        space: int | float | Binding | None = None,
         children: Content = (),
         content: Content | None = None,
     ) -> None:
@@ -7170,7 +7207,7 @@ class SingleChoiceSegmentedButtonRow(Component):
         """
         props: dict[str, PropValue] = {}
         if space is not None:
-            props["space"] = space
+            props["space"] = lower_binding(space, "composition")
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -7295,8 +7332,8 @@ class Slider(_Slider):
         on_press: ActionTarget | None = None,
         on_value_change: ActionTarget,
         on_value_change_finished: ActionTarget | None = None,
-        steps: int | None = None,
-        value: int | float,
+        steps: int | Binding | None = None,
+        value: int | float | Binding,
     ) -> SliderValue: ...
     def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
         """Construct the overload the keywords select.
@@ -7322,7 +7359,7 @@ class SmallFloatingActionButton(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
         elevation: JsonValue | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
@@ -7352,7 +7389,7 @@ class SmallFloatingActionButton(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if elevation is not None:
             props["elevation"] = elevation
         props["on_click"] = on_click
@@ -7382,11 +7419,11 @@ class Snackbar(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        action_content_color: JsonValue | Expression | None = None,
+        action_content_color: JsonValue | Expression | Binding | None = None,
         action_on_new_line: bool | None = None,
-        container_color: JsonValue | Expression | None = None,
-        content_color: JsonValue | Expression | None = None,
-        dismiss_action_content_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
+        content_color: JsonValue | Expression | Binding | None = None,
+        dismiss_action_content_color: JsonValue | Expression | Binding | None = None,
         modifier: Modifier | None = None,
         shape: JsonValue | None = None,
         children: Content = (),
@@ -7415,15 +7452,19 @@ class Snackbar(Component):
         """
         props: dict[str, PropValue] = {}
         if action_content_color is not None:
-            props["action_content_color"] = action_content_color
+            props["action_content_color"] = lower_binding(
+                action_content_color, "composition"
+            )
         if action_on_new_line is not None:
             props["action_on_new_line"] = action_on_new_line
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         if content_color is not None:
-            props["content_color"] = content_color
+            props["content_color"] = lower_binding(content_color, "composition")
         if dismiss_action_content_color is not None:
-            props["dismiss_action_content_color"] = dismiss_action_content_color
+            props["dismiss_action_content_color"] = lower_binding(
+                dismiss_action_content_color, "composition"
+            )
         if shape is not None:
             props["shape"] = shape
         if contents and children:
@@ -7520,10 +7561,10 @@ class StatefulSearchBar(Component):
         revision: int,
         selection_end: int,
         selection_start: int,
-        shadow_elevation: int | float | None = None,
+        shadow_elevation: int | float | Binding | None = None,
         shape: JsonValue | None = None,
         text: str,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         expanded_bar: Content | None = None,
         input_field: Content | None = None,
     ) -> None:
@@ -7555,12 +7596,12 @@ class StatefulSearchBar(Component):
         props["selection_end"] = selection_end
         props["selection_start"] = selection_start
         if shadow_elevation is not None:
-            props["shadow_elevation"] = shadow_elevation
+            props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
         if shape is not None:
             props["shape"] = shape
         props["text"] = text
         if tonal_elevation is not None:
-            props["tonal_elevation"] = tonal_elevation
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         slotted: tuple[Node, ...] = ()
         if expanded_bar is not None:
             slotted += slot_nodes(expanded_bar, key="expandedBar", slot="expandedBar")
@@ -7744,11 +7785,11 @@ class _Surface(Component):
         *contents: Node,
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
-        color: JsonValue | Expression | None = None,
+        color: JsonValue | Expression | Binding | None = None,
         modifier: Modifier | None = None,
-        shadow_elevation: int | float | None = None,
+        shadow_elevation: int | float | Binding | None = None,
         shape: JsonValue | None = None,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered Surface.
@@ -7771,13 +7812,13 @@ class _Surface(Component):
         if not isinstance(border, _Unset):
             props["border"] = border
         if color is not None:
-            props["color"] = color
+            props["color"] = lower_binding(color, "composition")
         if shadow_elevation is not None:
-            props["shadow_elevation"] = shadow_elevation
+            props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
         if shape is not None:
             props["shape"] = shape
         if tonal_elevation is not None:
-            props["tonal_elevation"] = tonal_elevation
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -7797,11 +7838,11 @@ class Surface(_Surface):
         *contents: Node,
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
-        color: JsonValue | Expression | None = None,
+        color: JsonValue | Expression | Binding | None = None,
         modifier: Modifier | None = None,
-        shadow_elevation: int | float | None = None,
+        shadow_elevation: int | float | Binding | None = None,
         shape: JsonValue | None = None,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         children: Content = (),
     ) -> Surface: ...
     @overload
@@ -7811,16 +7852,16 @@ class Surface(_Surface):
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
         checked: bool,
-        color: JsonValue | Expression | None = None,
+        color: JsonValue | Expression | Binding | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_checked_change: ActionTarget,
         on_focus: ActionTarget | None = None,
         on_hover: ActionTarget | None = None,
         on_press: ActionTarget | None = None,
-        shadow_elevation: int | float | None = None,
+        shadow_elevation: int | float | Binding | None = None,
         shape: JsonValue | None = None,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         children: Content = (),
     ) -> SurfaceChecked: ...
     @overload
@@ -7829,16 +7870,16 @@ class Surface(_Surface):
         *contents: Node,
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
-        color: JsonValue | Expression | None = None,
+        color: JsonValue | Expression | Binding | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
         on_focus: ActionTarget | None = None,
         on_hover: ActionTarget | None = None,
         on_press: ActionTarget | None = None,
-        shadow_elevation: int | float | None = None,
+        shadow_elevation: int | float | Binding | None = None,
         shape: JsonValue | None = None,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         children: Content = (),
     ) -> SurfaceOnClick: ...
     @overload
@@ -7847,7 +7888,7 @@ class Surface(_Surface):
         *contents: Node,
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
-        color: JsonValue | Expression | None = None,
+        color: JsonValue | Expression | Binding | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
@@ -7855,9 +7896,9 @@ class Surface(_Surface):
         on_hover: ActionTarget | None = None,
         on_press: ActionTarget | None = None,
         selected: bool,
-        shadow_elevation: int | float | None = None,
+        shadow_elevation: int | float | Binding | None = None,
         shape: JsonValue | None = None,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         children: Content = (),
     ) -> SurfaceSelected: ...
     def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
@@ -8021,7 +8062,7 @@ class Tab(Component):
         on_hover: ActionTarget | None = None,
         on_press: ActionTarget | None = None,
         selected: bool,
-        selected_content_color: JsonValue | Expression | None = None,
+        selected_content_color: JsonValue | Expression | Binding | None = None,
         icon: Content | None = None,
         text: Content | None = None,
     ) -> None:
@@ -8053,7 +8094,9 @@ class Tab(Component):
             props["on_press"] = on_press
         props["selected"] = selected
         if selected_content_color is not None:
-            props["selected_content_color"] = selected_content_color
+            props["selected_content_color"] = lower_binding(
+                selected_content_color, "composition"
+            )
         slotted: tuple[Node, ...] = ()
         if icon is not None:
             slotted += slot_nodes(icon, key="icon", slot="icon")
@@ -8079,7 +8122,7 @@ class TabContent(Component):
         on_hover: ActionTarget | None = None,
         on_press: ActionTarget | None = None,
         selected: bool,
-        selected_content_color: JsonValue | Expression | None = None,
+        selected_content_color: JsonValue | Expression | Binding | None = None,
         children: Content = (),
         content: Content | None = None,
     ) -> None:
@@ -8115,7 +8158,9 @@ class TabContent(Component):
             props["on_press"] = on_press
         props["selected"] = selected
         if selected_content_color is not None:
-            props["selected_content_color"] = selected_content_color
+            props["selected_content_color"] = lower_binding(
+                selected_content_color, "composition"
+            )
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -8140,7 +8185,7 @@ class Text(Component):
         self,
         *,
         id: str | None = None,
-        color: JsonValue | Expression | None = None,
+        color: JsonValue | Expression | Binding | None = None,
         font_resource: str | None = None,
         locale: str | None = None,
         modifier: Modifier | None = None,
@@ -8162,7 +8207,7 @@ class Text(Component):
         """
         props: dict[str, PropValue] = {}
         if color is not None:
-            props["color"] = color
+            props["color"] = lower_binding(color, "composition")
         if font_resource is not None:
             props["font_resource"] = font_resource
         if locale is not None:
@@ -8185,14 +8230,14 @@ class TextAnnotatedString(Component):
         self,
         *,
         id: str | None = None,
-        color: JsonValue | Expression | None = None,
+        color: JsonValue | Expression | Binding | None = None,
         font_family: _FontFamily | None = None,
         font_size: JsonValue | None = None,
         font_style: _FontStyle | None = None,
         font_weight: JsonValue | None | _Unset = UNSET,
         letter_spacing: JsonValue | None = None,
         line_height: JsonValue | None = None,
-        min_lines: int | None = None,
+        min_lines: int | Binding | None = None,
         modifier: Modifier | None = None,
         overflow: _TextOverflow | None = None,
         soft_wrap: bool | None = None,
@@ -8223,7 +8268,7 @@ class TextAnnotatedString(Component):
         """
         props: dict[str, PropValue] = {}
         if color is not None:
-            props["color"] = color
+            props["color"] = lower_binding(color, "composition")
         if font_family is not None:
             props["font_family"] = font_family
         if font_size is not None:
@@ -8237,7 +8282,7 @@ class TextAnnotatedString(Component):
         if line_height is not None:
             props["line_height"] = line_height
         if min_lines is not None:
-            props["min_lines"] = min_lines
+            props["min_lines"] = lower_binding(min_lines, "composition")
         if overflow is not None:
             props["overflow"] = overflow
         if soft_wrap is not None:
@@ -8474,7 +8519,7 @@ class TimePickerDialog(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        container_color: JsonValue | Expression | None = None,
+        container_color: JsonValue | Expression | Binding | None = None,
         modifier: Modifier | None = None,
         on_dismiss_request: ActionTarget,
         shape: JsonValue | None = None,
@@ -8506,7 +8551,7 @@ class TimePickerDialog(Component):
         """
         props: dict[str, PropValue] = {}
         if container_color is not None:
-            props["container_color"] = container_color
+            props["container_color"] = lower_binding(container_color, "composition")
         props["on_dismiss_request"] = on_dismiss_request
         if shape is not None:
             props["shape"] = shape
@@ -8634,7 +8679,7 @@ class TopAppBar(Component):
         *,
         id: str | None = None,
         colors: JsonValue | None = None,
-        expanded_height: int | float | None = None,
+        expanded_height: int | float | Binding | None = None,
         modifier: Modifier | None = None,
         window_insets: JsonValue | None = None,
         actions: Content | None = None,
@@ -8657,7 +8702,7 @@ class TopAppBar(Component):
         if colors is not None:
             props["colors"] = colors
         if expanded_height is not None:
-            props["expanded_height"] = expanded_height
+            props["expanded_height"] = lower_binding(expanded_height, "composition")
         if window_insets is not None:
             props["window_insets"] = window_insets
         slotted: tuple[Node, ...] = ()
@@ -8732,9 +8777,9 @@ class VerticalDivider(Component):
         self,
         *,
         id: str | None = None,
-        color: JsonValue | Expression | None = None,
+        color: JsonValue | Expression | Binding | None = None,
         modifier: Modifier | None = None,
-        thickness: int | float | None = None,
+        thickness: int | float | Binding | None = None,
     ) -> None:
         """Construct a registered VerticalDivider.
 
@@ -8746,9 +8791,9 @@ class VerticalDivider(Component):
         """
         props: dict[str, PropValue] = {}
         if color is not None:
-            props["color"] = color
+            props["color"] = lower_binding(color, "composition")
         if thickness is not None:
-            props["thickness"] = thickness
+            props["thickness"] = lower_binding(thickness, "composition")
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
@@ -8981,13 +9026,13 @@ class CircularProgressIndicatorProgress(CircularProgressIndicator):
         self,
         *,
         id: str | None = None,
-        color: JsonValue | Expression | None = None,
-        gap_size: int | float | None = None,
+        color: JsonValue | Expression | Binding | None = None,
+        gap_size: int | float | Binding | None = None,
         modifier: Modifier | None = None,
-        progress: int | float,
+        progress: int | float | Binding,
         stroke_cap: _StrokeCap | None = None,
-        stroke_width: int | float | None = None,
-        track_color: JsonValue | Expression | None = None,
+        stroke_width: int | float | Binding | None = None,
+        track_color: JsonValue | Expression | Binding | None = None,
     ) -> None:
         """Construct a registered CircularProgressIndicatorProgress.
 
@@ -9003,16 +9048,16 @@ class CircularProgressIndicatorProgress(CircularProgressIndicator):
         """
         props: dict[str, PropValue] = {}
         if color is not None:
-            props["color"] = color
+            props["color"] = lower_binding(color, "composition")
         if gap_size is not None:
-            props["gap_size"] = gap_size
-        props["progress"] = progress
+            props["gap_size"] = lower_binding(gap_size, "composition")
+        props["progress"] = lower_binding(progress, "composition")
         if stroke_cap is not None:
             props["stroke_cap"] = stroke_cap
         if stroke_width is not None:
-            props["stroke_width"] = stroke_width
+            props["stroke_width"] = lower_binding(stroke_width, "composition")
         if track_color is not None:
-            props["track_color"] = track_color
+            props["track_color"] = lower_binding(track_color, "composition")
         Component.__init__(self, id=id, children=(), modifier=modifier, **props)
 
 
@@ -9148,11 +9193,11 @@ class LinearProgressIndicatorWithoutProgress(LinearProgressIndicator):
         self,
         *,
         id: str | None = None,
-        color: JsonValue | Expression | None = None,
-        gap_size: int | float | None = None,
+        color: JsonValue | Expression | Binding | None = None,
+        gap_size: int | float | Binding | None = None,
         modifier: Modifier | None = None,
         stroke_cap: _StrokeCap | None = None,
-        track_color: JsonValue | Expression | None = None,
+        track_color: JsonValue | Expression | Binding | None = None,
     ) -> None:
         """Construct a registered LinearProgressIndicatorWithoutProgress.
 
@@ -9166,13 +9211,13 @@ class LinearProgressIndicatorWithoutProgress(LinearProgressIndicator):
         """
         props: dict[str, PropValue] = {}
         if color is not None:
-            props["color"] = color
+            props["color"] = lower_binding(color, "composition")
         if gap_size is not None:
-            props["gap_size"] = gap_size
+            props["gap_size"] = lower_binding(gap_size, "composition")
         if stroke_cap is not None:
             props["stroke_cap"] = stroke_cap
         if track_color is not None:
-            props["track_color"] = track_color
+            props["track_color"] = lower_binding(track_color, "composition")
         Component.__init__(self, id=id, children=(), modifier=modifier, **props)
 
 
@@ -9334,8 +9379,8 @@ class SliderValue(Slider):
         on_press: ActionTarget | None = None,
         on_value_change: ActionTarget,
         on_value_change_finished: ActionTarget | None = None,
-        steps: int | None = None,
-        value: int | float,
+        steps: int | Binding | None = None,
+        value: int | float | Binding,
     ) -> None:
         """Construct a registered SliderValue.
 
@@ -9368,8 +9413,8 @@ class SliderValue(Slider):
         if on_value_change_finished is not None:
             props["on_value_change_finished"] = on_value_change_finished
         if steps is not None:
-            props["steps"] = steps
-        props["value"] = value
+            props["steps"] = lower_binding(steps, "composition")
+        props["value"] = lower_binding(value, "composition")
         Component.__init__(self, id=id, children=(), modifier=modifier, **props)
 
 
@@ -9407,16 +9452,16 @@ class SurfaceChecked(Surface):
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
         checked: bool,
-        color: JsonValue | Expression | None = None,
+        color: JsonValue | Expression | Binding | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_checked_change: ActionTarget,
         on_focus: ActionTarget | None = None,
         on_hover: ActionTarget | None = None,
         on_press: ActionTarget | None = None,
-        shadow_elevation: int | float | None = None,
+        shadow_elevation: int | float | Binding | None = None,
         shape: JsonValue | None = None,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered SurfaceChecked.
@@ -9446,7 +9491,7 @@ class SurfaceChecked(Surface):
             props["border"] = border
         props["checked"] = checked
         if color is not None:
-            props["color"] = color
+            props["color"] = lower_binding(color, "composition")
         if enabled is not None:
             props["enabled"] = enabled
         props["on_checked_change"] = on_checked_change
@@ -9457,11 +9502,11 @@ class SurfaceChecked(Surface):
         if on_press is not None:
             props["on_press"] = on_press
         if shadow_elevation is not None:
-            props["shadow_elevation"] = shadow_elevation
+            props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
         if shape is not None:
             props["shape"] = shape
         if tonal_elevation is not None:
-            props["tonal_elevation"] = tonal_elevation
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -9501,16 +9546,16 @@ class SurfaceOnClick(Surface):
         *contents: Node,
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
-        color: JsonValue | Expression | None = None,
+        color: JsonValue | Expression | Binding | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
         on_focus: ActionTarget | None = None,
         on_hover: ActionTarget | None = None,
         on_press: ActionTarget | None = None,
-        shadow_elevation: int | float | None = None,
+        shadow_elevation: int | float | Binding | None = None,
         shape: JsonValue | None = None,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered SurfaceOnClick.
@@ -9538,7 +9583,7 @@ class SurfaceOnClick(Surface):
         if not isinstance(border, _Unset):
             props["border"] = border
         if color is not None:
-            props["color"] = color
+            props["color"] = lower_binding(color, "composition")
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
@@ -9549,11 +9594,11 @@ class SurfaceOnClick(Surface):
         if on_press is not None:
             props["on_press"] = on_press
         if shadow_elevation is not None:
-            props["shadow_elevation"] = shadow_elevation
+            props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
         if shape is not None:
             props["shape"] = shape
         if tonal_elevation is not None:
-            props["tonal_elevation"] = tonal_elevation
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -9595,7 +9640,7 @@ class SurfaceSelected(Surface):
         *contents: Node,
         id: str | None = None,
         border: JsonValue | None | _Unset = UNSET,
-        color: JsonValue | Expression | None = None,
+        color: JsonValue | Expression | Binding | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_click: ActionTarget,
@@ -9603,9 +9648,9 @@ class SurfaceSelected(Surface):
         on_hover: ActionTarget | None = None,
         on_press: ActionTarget | None = None,
         selected: bool,
-        shadow_elevation: int | float | None = None,
+        shadow_elevation: int | float | Binding | None = None,
         shape: JsonValue | None = None,
-        tonal_elevation: int | float | None = None,
+        tonal_elevation: int | float | Binding | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered SurfaceSelected.
@@ -9634,7 +9679,7 @@ class SurfaceSelected(Surface):
         if not isinstance(border, _Unset):
             props["border"] = border
         if color is not None:
-            props["color"] = color
+            props["color"] = lower_binding(color, "composition")
         if enabled is not None:
             props["enabled"] = enabled
         props["on_click"] = on_click
@@ -9646,11 +9691,11 @@ class SurfaceSelected(Surface):
             props["on_press"] = on_press
         props["selected"] = selected
         if shadow_elevation is not None:
-            props["shadow_elevation"] = shadow_elevation
+            props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
         if shape is not None:
             props["shape"] = shape
         if tonal_elevation is not None:
-            props["tonal_elevation"] = tonal_elevation
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id

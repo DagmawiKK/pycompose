@@ -25,10 +25,12 @@ def test_a_dp_prop_is_read_in_the_unit_the_app_stated() -> None:
     the host invented.
     """
     block = render("HorizontalDivider", components()["HorizontalDivider"])
-    assert "val thicknessWire = model.props.thickness" in block
+    assert "val thicknessState =" in block
+    assert "model.props.thickness?.let { wire ->" in block
+    assert "plain.jsonPrimitive.double.dp" in block
     assert (
-        "val thicknessValue = if (thicknessWire != null) thicknessWire.dp "
-        "else androidx.compose.material3.DividerDefaults.Thickness" in block
+        "val thicknessValue = thicknessState?.value ?: "
+        "androidx.compose.material3.DividerDefaults.Thickness" in block
     )
     assert "thickness = thicknessValue," in block
 
@@ -288,8 +290,8 @@ def test_an_index_prop_is_guarded_by_the_items_it_indexes() -> None:
     entry = components()["PrimaryTabRow"]
     block = render_one("PrimaryTabRow", entry)
     assert (
-        "val selectedTabIndexValue = context.index(model.props.selectedTabIndex, "
-        'model.children.inSlot("tabs"), node.id)'
+        "val selectedTabIndexValue = context.index("
+        'selectedTabIndexState.value.toLong(), model.children.inSlot("tabs"), node.id)'
     ) in block
     assert "if (selectedTabIndexValue != null) {" in block
     assert "selectedTabIndex = selectedTabIndexValue," in block

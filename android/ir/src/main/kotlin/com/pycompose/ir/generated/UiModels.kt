@@ -43,7 +43,7 @@ data class AlertDialogProps(
     val `shape`: JsonElement? = null,
     val `textContentColor`: JsonElement? = null,
     val `titleContentColor`: JsonElement? = null,
-    val `tonalElevation`: Double? = null,
+    val `tonalElevation`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -177,7 +177,7 @@ data class BasicAlertDialog(
 
 @Serializable
 data class BasicTextProps(
-    val `minLines`: Long = 1L,
+    val `minLines`: JsonElement = JsonPrimitive(1L),
     override val `modifier`: JsonObject? = null,
     val `overflow`: JsonElement? = null,
     val `softWrap`: Boolean = true,
@@ -200,7 +200,7 @@ data class BasicText(
 @Serializable
 data class BasicTextFieldProps(
     val `enabled`: Boolean = true,
-    val `minLines`: Long = 1L,
+    val `minLines`: JsonElement = JsonPrimitive(1L),
     override val `modifier`: JsonObject? = null,
     val `onFocus`: String? = null,
     val `onHover`: String? = null,
@@ -229,7 +229,7 @@ data class BottomAppBarProps(
     val `containerColor`: JsonElement? = null,
     val `contentPadding`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `tonalElevation`: Double? = null,
+    val `tonalElevation`: JsonElement? = null,
     val `windowInsets`: JsonElement? = null,
 ) : UiProps
 
@@ -250,7 +250,7 @@ data class BottomAppBarActionsProps(
     val `containerColor`: JsonElement? = null,
     val `contentPadding`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `tonalElevation`: Double? = null,
+    val `tonalElevation`: JsonElement? = null,
     val `windowInsets`: JsonElement? = null,
 ) : UiProps
 
@@ -271,12 +271,12 @@ data class BottomSheetScaffoldProps(
     val `containerColor`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `sheetContainerColor`: JsonElement? = null,
-    val `sheetMaxWidth`: Double? = null,
-    val `sheetPeekHeight`: Double? = null,
-    val `sheetShadowElevation`: Double? = null,
+    val `sheetMaxWidth`: JsonElement? = null,
+    val `sheetPeekHeight`: JsonElement? = null,
+    val `sheetShadowElevation`: JsonElement? = null,
     val `sheetShape`: JsonElement? = null,
     val `sheetSwipeEnabled`: Boolean = true,
-    val `sheetTonalElevation`: Double? = null,
+    val `sheetTonalElevation`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -388,7 +388,7 @@ data class CardWithoutOnClick(
 @Serializable
 data class CenterAlignedTopAppBarProps(
     val `colors`: JsonElement? = null,
-    val `expandedHeight`: Double? = null,
+    val `expandedHeight`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `windowInsets`: JsonElement? = null,
 ) : UiProps
@@ -432,10 +432,10 @@ data class Checkbox(
 @Serializable
 data class CircularProgressIndicatorProps(
     val `color`: JsonElement? = null,
-    val `gapSize`: Double? = null,
+    val `gapSize`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `strokeCap`: JsonElement? = null,
-    val `strokeWidth`: Double? = null,
+    val `strokeWidth`: JsonElement? = null,
     val `trackColor`: JsonElement? = null,
 ) : UiProps
 
@@ -454,11 +454,11 @@ data class CircularProgressIndicator(
 @Serializable
 data class CircularProgressIndicatorProgressProps(
     val `color`: JsonElement? = null,
-    val `gapSize`: Double? = null,
+    val `gapSize`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `progress`: Double,
+    val `progress`: JsonElement,
     val `strokeCap`: JsonElement? = null,
-    val `strokeWidth`: Double? = null,
+    val `strokeWidth`: JsonElement? = null,
     val `trackColor`: JsonElement? = null,
 ) : UiProps
 
@@ -545,7 +545,7 @@ data class DatePickerDialogProps(
     override val `modifier`: JsonObject? = null,
     val `onDismissRequest`: String,
     val `shape`: JsonElement? = null,
-    val `tonalElevation`: Double? = null,
+    val `tonalElevation`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -581,7 +581,7 @@ data class DisableSelection(
 data class DismissibleDrawerSheetProps(
     val `drawerContainerColor`: JsonElement? = null,
     val `drawerShape`: JsonElement? = null,
-    val `drawerTonalElevation`: Double? = null,
+    val `drawerTonalElevation`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `windowInsets`: JsonElement? = null,
 ) : UiProps
@@ -623,9 +623,9 @@ data class DockedSearchBarProps(
     val `expanded`: Boolean,
     override val `modifier`: JsonObject? = null,
     val `onExpandedChange`: String,
-    val `shadowElevation`: Double? = null,
+    val `shadowElevation`: JsonElement? = null,
     val `shape`: JsonElement? = null,
-    val `tonalElevation`: Double? = null,
+    val `tonalElevation`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -647,9 +647,9 @@ data class DropdownMenuProps(
     val `expanded`: Boolean,
     override val `modifier`: JsonObject? = null,
     val `onDismissRequest`: String,
-    val `shadowElevation`: Double? = null,
+    val `shadowElevation`: JsonElement? = null,
     val `shape`: JsonElement? = null,
-    val `tonalElevation`: Double? = null,
+    val `tonalElevation`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -842,9 +842,9 @@ data class ElevatedSuggestionChip(
 @Serializable
 data class ExpandedDockedSearchBarProps(
     override val `modifier`: JsonObject? = null,
-    val `shadowElevation`: Double? = null,
+    val `shadowElevation`: JsonElement? = null,
     val `shape`: JsonElement? = null,
-    val `tonalElevation`: Double? = null,
+    val `tonalElevation`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -863,8 +863,8 @@ data class ExpandedDockedSearchBar(
 data class ExpandedFullScreenSearchBarProps(
     val `collapsedShape`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `shadowElevation`: Double? = null,
-    val `tonalElevation`: Double? = null,
+    val `shadowElevation`: JsonElement? = null,
+    val `tonalElevation`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -889,9 +889,9 @@ data class ExposedDropdownMenuProps(
     val `offset`: Double? = null,
     val `onDismissRequest`: String,
     val `onScrollIdle`: String? = null,
-    val `shadowElevation`: Double? = null,
+    val `shadowElevation`: JsonElement? = null,
     val `shape`: JsonElement? = null,
-    val `tonalElevation`: Double? = null,
+    val `tonalElevation`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -1170,7 +1170,7 @@ data class FloatingActionButton(
 @Serializable
 data class FlowColumnProps(
     val `itemHorizontalAlignment`: JsonElement? = null,
-    val `maxItemsInEachColumn`: Long = 2147483647L,
+    val `maxItemsInEachColumn`: JsonElement = JsonPrimitive(2147483647L),
     override val `modifier`: JsonObject? = null,
     val `verticalArrangement`: JsonElement? = null,
 ) : UiProps
@@ -1190,7 +1190,7 @@ data class FlowColumn(
 @Serializable
 data class FlowRowProps(
     val `itemVerticalAlignment`: JsonElement? = null,
-    val `maxItemsInEachRow`: Long = 2147483647L,
+    val `maxItemsInEachRow`: JsonElement = JsonPrimitive(2147483647L),
     override val `modifier`: JsonObject? = null,
     val `verticalArrangement`: JsonElement? = null,
 ) : UiProps
@@ -1211,7 +1211,7 @@ data class FlowRow(
 data class HorizontalDividerProps(
     val `color`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `thickness`: Double? = null,
+    val `thickness`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -1409,9 +1409,9 @@ data class LargeFloatingActionButton(
 
 @Serializable
 data class LargeTopAppBarProps(
-    val `collapsedHeight`: Double? = null,
+    val `collapsedHeight`: JsonElement? = null,
     val `colors`: JsonElement? = null,
-    val `expandedHeight`: Double? = null,
+    val `expandedHeight`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `windowInsets`: JsonElement? = null,
 ) : UiProps
@@ -1506,9 +1506,9 @@ data class LeadingIconTab(
 @Serializable
 data class LinearProgressIndicatorProps(
     val `color`: JsonElement? = null,
-    val `gapSize`: Double? = null,
+    val `gapSize`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `progress`: Double,
+    val `progress`: JsonElement,
     val `strokeCap`: JsonElement? = null,
     val `trackColor`: JsonElement? = null,
 ) : UiProps
@@ -1528,7 +1528,7 @@ data class LinearProgressIndicator(
 @Serializable
 data class LinearProgressIndicatorWithoutProgressProps(
     val `color`: JsonElement? = null,
-    val `gapSize`: Double? = null,
+    val `gapSize`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `strokeCap`: JsonElement? = null,
     val `trackColor`: JsonElement? = null,
@@ -1549,8 +1549,8 @@ data class LinearProgressIndicatorWithoutProgress(
 @Serializable
 data class ListItemProps(
     override val `modifier`: JsonObject? = null,
-    val `shadowElevation`: Double? = null,
-    val `tonalElevation`: Double? = null,
+    val `shadowElevation`: JsonElement? = null,
+    val `tonalElevation`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -1567,9 +1567,9 @@ data class ListItem(
 
 @Serializable
 data class MediumTopAppBarProps(
-    val `collapsedHeight`: Double? = null,
+    val `collapsedHeight`: JsonElement? = null,
     val `colors`: JsonElement? = null,
-    val `expandedHeight`: Double? = null,
+    val `expandedHeight`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `windowInsets`: JsonElement? = null,
 ) : UiProps
@@ -1596,9 +1596,9 @@ data class ModalBottomSheetProps(
     val `scrimColor`: JsonElement? = null,
     val `shape`: JsonElement? = null,
     val `sheetGesturesEnabled`: Boolean = true,
-    val `sheetMaxWidth`: Double? = null,
+    val `sheetMaxWidth`: JsonElement? = null,
     val `skipPartiallyExpanded`: Boolean = false,
-    val `tonalElevation`: Double? = null,
+    val `tonalElevation`: JsonElement? = null,
     val `value`: String? = null,
 ) : UiProps
 
@@ -1618,7 +1618,7 @@ data class ModalBottomSheet(
 data class ModalDrawerSheetProps(
     val `drawerContainerColor`: JsonElement? = null,
     val `drawerShape`: JsonElement? = null,
-    val `drawerTonalElevation`: Double? = null,
+    val `drawerTonalElevation`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `windowInsets`: JsonElement? = null,
 ) : UiProps
@@ -1660,7 +1660,7 @@ data class ModalNavigationDrawer(
 data class ModalWideNavigationRailProps(
     val `arrangement`: JsonElement? = null,
     val `collapsedShape`: JsonElement? = null,
-    val `expandedHeaderTopPadding`: Double? = null,
+    val `expandedHeaderTopPadding`: JsonElement? = null,
     val `expandedShape`: JsonElement? = null,
     val `hideOnCollapse`: Boolean = false,
     override val `modifier`: JsonObject? = null,
@@ -1708,7 +1708,7 @@ data class MultiChoiceSegmentedButton(
 @Serializable
 data class MultiChoiceSegmentedButtonRowProps(
     override val `modifier`: JsonObject? = null,
-    val `space`: Double? = null,
+    val `space`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -1727,7 +1727,7 @@ data class MultiChoiceSegmentedButtonRow(
 data class NavigationBarProps(
     val `containerColor`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `tonalElevation`: Double? = null,
+    val `tonalElevation`: JsonElement? = null,
     val `windowInsets`: JsonElement? = null,
 ) : UiProps
 
@@ -2090,7 +2090,7 @@ data class OutlinedTextFieldProps(
     val `colors`: JsonElement? = null,
     val `enabled`: Boolean = true,
     val `isError`: Boolean = false,
-    val `minLines`: Long = 1L,
+    val `minLines`: JsonElement = JsonPrimitive(1L),
     override val `modifier`: JsonObject? = null,
     val `onFocus`: String? = null,
     val `onHover`: String? = null,
@@ -2119,7 +2119,7 @@ data class OutlinedTextField(
 data class PermanentDrawerSheetProps(
     val `drawerContainerColor`: JsonElement? = null,
     val `drawerShape`: JsonElement? = null,
-    val `drawerTonalElevation`: Double? = null,
+    val `drawerTonalElevation`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `windowInsets`: JsonElement? = null,
 ) : UiProps
@@ -2157,7 +2157,7 @@ data class PermanentNavigationDrawer(
 data class PlainTooltipProps(
     val `containerColor`: JsonElement? = null,
     val `contentColor`: JsonElement? = null,
-    val `maxWidth`: Double? = null,
+    val `maxWidth`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `showCaret`: Boolean = false,
 ) : UiProps
@@ -2178,10 +2178,10 @@ data class PlainTooltip(
 data class PrimaryScrollableTabRowProps(
     val `containerColor`: JsonElement? = null,
     val `contentColor`: JsonElement? = null,
-    val `edgePadding`: Double? = null,
-    val `minTabWidth`: Double? = null,
+    val `edgePadding`: JsonElement? = null,
+    val `minTabWidth`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `selectedTabIndex`: Long,
+    val `selectedTabIndex`: JsonElement,
 ) : UiProps
 
 @Serializable
@@ -2201,7 +2201,7 @@ data class PrimaryTabRowProps(
     val `containerColor`: JsonElement? = null,
     val `contentColor`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `selectedTabIndex`: Long,
+    val `selectedTabIndex`: JsonElement,
 ) : UiProps
 
 @Serializable
@@ -2265,7 +2265,7 @@ data class RichTooltipProps(
     val `actionContentColor`: JsonElement? = null,
     val `containerColor`: JsonElement? = null,
     val `contentColor`: JsonElement? = null,
-    val `maxWidth`: Double? = null,
+    val `maxWidth`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `showCaret`: Boolean = false,
     val `titleContentColor`: JsonElement? = null,
@@ -2326,9 +2326,9 @@ data class SearchBarProps(
     val `expanded`: Boolean,
     override val `modifier`: JsonObject? = null,
     val `onExpandedChange`: String,
-    val `shadowElevation`: Double? = null,
+    val `shadowElevation`: JsonElement? = null,
     val `shape`: JsonElement? = null,
-    val `tonalElevation`: Double? = null,
+    val `tonalElevation`: JsonElement? = null,
     val `windowInsets`: JsonElement? = null,
 ) : UiProps
 
@@ -2394,10 +2394,10 @@ data class SearchBarStateInputField(
 data class SecondaryScrollableTabRowProps(
     val `containerColor`: JsonElement? = null,
     val `contentColor`: JsonElement? = null,
-    val `edgePadding`: Double? = null,
-    val `minTabWidth`: Double? = null,
+    val `edgePadding`: JsonElement? = null,
+    val `minTabWidth`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `selectedTabIndex`: Long,
+    val `selectedTabIndex`: JsonElement,
 ) : UiProps
 
 @Serializable
@@ -2417,7 +2417,7 @@ data class SecondaryTabRowProps(
     val `containerColor`: JsonElement? = null,
     val `contentColor`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `selectedTabIndex`: Long,
+    val `selectedTabIndex`: JsonElement,
 ) : UiProps
 
 @Serializable
@@ -2571,7 +2571,7 @@ data class ShortNavigationBarItem(
 @Serializable
 data class SingleChoiceSegmentedButtonRowProps(
     override val `modifier`: JsonObject? = null,
-    val `space`: Double? = null,
+    val `space`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -2622,8 +2622,8 @@ data class SliderValueProps(
     val `onPress`: String? = null,
     val `onValueChange`: String,
     val `onValueChangeFinished`: String? = null,
-    val `steps`: Long = 0L,
-    val `value`: Double,
+    val `steps`: JsonElement = JsonPrimitive(0L),
+    val `value`: JsonElement,
 ) : UiProps
 
 @Serializable
@@ -2732,10 +2732,10 @@ data class StatefulSearchBarProps(
     val `revision`: Long,
     val `selectionEnd`: Long,
     val `selectionStart`: Long,
-    val `shadowElevation`: Double? = null,
+    val `shadowElevation`: JsonElement? = null,
     val `shape`: JsonElement? = null,
     val `text`: String,
-    val `tonalElevation`: Double? = null,
+    val `tonalElevation`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -2810,9 +2810,9 @@ data class SurfaceProps(
     val `border`: OptionalValue = OptionalValue.Absent,
     val `color`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `shadowElevation`: Double? = null,
+    val `shadowElevation`: JsonElement? = null,
     val `shape`: JsonElement? = null,
-    val `tonalElevation`: Double? = null,
+    val `tonalElevation`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -2838,9 +2838,9 @@ data class SurfaceCheckedProps(
     val `onFocus`: String? = null,
     val `onHover`: String? = null,
     val `onPress`: String? = null,
-    val `shadowElevation`: Double? = null,
+    val `shadowElevation`: JsonElement? = null,
     val `shape`: JsonElement? = null,
-    val `tonalElevation`: Double? = null,
+    val `tonalElevation`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -2865,9 +2865,9 @@ data class SurfaceOnClickProps(
     val `onFocus`: String? = null,
     val `onHover`: String? = null,
     val `onPress`: String? = null,
-    val `shadowElevation`: Double? = null,
+    val `shadowElevation`: JsonElement? = null,
     val `shape`: JsonElement? = null,
-    val `tonalElevation`: Double? = null,
+    val `tonalElevation`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -2893,9 +2893,9 @@ data class SurfaceSelectedProps(
     val `onHover`: String? = null,
     val `onPress`: String? = null,
     val `selected`: Boolean,
-    val `shadowElevation`: Double? = null,
+    val `shadowElevation`: JsonElement? = null,
     val `shape`: JsonElement? = null,
-    val `tonalElevation`: Double? = null,
+    val `tonalElevation`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -3036,7 +3036,7 @@ data class TextAnnotatedStringProps(
     val `fontWeight`: OptionalValue = OptionalValue.Absent,
     val `letterSpacing`: JsonElement? = null,
     val `lineHeight`: JsonElement? = null,
-    val `minLines`: Long = 1L,
+    val `minLines`: JsonElement = JsonPrimitive(1L),
     override val `modifier`: JsonObject? = null,
     val `overflow`: JsonElement? = null,
     val `softWrap`: Boolean = true,
@@ -3205,7 +3205,7 @@ data class TooltipBox(
 @Serializable
 data class TopAppBarProps(
     val `colors`: JsonElement? = null,
-    val `expandedHeight`: Double? = null,
+    val `expandedHeight`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `windowInsets`: JsonElement? = null,
 ) : UiProps
@@ -3250,7 +3250,7 @@ data class TriStateCheckbox(
 data class VerticalDividerProps(
     val `color`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `thickness`: Double? = null,
+    val `thickness`: JsonElement? = null,
 ) : UiProps
 
 @Serializable

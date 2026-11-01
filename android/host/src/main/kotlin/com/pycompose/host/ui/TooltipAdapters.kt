@@ -8,7 +8,6 @@ import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TooltipScope
-import androidx.compose.ui.unit.dp
 import com.pycompose.renderer.ComponentRegistry
 import com.pycompose.renderer.generated.ValueResolver
 import com.pycompose.renderer.tooltipState
@@ -49,12 +48,12 @@ private fun ComponentRegistry.Builder.plainTooltips(): ComponentRegistry.Builder
         PlainTooltip(
             modifier = modifier,
             caretShape = if (tip.props.showCaret) TooltipDefaults.caretShape() else null,
-            maxWidth = tip.props.maxWidth?.dp ?: TooltipDefaults.plainTooltipMaxWidth,
+            maxWidth = dpProp(tip.props.maxWidth, TooltipDefaults.plainTooltipMaxWidth),
             contentColor =
-                tip.props.contentColor?.let { nativeColor(it) }
+                tip.props.contentColor?.let { context.nativeColor(it) }
                     ?: TooltipDefaults.plainTooltipContentColor,
             containerColor =
-                tip.props.containerColor?.let { nativeColor(it) }
+                tip.props.containerColor?.let { context.nativeColor(it) }
                     ?: TooltipDefaults.plainTooltipContainerColor,
             content = { context.children(tip.children) },
         )
@@ -68,13 +67,13 @@ private fun ComponentRegistry.Builder.richTooltips(): ComponentRegistry.Builder 
             title = context.slot(tip.children, "title"),
             action = context.slot(tip.children, "action"),
             caretShape = if (tip.props.showCaret) TooltipDefaults.caretShape() else null,
-            maxWidth = tip.props.maxWidth?.dp ?: TooltipDefaults.richTooltipMaxWidth,
+            maxWidth = dpProp(tip.props.maxWidth, TooltipDefaults.richTooltipMaxWidth),
             colors =
                 TooltipDefaults.richTooltipColors(
-                    containerColor = nativeColor(tip.props.containerColor),
-                    contentColor = nativeColor(tip.props.contentColor),
-                    titleContentColor = nativeColor(tip.props.titleContentColor),
-                    actionContentColor = nativeColor(tip.props.actionContentColor),
+                    containerColor = context.nativeColor(tip.props.containerColor),
+                    contentColor = context.nativeColor(tip.props.contentColor),
+                    titleContentColor = context.nativeColor(tip.props.titleContentColor),
+                    actionContentColor = context.nativeColor(tip.props.actionContentColor),
                 ),
             text = { context.children(tip.children) },
         )

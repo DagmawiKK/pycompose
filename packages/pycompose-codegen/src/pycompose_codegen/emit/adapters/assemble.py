@@ -24,6 +24,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from pycompose.model.catalog.lock import REGISTRY
 from pycompose_codegen.emit.adapters.eligibility import held_props, is_mechanical
 from pycompose_codegen.emit.adapters.fragments import Fragments
 from pycompose_codegen.emit.adapters.imports import extra_imports
@@ -38,8 +39,17 @@ from pycompose_codegen.emit.adapters.state import host_locals, resolve_construct
 from pycompose_codegen.emit.adapters.text_echo import echoed_text
 from pycompose_codegen.emit.overloads import native_name
 
+CATALOG_CONVERTERS: dict[str, dict[str, Any]] = {
+    name: dict(spec) for name, spec in REGISTRY.sections.get("converters", {}).items()
+}
+"""The catalog's own animation converters: what a bare entry renders against."""
 
-def render(name: str, entry: dict[str, Any]) -> str:
+
+def render(
+    name: str,
+    entry: dict[str, Any],
+    converters: dict[str, dict[str, Any]] | None = None,
+) -> str:
     """Render one adapter, or an empty string when it cannot be derived.
 
     A prop is passed only when its generated Kotlin property is non-null, which
@@ -70,12 +80,15 @@ def render(name: str, entry: dict[str, Any]) -> str:
     Args:
         name: The component's schema name.
         entry: Its schema entry.
+        converters: The lock's animation converters, by Kotlin type; the
+            catalog's own when omitted.
 
     Returns:
         The adapter as Kotlin, or an empty string when it cannot be derived.
     """
     if not is_mechanical(entry):
         return ""
+    animations = CATALOG_CONVERTERS if converters is None else converters
 
     out = Fragments()
     out.arguments.append("modifier = modifier")
@@ -97,7 +110,7 @@ def render(name: str, entry: dict[str, Any]) -> str:
             # reports state, a held prop carries the app's desired state, and a
             # protocol prop steers the host itself: none names a native parameter.
             continue
-        if not render_prop(prop, spec, out):
+        if not render_prop(prop, spec, out, animations):
             return ""
     gate = " && ".join(filter(None, [host_locals(entry, out), *out.gates])) or None
     for slot_name, slot in sorted(entry.get("slots", {}).items()):
@@ -168,9 +181,10 @@ def render_file(registry: dict[str, Any]) -> str:
     blocks: list[str] = []
     imports: set[str] = set()
     opt_ins: set[str] = set()
+    converters = registry.get("converters", {})
     for name in sorted(registry["components"]):
         entry = registry["components"][name]
-        block = render(name, entry)
+        block = render(name, entry, converters)
         if block:
             blocks.append(block)
             opt_ins.update(entry.get("optIn", ()))
@@ -183,7 +197,7 @@ def render_file(registry: dict[str, Any]) -> str:
             imports.update(f"import {scope}" for scope in scopes)
             for extra in composables(native, entry):
                 imports.add(f"import {package}.{extra}")
-            for qualified in extra_imports(entry):
+            for qualified in extra_imports(entry, converters):
                 imports.add(f"import {qualified}")
             imports.add(f"import com.pycompose.ir.generated.{name} as {name}Node")
 

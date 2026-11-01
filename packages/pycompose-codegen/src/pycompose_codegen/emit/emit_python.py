@@ -23,6 +23,7 @@ from pycompose_codegen.emit.python_layout import (
     docstring_arg,
     overloads_line,
 )
+from pycompose_codegen.emit.python_props import python_argument, stored_value
 
 
 def render_python_components(
@@ -132,6 +133,7 @@ _FIRST_PARTY = tuple(
             ("pycompose.model.nodes.node", ("Node",)),
             ("pycompose.model.nodes.props", ("JsonValue",)),
             ("pycompose.model.nodes.values", ("UNSET", "_Unset")),
+            ("pycompose.model.programs.bindings", ("Binding", "lower_binding")),
             ("pycompose.ui.component", ("ActionTarget", "Component", "PropValue")),
             ("pycompose.ui.composition", ("Content", "content_nodes", "slot_nodes")),
             ("pycompose.ui.modifier", ("Modifier",)),
@@ -155,33 +157,6 @@ def _imports(body: str) -> list[str]:
 
     standard = ["import json"] * ("json" in used) + block(_STANDARD)
     return [*standard, "", *block(_FIRST_PARTY)]
-
-
-def _python_type(
-    component: str,
-    name: str,
-    prop: dict[str, Any],
-    aliases: Mapping[tuple[str, str], str],
-) -> str:
-    if prop["type"] == "enum":
-        return aliases[(component, name)]
-    if prop["type"] == "color":
-        # A colour may follow a holder's stream, evaluated by the host.
-        return f"{'JsonValue' if 'valueType' in prop else 'str'} | Expression"
-    if "valueType" in prop:
-        return "JsonValue"
-    return {
-        "string": "str",
-        "color": "str",
-        "resource": "str",
-        "actionId": "ActionTarget",
-        "boolean": "bool",
-        "integer": "int",
-        "durationMs": "int",
-        "number": "int | float",
-        "dp": "int | float",
-        "modifier": "Modifier",
-    }[prop["type"]]
 
 
 def _python_constructor(
@@ -241,6 +216,7 @@ def _python_constructor(
         keyword = python_name(field)
         if field == "modifier" or "protocol" in prop:
             continue
+        wire = stored_value(field, prop)
         if not prop.get("required", False):
             absent = "UNSET" if prop.get("nullable") else "None"
             condition = (
@@ -249,10 +225,13 @@ def _python_constructor(
                 else f"{keyword} is not {absent}"
             )
             lines.extend(
-                [f"        if {condition}:", *assignment("            ", keyword)]
+                [
+                    f"        if {condition}:",
+                    *assignment("            ", keyword, wire),
+                ]
             )
         else:
-            lines.extend(assignment("        ", keyword))
+            lines.extend(assignment("        ", keyword, wire))
     if spec["children"]["allowed"] and alias == "items":
         # With item, construction becomes a windowed declaration before this
         # runs (Component.__new__), so a key here is one given without it.
@@ -402,7 +381,7 @@ def _python_signature(
         if "protocol" in prop:
             continue
         keyword = python_name(field)
-        annotation, description = _python_argument(name, field, prop, aliases)
+        annotation, description = python_argument(name, field, prop, aliases)
         lines.append(f"        {keyword}: {annotation},")
         arguments[keyword] = description
     alias = spec["children"].get("kind")
@@ -469,22 +448,3 @@ def _python_slot_body(spec: dict[str, Any], children: str) -> tuple[list[str], s
         )
     combined = "slotted" if children == "()" else "normalized + slotted"
     return lines, combined
-
-
-def _python_argument(
-    component: str,
-    field: str,
-    prop: dict[str, Any],
-    aliases: Mapping[tuple[str, str], str],
-) -> tuple[str, str]:
-    annotation = _python_type(component, field, prop, aliases)
-    if prop.get("nullable"):
-        annotation += " | None"
-    if prop.get("required"):
-        return annotation, f"Required native {field}."
-    if prop.get("nullable"):
-        return (
-            annotation + " | _Unset = UNSET",
-            f"Native {field}; omitted uses its default; None is null.",
-        )
-    return annotation + " | None = None", f"Native {field}; None uses its default."

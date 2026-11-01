@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from pycompose.model.programs.bindings import animatable
+from pycompose_codegen.emit.adapters.bound import render_bound
 from pycompose_codegen.emit.adapters.fragments import Fragments
 from pycompose_codegen.emit.adapters.policy import (
     NUMERIC_CONVERSIONS,
@@ -19,13 +21,19 @@ from pycompose_codegen.emit.adapters.policy import (
 from pycompose_codegen.emit.values import resolver_call
 
 
-def render_prop(prop: str, spec: dict[str, Any], out: Fragments) -> bool:
+def render_prop(
+    prop: str,
+    spec: dict[str, Any],
+    out: Fragments,
+    converters: dict[str, dict[str, Any]],
+) -> bool:
     """Render one prop into `out`, or report that the adapter cannot be built.
 
     Args:
         prop: The prop's schema name.
         spec: Its schema entry.
         out: Collects the rendered pieces.
+        converters: The lock's animation converters, by Kotlin type.
 
     Returns:
         False when the prop carries a decision a generator cannot make.
@@ -34,6 +42,9 @@ def render_prop(prop: str, spec: dict[str, Any], out: Fragments) -> bool:
     prop_name = camel(prop)
     if prop_type == "modifier":
         return True
+    if animatable(spec):
+        # A prop the app may bind is read through one state, whatever its type.
+        return render_bound(prop_name, spec, out, converters)
     if "provider" in spec:
         emitted = _render_provider(prop_name, spec, spec["provider"], out)
     elif prop_type == "value":

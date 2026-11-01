@@ -11,6 +11,8 @@ from collections.abc import Iterable
 from typing import Any
 
 from pycompose.model.catalog.vocabulary import STATE_STREAMS
+from pycompose.model.programs.bindings import animatable
+from pycompose_codegen.emit.adapters.bound import plain_imports
 from pycompose_codegen.emit.adapters.state import state_call
 from pycompose_codegen.emit.derived_families import property_imports
 from pycompose_codegen.emit.state_families import attach_gate
@@ -33,16 +35,21 @@ def _state_imports(entry: dict[str, Any]) -> set[str]:
     return qualified
 
 
-def extra_imports(entry: dict[str, Any]) -> set[str]:
+def extra_imports(
+    entry: dict[str, Any], converters: dict[str, dict[str, Any]] | None = None
+) -> set[str]:
     """List the fully qualified imports an adapter needs beyond its component.
 
     Args:
         entry: The component's schema entry.
+        converters: The lock's animation converters, by Kotlin type.
 
     Returns:
         Import statements' targets, sorted by the caller.
     """
-    qualified = _prop_imports(entry.get("props", {}).values()) | _state_imports(entry)
+    qualified = _prop_imports(
+        entry.get("props", {}).values(), converters or {}
+    ) | _state_imports(entry)
     if entry.get("boxed"):
         qualified.add("androidx.compose.foundation.layout.Box")
     if (transient := entry.get("transient")) is not None:
@@ -80,10 +87,19 @@ def extra_imports(entry: dict[str, Any]) -> set[str]:
     return qualified
 
 
-def _prop_imports(specs: Iterable[dict[str, Any]]) -> set[str]:
+def _prop_imports(
+    specs: Iterable[dict[str, Any]], converters: dict[str, dict[str, Any]]
+) -> set[str]:
     """The imports a component's props need, beyond the resolvers they name."""
     qualified: set[str] = set()
     for spec in specs:
+        if animatable(spec):
+            # A bound prop reads its value through the pin's converter.
+            entry = converters.get(spec["animation"])
+            if entry is not None:
+                qualified.update(entry["imports"])
+            qualified.update(plain_imports(spec))
+            continue
         if spec.get("type") == "color" and "valueType" in spec:
             qualified.add("kotlinx.serialization.json.JsonObject")
             qualified.add("com.pycompose.renderer.expressionColor")

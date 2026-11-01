@@ -111,7 +111,7 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
                     if version_key(prop.get("since", version)) <= version_key(version)
                 },
             }
-            schema = _component_schema(name, scoped)
+            schema = _component_schema(name, scoped, version)
             if "modifier" in scoped["props"]:
                 schema["properties"]["props"]["properties"]["modifier"]["properties"][
                     "operations"
@@ -167,20 +167,28 @@ def _modifier_schema(
                 ],
                 "properties": {
                     "type": {"const": name},
-                    **{k: _operation_prop(p, version) for k, p in scoped.items()},
+                    **{k: _bound_prop(p, version) for k, p in scoped.items()},
                 },
             }
         )
     return {"anyOf": variants or [False]}
 
 
-def _operation_prop(prop: dict[str, Any], version: str | None) -> dict[str, Any]:
-    """A modifier prop's schema: its value, or a binding the host animates to."""
+def _bound_prop(prop: dict[str, Any], version: str | None) -> dict[str, Any]:
+    """A prop's schema: its value, or a binding the host animates to.
+
+    The same form serves a modifier argument and a component prop: a binding is
+    a fact about the prop, not about where it is written.
+    """
     schema = _prop_schema(prop)
     bound = version is None or version_key(version) >= version_key(BINDINGS_SINCE)
-    if bound and animatable(prop):
-        return {"anyOf": [schema, {"$ref": "#/definitions/Binding"}]}
-    return schema
+    if not (bound and animatable(prop)):
+        return schema
+    # A prop that already states alternatives keeps one level: a colour's
+    # tagged value or expression, and now a binding too.
+    if set(schema) == {"anyOf"}:
+        return {"anyOf": [*schema["anyOf"], {"$ref": "#/definitions/Binding"}]}
+    return {"anyOf": [schema, {"$ref": "#/definitions/Binding"}]}
 
 
 def _node_schema(component_refs: list[str]) -> dict[str, Any]:
@@ -203,11 +211,15 @@ def _node_schema(component_refs: list[str]) -> dict[str, Any]:
     }
 
 
-def _component_schema(name: str, comp: dict[str, Any]) -> dict[str, Any]:
+def _component_schema(
+    name: str, comp: dict[str, Any], version: str | None = None
+) -> dict[str, Any]:
     props = sorted(comp["props"].items())
     props_schema = {
         "type": "object",
-        "properties": {prop_name: _prop_schema(prop) for prop_name, prop in props},
+        "properties": {
+            prop_name: _bound_prop(prop, version) for prop_name, prop in props
+        },
         "additionalProperties": False,
     }
     required = [prop_name for prop_name, prop in props if prop.get("required")]

@@ -18,11 +18,14 @@ def test_a_provider_prop_becomes_a_lambda_reading_the_snapshot_value() -> None:
 
     The app states a number in the snapshot; the adapter hands Compose a lambda
     that reads it. The wire carries a Double, so the pinned return type decides
-    the conversion instead of a cast the generator picked for itself.
+    the conversion instead of a cast the generator picked for itself, and the
+    value may be bound like any other.
     """
     block = render("LinearProgressIndicator", components()["LinearProgressIndicator"])
-    assert "val progressValue = model.props.progress" in block
-    assert "progress = { progressValue.toFloat() }" in block
+    assert "val progressState =" in block
+    assert "Float.VectorConverter" in block
+    assert "plain.jsonPrimitive.double.toFloat()" in block
+    assert "progress = { progressState.value }" in block
 
 
 @pytest.mark.parametrize(

@@ -130,18 +130,20 @@ internal object WireValidator {
         path: String,
         actionIds: Set<String>,
     ) {
-        if (value == JsonNull && rule.nullable) return
-        if (rule.valueType != null && value is JsonObject) {
-            ValueParser.validate(value, rule.valueType).getOrThrow()
-            ValueParser.bounds(value, rule.minimum, rule.maximum)
-            return
-        }
-        if (rule.type == "value" || (rule.type in TAGGED && rule.valueType != null)) {
+        // A binding is read by the host; its target is what the prop's type checks.
+        val checked = target(value, rule)
+        when {
+            checked == JsonNull && rule.nullable -> Unit
+            rule.valueType != null && checked is JsonObject -> {
+                ValueParser.validate(checked, rule.valueType).getOrThrow()
+                ValueParser.bounds(checked, rule.minimum, rule.maximum)
+            }
             // A value prop, and a colour or named constant of a family, is
             // always its family's tagged object.
-            error("$path must be its family's tagged value object")
+            rule.type == "value" || (rule.type in TAGGED && rule.valueType != null) ->
+                error("$path must be its family's tagged value object")
+            else -> legacyProperty(checked, rule, path, actionIds)
         }
-        legacyProperty(value, rule, path, actionIds)
     }
 
     private fun legacyProperty(

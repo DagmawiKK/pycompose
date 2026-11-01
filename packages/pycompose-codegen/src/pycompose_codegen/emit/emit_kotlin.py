@@ -7,6 +7,7 @@ GeneratedAdapters so every approved component gets performance-tuned wiring.
 import re
 from typing import Any
 
+from pycompose.model.programs.bindings import animatable
 from pycompose_codegen.emit.literals import GENERATED_NOTICE, kotlin_string
 from pycompose_codegen.emit.rules import die, supported, version_key
 
@@ -21,7 +22,10 @@ def _kt_type(prop: dict[str, Any]) -> str:
     if prop.get("nullable") and not prop.get("required"):
         return "OptionalValue"
     suffix = "?" if prop.get("nullable") else ""
-    if "valueType" in prop:
+    if "valueType" in prop or animatable(prop):
+        # A value family's tagged object, and a binding the host animates to,
+        # are both objects: the model holds the wire form and the adapter reads
+        # the value out of it.
         return "JsonElement" + suffix
     return {
         "string": "String",
@@ -57,14 +61,18 @@ def _kt_default(prop: dict[str, Any]) -> str:
     if "valueType" in prop:
         return f" = JsonPrimitive({kotlin_string(value)})"
     if isinstance(value, str | bool):
-        return " = " + (
-            kotlin_string(value) if isinstance(value, str) else str(value).lower()
-        )
-    if prop["type"] in {"integer", "durationMs"}:
-        return f" = {value}L"
-    if prop["type"] in {"number", "dp"}:
-        return f" = {float(value)}"
-    die("unsupported Kotlin prop default")
+        literal = kotlin_string(value) if isinstance(value, str) else str(value).lower()
+    elif prop["type"] in {"integer", "durationMs"}:
+        literal = f"{value}L"
+    elif prop["type"] in {"number", "dp"}:
+        literal = f"{float(value)}"
+    else:
+        die("unsupported Kotlin prop default")
+    if animatable(prop):
+        # The prop may ride the wire as a binding, so its model default is the
+        # wire form of the value, not the value.
+        return f" = JsonPrimitive({literal})"
+    return f" = {literal}"
 
 
 def _kt_props(name: str, props: dict[str, Any], base: str = "UiProps") -> list[str]:

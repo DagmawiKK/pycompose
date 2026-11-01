@@ -25,10 +25,10 @@ from pycompose.model.nodes.values import (
 )
 from pycompose.model.programs.bindings import (
     BINDINGS_SINCE,
-    animatable,
     check_binding,
     is_binding,
 )
+from pycompose.ui._bound import binding_refusal
 from pycompose.ui.intents import BoundIntent, valid_intent
 
 _LONG = range(-(2**63), 2**63)
@@ -79,6 +79,9 @@ def validate_prop(
     """
     if value is None:
         return prop.nullable
+    bound = _validate_bound(value, prop)
+    if bound is not None:
+        return bound
     check = _TYPE_CHECKS.get(prop.type)
     if isinstance(value, Mapping) and (
         prop.value_type is not None or prop.type == "actionId"
@@ -98,11 +101,30 @@ def validate_prop(
             check_json(value)
     except IrValidationError:
         return False
-    if isinstance(value, int | float):
-        return (prop.minimum is None or value >= prop.minimum) and (
-            prop.maximum is None or value <= prop.maximum
-        )
-    return True
+    return not isinstance(value, int | float) or (
+        (prop.minimum is None or value >= prop.minimum)
+        and (prop.maximum is None or value <= prop.maximum)
+    )
+
+
+def _validate_bound(value: object, prop: PropDef) -> bool | None:
+    """Check a binding filling a prop, or report that the value is not one.
+
+    The host reads the target, so the target is what the prop's type checks.
+
+    Args:
+        value: The candidate value.
+        prop: Definition of the prop it would fill.
+
+    Returns:
+        Whether the binding may fill the prop, or None for any other value.
+    """
+    if not (isinstance(value, Mapping) and is_binding(value)):
+        return None
+    if binding_refusal(value, prop) is not None:
+        return False
+    target, _phase = check_binding(cast("Mapping[str, object]", value))
+    return validate_prop(target, prop)
 
 
 def _is_native_float(value: object) -> bool:
@@ -165,20 +187,10 @@ def _validate_operation(operation: object, intents: Intents | None) -> None:
         declared = spec.get(key)
         value = item
         if declared is not None and is_binding(item):
-            # The host reads the target; the target is what is checked.
-            if not animatable(declared):
-                raise IrValidationError(
-                    f"no animation converter for a {declared.type} prop",
-                    modifier=name,
-                    prop=key,
-                )
-            value, phase = check_binding(cast("Mapping[str, object]", item))
-            if declared.phase is not None and phase != declared.phase:
-                raise IrValidationError(
-                    f"this prop is read in {declared.phase}",
-                    modifier=name,
-                    prop=key,
-                )
+            refusal = binding_refusal(item, declared)
+            if refusal is not None:
+                raise IrValidationError(refusal, modifier=name, prop=key)
+            value, _phase = check_binding(cast("Mapping[str, object]", item))
         if declared is None or not validate_prop(value, declared, intents=intents):
             raise IrValidationError("invalid modifier prop", modifier=name, prop=key)
 
@@ -273,7 +285,11 @@ class _Validation:
                 prop.since is not None and not self.available(prop.since)
             ) or not self.values_available(props[name]):
                 self.report("prop requires newer schema", node, name)
-            if not validate_prop(props[name], prop, intents=self.intents):
+            if is_binding(props[name]):
+                refusal = binding_refusal(props[name], prop)
+                if refusal is not None:
+                    self.report(refusal, node, name)
+            elif not validate_prop(props[name], prop, intents=self.intents):
                 self.report("invalid prop value", node, name)
         self.child_rules(node, spec)
         return _NodeFrame(

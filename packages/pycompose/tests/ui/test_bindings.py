@@ -9,7 +9,18 @@ from pycompose.errors import IrValidationError
 from pycompose.host.wire import emit_ir, validate_ir
 from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.snapshot import Snapshot
-from pycompose.ui import Binding, Box, Color, Modifier, animate, follow, spring, tween
+from pycompose.ui import (
+    Binding,
+    Box,
+    Color,
+    Modifier,
+    Surface,
+    Text,
+    animate,
+    follow,
+    spring,
+    tween,
+)
 
 
 def test_a_binding_crosses_the_wire_as_its_target_its_travel_and_its_phase() -> None:
@@ -150,3 +161,35 @@ def test_a_follow_in_layout_is_still_a_binding() -> None:
 def test_a_binding_stating_another_phase_than_its_call_site_is_refused() -> None:
     with pytest.raises(IrValidationError, match="read in layout"):
         Modifier().offset(x=Binding(8, tween(100), "composition"))
+
+
+def test_a_component_prop_binding_crosses_the_wire_and_validates() -> None:
+    # A component reads its props while composing, so its binding is read
+    # there; the wire says so and the schema accepts it.
+    node = Surface(shadow_elevation=animate(8, tween(200)))
+    assert node.props["shadowElevation"] == {
+        "type": "binding",
+        "target": 8,
+        "travel": {"kind": "tween", "durationMs": 200, "delayMs": 0},
+        "phase": "composition",
+    }
+    snapshot = emit_ir(Snapshot(root=node), SCHEMA_VERSION)
+    assert validate_ir(snapshot).snapshot is snapshot
+
+
+def test_a_component_binding_stating_another_phase_is_refused() -> None:
+    with pytest.raises(IrValidationError, match="read in composition"):
+        Surface(shadow_elevation=Binding(8, tween(100), "draw"))
+
+
+def test_a_released_envelope_refuses_a_component_binding() -> None:
+    snapshot = emit_ir(Snapshot(root=Surface(shadow_elevation=animate(8))), "1.22.0")
+    with pytest.raises(IrValidationError, match="newer schema"):
+        validate_ir(snapshot)
+
+
+def test_a_component_prop_with_no_converter_names_why_it_cannot_be_bound() -> None:
+    # The pin declares a converter per type; a string has none, so the app is
+    # told that, not that its value is not JSON data.
+    with pytest.raises(IrValidationError, match="no animation converter for a string"):
+        Text(text=animate("hi"))  # type: ignore[arg-type]
