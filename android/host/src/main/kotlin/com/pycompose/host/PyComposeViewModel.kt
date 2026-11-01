@@ -79,6 +79,9 @@ class PyComposeViewModel(
     val error: StateFlow<String> = mutableError.asStateFlow()
     private var route = savedState.get<String>("route") ?: "home"
     private var restore = savedState.get<String>(STATE) ?: ""
+
+    /** Whether Python has a session; owned by the worker, like every bridge call. */
+    private var sessionStarted = false
     private var epoch = (savedState.get<Long>(EPOCH) ?: -1L) + 1L
     private val resultSubscription: AutoCloseable
     private val admissionSubscription: AutoCloseable
@@ -102,17 +105,18 @@ class PyComposeViewModel(
         val saved = restore
         scope.launch {
             try {
-                perform(listOf(ActionTrace.begin()), System.nanoTime()) {
-                    bridge.start(restored, saved)
-                    // Facts Python cannot observe itself (appearance, size, locale) must
-                    // reach it before the first pull: the pull is the frame the user
-                    // sees, and an app that paints from these facts would otherwise
-                    // render its default palette and flash when the report lands late.
-                    initialConfig?.let { config ->
-                        bridge.acceptAction(Action("onConfigChanged", config).toJson())
+                sessionStarted =
+                    perform(listOf(ActionTrace.begin()), System.nanoTime()) {
+                        bridge.start(restored, saved)
+                        // Facts Python cannot observe itself (appearance, size, locale) must
+                        // reach it before the first pull: the pull is the frame the user
+                        // sees, and an app that paints from these facts would otherwise
+                        // render its default palette and flash when the report lands late.
+                        initialConfig?.let { config ->
+                            bridge.acceptAction(Action("onConfigChanged", config).toJson())
+                        }
+                        true
                     }
-                    true
-                }
                 for (first in commands) {
                     // Everything queued behind the first command runs before one
                     // pull: a burst costs one snapshot, not one per command.
@@ -146,7 +150,10 @@ class PyComposeViewModel(
         command: Command,
         trace: String,
     ): Boolean {
-        try {
+        // A session that never started answers every command but a reload with
+        // "not started"; the error on screen stays the one that says why.
+        if (!sessionStarted && command !is Command.Reload) return false
+        return try {
             when (command) {
                 is Command.Dispatch -> {
                     val source = command.action.copy(trace = trace).toJson()
@@ -163,6 +170,7 @@ class PyComposeViewModel(
                 }
                 is Command.Reload -> {
                     if (bridge.reload(command.route, restore)) {
+                        sessionStarted = true
                         // A new Python session knows no serial the host holds.
                         stream.reset()
                         epoch += 1
@@ -194,10 +202,10 @@ class PyComposeViewModel(
                         }
                 }
             }
-            return true
+            true
         } catch (failure: Exception) {
             mutableError.value = failure.message ?: "Python worker failure"
-            return false
+            false
         }
     }
 
@@ -286,67 +294,71 @@ class PyComposeViewModel(
         return accepted
     }
 
-    // Boundary failures become diagnostics, never UI crashes.
+    // Boundary failures become diagnostics, never UI crashes; the result says whether
+    // the operation succeeded, so a failed start is known as one.
     @Suppress("TooGenericExceptionCaught")
     private fun perform(
         cookies: List<Int>,
         queuedAt: Long,
         operation: () -> Boolean,
-    ) {
+    ): Boolean {
         var shown = false
         try {
             val started = System.nanoTime()
             // A batch none of which reached Python has nothing new to pull.
-            if (!ActionTrace.stage("pycompose.python", operation)) return
-            val ran = System.nanoTime()
-            // Python draws the snapshot once, when it is pulled, for every command.
-            val envelope =
-                ActionTrace.stage("pycompose.pull") {
-                    bridge.fetchLatest(stream.surface, stream.serial)
-                }
-            val pulled = System.nanoTime()
-            // Fetched between stages, so the log's own call is counted in none of them.
-            val phases = if (timePasses) bridge.fetchLastPass() else ""
-            val resumed = System.nanoTime()
-            val result = ActionTrace.stage("pycompose.apply") { stream.accept(envelope) }
-            val applied = System.nanoTime()
-            val timing =
-                if (timePasses) {
-                    PassTiming(
-                        queue = PassTiming.millis(started - queuedAt),
-                        python = PassTiming.millis(ran - started),
-                        pull = PassTiming.millis(pulled - ran),
-                        apply = PassTiming.millis(applied - resumed),
-                        phases = phases,
-                        commands = cookies.size,
-                        appliedAt = applied,
-                    )
-                } else {
-                    null
-                }
-            result
-                .onSuccess { candidate ->
-                    // Effects belong to the snapshot that carried them: a repeat
-                    // pull of an unchanged snapshot must not replay them.
-                    val previous = mutableSnapshot.value
-                    val changed = candidate.snapshot != previous?.ir?.snapshot
-                    if (changed || previous?.epoch != epoch) {
-                        mutableSnapshot.value =
-                            SessionSnapshot(candidate, epoch, cookies, stream.serial, timing)
-                        shown = true
+            if (ActionTrace.stage("pycompose.python", operation)) {
+                val ran = System.nanoTime()
+                // Python draws the snapshot once, when it is pulled, for every command.
+                val envelope =
+                    ActionTrace.stage("pycompose.pull") {
+                        bridge.fetchLatest(stream.surface, stream.serial)
                     }
-                    mutableError.value = bridge.fetchLatestError()
-                    if (changed) {
-                        runEffects(candidate)
-                        saveAppData(candidate)
+                val pulled = System.nanoTime()
+                // Fetched between stages, so the log's own call is counted in none of them.
+                val phases = if (timePasses) bridge.fetchLastPass() else ""
+                val resumed = System.nanoTime()
+                val result = ActionTrace.stage("pycompose.apply") { stream.accept(envelope) }
+                val applied = System.nanoTime()
+                val timing =
+                    if (timePasses) {
+                        PassTiming(
+                            queue = PassTiming.millis(started - queuedAt),
+                            python = PassTiming.millis(ran - started),
+                            pull = PassTiming.millis(pulled - ran),
+                            apply = PassTiming.millis(applied - resumed),
+                            phases = phases,
+                            commands = cookies.size,
+                            appliedAt = applied,
+                        )
+                    } else {
+                        null
                     }
-                }.onFailure { mutableError.value = it.message ?: "Invalid IR snapshot" }
+                result
+                    .onSuccess { candidate ->
+                        // Effects belong to the snapshot that carried them: a repeat
+                        // pull of an unchanged snapshot must not replay them.
+                        val previous = mutableSnapshot.value
+                        val changed = candidate.snapshot != previous?.ir?.snapshot
+                        if (changed || previous?.epoch != epoch) {
+                            mutableSnapshot.value =
+                                SessionSnapshot(candidate, epoch, cookies, stream.serial, timing)
+                            shown = true
+                        }
+                        mutableError.value = bridge.fetchLatestError()
+                        if (changed) {
+                            runEffects(candidate)
+                            saveAppData(candidate)
+                        }
+                    }.onFailure { mutableError.value = it.message ?: "Invalid IR snapshot" }
+            }
         } catch (failure: Exception) {
             mutableError.value = failure.message ?: "Python worker failure"
+            return false
         } finally {
             // A command that changed nothing on screen has no frame to close its span.
             if (!shown) cookies.forEach(ActionTrace::end)
         }
+        return true
     }
 
     /**
