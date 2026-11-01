@@ -97,6 +97,7 @@ def test_gap_class_names_the_work_each_reason_needs() -> None:
         gap_class("synchronous result needs a provider/predicate protocol")
         == "provider-protocol"
     )
+    assert gap_class("no animation converter for kotlin.Float") == "binding-protocol"
     assert gap_class("an unknown reason") == "unclassified"
 
 
@@ -322,6 +323,17 @@ def test_strict_findings_refuse_incompleteness_not_coverage() -> None:
     assert strict_findings(target) == ["extraction: target diagnostics present"]
     delta = _report(grounding={"ungroundedComponents": ["Box"], "ungroundedValues": []})
     assert strict_findings(delta) == []
+    bindings = _report(
+        bindings={
+            "props": 1,
+            "states": {},
+            "classes": {"unclassified": 1},
+            "unclassifiedReasons": {"odd": 1},
+        }
+    )
+    assert strict_findings(bindings) == [
+        "bindings: unclassified unbindable reasons present"
+    ]
 
 
 def test_summarize_renders_every_section_deterministically() -> None:
@@ -340,6 +352,17 @@ def test_summarize_renders_every_section_deterministically() -> None:
     )
     assert "  material: ui 2 support 2 | approved 1 planned 0 blocked 1" in lines
     assert summarize(_report()) == text
+    bound = summarize(
+        _report(
+            bindings={
+                "props": 3,
+                "states": {"bindable": 1, "held": 1},
+                "classes": {"binding-protocol": 1},
+                "unclassifiedReasons": {},
+            }
+        )
+    )
+    assert "bindings: 3 props, bindable 1, held 1, binding-protocol 1" in bound
 
 
 def test_account_partitions_a_synthetic_inventory(tmp_path: Path) -> None:

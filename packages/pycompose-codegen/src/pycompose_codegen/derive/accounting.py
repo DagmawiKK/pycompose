@@ -47,6 +47,7 @@ from pathlib import Path
 from typing import Any
 
 from pycompose_codegen.checkout import PACKAGE, ROOT
+from pycompose_codegen.derive.accounting_bindings import binding_states
 from pycompose_codegen.derive.accounting_views import (
     approval_facts,
     empty_bucket,
@@ -127,6 +128,7 @@ GAP_CLASSES: tuple[tuple[str, str], ...] = (
     ("varargs need a collection binding", "collection-binding"),
     ("modifier default is not the native identity", "modifier-default"),
     ("opt-in marker is not accessible outside the pin", "exposure-fail-closed"),
+    ("no animation converter", "binding-protocol"),
 )
 """Planner gap reason -> the class of work that would close it."""
 
@@ -163,6 +165,31 @@ def gap_class(reason: str) -> str:
         if reason.startswith(prefix):
             return name
     return "unclassified"
+
+
+def binding_census(registry: dict[str, Any]) -> dict[str, Any]:
+    """Count every approved value prop by whether the host can animate it.
+
+    Args:
+        registry: The approved catalog.
+
+    Returns:
+        The counts by state, and the unbindable props' reasons, by class.
+    """
+    states, reasons = binding_states(registry)
+    classes: Counter[str] = Counter()
+    unclassified: Counter[str] = Counter()
+    for reason, count in reasons.items():
+        name = gap_class(reason)
+        classes[name] += count
+        if name == "unclassified":
+            unclassified[reason] += count
+    return {
+        "props": sum(states.values()) + sum(reasons.values()),
+        "states": dict(sorted(states.items())),
+        "classes": dict(sorted(classes.items())),
+        "unclassifiedReasons": dict(sorted(unclassified.items())),
+    }
 
 
 def account(
@@ -281,6 +308,7 @@ def account(
         "domains": domains,
         "supportRecognition": dict(sorted(support_recognition.items())),
         "unrecognizedRequiredOwners": dict(sorted(unrecognized_owners.items())),
+        "bindings": binding_census(registry),
         "protocols": protocols(registry),
         "grounding": grounding(registry, plan, found),
         "gaps": {
@@ -313,6 +341,8 @@ def strict_findings(report: dict[str, Any]) -> list[str]:
         findings.append("domains: unclassified declarations present")
     if report["gaps"]["unclassifiedReasons"]:
         findings.append("gaps: unclassified planner reasons present")
+    if report.get("bindings", {}).get("unclassifiedReasons"):
+        findings.append("bindings: unclassified unbindable reasons present")
     if report["grounding"]["ungroundedValues"]:
         findings.append("grounding: approved value sources are not on the pin")
     if [item for item in report["gaps"]["diagnostics"] if item["target"]]:
@@ -356,6 +386,15 @@ def summarize(report: dict[str, Any]) -> str:
             f"{name} {count}" for name, count in report["gaps"]["classes"].items()
         ),
     ]
+    bindings = report.get("bindings")
+    if bindings:
+        lines.append(
+            f"bindings: {bindings['props']} props"
+            + "".join(f", {name} {count}" for name, count in bindings["states"].items())
+            + "".join(
+                f", {name} {count}" for name, count in bindings["classes"].items()
+            )
+        )
     for domain in sorted(report["domains"]):
         data = report["domains"][domain]
         overloads = data["overloads"]
