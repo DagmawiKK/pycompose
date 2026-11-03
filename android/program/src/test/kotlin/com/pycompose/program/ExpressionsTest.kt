@@ -4,6 +4,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -51,5 +52,94 @@ class ExpressionsTest {
             }
         assertEquals(ColourTerm.Alpha(0xFF000000.toInt(), 0.3f), term)
         assertEquals(ColourTerm.Alpha(0xFF000000.toInt(), 0f), colour(node) { _, _ -> null })
+    }
+
+    @Test
+    fun `a prop type takes the expression kind it holds`() {
+        assertEquals("color", Expressions.kindOf("color"))
+        assertEquals("number", Expressions.kindOf("dp"))
+        assertEquals("number", Expressions.kindOf("number"))
+        assertNull(Expressions.kindOf("integer"))
+        assertNull(Expressions.kindOf("string"))
+    }
+
+    @Test
+    fun `a numeric expression is checked as a number`() {
+        val numeric =
+            parse(
+                """{"type":"expression","node":{"op":"times",
+                "args":[{"stream":"list","name":"progress"},{"number":4}]}}""",
+            )
+        assertEquals(
+            listOf("list" to "progress"),
+            Expressions.validate(numeric, "number", contract),
+        )
+        assertThrows<IllegalArgumentException> {
+            Expressions.validate(numeric, "color", contract)
+        }
+    }
+
+    @Test
+    fun `targets reads a prop, a binding's target and a modifier argument`() {
+        val root =
+            parse(
+                """{"id":"list","type":"Column","props":{
+                "modifier":{"operations":[{"type":"offset",
+                "y":{"type":"expression","node":{"stream":"list","name":"progress"}}}]}},
+                "children":[
+                  {"id":"card","type":"Surface","props":{
+                    "shadowElevation":{"type":"binding",
+                    "target":{"type":"expression","node":{"stream":"list","name":"progress"}},
+                    "travel":{"kind":"none"},"phase":"layout"}}}]}""",
+            )
+        val reads = mutableListOf<String>()
+        Expressions.targets(
+            root,
+            contract,
+            { type, prop ->
+                Expressions.kindOf(
+                    if (type == "Surface" &&
+                        prop == "shadowElevation"
+                    ) {
+                        "dp"
+                    } else {
+                        null
+                    },
+                )
+            },
+            { modifier, argument ->
+                Expressions.kindOf(
+                    if (modifier == "offset" &&
+                        argument == "y"
+                    ) {
+                        "dp"
+                    } else {
+                        null
+                    },
+                )
+            },
+        ) { type ->
+            reads += type
+            if (type == "Column") setOf("progress") else emptySet()
+        }
+        assertEquals(listOf("Column", "Column"), reads)
+    }
+
+    @Test
+    fun `targets refuses a stream its holder does not publish`() {
+        val root =
+            parse(
+                """{"id":"card","type":"Surface","props":{
+                "shadowElevation":{"type":"expression",
+                "node":{"stream":"card","name":"progress"}}}}""",
+            )
+        assertThrows<IllegalArgumentException> {
+            Expressions.targets(
+                root,
+                contract,
+                { _, _ -> "number" },
+                { _, _ -> null },
+            ) { emptySet() }
+        }
     }
 }

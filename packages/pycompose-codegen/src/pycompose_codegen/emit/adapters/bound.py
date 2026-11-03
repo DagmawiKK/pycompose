@@ -56,6 +56,9 @@ def converter(
 def plain(spec: dict[str, Any]) -> list[str]:
     """Read a plain wire value as the type the converter animates.
 
+    A dp or number may stand as an expression over holder streams, which the
+    host evaluates; ``context.number`` reads either form.
+
     Args:
         spec: The prop's lock entry.
 
@@ -74,9 +77,11 @@ def plain(spec: dict[str, Any]) -> list[str]:
             "}",
         ]
     if spec["type"] == "dp":
-        return ["plain.jsonPrimitive.double.dp"]
+        return ["context.number(plain).dp"]
     native = cast("str", spec["animation"]).rsplit(".", 1)[-1]
     narrow = {"Float": ".toFloat()", "Int": ".toInt()"}.get(native, "")
+    if spec["type"] == "number":
+        return [f"context.number(plain){narrow}"]
     return [f"plain.jsonPrimitive.{READS[spec['type']]}{narrow}"]
 
 
@@ -94,11 +99,14 @@ def plain_imports(spec: dict[str, Any]) -> set[str]:
             "kotlinx.serialization.json.JsonObject",
             "com.pycompose.renderer.expressionColor",
         }
+    if spec["type"] == "dp":
+        # Kotlin's own conversion is an extension property, and the number is
+        # read through the renderer's one decode.
+        return {"androidx.compose.ui.unit.dp", "com.pycompose.renderer.number"}
+    if spec["type"] == "number":
+        return {"com.pycompose.renderer.number"}
     reads = {f"kotlinx.serialization.json.{READS[spec['type']]}"}
     reads.add("kotlinx.serialization.json.jsonPrimitive")
-    if spec["type"] == "dp":
-        # Kotlin's own conversion is an extension property.
-        reads.add("androidx.compose.ui.unit.dp")
     return reads
 
 

@@ -11,7 +11,18 @@ from pycompose.errors import IrValidationError
 from pycompose.host.wire import emit_ir, to_json, validate_ir
 from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.snapshot import Snapshot
-from pycompose.ui import Column, ModalNavigationDrawer, Text
+from pycompose.ui import (
+    BasicText,
+    Box,
+    Column,
+    ModalNavigationDrawer,
+    Modifier,
+    Surface,
+    Text,
+    animate,
+    follow,
+    tween,
+)
 
 
 def _scrim(key: str = "nav") -> object:
@@ -88,6 +99,88 @@ def test_a_stream_its_holder_does_not_expose_is_refused() -> None:
         validate_ir(snapshot)
 
 
-def test_only_a_colour_takes_an_expression() -> None:
+def test_only_a_numeric_or_colour_prop_takes_an_expression() -> None:
     with pytest.raises(IrValidationError):
         Text(text=_scrim())  # type: ignore[arg-type]
+    # An integer is discrete: an expression is evaluated in floating point.
+    with pytest.raises(IrValidationError, match="invalid prop value"):
+        BasicText(text="Hi", min_lines=Stream("list", "progress"))  # type: ignore[arg-type]
+
+
+def test_a_number_expression_drives_a_number_prop() -> None:
+    state = Snapshot(
+        root=Column(
+            Surface(shadow_elevation=Stream("list", "progress").times(4)),
+            id="list",
+        )
+    )
+    snapshot = emit_ir(state, SCHEMA_VERSION)
+    validate_ir(snapshot)
+    wire = json.loads(to_json(snapshot))
+    expression = wire["root"]["children"][0]["props"]["shadowElevation"]
+    assert expression["type"] == "expression"
+    assert expression["node"]["args"][0] == {
+        "stream": wire["root"]["id"],
+        "name": "progress",
+    }
+
+
+def test_a_number_expression_drives_a_modifier_argument() -> None:
+    state = Snapshot(
+        root=Column(
+            Box(modifier=Modifier().offset(y=Stream("list", "offset"))),
+            id="list",
+        )
+    )
+    snapshot = emit_ir(state, SCHEMA_VERSION)
+    validate_ir(snapshot)
+    wire = json.loads(to_json(snapshot))
+    operation = wire["root"]["children"][0]["props"]["modifier"]["operations"][0]
+    assert operation["y"] == {
+        "type": "expression",
+        "node": {"stream": wire["root"]["id"], "name": "offset"},
+    }
+
+
+def test_a_bound_number_expression_resolves_its_stream() -> None:
+    state = Snapshot(
+        root=Column(
+            Surface(shadow_elevation=animate(Stream("list", "progress"), tween(100))),
+            id="list",
+        )
+    )
+    snapshot = emit_ir(state, SCHEMA_VERSION)
+    validate_ir(snapshot)
+    wire = json.loads(to_json(snapshot))
+    binding = wire["root"]["children"][0]["props"]["shadowElevation"]
+    assert binding["type"] == "binding"
+    assert binding["target"]["node"]["stream"] == wire["root"]["id"]
+
+
+def test_a_bound_expression_naming_no_holder_is_refused() -> None:
+    with pytest.raises(IrValidationError, match="names no component"):
+        emit_ir(
+            Snapshot(root=Surface(shadow_elevation=follow(Stream("gone", "progress")))),
+            SCHEMA_VERSION,
+        )
+
+
+def test_a_compound_dp_family_refuses_a_number_expression() -> None:
+    """A dp prop carrying PaddingValues holds a compound value, not a number."""
+    with pytest.raises(IrValidationError, match="invalid modifier prop"):
+        Column(
+            Box(modifier=Modifier().padding(Stream("list", "progress"))),  # type: ignore[arg-type]
+            id="list",
+        )
+
+
+def test_a_dp_family_takes_a_number_expression() -> None:
+    """A dp the app states as a Dp is a number, and a number may be live."""
+    state = Snapshot(
+        root=Column(
+            Box(modifier=Modifier().size(width=Stream("list", "progress").times(40))),
+            id="list",
+        )
+    )
+    snapshot = emit_ir(state, SCHEMA_VERSION)
+    validate_ir(snapshot)

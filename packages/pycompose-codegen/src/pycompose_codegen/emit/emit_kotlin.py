@@ -22,10 +22,10 @@ def _kt_type(prop: dict[str, Any]) -> str:
     if prop.get("nullable") and not prop.get("required"):
         return "OptionalValue"
     suffix = "?" if prop.get("nullable") else ""
-    if "valueType" in prop or animatable(prop):
-        # A value family's tagged object, and a binding the host animates to,
-        # are both objects: the model holds the wire form and the adapter reads
-        # the value out of it.
+    if prop["type"] in {"dp", "number"} or "valueType" in prop or animatable(prop):
+        # A value family's tagged object, a binding the host animates to, and an
+        # expression the host evaluates are all objects: the model holds the
+        # wire form and the adapter reads the value out of it.
         return "JsonElement" + suffix
     return {
         "string": "String",
@@ -36,8 +36,6 @@ def _kt_type(prop: dict[str, Any]) -> str:
         "boolean": "Boolean",
         "integer": "Long",
         "durationMs": "Long",
-        "number": "Double",
-        "dp": "Double",
         "modifier": "JsonObject",
     }[prop["type"]] + suffix
 
@@ -68,9 +66,9 @@ def _kt_default(prop: dict[str, Any]) -> str:
         literal = f"{float(value)}"
     else:
         die("unsupported Kotlin prop default")
-    if animatable(prop):
-        # The prop may ride the wire as a binding, so its model default is the
-        # wire form of the value, not the value.
+    if prop["type"] in {"dp", "number"} or animatable(prop):
+        # The prop may ride the wire as a binding or an expression, so its model
+        # default is the wire form of the value, not the value.
         return f" = JsonPrimitive({literal})"
     return f" = {literal}"
 

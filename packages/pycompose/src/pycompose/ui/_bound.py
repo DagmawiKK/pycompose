@@ -22,10 +22,11 @@ from pycompose.model.programs.bindings import (
     check_binding,
     lower_binding,
 )
+from pycompose.model.programs.expressions import lower_expression
 
 
 def lower_prop(component: str, name: str, value: object) -> JsonValue:
-    """A binding as the wire states it, in the phase its prop is read in.
+    """A prop as the wire states it: an expression written out, a binding lowered.
 
     A generated constructor lowers every prop the host can animate. This catches
     the rest, so a binding on a prop the pin gives no converter is refused by
@@ -40,7 +41,8 @@ def lower_prop(component: str, name: str, value: object) -> JsonValue:
         The value the node stores.
     """
     if not isinstance(value, Binding):
-        return cast("JsonValue", value)
+        # An expression is wire data from here on; emission resolves its keys.
+        return lower_expression(value)
     declared = REGISTRY.components.get(component)
     prop = declared.props.get(to_camel_case(name)) if declared is not None else None
     phase = prop.phase if prop is not None else None

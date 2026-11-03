@@ -64,7 +64,12 @@ internal object WireValidator {
                 ?: error("root must be an object")
         require("slot" !in rootNode) { "The root cannot fill a slot" }
         NodeWalk(schema, actionIds, cache?.memoFor(schema, actionIds)).run(rootNode)
-        Expressions.targets(rootNode, EXPRESSIONS) { type -> IrContract.streams[type].orEmpty() }
+        Expressions.targets(
+            rootNode,
+            EXPRESSIONS,
+            ::propExpressionKind,
+            ::modifierExpressionKind,
+        ) { type -> IrContract.streams[type].orEmpty() }
     }
 
     /**
@@ -184,6 +189,12 @@ internal object WireValidator {
         rule: PropertyRule,
         path: String,
     ) {
+        // The host evaluates it each frame; it gives a number, and its bounds
+        // are the host's to enforce when it reads one.
+        if (Expressions.isExpression(value)) {
+            Expressions.validate(value as JsonObject, "number", EXPRESSIONS)
+            return
+        }
         if (rule.type == "dp") ValueParser.validateFloat(value)
         bounds(number(value as? JsonPrimitive, path), rule, path)
     }
@@ -234,6 +245,24 @@ internal object WireValidator {
         }
     }
 }
+
+/** The expression kind a component prop holds, or null when it holds none. */
+private fun propExpressionKind(
+    type: String,
+    prop: String,
+): String? =
+    Expressions.kindOf(
+        IrContract.components[type]
+            ?.props
+            ?.get(prop)
+            ?.type,
+    )
+
+/** The expression kind a modifier argument holds, or null when it holds none. */
+private fun modifierExpressionKind(
+    modifier: String,
+    argument: String,
+): String? = Expressions.kindOf(IrContract.modifiers[modifier]?.get(argument)?.type)
 
 /** A modifier prop's value to check: a binding's target, where the host may animate it. */
 private fun target(

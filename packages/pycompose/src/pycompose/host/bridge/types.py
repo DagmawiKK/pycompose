@@ -12,7 +12,7 @@ from pycompose.host.bridge._generated.payloads import IncrementPayload, SubmitPa
 from pycompose.model.canonical import FrozenJsonValue, freeze_json
 from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.catalog.registry import PropDef
-from pycompose.ui._rules import validate_prop
+from pycompose.ui._props import validate_prop
 from pycompose.ui.intents import IntentSpec, check_payload
 
 __all__ = [

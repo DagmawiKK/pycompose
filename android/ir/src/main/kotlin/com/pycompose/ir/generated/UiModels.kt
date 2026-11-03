@@ -478,7 +478,7 @@ data class CircularProgressIndicatorProgress(
 data class ColumnProps(
     val `horizontalAlignment`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `offset`: Double? = null,
+    val `offset`: JsonElement? = null,
     val `onScrollIdle`: String? = null,
     val `scrollable`: Boolean? = null,
     val `verticalArrangement`: JsonElement? = null,
@@ -886,7 +886,7 @@ data class ExposedDropdownMenuProps(
     val `expanded`: Boolean,
     val `matchAnchorWidth`: Boolean = true,
     override val `modifier`: JsonObject? = null,
-    val `offset`: Double? = null,
+    val `offset`: JsonElement? = null,
     val `onDismissRequest`: String,
     val `onScrollIdle`: String? = null,
     val `shadowElevation`: JsonElement? = null,
@@ -2596,7 +2596,7 @@ data class SliderProps(
     val `onPress`: String? = null,
     val `onValueChangeFinished`: String? = null,
     val `steps`: Long = 0L,
-    val `value`: Double? = null,
+    val `value`: JsonElement? = null,
     val `valueRange`: JsonElement,
 ) : UiProps
 

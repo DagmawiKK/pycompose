@@ -21,9 +21,10 @@ from __future__ import annotations
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 from pycompose.errors import IrValidationError
+from pycompose.model.canonical import JsonValue
 from pycompose.model.catalog.vocabulary import (
     EXPRESSION_LIMITS,
     EXPRESSION_OPS,
@@ -33,6 +34,45 @@ from pycompose.model.catalog.vocabulary import (
 Kind = Literal["number", "color"]
 _COLOR = re.compile(r"#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8})")
 _STREAMS = frozenset(name for names in STATE_STREAMS.values() for name in names)
+
+EXPRESSION_KINDS: dict[str, Kind] = {
+    "color": "color",
+    "dp": "number",
+    "number": "number",
+}
+"""The prop types an expression may fill, and the kind it must evaluate to.
+
+A colour prop takes a colour expression; a dp or number prop takes a number
+expression. An integer is not among them: an expression is evaluated in
+floating point every frame, and a discrete value (an index, a line count)
+cannot follow one.
+"""
+
+
+def is_expression(value: object) -> bool:
+    """Report whether a wire value is an expression's object.
+
+    Args:
+        value: A prop value, possibly frozen.
+
+    Returns:
+        True for an ``{"type": "expression", ...}`` object.
+    """
+    return isinstance(value, Mapping) and value.get("type") == "expression"
+
+
+def lower_expression(value: object) -> JsonValue:
+    """A value as wire data: an expression written out, anything else unchanged.
+
+    Args:
+        value: What an app passed to a prop or a modifier argument.
+
+    Returns:
+        The wire value.
+    """
+    if isinstance(value, Expression):
+        return cast("JsonValue", value.to_wire())
+    return cast("JsonValue", value)
 
 
 @dataclass(frozen=True, slots=True)

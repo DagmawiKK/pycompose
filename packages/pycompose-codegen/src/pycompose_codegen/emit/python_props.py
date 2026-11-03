@@ -27,6 +27,9 @@ def python_type(
     if prop["type"] == "color":
         # A colour may follow a holder's stream, evaluated by the host.
         annotation = f"{'JsonValue' if 'valueType' in prop else 'str'} | Expression"
+    elif prop["type"] in {"dp", "number"}:
+        # A number may follow a holder's stream, evaluated by the host.
+        annotation = "int | float | Expression"
     elif "valueType" in prop:
         annotation = "JsonValue"
     else:

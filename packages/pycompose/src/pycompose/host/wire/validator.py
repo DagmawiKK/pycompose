@@ -31,7 +31,8 @@ from pycompose.model.catalog.lock import (
 from pycompose.model.catalog.version import require_version
 from pycompose.model.nodes.node import Node
 from pycompose.model.nodes.reuse import Reuse
-from pycompose.ui._rules import Intents, _Validation
+from pycompose.ui._props import Intents
+from pycompose.ui._rules import _Validation
 from pycompose.ui.intents import read_intents
 
 __all__ = ["ValidationResult", "validate_ir"]

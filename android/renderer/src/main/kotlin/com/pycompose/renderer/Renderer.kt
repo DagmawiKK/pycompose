@@ -234,7 +234,7 @@ class Renderer(
     internal val windows: (String, Int, Int) -> Unit = { _, _, _ -> },
     internal val report: (String) -> Unit = {},
 ) {
-    private val modifiers = ModifierBuilder(actions)
+    private val modifiers = ModifierBuilder(actions) { streams }
 
     /** Report numbers for the session, kept across snapshots. */
     internal val reports = Reports()

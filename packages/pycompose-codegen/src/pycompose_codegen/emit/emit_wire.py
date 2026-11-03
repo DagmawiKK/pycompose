@@ -354,4 +354,8 @@ def _prop_schema(prop: dict[str, Any]) -> dict[str, Any]:
             value[bound] = prop[bound]
     if "valueType" in prop:
         value = _tagged(prop, value)
+    if ptype in {"dp", "number"}:
+        # The host evaluates it each frame; it gives a number, and its bounds
+        # are the host's to enforce when it reads one.
+        value = {"anyOf": [value, {"$ref": "#/definitions/Expression"}]}
     return {"anyOf": [value, {"type": "null"}]} if prop.get("nullable") else value

@@ -282,6 +282,7 @@ import com.pycompose.renderer.expressionColor
 import com.pycompose.renderer.inSlot
 import com.pycompose.renderer.index
 import com.pycompose.renderer.lazyListState
+import com.pycompose.renderer.number
 import com.pycompose.renderer.publish
 import com.pycompose.renderer.reconcileProperty
 import com.pycompose.renderer.scrollState
@@ -294,7 +295,6 @@ import com.pycompose.renderer.unslotted
 import com.pycompose.renderer.wanted
 import com.pycompose.renderer.windowedItems
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.double
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.long
 
@@ -360,7 +360,7 @@ object GeneratedAdapters {
                     model.props.tonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val tonalElevationValue = tonalElevationState?.value ?: androidx.compose.material3.AlertDialogDefaults.TonalElevation
@@ -534,7 +534,7 @@ object GeneratedAdapters {
                     model.props.tonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val tonalElevationValue = tonalElevationState?.value ?: androidx.compose.material3.BottomAppBarDefaults.ContainerElevation
@@ -569,7 +569,7 @@ object GeneratedAdapters {
                     model.props.tonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val tonalElevationValue = tonalElevationState?.value ?: androidx.compose.material3.BottomAppBarDefaults.ContainerElevation
@@ -615,7 +615,7 @@ object GeneratedAdapters {
                     model.props.sheetMaxWidth?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val sheetMaxWidthValue = sheetMaxWidthState?.value ?: androidx.compose.material3.BottomSheetDefaults.SheetMaxWidth
@@ -623,7 +623,7 @@ object GeneratedAdapters {
                     model.props.sheetPeekHeight?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val sheetPeekHeightValue = sheetPeekHeightState?.value ?: androidx.compose.material3.BottomSheetDefaults.SheetPeekHeight
@@ -631,7 +631,7 @@ object GeneratedAdapters {
                     model.props.sheetShadowElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val sheetShadowElevationValue = sheetShadowElevationState?.value ?: androidx.compose.material3.BottomSheetDefaults.Elevation
@@ -641,7 +641,7 @@ object GeneratedAdapters {
                     model.props.sheetTonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val sheetTonalElevationValue = sheetTonalElevationState?.value ?: (0).dp
@@ -764,7 +764,7 @@ object GeneratedAdapters {
                     model.props.expandedHeight?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val expandedHeightValue = expandedHeightState?.value ?: androidx.compose.material3.TopAppBarDefaults.TopAppBarExpandedHeight
@@ -812,7 +812,7 @@ object GeneratedAdapters {
                     model.props.gapSize?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val gapSizeValue = gapSizeState?.value ?: androidx.compose.material3.ProgressIndicatorDefaults.CircularIndicatorTrackGapSize
@@ -822,7 +822,7 @@ object GeneratedAdapters {
                     model.props.strokeWidth?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val strokeWidthValue = strokeWidthState?.value ?: androidx.compose.material3.ProgressIndicatorDefaults.CircularStrokeWidth
@@ -865,7 +865,7 @@ object GeneratedAdapters {
                     model.props.gapSize?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val gapSizeValue = gapSizeState?.value ?: androidx.compose.material3.ProgressIndicatorDefaults.CircularIndicatorTrackGapSize
@@ -873,7 +873,7 @@ object GeneratedAdapters {
                     model.props.progress.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Float.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.toFloat()
+                            context.number(plain).toFloat()
                         }
                     }
                 val strokeCapValue = model.props.strokeCap?.let { com.pycompose.renderer.generated.ValueResolver.strokeCap(it).getOrThrow() }
@@ -882,7 +882,7 @@ object GeneratedAdapters {
                     model.props.strokeWidth?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val strokeWidthValue = strokeWidthState?.value ?: androidx.compose.material3.ProgressIndicatorDefaults.CircularStrokeWidth
@@ -963,7 +963,7 @@ object GeneratedAdapters {
                     model.props.tonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val tonalElevationValue = tonalElevationState?.value ?: androidx.compose.material3.DatePickerDefaults.TonalElevation
@@ -1006,7 +1006,7 @@ object GeneratedAdapters {
                     model.props.drawerTonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val drawerTonalElevationValue = drawerTonalElevationState?.value ?: androidx.compose.material3.DrawerDefaults.DismissibleDrawerElevation
@@ -1039,7 +1039,7 @@ object GeneratedAdapters {
                     model.props.shadowElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val shadowElevationValue = shadowElevationState?.value ?: androidx.compose.material3.SearchBarDefaults.ShadowElevation
@@ -1049,7 +1049,7 @@ object GeneratedAdapters {
                     model.props.tonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val tonalElevationValue = tonalElevationState?.value ?: androidx.compose.material3.SearchBarDefaults.TonalElevation
@@ -1088,7 +1088,7 @@ object GeneratedAdapters {
                     model.props.shadowElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val shadowElevationValue = shadowElevationState?.value ?: androidx.compose.material3.MenuDefaults.ShadowElevation
@@ -1098,7 +1098,7 @@ object GeneratedAdapters {
                     model.props.tonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val tonalElevationValue = tonalElevationState?.value ?: androidx.compose.material3.MenuDefaults.TonalElevation
@@ -1326,7 +1326,7 @@ object GeneratedAdapters {
                     model.props.shadowElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val shadowElevationValue = shadowElevationState?.value ?: androidx.compose.material3.MenuDefaults.ShadowElevation
@@ -1336,7 +1336,7 @@ object GeneratedAdapters {
                     model.props.tonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val tonalElevationValue = tonalElevationState?.value ?: androidx.compose.material3.MenuDefaults.TonalElevation
@@ -1654,7 +1654,7 @@ object GeneratedAdapters {
                     model.props.thickness?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val thicknessValue = thicknessState?.value ?: androidx.compose.material3.DividerDefaults.Thickness
@@ -1810,7 +1810,7 @@ object GeneratedAdapters {
                     model.props.collapsedHeight?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val collapsedHeightValue = collapsedHeightState?.value ?: androidx.compose.material3.TopAppBarDefaults.LargeAppBarCollapsedHeight
@@ -1820,7 +1820,7 @@ object GeneratedAdapters {
                     model.props.expandedHeight?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val expandedHeightValue = expandedHeightState?.value ?: androidx.compose.material3.TopAppBarDefaults.LargeAppBarExpandedHeight
@@ -1914,7 +1914,7 @@ object GeneratedAdapters {
                     model.props.gapSize?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val gapSizeValue = gapSizeState?.value ?: androidx.compose.material3.ProgressIndicatorDefaults.LinearIndicatorTrackGapSize
@@ -1922,7 +1922,7 @@ object GeneratedAdapters {
                     model.props.progress.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Float.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.toFloat()
+                            context.number(plain).toFloat()
                         }
                     }
                 val strokeCapValue = model.props.strokeCap?.let { com.pycompose.renderer.generated.ValueResolver.strokeCap(it).getOrThrow() }
@@ -1966,7 +1966,7 @@ object GeneratedAdapters {
                     model.props.gapSize?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val gapSizeValue = gapSizeState?.value ?: androidx.compose.material3.ProgressIndicatorDefaults.LinearIndicatorTrackGapSize
@@ -1998,7 +1998,7 @@ object GeneratedAdapters {
                     model.props.shadowElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val shadowElevationValue = shadowElevationState?.value ?: androidx.compose.material3.ListItemDefaults.Elevation
@@ -2006,7 +2006,7 @@ object GeneratedAdapters {
                     model.props.tonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val tonalElevationValue = tonalElevationState?.value ?: androidx.compose.material3.ListItemDefaults.Elevation
@@ -2027,7 +2027,7 @@ object GeneratedAdapters {
                     model.props.collapsedHeight?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val collapsedHeightValue = collapsedHeightState?.value ?: androidx.compose.material3.TopAppBarDefaults.MediumAppBarCollapsedHeight
@@ -2037,7 +2037,7 @@ object GeneratedAdapters {
                     model.props.expandedHeight?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val expandedHeightValue = expandedHeightState?.value ?: androidx.compose.material3.TopAppBarDefaults.MediumAppBarExpandedHeight
@@ -2086,7 +2086,7 @@ object GeneratedAdapters {
                     model.props.sheetMaxWidth?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val sheetMaxWidthValue = sheetMaxWidthState?.value ?: androidx.compose.material3.BottomSheetDefaults.SheetMaxWidth
@@ -2094,7 +2094,7 @@ object GeneratedAdapters {
                     model.props.tonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val tonalElevationValue = tonalElevationState?.value ?: (0).dp
@@ -2135,7 +2135,7 @@ object GeneratedAdapters {
                     model.props.drawerTonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val drawerTonalElevationValue = drawerTonalElevationState?.value ?: androidx.compose.material3.DrawerDefaults.ModalDrawerElevation
@@ -2185,7 +2185,7 @@ object GeneratedAdapters {
                     model.props.expandedHeaderTopPadding?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val expandedHeaderTopPaddingValue = expandedHeaderTopPaddingState?.value ?: (0).dp
@@ -2230,7 +2230,7 @@ object GeneratedAdapters {
                     model.props.space?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val spaceValue = spaceState?.value ?: androidx.compose.material3.SegmentedButtonDefaults.BorderWidth
@@ -2258,7 +2258,7 @@ object GeneratedAdapters {
                     model.props.tonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val tonalElevationValue = tonalElevationState?.value ?: androidx.compose.material3.NavigationBarDefaults.Elevation
@@ -2627,7 +2627,7 @@ object GeneratedAdapters {
                     model.props.drawerTonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val drawerTonalElevationValue = drawerTonalElevationState?.value ?: androidx.compose.material3.DrawerDefaults.PermanentDrawerElevation
@@ -2680,7 +2680,7 @@ object GeneratedAdapters {
                     model.props.edgePadding?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val edgePaddingValue = edgePaddingState?.value ?: androidx.compose.material3.TabRowDefaults.ScrollableTabRowEdgeStartPadding
@@ -2688,7 +2688,7 @@ object GeneratedAdapters {
                     model.props.minTabWidth?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val minTabWidthValue = minTabWidthState?.value ?: androidx.compose.material3.TabRowDefaults.ScrollableTabRowMinTabWidth
@@ -2828,7 +2828,7 @@ object GeneratedAdapters {
                     model.props.shadowElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val shadowElevationValue = shadowElevationState?.value ?: androidx.compose.material3.SearchBarDefaults.ShadowElevation
@@ -2838,7 +2838,7 @@ object GeneratedAdapters {
                     model.props.tonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val tonalElevationValue = tonalElevationState?.value ?: androidx.compose.material3.SearchBarDefaults.TonalElevation
@@ -2886,7 +2886,7 @@ object GeneratedAdapters {
                     model.props.edgePadding?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val edgePaddingValue = edgePaddingState?.value ?: androidx.compose.material3.TabRowDefaults.ScrollableTabRowEdgeStartPadding
@@ -2894,7 +2894,7 @@ object GeneratedAdapters {
                     model.props.minTabWidth?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val minTabWidthValue = minTabWidthState?.value ?: androidx.compose.material3.TabRowDefaults.ScrollableTabRowMinTabWidth
@@ -3088,7 +3088,7 @@ object GeneratedAdapters {
                     model.props.space?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val spaceValue = spaceState?.value ?: androidx.compose.material3.SegmentedButtonDefaults.BorderWidth
@@ -3129,7 +3129,7 @@ object GeneratedAdapters {
                     model.props.value.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Float.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.toFloat()
+                            context.number(plain).toFloat()
                         }
                     }
                 val valueValue = valueState.value
@@ -3302,7 +3302,7 @@ object GeneratedAdapters {
                     model.props.shadowElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val shadowElevationValue = shadowElevationState?.value ?: (0).dp
@@ -3312,7 +3312,7 @@ object GeneratedAdapters {
                     model.props.tonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val tonalElevationValue = tonalElevationState?.value ?: (0).dp
@@ -3350,7 +3350,7 @@ object GeneratedAdapters {
                     model.props.shadowElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val shadowElevationValue = shadowElevationState?.value ?: (0).dp
@@ -3360,7 +3360,7 @@ object GeneratedAdapters {
                     model.props.tonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val tonalElevationValue = tonalElevationState?.value ?: (0).dp
@@ -3403,7 +3403,7 @@ object GeneratedAdapters {
                     model.props.shadowElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val shadowElevationValue = shadowElevationState?.value ?: (0).dp
@@ -3413,7 +3413,7 @@ object GeneratedAdapters {
                     model.props.tonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val tonalElevationValue = tonalElevationState?.value ?: (0).dp
@@ -3455,7 +3455,7 @@ object GeneratedAdapters {
                     model.props.shadowElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val shadowElevationValue = shadowElevationState?.value ?: (0).dp
@@ -3465,7 +3465,7 @@ object GeneratedAdapters {
                     model.props.tonalElevation?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val tonalElevationValue = tonalElevationState?.value ?: (0).dp
@@ -3748,7 +3748,7 @@ object GeneratedAdapters {
                     model.props.expandedHeight?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val expandedHeightValue = expandedHeightState?.value ?: androidx.compose.material3.TopAppBarDefaults.TopAppBarExpandedHeight
@@ -3797,7 +3797,7 @@ object GeneratedAdapters {
                     model.props.thickness?.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Dp.VectorConverter, com.pycompose.program.Phase.Composition) {
                             plain ->
-                            plain.jsonPrimitive.double.dp
+                            context.number(plain).dp
                         }
                     }
                 val thicknessValue = thicknessState?.value ?: androidx.compose.material3.DividerDefaults.Thickness

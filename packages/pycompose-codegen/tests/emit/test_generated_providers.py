@@ -17,14 +17,14 @@ def test_a_provider_prop_becomes_a_lambda_reading_the_snapshot_value() -> None:
     """``progress: () -> Float`` is a parameter the app cannot name.
 
     The app states a number in the snapshot; the adapter hands Compose a lambda
-    that reads it. The wire carries a Double, so the pinned return type decides
-    the conversion instead of a cast the generator picked for itself, and the
-    value may be bound like any other.
+    that reads it. The wire carries a number or an expression over holder
+    streams, so the pinned return type decides the conversion instead of a cast
+    the generator picked for itself, and the value may be bound like any other.
     """
     block = render("LinearProgressIndicator", components()["LinearProgressIndicator"])
     assert "val progressState =" in block
     assert "Float.VectorConverter" in block
-    assert "plain.jsonPrimitive.double.toFloat()" in block
+    assert "context.number(plain).toFloat()" in block
     assert "progress = { progressState.value }" in block
 
 

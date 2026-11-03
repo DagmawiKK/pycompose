@@ -28,7 +28,7 @@ from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.nodes.node import Node
 from pycompose.model.snapshot import Snapshot
 from pycompose.ui import ModalBottomSheet, ModalNavigationDrawer, Text
-from pycompose.ui._rules import validate_prop
+from pycompose.ui._props import validate_prop
 
 SCHEMA_PATH = Path(__file__).resolve().parents[4] / "schema" / "catalog.lock.json"
 

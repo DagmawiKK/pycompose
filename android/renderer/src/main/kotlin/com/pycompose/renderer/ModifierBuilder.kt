@@ -17,6 +17,7 @@ import kotlinx.serialization.json.jsonPrimitive
  */
 class ModifierBuilder(
     private val actions: ActionDispatcher,
+    private val streams: () -> Streams,
 ) {
     /**
      * The modifier [program] describes, or why it cannot apply.
@@ -51,9 +52,13 @@ class ModifierBuilder(
                     val modifier = built.getOrNull() ?: return@fold built
                     val type = checkNotNull(operation["type"]?.jsonPrimitive).content
                     val applied =
-                        GeneratedModifiers.apply(type, scope, operation) {
-                            actions.dispatch(it)
-                        }
+                        GeneratedModifiers.apply(
+                            type,
+                            scope,
+                            operation,
+                            actions::dispatch,
+                            streams(),
+                        )
                     if (applied == null) {
                         Result.failure(IllegalStateException("$type needs a parent declaring it"))
                     } else {

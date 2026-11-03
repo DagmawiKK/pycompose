@@ -106,7 +106,11 @@ def _prop_imports(
         if spec.get("type") == "dp":
             # Kotlin's own conversion is an extension property, so the import
             # is what makes ``model.props.x.dp`` resolve.
-            qualified.add("androidx.compose.ui.unit.dp")
+            qualified.update(
+                {"androidx.compose.ui.unit.dp", "com.pycompose.renderer.number"}
+            )
+        if spec.get("type") == "number":
+            qualified.add("com.pycompose.renderer.number")
         if "indexOf" in spec:
             qualified.update(
                 {"com.pycompose.renderer.index", "com.pycompose.renderer.inSlot"}

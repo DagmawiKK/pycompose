@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import com.pycompose.renderer.generated.driveTo
 import com.pycompose.renderer.generated.rememberAnchored
 import com.pycompose.renderer.generated.settledAnchor
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 
 /**
@@ -99,7 +100,8 @@ fun RenderContext.swipeState(
 /**
  * The node's slider projection; a gesture reports only its finished value.
  *
- * @param value Desired value; null starts at the range's floor.
+ * @param value Desired value, or an expression over holder streams; null starts
+ *   at the range's floor.
  * @param report Action id finished values report to; null reports none.
  * @param valueRange Native range; null uses zero to one.
  * @param steps Step count between range bounds; null uses none.
@@ -107,11 +109,18 @@ fun RenderContext.swipeState(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RenderContext.sliderState(
-    value: Double?,
+    value: JsonElement?,
     report: String?,
     valueRange: ClosedFloatingPointRange<Float>?,
     steps: Long?,
-): SliderState = rememberHostSliderState(value, report, valueRange, steps, observations::observe)
+): SliderState =
+    rememberHostSliderState(
+        value?.let { number(it) },
+        report,
+        valueRange,
+        steps,
+        observations::observe,
+    )
 
 /**
  * The node's tooltip projection, reporting visibility transitions.
@@ -167,14 +176,15 @@ fun RenderContext.searchState(
 /**
  * The node's scroll projection, attached through its modifier by the adapter.
  *
- * @param offset Desired offset in pixels; null leaves scrolling to gestures.
+ * @param offset Desired offset in pixels, or an expression over holder streams;
+ *   null leaves scrolling to gestures.
  * @param report Action id idle offsets report to; null reports none.
  */
 @Composable
 fun RenderContext.scrollState(
-    offset: Double?,
+    offset: JsonElement?,
     report: String?,
-): ScrollState = rememberHostScrollState(offset, report, observations::observe)
+): ScrollState = rememberHostScrollState(offset?.let { number(it) }, report, observations::observe)
 
 /**
  * The node's lazy-list projection, reporting the first visible index at rest.

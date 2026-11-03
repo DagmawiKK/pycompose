@@ -17,12 +17,41 @@ from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.nodes.props import JsonValue
 from pycompose.model.nodes.values import named_value
 from pycompose.model.programs.bindings import Binding
+from pycompose.model.programs.expressions import Expression, lower_expression
 from pycompose.ui._generated.modifiers import GeneratedOperations
 from pycompose.ui._generated.values import Dp, PaddingValues
-from pycompose.ui._rules import validate_modifier
+from pycompose.ui._props import validate_modifier
 from pycompose.ui.modifier_operation import _Operation
 
 _PADDING_SIDES = ("start", "top", "end", "bottom")
+
+
+def _direct_padding(value: object, sides: tuple[object, ...]) -> JsonValue | None:
+    """A padding value that names every side at once: a tagged object or an expression.
+
+    Args:
+        value: What the app passed.
+        sides: The side keywords, refused alongside a direct value.
+
+    Returns:
+        The value to pass through, or None when the sides build it.
+
+    Raises:
+        IrValidationError: If a direct value is combined with side keywords.
+    """
+    if isinstance(value, Expression):
+        if any(side is not None for side in sides):
+            raise IrValidationError(
+                "padding takes either an expression or side keywords, not both"
+            )
+        return cast("JsonValue", value.to_wire())
+    if isinstance(value, Mapping):
+        if any(side is not None for side in sides):
+            raise IrValidationError(
+                "padding takes either a padding dict or side keywords, not both"
+            )
+        return cast("JsonValue", dict(value))
+    return None
 
 
 @dataclass(frozen=True, slots=True)
@@ -50,7 +79,7 @@ class Modifier(GeneratedOperations):
     # A slotted dataclass is a new class, so the conveniences below name it in
     # super(): the zero-argument form would still see the class before slots.
 
-    def _append(self, name: str, **props: JsonValue | Binding) -> Modifier:
+    def _append(self, name: str, **props: JsonValue | Binding | Expression) -> Modifier:
         operations = cast(
             tuple[FrozenJsonValue, ...], self.values.get("operations", ())
         )
@@ -65,19 +94,20 @@ class Modifier(GeneratedOperations):
                     modifier=name,
                     prop=key,
                 )
+            props[key] = lower_expression(value)
             if rule is not None and rule.type == "enum" and rule.value_type:
                 props[key] = cast(
                     "JsonValue",
                     named_value(rule.value_type, value, REGISTRY.value_types),
                 )
-        # Every binding was lowered above; what remains is plain wire data.
+        # Every binding and expression was lowered above; what remains is wire data.
         operation = freeze_json(cast("JsonValue", {"type": name, **props}))
         return Modifier({"operations": (*operations, operation)})
 
     @_Operation
     def padding(
         self,
-        value: JsonValue = None,
+        value: JsonValue | Expression = None,
         *,
         top: int | float | None = None,
         start: int | float | None = None,
@@ -111,12 +141,9 @@ class Modifier(GeneratedOperations):
                 dict was combined with side keywords.
         """
         keywords = (top, start, end, bottom, horizontal, vertical)
-        if isinstance(value, Mapping):
-            if any(side is not None for side in keywords):
-                raise IrValidationError(
-                    "padding takes either a padding dict or side keywords, not both"
-                )
-            return super(Modifier, self).padding(dict(value))
+        direct = _direct_padding(value, keywords)
+        if direct is not None:
+            return super(Modifier, self).padding(direct)
         if value is None and not any(side is not None for side in keywords):
             raise IrValidationError("padding needs a value or at least one side")
         if value is not None and (
@@ -150,8 +177,8 @@ class Modifier(GeneratedOperations):
     @_Operation
     def size(
         self,
-        width: JsonValue | Binding,
-        height: JsonValue | Binding = None,
+        width: JsonValue | Expression | Binding,
+        height: JsonValue | Expression | Binding = None,
     ) -> Modifier:
         """Append nonnegative dp size; an omitted height makes a square.
 

@@ -100,7 +100,32 @@ def _imports(registry: dict[str, Any]) -> list[str]:
             entry = converters.get(spec.get("animation"))
             if entry is not None:
                 names.update(entry["imports"])
+    names.update(_numeric_imports(registry))
     return [f"import {name}" for name in sorted(names)]
+
+
+def _numeric_imports(registry: dict[str, Any]) -> set[str]:
+    """What reading a dp or number argument that may be an expression needs.
+
+    Args:
+        registry: The catalog lock.
+
+    Returns:
+        Fully qualified names, imported so the generated read stays one line.
+    """
+    types = {
+        spec.get("type")
+        for modifier in registry.get("modifiers", {}).values()
+        for spec in modifier.get("props", {}).values()
+    }
+    names: set[str] = set()
+    if "dp" in types:
+        names.update(
+            {"com.pycompose.program.Expressions", "com.pycompose.renderer.dpValue"}
+        )
+    if "number" in types:
+        names.add("com.pycompose.renderer.numberValue")
+    return names
 
 
 def render_modifiers(registry: dict[str, Any]) -> str:
@@ -176,7 +201,8 @@ def render_modifiers(registry: dict[str, Any]) -> str:
             "object GeneratedModifiers {",
             "    /**",
             "     * [type] applied with [op]'s props; null for an operation worn",
-            "     * outside every scope declaring it. [dispatch] sends a click's id.",
+            "     * outside every scope declaring it. [dispatch] sends a click's id;",
+            "     * [streams] reads the holder streams an expression names.",
             "     */",
             "    @Composable",
             "    fun apply(",
@@ -184,6 +210,7 @@ def render_modifiers(registry: dict[str, Any]) -> str:
             "        scope: Any?,",
             "        op: JsonObject,",
             "        dispatch: (String) -> Unit,",
+            "        streams: com.pycompose.renderer.Streams,",
             "    ): Modifier? =",
             "        when (type) {",
             *direct,

@@ -58,6 +58,9 @@ def resolved(family: str, value: str) -> str:
 def prop_value(spec: dict[str, Any], native: str) -> str:
     """The Kotlin value a prop of this spec passes, read from ``value``.
 
+    A dp or number may stand as an expression over holder streams, which the
+    host evaluates from the streams the snapshot publishes.
+
     Args:
         spec: The prop's lock entry.
         native: The Kotlin type of the parameter receiving it.
@@ -70,11 +73,18 @@ def prop_value(spec: dict[str, Any], native: str) -> str:
     if spec["type"] == "actionId":
         return "{ dispatch(value.jsonPrimitive.content) }"
     if spec["type"] == "dp":
-        return (
+        plain = (
             "com.pycompose.renderer.PropResolver"
             ".dp(value.jsonPrimitive.double).getOrThrow()"
         )
-    decoded = f"value.jsonPrimitive.{READS[spec['type']]}"
+        return (
+            "if (Expressions.isExpression(value)) "
+            f"dpValue(value, streams) else {plain}"
+        )
+    if spec["type"] == "number":
+        decoded = "numberValue(value, streams)"
+    else:
+        decoded = f"value.jsonPrimitive.{READS[spec['type']]}"
     return decoded + NARROW.get(native.rsplit(".", 1)[-1], "")
 
 
@@ -82,12 +92,14 @@ def decoded(spec: dict[str, Any], argument: dict[str, Any]) -> str:
     """The Kotlin value one prop of a direct call passes, read from ``value``.
 
     A family's tagged object goes through its resolver; a dp also rides the
-    wire as a bare number (ADR-0036).
+    wire as a bare number (ADR-0036) or as an expression over holder streams.
     """
     if spec.get("valueType") == "Dp" and spec["type"] == "dp":
         riding = "com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double)"
         return (
-            f"if (value is JsonObject) {resolved('Dp', 'value')} "
+            "if (Expressions.isExpression(value)) "
+            "dpValue(value, streams) "
+            f"else if (value is JsonObject) {resolved('Dp', 'value')} "
             f"else {riding}.getOrThrow()"
         )
     return prop_value(spec, argument["type"])

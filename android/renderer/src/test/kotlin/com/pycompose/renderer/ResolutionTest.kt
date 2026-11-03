@@ -76,7 +76,7 @@ class ResolutionTest {
 
     @Test
     fun `modifier program fails as a whole on malformed operations`() {
-        val builder = ModifierBuilder(ActionDispatcher {})
+        val builder = ModifierBuilder(ActionDispatcher {}) { emptyMap() }
         val malformed =
             Json
                 .parseToJsonElement(

@@ -38,6 +38,10 @@ def _parameter(name: str, prop: str, spec: dict[str, Any]) -> str:
         kind = "JsonValue"
     else:
         kind = TYPES[spec["type"]]
+    if spec["type"] in {"dp", "number"} and spec.get("valueType") in {None, "Dp"}:
+        # A number may follow a holder's stream, evaluated by the host. A dp prop
+        # carrying another family (PaddingValues) holds a compound value, not one.
+        kind += " | Expression"
     if animatable(spec):
         # The host animates to a target the app states with animate().
         kind += " | Binding"
@@ -57,6 +61,8 @@ def _given(prop: str, spec: dict[str, Any]) -> str:
     if animatable(spec):
         phase = json.dumps(spec.get("phase", "composition"))
         return f"lower_binding({python_name(prop)}, {phase})"
+    if spec["type"] in {"dp", "number"}:
+        return f"lower_expression({python_name(prop)})"
     return python_name(prop)
 
 
@@ -152,6 +158,10 @@ def render_operations(registry: dict[str, Any]) -> str:
                 "",
                 "from pycompose.model.nodes.props import JsonValue",
                 "from pycompose.model.programs.bindings import Binding, lower_binding",
+                "from pycompose.model.programs.expressions import (",
+                "    Expression,",
+                "    lower_expression,",
+                ")",
                 "from pycompose.ui.intents import Intent, lower_action",
                 "from pycompose.ui.modifier_operation import _Operation",
                 "",
@@ -167,7 +177,7 @@ def render_operations(registry: dict[str, Any]) -> str:
                 "    __slots__ = ()",
                 "",
                 "    def _append("
-                "self, name: str, **props: JsonValue | Binding"
+                "self, name: str, **props: JsonValue | Binding | Expression"
                 ") -> Modifier:",
                 "        raise NotImplementedError",
                 "",

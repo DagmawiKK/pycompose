@@ -39,6 +39,22 @@ object Expressions {
         } == true
 
     /**
+     * The expression kind a prop type holds, or null when it holds none.
+     *
+     * A colour prop takes a colour expression; a dp or number prop takes a number expression. An
+     * integer is not among them: an expression is evaluated in floating point every frame, and a
+     * discrete value (an index, a line count) cannot follow one.
+     *
+     * @param type The prop's catalog type.
+     */
+    fun kindOf(type: String?): String? =
+        when (type) {
+            "color" -> "color"
+            "dp", "number" -> "number"
+            else -> null
+        }
+
+    /**
      * Check one expression and name the streams it reads.
      *
      * @param value The `{"type": "expression", "node": ...}` object.
@@ -61,13 +77,21 @@ object Expressions {
     /**
      * Every stream an expression in the snapshot reads names a node whose holder exposes it.
      *
+     * A binding is read through its target, and a modifier's arguments are read too: an
+     * expression is a fact about the value a prop or argument holds, not about where it is
+     * written.
+     *
      * @param root The snapshot's root node, already validated node by node.
      * @param contract The catalog's limits and vocabulary.
+     * @param propKind The expression kind a component prop holds, or null when it holds none.
+     * @param modifierKind The expression kind a modifier argument holds, or null for none.
      * @param published The streams a component type's holder publishes.
      */
     fun targets(
         root: JsonObject,
         contract: Contract,
+        propKind: (type: String, prop: String) -> String?,
+        modifierKind: (modifier: String, argument: String) -> String?,
         published: (String) -> Set<String>,
     ) {
         val types = mutableMapOf<String, String>()
@@ -75,10 +99,15 @@ object Expressions {
         val pending = ArrayDeque(listOf(root))
         while (pending.isNotEmpty()) {
             val node = pending.removeLast()
-            types[(node.getValue("id") as JsonPrimitive).content] =
-                (node.getValue("type") as JsonPrimitive).content
-            (node["props"] as? JsonObject)?.values?.filter(::isExpression)?.forEach {
-                reads += validate(it as JsonObject, "color", contract)
+            val type = (node.getValue("type") as JsonPrimitive).content
+            types[(node.getValue("id") as JsonPrimitive).content] = type
+            (node["props"] as? JsonObject)?.forEach { (name, value) ->
+                reads +=
+                    if (name == "modifier") {
+                        modifierReads(value, contract, modifierKind)
+                    } else {
+                        expressionReads(value, contract) { propKind(type, name) }
+                    }
             }
             (node["children"] as? JsonArray)?.forEach { pending.add(it as JsonObject) }
         }
@@ -87,6 +116,45 @@ object Expressions {
                 "Stream $stream names no holder exposing it"
             }
         }
+    }
+
+    /** The streams one value's expression reads, a binding read through its target. */
+    private fun expressionReads(
+        value: JsonElement,
+        contract: Contract,
+        kind: () -> String?,
+    ): List<Pair<String, String>> {
+        val expression = expressionIn(value) ?: return emptyList()
+        val expected = requireNotNull(kind()) { "This value cannot hold an expression" }
+        return validate(expression, expected, contract)
+    }
+
+    /** The streams every expression a modifier's arguments carry read. */
+    private fun modifierReads(
+        value: JsonElement,
+        contract: Contract,
+        kind: (modifier: String, argument: String) -> String?,
+    ): List<Pair<String, String>> {
+        val operations = (value as? JsonObject)?.get("operations") as? JsonArray
+        return operations.orEmpty().flatMap { operation ->
+            val args = operation as? JsonObject ?: return@flatMap emptyList()
+            val name = (args["type"] as? JsonPrimitive)?.content ?: return@flatMap emptyList()
+            args.filterKeys { it != "type" }.flatMap { (argument, argumentValue) ->
+                expressionReads(argumentValue, contract) { kind(name, argument) }
+            }
+        }
+    }
+
+    /** The expression a value states, or the target of a binding that states one. */
+    private fun expressionIn(value: JsonElement): JsonObject? {
+        val objectValue = value as? JsonObject ?: return null
+        val stated =
+            if (Bindings.isBinding(objectValue)) {
+                Bindings.read(objectValue).target
+            } else {
+                objectValue
+            }
+        return if (isExpression(stated)) stated as JsonObject else null
     }
 
     /** One op's shape: how many number arguments, and the colour field it carries. */

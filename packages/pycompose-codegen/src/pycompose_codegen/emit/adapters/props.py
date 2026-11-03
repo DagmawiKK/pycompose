@@ -100,6 +100,9 @@ def _render_scalar(prop_name: str, spec: dict[str, Any], out: Fragments) -> bool
 def scalar_wire(prop_name: str, spec: dict[str, Any]) -> str:
     """Read one scalar from the model, narrowing an Int- or Float-native value.
 
+    A number may be an expression over holder streams, so it is read through
+    ``context.number``; every other scalar is the value the model holds.
+
     Args:
         prop_name: The camelCase Kotlin property name.
         spec: The prop's schema entry.
@@ -107,7 +110,10 @@ def scalar_wire(prop_name: str, spec: dict[str, Any]) -> str:
     Returns:
         Kotlin source for the value Compose receives.
     """
-    wire = f"model.props.{prop_name}"
+    if spec["type"] == "number":
+        wire = f"context.number(model.props.{prop_name})"
+    else:
+        wire = f"model.props.{prop_name}"
     narrow = {"Int": "toInt()", "Float": "toFloat()"}.get(spec.get("nativeType", ""))
     if narrow:
         wire += f"?.{narrow}" if spec.get("nullable") else f".{narrow}"
@@ -115,13 +121,13 @@ def scalar_wire(prop_name: str, spec: dict[str, Any]) -> str:
 
 
 def _render_dp(prop_name: str, spec: dict[str, Any], out: Fragments) -> bool:
-    """Render a dp prop through Kotlin's own ``Double.dp`` conversion.
+    """Render a dp prop through the one decode a number wire value has.
 
-    A dp prop rides the wire as a plain finite number; the number already means
-    the density-independent unit, so no decoder sits between them. Absence is
-    the interesting half: the model cannot hold a ``Dp``, so an optional prop
-    names its pinned default in ``nativeDefault`` and the adapter chooses, with
-    the native side owning the value it declared.
+    A dp prop rides the wire as a number or as an expression over holder
+    streams; ``context.number`` reads either, so no decoder sits between the
+    prop and ``Dp``. Absence is the interesting half: the model cannot hold a
+    ``Dp``, so an optional prop names its pinned default in ``nativeDefault``
+    and the adapter chooses, with the native side owning the value it declared.
 
     Args:
         prop_name: The camelCase Kotlin property name.
@@ -133,7 +139,7 @@ def _render_dp(prop_name: str, spec: dict[str, Any], out: Fragments) -> bool:
     """
     wire = f"model.props.{prop_name}"
     if spec.get("required") or "default" in spec:
-        out.arguments.append(f"{prop_name} = {wire}.dp")
+        out.arguments.append(f"{prop_name} = context.number({wire}).dp")
         return True
     if "nativeDefault" in spec:
         # Through a local: the model lives in another module, so its nullable
@@ -141,7 +147,7 @@ def _render_dp(prop_name: str, spec: dict[str, Any], out: Fragments) -> bool:
         out.locals.append(f"val {prop_name}Wire = {wire}")
         out.locals.append(
             f"val {prop_name}Value = if ({prop_name}Wire != null) "
-            f"{prop_name}Wire.dp else {spec['nativeDefault']}"
+            f"context.number({prop_name}Wire).dp else {spec['nativeDefault']}"
         )
         out.arguments.append(f"{prop_name} = {prop_name}Value")
         return True
@@ -349,7 +355,12 @@ def _render_provider(
         )
     elif spec["type"] in SCALAR_KOTLIN:
         wire = SCALAR_KOTLIN[spec["type"]]
-        local = f"val {prop_name}Value = model.props.{prop_name}"
+        read = (
+            f"context.number(model.props.{prop_name})"
+            if spec["type"] == "number"
+            else f"model.props.{prop_name}"
+        )
+        local = f"val {prop_name}Value = {read}"
     else:
         return False
     argument = _provided(f"{prop_name}Value", wire, provider["returns"])

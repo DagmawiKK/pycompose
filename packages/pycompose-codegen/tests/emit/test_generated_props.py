@@ -20,14 +20,14 @@ from test_generated_adapters import (
 def test_a_dp_prop_is_read_in_the_unit_the_app_stated() -> None:
     """``thickness=2`` is two density-independent pixels, not two pixels.
 
-    The model holds a plain number, so the adapter names the unit where it is
-    read; an absent one falls back to the pinned default rather than to a zero
-    the host invented.
+    The model holds the wire form, which may be an expression, so the adapter
+    reads the number and names the unit where it is read; an absent one falls
+    back to the pinned default rather than to a zero the host invented.
     """
     block = render("HorizontalDivider", components()["HorizontalDivider"])
     assert "val thicknessState =" in block
     assert "model.props.thickness?.let { wire ->" in block
-    assert "plain.jsonPrimitive.double.dp" in block
+    assert "context.number(plain).dp" in block
     assert (
         "val thicknessValue = thicknessState?.value ?: "
         "androidx.compose.material3.DividerDefaults.Thickness" in block
@@ -44,7 +44,7 @@ def test_a_dp_prop_that_is_always_present_wraps_at_the_call(spec: dict) -> None:
     entry = components()["VerticalDivider"]
     entry["props"]["thickness"] = spec
     block = render("VerticalDivider", entry)
-    assert "thickness = model.props.thickness.dp," in block
+    assert "thickness = context.number(model.props.thickness).dp," in block
 
 
 @pytest.mark.parametrize(
@@ -341,5 +341,31 @@ def test_an_optional_callback_reaches_nobody_when_unbound() -> None:
         "onMove = { value -> model.props.onMove?.let "
         "{ context.event(it, JsonPrimitive(value)) } }"
     ) in block
-    # The wire carries a double; Compose takes a Float.
-    assert "value = model.props.value.toFloat()" in block
+    # The wire carries a number or an expression; Compose takes a Float.
+    assert "value = context.number(model.props.value).toFloat()" in block
+
+
+def test_a_dp_or_number_prop_holds_the_wire_form_it_may_arrive_in() -> None:
+    """A dp or number may stand as an expression, so the model keeps the wire value.
+
+    The default is the wire form too: the adapter decodes it with the same read
+    that evaluates an expression, so no reader sees a raw Kotlin number.
+    """
+    from pycompose_codegen.emit.emit_kotlin import render_kotlin_models
+
+    models = render_kotlin_models(
+        {
+            "actions": {},
+            "components": {
+                "Bar": {
+                    "props": {
+                        "progress": {"type": "number"},
+                        "thickness": {"type": "dp", "default": 2},
+                    },
+                    "children": {"allowed": False},
+                },
+            },
+        }
+    )
+    assert "val `thickness`: JsonElement = JsonPrimitive(2.0)," in models
+    assert "val `progress`: JsonElement? = null," in models

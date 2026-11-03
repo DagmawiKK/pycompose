@@ -10,7 +10,7 @@ from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.nodes import Node, Props
 from pycompose.model.nodes.props import JsonValue
 from pycompose.model.snapshot import Snapshot
-from pycompose.ui._rules import validate_modifier
+from pycompose.ui._props import validate_modifier
 
 
 @pytest.mark.parametrize(
