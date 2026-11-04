@@ -56,7 +56,6 @@ from pycompose.model.catalog.vocabulary import (
     SLOT_KINDS,
     STATE_KINDS,
     TRANSIENT_KINDS,
-    WRAPPERS,
 )
 
 __all__ = [
@@ -82,7 +81,6 @@ __all__ = [
     "StateRule",
     "TRANSIENT_KINDS",
     "TransientRule",
-    "WRAPPERS",
 ]
 
 

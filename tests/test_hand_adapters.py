@@ -35,7 +35,7 @@ def test_every_prop_of_a_hand_adapted_component_is_read() -> None:
     hand = {
         name: entry
         for name, entry in components.items()
-        if entry.get("adapter") == "manual" or entry.get("wrapper")
+        if entry.get("adapter") == "manual"
     }
     assert hand
     unread = {

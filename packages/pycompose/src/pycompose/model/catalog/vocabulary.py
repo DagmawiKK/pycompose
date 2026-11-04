@@ -1,9 +1,8 @@
 """The closed vocabularies of the component registry.
 
 One module owns every closed set the registry, the codegen and the pin
-audit speak: slot kinds,
-interaction and state families, prop owners, adapter modes, decoders and
-delegating wrappers. A closed set that two layers must agree on is safest
+audit speak: slot kinds, interaction and state families, prop owners,
+adapter modes and decoders. A closed set that two layers must agree on is safest
 when the second definition cannot exist: these tuples are the only
 copies, and every other file imports its names from here --
 ``registry`` re-exports them on its established import surface.
@@ -176,12 +175,4 @@ RESOURCE_TYPES = {
 
 The host loads the referenced resource and hands the native call the result,
 so a parameter of such a type is a ``resource`` prop, not a value family.
-"""
-
-WRAPPERS = ("ResourceText", "ResourceImage")
-"""Composables an adapter may delegate to whole.
-
-A wrapper resolves its content asynchronously -- off the Compose thread, with
-its own diagnostics -- so it cannot be expressed as a resolved prop value. The
-call site is mechanical; what it delegates to is not.
 """

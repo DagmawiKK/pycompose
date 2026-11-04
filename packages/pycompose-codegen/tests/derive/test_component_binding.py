@@ -256,7 +256,8 @@ def test_a_manual_adapter_claims_no_identity(tmp_path: Path) -> None:
     assert result.errors == ()
 
 
-def test_an_anchored_wrapper_verifies_its_recorded_identity(tmp_path: Path) -> None:
+def test_an_anchored_call_verifies_its_recorded_identity(tmp_path: Path) -> None:
+    """A call the face cannot pin -- a resource fills ``painter`` -- records it."""
     painter = widget(
         [
             modifier(),
@@ -272,7 +273,6 @@ def test_an_anchored_wrapper_verifies_its_recorded_identity(tmp_path: Path) -> N
         [painter],
         props=props,
         reshaped=["resource"],
-        wrapper="ResourceImage",
         source={
             "artifact": "androidx.compose.material3:material3-android:1.4.0",
             "owner": "androidx.compose.material3.test.WidgetKt",
@@ -289,7 +289,6 @@ def test_an_anchored_wrapper_verifies_its_recorded_identity(tmp_path: Path) -> N
         [painter],
         props=props,
         reshaped=["resource"],
-        wrapper="ResourceImage",
         source={
             "artifact": "androidx.compose.material3:material3-android:1.4.0",
             "owner": "androidx.compose.material3.test.WidgetKt",
@@ -306,10 +305,9 @@ def test_an_anchored_wrapper_verifies_its_recorded_identity(tmp_path: Path) -> N
         [painter],
         props=props,
         reshaped=["resource"],
-        wrapper="ResourceImage",
     )
     assert orphan.mode == "refused"
-    assert any("record the overload" in error for error in orphan.errors), orphan.errors
+    assert orphan.errors, "an unpinnable call with no recorded source is refused"
 
 
 def test_resolutions_are_deterministic(tmp_path: Path) -> None:
@@ -386,7 +384,7 @@ def test_the_resolved_face_is_the_generated_call(native_document) -> None:
     checked = skipped = 0
     for result in resolutions(catalog, inventory(DUMP)):
         entry = catalog["components"][result.name]
-        if entry.get("wrapper") or entry.get("adapter") == "manual":
+        if entry.get("adapter") == "manual":
             skipped += 1
             continue
         block = render(result.name, entry)

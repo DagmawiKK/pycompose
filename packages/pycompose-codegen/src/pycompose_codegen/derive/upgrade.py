@@ -120,7 +120,7 @@ def manual(lock: dict[str, Any], held: set[str]) -> set[str]:
     return held | {
         name
         for name, entry in lock["components"].items()
-        if entry.get("adapter") == "manual" or entry.get("wrapper")
+        if entry.get("adapter") == "manual"
     }
 
 

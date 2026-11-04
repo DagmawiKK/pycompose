@@ -29,11 +29,6 @@ def is_mechanical(entry: dict[str, Any]) -> bool:
     """
     if entry.get("adapter") == "manual":
         return False
-    if entry.get("wrapper"):
-        # Text and Image hand off to ResourceText / ResourceImage, which load
-        # their content off the Compose thread and report their own diagnostics.
-        # The call site is mechanical; what it delegates to is not.
-        return False
     if not _declared_slots(entry):
         return False
     held = held_props(entry)

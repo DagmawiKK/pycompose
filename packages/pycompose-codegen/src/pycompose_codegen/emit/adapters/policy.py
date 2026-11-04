@@ -19,7 +19,7 @@ MECHANICAL = {"string", "boolean", "integer", "number", "actionId", "modifier"}
 """Schema prop types an adapter can render with no decision.
 
 A colour or a named constant renders through its value family's resolver; a
-resource only through a wrapper, which loads it off the Compose thread.
+resource through the host's loader, in the parameter it fills.
 """
 
 

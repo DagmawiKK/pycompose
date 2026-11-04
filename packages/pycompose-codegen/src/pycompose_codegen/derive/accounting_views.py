@@ -165,7 +165,7 @@ def protocols(registry: dict[str, Any]) -> dict[str, Any]:
         "lifecycle": sorted(registry["lifecycle"]),
         "modifiers": sorted(registry["modifiers"]),
     }
-    for key in ("state", "transient", "interaction", "adapter", "wrapper"):
+    for key in ("state", "transient", "interaction", "adapter"):
         view[key] = sorted(name for name, spec in components.items() if key in spec)
     view["stateByKind"] = {
         kind: sorted(

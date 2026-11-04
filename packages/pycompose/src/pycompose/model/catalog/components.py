@@ -2,8 +2,8 @@
 
 :class:`ComponentSpec` is the concrete frozen definition a registry entry
 round-trips to, and :class:`ComponentDef` its read-only structural view.
-The helper parsers here (:func:`_adapter`, :func:`_wrapper`,
-:func:`_opt_in`, :func:`_reshaped`) refuse unknown component-level kinds
+The helper parsers here (:func:`_adapter`, :func:`_opt_in`,
+:func:`_reshaped`) refuse unknown component-level kinds
 rather than ignoring them.
 """
 
@@ -19,7 +19,7 @@ from pycompose.errors import ComponentRegistryError
 from pycompose.model.catalog.elements import ChildrenRule, SlotRule
 from pycompose.model.catalog.holders import StateRule, TransientRule
 from pycompose.model.catalog.props import InteractionRule, PropDef
-from pycompose.model.catalog.vocabulary import ADAPTERS, WRAPPERS
+from pycompose.model.catalog.vocabulary import ADAPTERS
 
 
 class ComponentDef(Protocol):
@@ -92,28 +92,6 @@ def _adapter(name: str, value: object) -> str:
     if value not in ADAPTERS:
         raise ComponentRegistryError(
             f"component {name!r}: 'adapter' must be one of {', '.join(ADAPTERS)}"
-        )
-    return cast("str", value)
-
-
-def _wrapper(name: str, value: object) -> str | None:
-    """Parse a component's declared wrapper.
-
-    Args:
-        name: The component's registry key, for the error message.
-        value: The raw ``wrapper`` field.
-
-    Returns:
-        The wrapper's name, or None when the component has none.
-
-    Raises:
-        ComponentRegistryError: If the field is present but unrecognised.
-    """
-    if value is None:
-        return None
-    if value not in WRAPPERS:
-        raise ComponentRegistryError(
-            f"component {name!r}: 'wrapper' must be one of {', '.join(WRAPPERS)}"
         )
     return cast("str", value)
 
@@ -279,9 +257,6 @@ class ComponentSpec:
         adapter: ``"manual"`` when the Kotlin adapter cannot be generated. The
             default is to generate it; a component opts out by carrying a
             decision a generator cannot make, and says which.
-        wrapper: The hand-written composable this adapter delegates to whole,
-            when it has one. Set instead of ``adapter`` because the call site is
-            still mechanical -- only the thing it calls is not.
         slots: Named slots by wire name, each reaching its own native parameter.
             Declared rather than inferred: which of a component's content
             parameters a subtree belongs in is a decision the schema owns.
@@ -322,7 +297,6 @@ class ComponentSpec:
     since: str | None = None
     reshaped: tuple[str, ...] = ()
     adapter: str = "generated"
-    wrapper: str | None = None
     slots: Mapping[str, SlotRule] = dataclass_field(default_factory=dict)
     interaction: InteractionRule | None = None
     state: StateRule | None = None
@@ -382,7 +356,6 @@ class ComponentSpec:
             since=cast("str | None", data.get("since")),
             reshaped=_reshaped(name, data.get("reshaped")),
             adapter=_adapter(name, data.get("adapter")),
-            wrapper=_wrapper(name, data.get("wrapper")),
             slots=_entries(name, data, "slots", "slot", SlotRule.from_mapping, {}),
             interaction=_section(
                 name, data, "interaction", InteractionRule.from_mapping
@@ -432,7 +405,6 @@ class ComponentSpec:
         if self.opt_in:
             result["optIn"] = list(self.opt_in)
         optional = {
-            "wrapper": self.wrapper,
             "scope": self.scope,
             "overloadOf": self.overload_of,
             "boxed": self.boxed,

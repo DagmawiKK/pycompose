@@ -316,7 +316,6 @@
         },
         "transient": { "$ref": "#/$defs/transientBlock" },
         "interaction": { "$ref": "#/$defs/interactionBlock" },
-        "wrapper": { "type": "string" },
         "scope": { "type": "string" },
         "overloadOf": { "type": "string", "minLength": 1 },
         "boxed": { "const": true },

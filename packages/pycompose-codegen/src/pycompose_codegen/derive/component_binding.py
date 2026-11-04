@@ -13,9 +13,9 @@ declaration, or says why none can be selected. Three modes exist:
 
 * ``derived`` -- the face selects one overload; the entry's recorded ``source``
   must equal it.
-* ``anchored`` -- the call is hand-written (a resource wrapper passes a
-  ``Painter`` the wire face never names); the entry must record the overload
-  its call binds, and the pin must still declare that identity.
+* ``anchored`` -- the call passes something the wire face never names (a
+  value the host builds, a parameter a resource fills); the entry must record
+  the overload its call binds, and the pin must still declare that identity.
 * ``manual`` -- the adapter is hand-written and legitimately spans a family of
   overloads; no single identity is claimed, and the union-membership check
   remains as the weaker boundary.
@@ -203,13 +203,6 @@ def _refusal(
     accepted: list[Declaration],
 ) -> str:
     """Say why no single overload could be selected."""
-    if entry.get("wrapper"):
-        if not candidates:
-            return f"no pinned overload in {entry.get('package')!r}"
-        return (
-            "wrapper call passes parameters the wire face never names; "
-            "record the overload its call binds"
-        )
     if not candidates:
         return f"no pinned overload in {entry.get('package')!r}"
     if not accepted:

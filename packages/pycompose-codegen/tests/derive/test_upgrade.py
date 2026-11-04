@@ -102,12 +102,11 @@ def test_a_module_moved_off_the_new_bom_stops_the_upgrade() -> None:
 def test_hand_written_components_are_the_ones_flagged() -> None:
     lock = {
         "components": {
-            "Text": {"wrapper": "ResourceText"},
             "Search": {"adapter": "manual"},
             "Button": {},
         }
     }
-    assert manual(lock, {"Crossfade"}) == {"Text", "Search", "Crossfade"}
+    assert manual(lock, {"Crossfade"}) == {"Search", "Crossfade"}
 
 
 def test_a_decision_names_a_declaration_and_the_lock_stamps_the_pin() -> None:
