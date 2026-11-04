@@ -14,6 +14,7 @@ from collections.abc import Iterable
 from typing import Any
 
 from pycompose_codegen.derive.classpath_dump import Inventory
+from pycompose_codegen.derive.opt_ins import opt_in_index
 from pycompose_codegen.derive.propose_families import propose_members
 
 VALUE_CLASS = "kotlin/jvm/JvmInline"
@@ -34,6 +35,8 @@ def constant_families(
         Each derived family's lock entry, by family name.
     """
     classes = {c.classifier: c for c in found.classes}
+    # A member that needs an opt-in carries it, as an approved family's does.
+    index = opt_in_index(found)
     families: dict[str, dict[str, Any]] = {}
     for classifier in sorted(set(classifiers)):
         dotted = classifier.replace("/", ".")
@@ -51,6 +54,7 @@ def constant_families(
                 classifier if enum else f"{classifier}$Companion",
                 {"family": name, "kotlinType": dotted},
                 since=since,
+                opt_ins=index,
             )
         except ValueError:
             continue

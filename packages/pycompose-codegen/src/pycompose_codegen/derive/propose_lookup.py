@@ -294,27 +294,11 @@ MEMBERS = {
         (),
     ),
     "FontFamily": ("androidx/compose/ui/text/font/FontFamily$Companion", "", ()),
-    "ToggleableState": ("androidx/compose/ui/state/ToggleableState", "", ()),
-    "StrokeCap": ("androidx/compose/ui/graphics/StrokeCap$Companion", "", ()),
-    "TextAlign": ("androidx/compose/ui/text/style/TextAlign$Companion", "", ()),
     "TextDecoration": (
         "androidx/compose/ui/text/style/TextDecoration$Companion",
         "",
         (),
     ),
-    "TextOverflow": (
-        "androidx/compose/ui/text/style/TextOverflow$Companion",
-        "",
-        (),
-    ),
-    "FontStyle": ("androidx/compose/ui/text/font/FontStyle$Companion", "", ()),
-    "FabPosition": ("androidx/compose/material3/FabPosition$Companion", "", ()),
-    "TimePickerLayoutType": (
-        "androidx/compose/material3/TimePickerLayoutType$Companion",
-        "",
-        (),
-    ),
-    "DisplayMode": ("androidx/compose/material3/DisplayMode$Companion", "", ()),
     # AbsoluteAlignment is a second holder of the alignment vocabulary, not a
     # whole new one: its members carry the same family types, so they join the
     # family under their own holder.

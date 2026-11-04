@@ -14404,31 +14404,6 @@
       "covers": "Dp, TextUnit",
       "since": "1.8.0"
     },
-    "ToggleableState": {
-      "family": "ToggleableState",
-      "kind": "constant",
-      "kotlinType": "androidx.compose.ui.state.ToggleableState",
-      "since": "1.12.0",
-      "source": {
-        "owner": "androidx/compose/ui/state/ToggleableState",
-        "members": "enum entries"
-      },
-      "parameters": {
-        "name": {
-          "type": "string",
-          "required": true,
-          "values": [
-            "Indeterminate",
-            "Off",
-            "On"
-          ]
-        }
-      },
-      "native": {
-        "constantParameter": "name",
-        "propertyOwner": "androidx.compose.ui.state.ToggleableState"
-      }
-    },
     "BorderStroke": {
       "family": "BorderStroke",
       "kind": "record",
@@ -19040,60 +19015,6 @@
         "call": "androidx.compose.material3.TopAppBarDefaults.topAppBarColors"
       }
     },
-    "StrokeCap": {
-      "family": "StrokeCap",
-      "kind": "constant",
-      "kotlinType": "androidx.compose.ui.graphics.StrokeCap",
-      "since": "1.13.0",
-      "source": {
-        "owner": "androidx/compose/ui/graphics/StrokeCap$Companion",
-        "members": "public properties"
-      },
-      "parameters": {
-        "name": {
-          "type": "string",
-          "required": true,
-          "values": [
-            "Butt",
-            "Round",
-            "Square"
-          ]
-        }
-      },
-      "native": {
-        "constantParameter": "name",
-        "propertyOwner": "androidx.compose.ui.graphics.StrokeCap"
-      }
-    },
-    "TextAlign": {
-      "family": "TextAlign",
-      "kind": "constant",
-      "kotlinType": "androidx.compose.ui.text.style.TextAlign",
-      "since": "1.13.0",
-      "source": {
-        "owner": "androidx/compose/ui/text/style/TextAlign$Companion",
-        "members": "public properties"
-      },
-      "parameters": {
-        "name": {
-          "type": "string",
-          "required": true,
-          "values": [
-            "Center",
-            "End",
-            "Justify",
-            "Left",
-            "Right",
-            "Start",
-            "Unspecified"
-          ]
-        }
-      },
-      "native": {
-        "constantParameter": "name",
-        "propertyOwner": "androidx.compose.ui.text.style.TextAlign"
-      }
-    },
     "TextDecoration": {
       "family": "TextDecoration",
       "kind": "constant",
@@ -19117,110 +19038,6 @@
       "native": {
         "constantParameter": "name",
         "propertyOwner": "androidx.compose.ui.text.style.TextDecoration"
-      }
-    },
-    "TextOverflow": {
-      "family": "TextOverflow",
-      "kind": "constant",
-      "kotlinType": "androidx.compose.ui.text.style.TextOverflow",
-      "since": "1.13.0",
-      "source": {
-        "owner": "androidx/compose/ui/text/style/TextOverflow$Companion",
-        "members": "public properties"
-      },
-      "parameters": {
-        "name": {
-          "type": "string",
-          "required": true,
-          "values": [
-            "Clip",
-            "Ellipsis",
-            "MiddleEllipsis",
-            "StartEllipsis",
-            "Visible"
-          ]
-        }
-      },
-      "native": {
-        "constantParameter": "name",
-        "propertyOwner": "androidx.compose.ui.text.style.TextOverflow"
-      }
-    },
-    "FontStyle": {
-      "family": "FontStyle",
-      "kind": "constant",
-      "kotlinType": "androidx.compose.ui.text.font.FontStyle",
-      "since": "1.13.0",
-      "source": {
-        "owner": "androidx/compose/ui/text/font/FontStyle$Companion",
-        "members": "public properties"
-      },
-      "parameters": {
-        "name": {
-          "type": "string",
-          "required": true,
-          "values": [
-            "Italic",
-            "Normal"
-          ]
-        }
-      },
-      "native": {
-        "constantParameter": "name",
-        "propertyOwner": "androidx.compose.ui.text.font.FontStyle"
-      }
-    },
-    "FabPosition": {
-      "family": "FabPosition",
-      "kind": "constant",
-      "kotlinType": "androidx.compose.material3.FabPosition",
-      "since": "1.13.0",
-      "source": {
-        "owner": "androidx/compose/material3/FabPosition$Companion",
-        "members": "public properties"
-      },
-      "parameters": {
-        "name": {
-          "type": "string",
-          "required": true,
-          "values": [
-            "Center",
-            "End",
-            "EndOverlay",
-            "Start"
-          ]
-        }
-      },
-      "native": {
-        "constantParameter": "name",
-        "propertyOwner": "androidx.compose.material3.FabPosition"
-      }
-    },
-    "TimePickerLayoutType": {
-      "family": "TimePickerLayoutType",
-      "kind": "constant",
-      "kotlinType": "androidx.compose.material3.TimePickerLayoutType",
-      "since": "1.13.0",
-      "source": {
-        "owner": "androidx/compose/material3/TimePickerLayoutType$Companion",
-        "members": "public properties"
-      },
-      "optIn": [
-        "androidx.compose.material3.ExperimentalMaterial3Api"
-      ],
-      "parameters": {
-        "name": {
-          "type": "string",
-          "required": true,
-          "values": [
-            "Horizontal",
-            "Vertical"
-          ]
-        }
-      },
-      "native": {
-        "constantParameter": "name",
-        "propertyOwner": "androidx.compose.material3.TimePickerLayoutType"
       }
     },
     "Alignment": {
@@ -19322,30 +19139,6 @@
           "Left": "androidx.compose.ui.AbsoluteAlignment",
           "Right": "androidx.compose.ui.AbsoluteAlignment"
         }
-      }
-    },
-    "DisplayMode": {
-      "family": "DisplayMode",
-      "kind": "constant",
-      "kotlinType": "androidx.compose.material3.DisplayMode",
-      "since": "1.14.0",
-      "source": {
-        "owner": "androidx/compose/material3/DisplayMode$Companion",
-        "members": "public properties"
-      },
-      "parameters": {
-        "name": {
-          "type": "string",
-          "required": true,
-          "values": [
-            "Input",
-            "Picker"
-          ]
-        }
-      },
-      "native": {
-        "constantParameter": "name",
-        "propertyOwner": "androidx.compose.material3.DisplayMode"
       }
     },
     "materialIcon": {
@@ -19764,6 +19557,30 @@
         "propertyOwner": "androidx.compose.foundation.text.input.TextObfuscationMode"
       }
     },
+    "DisplayMode": {
+      "family": "DisplayMode",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.material3.DisplayMode",
+      "since": "1.14.0",
+      "source": {
+        "owner": "androidx/compose/material3/DisplayMode$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Input",
+            "Picker"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.material3.DisplayMode"
+      }
+    },
     "ExposedDropdownMenuAnchorType": {
       "family": "ExposedDropdownMenuAnchorType",
       "kind": "constant",
@@ -19787,6 +19604,32 @@
       "native": {
         "constantParameter": "name",
         "propertyOwner": "androidx.compose.material3.ExposedDropdownMenuAnchorType"
+      }
+    },
+    "FabPosition": {
+      "family": "FabPosition",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.material3.FabPosition",
+      "since": "1.13.0",
+      "source": {
+        "owner": "androidx/compose/material3/FabPosition$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Center",
+            "End",
+            "EndOverlay",
+            "Start"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.material3.FabPosition"
       }
     },
     "NavigationItemIconPosition": {
@@ -19861,6 +19704,33 @@
         "propertyOwner": "androidx.compose.material3.TimePickerDisplayMode"
       }
     },
+    "TimePickerLayoutType": {
+      "family": "TimePickerLayoutType",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.material3.TimePickerLayoutType",
+      "since": "1.13.0",
+      "source": {
+        "owner": "androidx/compose/material3/TimePickerLayoutType$Companion",
+        "members": "public properties"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Horizontal",
+            "Vertical"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.material3.TimePickerLayoutType"
+      }
+    },
     "NavigationSuiteType": {
       "family": "NavigationSuiteType",
       "kind": "constant",
@@ -19915,6 +19785,136 @@
       "native": {
         "constantParameter": "name",
         "propertyOwner": "androidx.compose.ui.graphics.FilterQuality"
+      }
+    },
+    "StrokeCap": {
+      "family": "StrokeCap",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.ui.graphics.StrokeCap",
+      "since": "1.13.0",
+      "source": {
+        "owner": "androidx/compose/ui/graphics/StrokeCap$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Butt",
+            "Round",
+            "Square"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.ui.graphics.StrokeCap"
+      }
+    },
+    "ToggleableState": {
+      "family": "ToggleableState",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.ui.state.ToggleableState",
+      "since": "1.12.0",
+      "source": {
+        "owner": "androidx/compose/ui/state/ToggleableState",
+        "members": "enum entries"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Indeterminate",
+            "Off",
+            "On"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.ui.state.ToggleableState"
+      }
+    },
+    "FontStyle": {
+      "family": "FontStyle",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.ui.text.font.FontStyle",
+      "since": "1.13.0",
+      "source": {
+        "owner": "androidx/compose/ui/text/font/FontStyle$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Italic",
+            "Normal"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.ui.text.font.FontStyle"
+      }
+    },
+    "TextAlign": {
+      "family": "TextAlign",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.ui.text.style.TextAlign",
+      "since": "1.13.0",
+      "source": {
+        "owner": "androidx/compose/ui/text/style/TextAlign$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Center",
+            "End",
+            "Justify",
+            "Left",
+            "Right",
+            "Start",
+            "Unspecified"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.ui.text.style.TextAlign"
+      }
+    },
+    "TextOverflow": {
+      "family": "TextOverflow",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.ui.text.style.TextOverflow",
+      "since": "1.13.0",
+      "source": {
+        "owner": "androidx/compose/ui/text/style/TextOverflow$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Clip",
+            "Ellipsis",
+            "MiddleEllipsis",
+            "StartEllipsis",
+            "Visible"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.ui.text.style.TextOverflow"
       }
     },
     "SnapLayoutInfoProvider": {

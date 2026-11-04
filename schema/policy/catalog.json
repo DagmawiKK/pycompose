@@ -657,14 +657,6 @@
       "covers": "Dp, TextUnit",
       "since": "1.8.0"
     },
-    "ToggleableState": {
-      "source": {
-        "owner": "androidx/compose/ui/state/ToggleableState",
-        "members": "enum entries"
-      },
-      "family": "ToggleableState",
-      "kotlinType": "androidx.compose.ui.state.ToggleableState"
-    },
     "BorderStroke": {
       "source": {
         "artifact": "androidx.compose.foundation:foundation-android",
@@ -1340,22 +1332,6 @@
         "descriptor": "(JJJJJJLandroidx/compose/runtime/Composer;II)Landroidx/compose/material3/TopAppBarColors;"
       }
     },
-    "StrokeCap": {
-      "source": {
-        "owner": "androidx/compose/ui/graphics/StrokeCap$Companion",
-        "members": "public properties"
-      },
-      "family": "StrokeCap",
-      "kotlinType": "androidx.compose.ui.graphics.StrokeCap"
-    },
-    "TextAlign": {
-      "source": {
-        "owner": "androidx/compose/ui/text/style/TextAlign$Companion",
-        "members": "public properties"
-      },
-      "family": "TextAlign",
-      "kotlinType": "androidx.compose.ui.text.style.TextAlign"
-    },
     "TextDecoration": {
       "source": {
         "owner": "androidx/compose/ui/text/style/TextDecoration$Companion",
@@ -1363,38 +1339,6 @@
       },
       "family": "TextDecoration",
       "kotlinType": "androidx.compose.ui.text.style.TextDecoration"
-    },
-    "TextOverflow": {
-      "source": {
-        "owner": "androidx/compose/ui/text/style/TextOverflow$Companion",
-        "members": "public properties"
-      },
-      "family": "TextOverflow",
-      "kotlinType": "androidx.compose.ui.text.style.TextOverflow"
-    },
-    "FontStyle": {
-      "source": {
-        "owner": "androidx/compose/ui/text/font/FontStyle$Companion",
-        "members": "public properties"
-      },
-      "family": "FontStyle",
-      "kotlinType": "androidx.compose.ui.text.font.FontStyle"
-    },
-    "FabPosition": {
-      "source": {
-        "owner": "androidx/compose/material3/FabPosition$Companion",
-        "members": "public properties"
-      },
-      "family": "FabPosition",
-      "kotlinType": "androidx.compose.material3.FabPosition"
-    },
-    "TimePickerLayoutType": {
-      "source": {
-        "owner": "androidx/compose/material3/TimePickerLayoutType$Companion",
-        "members": "public properties"
-      },
-      "family": "TimePickerLayoutType",
-      "kotlinType": "androidx.compose.material3.TimePickerLayoutType"
     },
     "Alignment": {
       "source": {
@@ -1419,14 +1363,6 @@
       },
       "family": "AlignmentHorizontal",
       "kotlinType": "androidx.compose.ui.Alignment.Horizontal"
-    },
-    "DisplayMode": {
-      "source": {
-        "owner": "androidx/compose/material3/DisplayMode$Companion",
-        "members": "public properties"
-      },
-      "family": "DisplayMode",
-      "kotlinType": "androidx.compose.material3.DisplayMode"
     },
     "materialIcon": {
       "source": {
