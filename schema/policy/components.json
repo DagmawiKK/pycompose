@@ -1122,8 +1122,6 @@
       "observe": false
     },
     "patch": {
-      "source": null,
-      "slots": null,
       "props": {
         "selection": {
           "type": "integer"
@@ -1136,30 +1134,8 @@
               "type": "integer"
             }
           ]
-        },
-        "colors": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "isError": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "minLines": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "readOnly": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "shape": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "singleLine": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "textStyle": {
-          "refuse": "its hand-written adapter does not read it yet"
         }
       },
-      "adapter": "manual",
       "reshaped": [
         "value",
         "onValueChange",

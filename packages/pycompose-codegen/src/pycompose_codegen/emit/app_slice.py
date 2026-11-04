@@ -78,7 +78,6 @@ FLOOR_COMPONENTS = frozenset(
         "ExpandedDockedSearchBar",
         "ExpandedFullScreenSearchBar",
         "Text",
-        "TextField",
         "TooltipBox",
     }
 )

@@ -8363,38 +8363,99 @@ class TextField(Component):
         self,
         *,
         id: str | None = None,
+        colors: JsonValue | None = None,
         enabled: bool | None = None,
+        is_error: bool | None = None,
         label: str | None = None,
+        min_lines: int | Binding | None = None,
         modifier: Modifier | None = None,
         on_selection_change: ActionTarget | None = None,
         on_value_change: ActionTarget,
+        read_only: bool | None = None,
         selection: int | None = None,
+        shape: JsonValue | None = None,
+        single_line: bool | None = None,
+        text_style: JsonValue | None = None,
         value: str,
+        leading_icon: Content | None = None,
+        placeholder: Content | None = None,
+        prefix: Content | None = None,
+        suffix: Content | None = None,
+        supporting_text: Content | None = None,
+        trailing_icon: Content | None = None,
     ) -> None:
         """Construct a registered TextField.
 
         Args:
             id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
+            is_error: Native isError; None uses its default.
             label: Native label; None uses its default.
+            min_lines: Native minLines; None uses its default.
             modifier: Native modifier; None uses its default.
             on_selection_change: Native onSelectionChange; None uses its default.
             on_value_change: Required native onValueChange.
+            read_only: Native readOnly; None uses its default.
             selection: Native selection; None uses its default.
+            shape: Native shape; None uses its default.
+            single_line: Native singleLine; None uses its default.
+            text_style: Native textStyle; None uses its default.
             value: Required native value.
+            leading_icon: Nodes for the native leadingIcon slot.
+            placeholder: Nodes for the native placeholder slot.
+            prefix: Nodes for the native prefix slot.
+            suffix: Nodes for the native suffix slot.
+            supporting_text: Nodes for the native supportingText slot.
+            trailing_icon: Nodes for the native trailingIcon slot.
         """
         props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
         if enabled is not None:
             props["enabled"] = enabled
+        if is_error is not None:
+            props["is_error"] = is_error
         if label is not None:
             props["label"] = label
+        if min_lines is not None:
+            props["min_lines"] = lower_binding(min_lines, "composition")
         if on_selection_change is not None:
             props["on_selection_change"] = on_selection_change
         props["on_value_change"] = on_value_change
+        if read_only is not None:
+            props["read_only"] = read_only
         if selection is not None:
             props["selection"] = selection
+        if shape is not None:
+            props["shape"] = shape
+        if single_line is not None:
+            props["single_line"] = single_line
+        if text_style is not None:
+            props["text_style"] = text_style
         props["value"] = value
-        super().__init__(id=id, children=(), modifier=modifier, **props)
+        slotted: tuple[Node, ...] = ()
+        if leading_icon is not None:
+            slotted += slot_nodes(leading_icon, key="leadingIcon", slot="leadingIcon")
+        if placeholder is not None:
+            slotted += slot_nodes(placeholder, key="placeholder", slot="placeholder")
+        if prefix is not None:
+            slotted += slot_nodes(prefix, key="prefix", slot="prefix")
+        if suffix is not None:
+            slotted += slot_nodes(suffix, key="suffix", slot="suffix")
+        if supporting_text is not None:
+            slotted += slot_nodes(
+                supporting_text,
+                key="supportingText",
+                slot="supportingText",
+            )
+        if trailing_icon is not None:
+            slotted += slot_nodes(
+                trailing_icon,
+                key="trailingIcon",
+                slot="trailingIcon",
+            )
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
 class TimeInput(Component):

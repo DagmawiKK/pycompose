@@ -39,10 +39,13 @@ class ContentSlot:
         parameter: The named content parameter to pass, or ``None`` for a
             trailing lambda. ``FilterChip`` names it ``label``; ``Button`` takes
             it positionally.
+        nullable: Whether the native slot takes null, so an absent string is
+            passed as none.
     """
 
     composable: str
     parameter: str | None = None
+    nullable: bool = False
 
     def __post_init__(self) -> None:
         if not self.composable:
@@ -74,7 +77,11 @@ class ContentSlot:
             raise ComponentRegistryError(
                 f"{where}: 'content.parameter' must be a non-empty string or null"
             )
-        return cls(composable=composable, parameter=parameter)
+        return cls(
+            composable=composable,
+            parameter=parameter,
+            nullable=data.get("nullable") is True,
+        )
 
     def to_mapping(self) -> dict[str, object]:
         """Render as a plain JSON object.
@@ -85,6 +92,8 @@ class ContentSlot:
         result: dict[str, object] = {"composable": self.composable}
         if self.parameter is not None:
             result["parameter"] = self.parameter
+        if self.nullable:
+            result["nullable"] = True
         return result
 
 

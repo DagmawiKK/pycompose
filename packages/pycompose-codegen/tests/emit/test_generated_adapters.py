@@ -19,6 +19,8 @@ from typing import Any
 import pytest
 from pycompose_codegen.emit.adapters.assemble import render, render_file
 from pycompose_codegen.emit.adapters.eligibility import held_props, is_mechanical
+from pycompose_codegen.emit.adapters.fragments import Fragments
+from pycompose_codegen.emit.adapters.text_echo import echoed_text
 
 SCHEMA_PATH = Path(__file__).resolve().parents[4] / "schema" / "catalog.lock.json"
 GENERATED = (
@@ -311,6 +313,9 @@ def test_no_optional_prop_is_passed_through() -> None:
         held = held_props(entry)
         if entry.get("transient") is not None:
             held |= set(entry["props"])
+        # A reconciled text field hands its value and caret to the host's
+        # reconciler, which takes an absent caret as "the field keeps its own".
+        held |= echoed_text(entry["props"], Fragments())
         for prop, spec in entry["props"].items():
             if prop in held:
                 continue

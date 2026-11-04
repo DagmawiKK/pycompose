@@ -184,16 +184,20 @@ def _slot(prop_name: str, spec: dict[str, Any]) -> tuple[str, str] | None:
 
     Returns:
         ``(argument, trailing)`` where either may be empty, or None when the
-        slot is optional and would need a null check -- a decision, not a
-        derivation.
+        slot is optional and its native parameter takes no null, so absence
+        would be a decision, not a derivation.
     """
     slot = spec.get("content")
     if slot is None:
         return None
-    if not spec.get("required"):
-        return None
-    wrapped = f"{slot['composable']}(model.props.{prop_name})"
     parameter = slot.get("parameter")
+    if not spec.get("required"):
+        if parameter is None or not slot.get("nullable"):
+            return None
+        # The native slot takes null, which is what the app left out.
+        lambda_ = f"{{ {slot['composable']}(text) }}"
+        return f"{parameter} = model.props.{prop_name}?.let {{ text -> {lambda_} }}", ""
+    wrapped = f"{slot['composable']}(model.props.{prop_name})"
     if parameter is not None:
         return f"{parameter} = {{ {wrapped} }}", ""
     return "", wrapped

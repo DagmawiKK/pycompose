@@ -86,10 +86,19 @@ def _flatten(
         raise CandidateError(f"{name}: flatten names {native!r}, which is no slot")
     slots = entry.get("slots", {})
     if native in slots:
-        del slots[native]
+        # A nullable slot left out is the component's own null, so the string
+        # may be left out too.
+        nullable = slots.pop(native).get("nullable") is True
         if not slots:
             del entry["slots"]
-        prop, content = native, {"composable": "Text", "parameter": native}
+        prop, content = (
+            native,
+            {
+                "composable": "Text",
+                "parameter": native,
+                **({"nullable": True} if nullable else {}),
+            },
+        )
     else:
         # The primary content: Compose names it after its role, the wire after
         # what it carries.

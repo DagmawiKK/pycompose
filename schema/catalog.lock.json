@@ -9684,10 +9684,38 @@
       "package": "androidx.compose.material3",
       "category": "input",
       "stability": "stable",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/ui/text/input/VisualTransformation;Landroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/KeyboardActions;ZIILandroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/runtime/Composer;IIII)V",
+        "jvmName": "TextField",
+        "name": "TextField",
+        "owner": "androidx.compose.material3.TextFieldKt"
+      },
       "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "TextFieldColors",
+          "nativeDefault": "androidx.compose.material3.TextFieldDefaults.colors()",
+          "since": "1.23.0"
+        },
         "enabled": {
           "type": "boolean",
           "default": true
+        },
+        "isError": {
+          "type": "boolean",
+          "default": false,
+          "since": "1.23.0"
+        },
+        "minLines": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "default": 1,
+          "since": "1.23.0",
+          "animation": "kotlin.Int",
+          "phase": "composition"
         },
         "onValueChange": {
           "type": "actionId",
@@ -9698,6 +9726,28 @@
               "type": "string"
             }
           ]
+        },
+        "readOnly": {
+          "type": "boolean",
+          "default": false,
+          "since": "1.23.0"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.TextFieldDefaults.shape",
+          "since": "1.23.0"
+        },
+        "singleLine": {
+          "type": "boolean",
+          "default": false,
+          "since": "1.23.0"
+        },
+        "textStyle": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "nativeDefault": "(androidx.compose.material3.LocalTextStyle).current",
+          "since": "1.23.0"
         },
         "value": {
           "type": "string",
@@ -9710,7 +9760,8 @@
           "type": "string",
           "content": {
             "composable": "Text",
-            "parameter": "label"
+            "parameter": "label",
+            "nullable": true
           }
         },
         "selection": {
@@ -9729,7 +9780,32 @@
       "children": {
         "allowed": false
       },
-      "adapter": "manual",
+      "slots": {
+        "leadingIcon": {
+          "native": "leadingIcon",
+          "nullable": true
+        },
+        "placeholder": {
+          "native": "placeholder",
+          "nullable": true
+        },
+        "prefix": {
+          "native": "prefix",
+          "nullable": true
+        },
+        "suffix": {
+          "native": "suffix",
+          "nullable": true
+        },
+        "supportingText": {
+          "native": "supportingText",
+          "nullable": true
+        },
+        "trailingIcon": {
+          "native": "trailingIcon",
+          "nullable": true
+        }
+      },
       "reshaped": [
         "value",
         "onValueChange",

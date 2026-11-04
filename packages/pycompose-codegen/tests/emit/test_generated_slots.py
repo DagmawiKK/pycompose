@@ -36,11 +36,16 @@ def test_a_slot_declares_the_import_its_content_needs() -> None:
     assert "Button" not in composables("Button", components()["Button"])
 
 
-def test_an_optional_slot_is_not_generated() -> None:
-    """``TextField.label`` is optional, so it needs a null check -- a decision."""
+def test_an_optional_flattened_slot_passes_null_when_left_out() -> None:
+    """``TextField.label`` is optional, and its native slot takes null.
+
+    So leaving the string out is the component's own null: derived, not decided.
+    """
     entry = components()["TextField"]
-    assert entry["props"]["label"].get("content")
-    assert render("TextField", entry) == ""
+    assert entry["props"]["label"]["content"]["nullable"] is True
+    assert "label = model.props.label?.let { text -> { Text(text) } }" in render(
+        "TextField", entry
+    )
 
 
 def test_primary_children_reach_the_declared_parameter() -> None:

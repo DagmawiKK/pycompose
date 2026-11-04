@@ -175,7 +175,8 @@ def test_flatten_keeps_a_named_slot_under_its_native_name() -> None:
     assert "slots" not in shaped
     assert shaped["props"]["label"] == {
         "type": "string",
-        "content": {"composable": "Text", "parameter": "label"},
+        # The native slot takes null, so an absent string is passed as none.
+        "content": {"composable": "Text", "parameter": "label", "nullable": True},
     }
     assert "reshaped" not in shaped
 

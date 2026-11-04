@@ -10404,16 +10404,55 @@
     },
     "C_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
             "enabled": {
               "default": true,
               "type": "boolean"
             },
+            "isError": {
+              "default": false,
+              "type": "boolean"
+            },
             "label": {
               "type": "string"
+            },
+            "minLines": {
+              "anyOf": [
+                {
+                  "default": 1,
+                  "maximum": 2147483647,
+                  "minimum": -2147483648,
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "modifier": {
               "properties": {
@@ -10432,8 +10471,22 @@
             "onValueChange": {
               "$ref": "#/definitions/Action"
             },
+            "readOnly": {
+              "default": false,
+              "type": "boolean"
+            },
             "selection": {
               "type": "integer"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "singleLine": {
+              "default": false,
+              "type": "boolean"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
             },
             "value": {
               "type": "string"
@@ -15522,7 +15575,26 @@
     },
     "V_1_0_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -16479,7 +16551,26 @@
     },
     "V_1_10_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -17491,7 +17582,26 @@
     },
     "V_1_11_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -18503,7 +18613,26 @@
     },
     "V_1_12_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -19515,7 +19644,26 @@
     },
     "V_1_13_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -20527,7 +20675,26 @@
     },
     "V_1_14_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -21539,7 +21706,26 @@
     },
     "V_1_15_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -22551,7 +22737,26 @@
     },
     "V_1_16_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -23563,7 +23768,26 @@
     },
     "V_1_17_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -24685,7 +24909,26 @@
     },
     "V_1_18_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -25853,7 +26096,26 @@
     },
     "V_1_19_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -26635,7 +26897,26 @@
     },
     "V_1_1_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -27865,7 +28146,26 @@
     },
     "V_1_20_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -29151,7 +29451,26 @@
     },
     "V_1_21_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -31202,7 +31521,26 @@
     },
     "V_1_22_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -44484,16 +44822,55 @@
     },
     "V_1_23_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
             "enabled": {
               "default": true,
               "type": "boolean"
             },
+            "isError": {
+              "default": false,
+              "type": "boolean"
+            },
             "label": {
               "type": "string"
+            },
+            "minLines": {
+              "anyOf": [
+                {
+                  "default": 1,
+                  "maximum": 2147483647,
+                  "minimum": -2147483648,
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "modifier": {
               "properties": {
@@ -44512,8 +44889,22 @@
             "onValueChange": {
               "$ref": "#/definitions/Action"
             },
+            "readOnly": {
+              "default": false,
+              "type": "boolean"
+            },
             "selection": {
               "type": "integer"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "singleLine": {
+              "default": false,
+              "type": "boolean"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
             },
             "value": {
               "type": "string"
@@ -45831,7 +46222,26 @@
     },
     "V_1_2_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -46788,7 +47198,26 @@
     },
     "V_1_3_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -47745,7 +48174,26 @@
     },
     "V_1_4_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -48702,7 +49150,26 @@
     },
     "V_1_5_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -49659,7 +50126,26 @@
     },
     "V_1_6_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -50616,7 +51102,26 @@
     },
     "V_1_7_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -51573,7 +52078,26 @@
     },
     "V_1_8_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {
@@ -52530,7 +53054,26 @@
     },
     "V_1_9_0_TextField": {
       "properties": {
-        "children": false,
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
         "props": {
           "additionalProperties": false,
           "properties": {

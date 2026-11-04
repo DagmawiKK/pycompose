@@ -6,12 +6,40 @@ from typing import Any
 
 from pycompose_codegen.emit.adapters.fragments import Fragments
 
-__all__ = ["EDIT_IMPORTS", "echoed_text", "echoes"]
+__all__ = ["CARET_IMPORTS", "EDIT_IMPORTS", "echoed_text", "echoes", "follows_caret"]
 
 EDIT_IMPORTS = frozenset(
     {"com.pycompose.renderer.edit", "com.pycompose.renderer.edited"}
 )
 """The renderer's reconciler, which a reconciled field calls."""
+
+CARET_IMPORTS = frozenset(
+    {
+        "androidx.compose.ui.text.input.TextFieldValue",
+        "com.pycompose.renderer.editText",
+        "com.pycompose.renderer.editedText",
+    }
+)
+"""The reconciler over text and caret, which a field the app may place calls."""
+
+
+def follows_caret(props: dict[str, Any]) -> bool:
+    """Whether a reconciled text field also lets the app state its caret.
+
+    Args:
+        props: The component's declared props, by wire name.
+
+    Returns:
+        True for an optional integer ``selection`` and its ``onSelectionChange``.
+    """
+    caret, change = props.get("selection") or {}, props.get("onSelectionChange") or {}
+    reported = [(f["name"], f["type"]) for f in change.get("payload") or []]
+    return (
+        echoes(props)
+        and caret.get("type") == "integer"
+        and change.get("type") == "actionId"
+        and reported == [("value", "integer")]
+    )
 
 
 def echoes(props: dict[str, Any]) -> bool:
@@ -52,6 +80,20 @@ def echoed_text(props: dict[str, Any], out: Fragments) -> set[str]:
     """
     if not echoes(props):
         return set()
+    if follows_caret(props):
+        # The text and the caret travel as one native value, whose overload the
+        # call then resolves to; the app's caret stands once it has answered.
+        out.locals.append(
+            "val field = context.editedText(model.id, model.props.value, "
+            "model.props.selection, model.props.onValueChange, "
+            "model.props.onSelectionChange)"
+        )
+        out.arguments.append("value = field.value")
+        out.arguments.append(
+            "onValueChange = { value: TextFieldValue -> context.editText(field, value, "
+            "model.props.onValueChange, model.props.onSelectionChange) }"
+        )
+        return {"value", "onValueChange", "selection", "onSelectionChange"}
     out.locals.append(
         "val field = context.edited(model.id, model.props.value, "
         "model.props.onValueChange)"

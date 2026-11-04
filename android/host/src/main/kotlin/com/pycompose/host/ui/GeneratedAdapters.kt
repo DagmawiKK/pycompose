@@ -118,6 +118,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldLabelScope
 import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePicker
@@ -139,6 +140,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.colorspace.ColorSpaces
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.pycompose.ir.generated.AlertDialog as AlertDialogNode
@@ -265,6 +267,7 @@ import com.pycompose.ir.generated.Tab as TabNode
 import com.pycompose.ir.generated.TabContent as TabContentNode
 import com.pycompose.ir.generated.TextAnnotatedString as TextAnnotatedStringNode
 import com.pycompose.ir.generated.TextButton as TextButtonNode
+import com.pycompose.ir.generated.TextField as TextFieldNode
 import com.pycompose.ir.generated.TimeInput as TimeInputNode
 import com.pycompose.ir.generated.TimePicker as TimePickerNode
 import com.pycompose.ir.generated.TimePickerDialog as TimePickerDialogNode
@@ -282,7 +285,9 @@ import com.pycompose.renderer.boundColor
 import com.pycompose.renderer.boundDp
 import com.pycompose.renderer.drawerState
 import com.pycompose.renderer.edit
+import com.pycompose.renderer.editText
 import com.pycompose.renderer.edited
+import com.pycompose.renderer.editedText
 import com.pycompose.renderer.expressionColor
 import com.pycompose.renderer.inSlot
 import com.pycompose.renderer.index
@@ -2617,6 +2622,37 @@ object GeneratedAdapters {
                 ) {
                     Text(model.props.text)
                 }
+            }
+            .register("TextField") { node, modifier, context ->
+                val model = node as TextFieldNode
+                val field = context.editedText(model.id, model.props.value, model.props.selection, model.props.onValueChange, model.props.onSelectionChange)
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.textFieldColors(colorsWire).getOrThrow() else androidx.compose.material3.TextFieldDefaults.colors()
+                val minLinesValue = bound(model.props.minLines, Int.VectorConverter) { plain -> plain.jsonPrimitive.long.toInt() }
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.TextFieldDefaults.shape
+                val textStyleWire = model.props.textStyle
+                val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else (androidx.compose.material3.LocalTextStyle).current
+                TextField(
+                    modifier = modifier,
+                    value = field.value,
+                    onValueChange = { value: TextFieldValue -> context.editText(field, value, model.props.onValueChange, model.props.onSelectionChange) },
+                    colors = colorsValue,
+                    enabled = model.props.enabled,
+                    isError = model.props.isError,
+                    minLines = minLinesValue,
+                    readOnly = model.props.readOnly,
+                    shape = shapeValue,
+                    singleLine = model.props.singleLine,
+                    textStyle = textStyleValue,
+                    label = model.props.label?.let { text -> { Text(text) } },
+                    leadingIcon = context.slot(model.children, "leadingIcon"),
+                    placeholder = context.slot(model.children, "placeholder"),
+                    prefix = context.slot(model.children, "prefix"),
+                    suffix = context.slot(model.children, "suffix"),
+                    supportingText = context.slot(model.children, "supportingText"),
+                    trailingIcon = context.slot(model.children, "trailingIcon"),
+                )
             }
             .register("TimeInput") { node, modifier, context ->
                 val model = node as TimeInputNode

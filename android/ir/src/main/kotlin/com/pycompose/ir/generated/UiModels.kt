@@ -3085,12 +3085,19 @@ data class TextButton(
 
 @Serializable
 data class TextFieldProps(
+    val `colors`: JsonElement? = null,
     val `enabled`: Boolean = true,
+    val `isError`: Boolean = false,
     val `label`: String? = null,
+    val `minLines`: JsonElement = JsonPrimitive(1L),
     override val `modifier`: JsonObject? = null,
     val `onSelectionChange`: String? = null,
     val `onValueChange`: String,
+    val `readOnly`: Boolean = false,
     val `selection`: Long? = null,
+    val `shape`: JsonElement? = null,
+    val `singleLine`: Boolean = false,
+    val `textStyle`: JsonElement? = null,
     val `value`: String,
 ) : UiProps
 
@@ -3099,10 +3106,10 @@ data class TextFieldProps(
 data class TextField(
     override val id: String,
     override val props: TextFieldProps,
+    override val children: List<UiNode> = emptyList(),
     override val slot: String? = null,
 ) : UiNode {
-    override val children: List<UiNode> get() = emptyList()
-    override fun withChildren(children: List<UiNode>): UiNode = this
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "TextField"
 }
 

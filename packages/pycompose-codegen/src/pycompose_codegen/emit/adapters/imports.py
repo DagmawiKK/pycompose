@@ -14,7 +14,12 @@ from pycompose.model.catalog.vocabulary import STATE_STREAMS
 from pycompose.model.programs.bindings import animatable
 from pycompose_codegen.emit.adapters.bound import plain_imports
 from pycompose_codegen.emit.adapters.state import state_call
-from pycompose_codegen.emit.adapters.text_echo import EDIT_IMPORTS, echoes
+from pycompose_codegen.emit.adapters.text_echo import (
+    CARET_IMPORTS,
+    EDIT_IMPORTS,
+    echoes,
+    follows_caret,
+)
 from pycompose_codegen.emit.derived_families import property_imports
 from pycompose_codegen.emit.state_families import attach_gate
 
@@ -51,7 +56,9 @@ def extra_imports(
     qualified = _prop_imports(
         entry.get("props", {}).values(), converters or {}
     ) | _state_imports(entry)
-    if echoes(entry.get("props", {})):
+    if follows_caret(entry.get("props", {})):
+        qualified |= CARET_IMPORTS
+    elif echoes(entry.get("props", {})):
         qualified |= EDIT_IMPORTS
     if entry.get("boxed"):
         qualified.add("androidx.compose.foundation.layout.Box")

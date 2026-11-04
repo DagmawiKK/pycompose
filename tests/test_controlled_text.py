@@ -26,8 +26,9 @@ from pycompose.ui import TextField
 APP = Path(__file__).resolve().parents[1] / "examples" / "notes" / "app"
 SCHEMA = json.loads(Path("schema/catalog.lock.json").read_text())
 ADAPTER = Path(
-    "android/host/src/main/kotlin/com/pycompose/host/ui/BuiltinComponents.kt"
+    "android/host/src/main/kotlin/com/pycompose/host/ui/GeneratedAdapters.kt"
 )
+RECONCILER = Path("android/renderer/src/main/kotlin/com/pycompose/renderer/Edited.kt")
 
 
 # ---------------------------------------------------------------------------
@@ -164,16 +165,19 @@ def test_the_caret_lives_in_the_saved_state() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_a_caret_moved_without_the_text_changing_is_not_reported() -> None:
-    """A real limit, documented rather than discovered.
+def test_a_caret_moved_without_the_text_changing_is_reported_alone() -> None:
+    """The value overload calls back for a caret move too, with the same text.
 
-    Material3's TextField has no selection callback, so the caret is read back
-    from the same callback that reports the text. Moving the caret with an arrow
-    key produces no text change and so no event. Making it observable needs
-    TextFieldState, which arrived in material3 1.4.0-alpha; this project is on
-    compose-bom 2026.09.00, which resolves to 1.4.x.
+    The generated field passes every callback to the reconciler, which reports
+    the caret whenever the app follows it and the text only when it changed.
     """
-    assert "no selection callback of its" in ADAPTER.read_text()
+    adapter = ADAPTER.read_text()
+    assert "value: TextFieldValue -> context.editText(field, value," in adapter
+    reconciler = RECONCILER.read_text()
+    assert "if (value.text != edited.value.text) put(onText" in reconciler
+    assert (
+        "onCaret?.let { put(it, JsonPrimitive(value.selection.start)) }" in reconciler
+    )
 
 
 def test_the_event_channel_still_carries_one_value() -> None:

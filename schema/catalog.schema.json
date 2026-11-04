@@ -168,7 +168,8 @@
       "additionalProperties": false,
       "properties": {
         "composable": { "type": "string" },
-        "parameter": { "type": "string" }
+        "parameter": { "type": "string" },
+        "nullable": { "const": true, "description": "The native slot takes null, which an absent string becomes." }
       }
     },
     "provider": {
