@@ -11,10 +11,14 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.pycompose.program.Binding
 import com.pycompose.program.Bindings
 import com.pycompose.program.Phase
 import com.pycompose.program.Travel
+import com.pycompose.renderer.generated.ValueResolver
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 
@@ -71,6 +75,69 @@ fun <T, V : AnimationVector> optionalBindingState(
     phase: Phase,
     read: @Composable (JsonElement) -> T,
 ): State<T>? = if (wire == null) null else bindingState(wire, converter, phase, read)
+
+/**
+ * A prop a component reads while composing: plain, read as it stands with no state kept for it,
+ * or bound, travelling through [converter].
+ *
+ * @param wire The prop's wire value: plain, or a binding.
+ * @param converter The pin's converter for the prop's type.
+ * @param read Reads a plain wire value.
+ * @return The value to pass this composition.
+ */
+@Composable
+fun <T, V : AnimationVector> bound(
+    wire: JsonElement,
+    converter: TwoWayConverter<T, V>,
+    read: @Composable (JsonElement) -> T,
+): T {
+    val binding = bound(wire)?.at(Phase.Composition) ?: return read(wire)
+    return animateValueAsState(
+        read(binding.target),
+        converter,
+        spec(binding.travel),
+        label = "binding",
+    ).value
+}
+
+/**
+ * A colour prop read while composing, or [fallback] when it was omitted or names no colour.
+ *
+ * @param wire The prop's wire value, or null when omitted.
+ * @param converter The pin's converter for colours.
+ * @param fallback What the component uses when the app states nothing.
+ * @return The colour to pass this composition.
+ */
+@Composable
+fun <V : AnimationVector> RenderContext.boundColor(
+    wire: JsonElement?,
+    converter: TwoWayConverter<Color, V>,
+    fallback: Color,
+): Color {
+    if (wire == null) return fallback
+    return bound(wire, converter) { plain ->
+        (plain as? JsonObject)?.let {
+            expressionColor(it)
+                ?: ValueResolver.color(it).getOrDefault(fallback)
+        }
+            ?: fallback
+    }
+}
+
+/**
+ * A dp prop read while composing, or [fallback] when it was omitted.
+ *
+ * @param wire The prop's wire value, or null when omitted.
+ * @param converter The pin's converter for dp.
+ * @param fallback What the component uses when the app states nothing.
+ * @return The dp to pass this composition.
+ */
+@Composable
+fun <V : AnimationVector> RenderContext.boundDp(
+    wire: JsonElement?,
+    converter: TwoWayConverter<Dp, V>,
+    fallback: Dp,
+): Dp = if (wire == null) fallback else bound(wire, converter) { number(it).dp }
 
 /** The binding a prop value carries, or null for a plain value. */
 private fun bound(wire: JsonElement): Binding? {

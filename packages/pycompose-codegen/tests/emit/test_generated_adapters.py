@@ -378,7 +378,7 @@ def test_a_dp_default_is_the_extension_property_it_names() -> None:
     surface = components()["Surface"]
     assert surface["props"]["shadowElevation"]["nativeDefault"] == "(0).dp"
     block = render("Surface", surface)
-    assert "?: (0).dp" in block
+    assert ", (0).dp)" in block
     assert "default_androidx" not in block
 
 

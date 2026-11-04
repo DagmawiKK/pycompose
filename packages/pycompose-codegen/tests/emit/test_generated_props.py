@@ -25,13 +25,10 @@ def test_a_dp_prop_is_read_in_the_unit_the_app_stated() -> None:
     back to the pinned default rather than to a zero the host invented.
     """
     block = render("HorizontalDivider", components()["HorizontalDivider"])
-    assert "val thicknessState =" in block
-    assert "model.props.thickness?.let { wire ->" in block
-    assert "context.number(plain).dp" in block
     assert (
-        "val thicknessValue = thicknessState?.value ?: "
-        "androidx.compose.material3.DividerDefaults.Thickness" in block
-    )
+        "val thicknessValue = context.boundDp(model.props.thickness, "
+        "Dp.VectorConverter, androidx.compose.material3.DividerDefaults.Thickness)"
+    ) in block
     assert "thickness = thicknessValue," in block
 
 

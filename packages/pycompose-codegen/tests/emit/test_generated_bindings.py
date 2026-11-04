@@ -27,7 +27,6 @@ MANUAL_DIR = (
 )
 GENERATED = MANUAL_DIR / "GeneratedAdapters.kt"
 
-COMPOSITION = "com.pycompose.program.Phase.Composition"
 """Where a component reads its props: the call itself, while composing."""
 
 READERS = ("dpProp(", "nativeColor(", "bindingState(", "optionalBindingState(")
@@ -75,7 +74,11 @@ def manual_sources() -> list[str]:
 
 
 def test_every_bindable_prop_of_a_generated_component_reads_through_it() -> None:
-    """One state per bindable prop, with the pin's converter and its phase."""
+    """One read per bindable prop, through the pin's converter.
+
+    A prop read in the call is one helper call; one read later -- by a
+    provider, or through an index clamp -- keeps a state declared for its phase.
+    """
     converters = lock()["converters"]
     pairs = [
         (name, prop, spec)
@@ -85,11 +88,16 @@ def test_every_bindable_prop_of_a_generated_component_reads_through_it() -> None
     assert len(pairs) >= DISCOVERY_FLOOR, f"only {len(pairs)} generated pairs found"
     for name, prop, spec in pairs:
         block = render(name, lock()["components"][name])
-        assert f"val {camel(prop)}State =" in block, f"{name}.{prop} declares no state"
-        assert (
-            converters[spec["animation"]]["expression"] in block
-        ), f"{name}.{prop} does not use its pin's converter"
-        assert COMPOSITION in block, f"{name}.{prop} is not read at composition"
+        expression = converters[spec["animation"]]["expression"]
+        if "provider" in spec or "indexOf" in spec:
+            assert f"val {camel(prop)}State =" in block, f"{name}.{prop} keeps no state"
+        else:
+            read = f"val {camel(prop)}Value = "
+            line = next((x for x in block.splitlines() if read in x), "")
+            assert (
+                expression in line
+            ), f"{name}.{prop} is not one read through its converter"
+        assert expression in block, f"{name}.{prop} does not use its pin's converter"
 
 
 def test_a_prop_the_pin_gives_no_converter_is_passed_as_a_plain_value() -> None:

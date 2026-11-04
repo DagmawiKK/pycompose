@@ -130,24 +130,24 @@ object GeneratedModifiers {
             }
             "absolutePadding" ->
                 Modifier.absolutePadding(
-                    left = if ("left" in op) op.getValue("left").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else (0).dp,
-                    top = if ("top" in op) op.getValue("top").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else (0).dp,
-                    right = if ("right" in op) op.getValue("right").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else (0).dp,
-                    bottom = if ("bottom" in op) op.getValue("bottom").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else (0).dp,
+                    left = if ("left" in op) op.getValue("left").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else (0).dp,
+                    top = if ("top" in op) op.getValue("top").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else (0).dp,
+                    right = if ("right" in op) op.getValue("right").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else (0).dp,
+                    bottom = if ("bottom" in op) op.getValue("bottom").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else (0).dp,
                 )
             "alpha" ->
                 Modifier.alpha(
-                    alpha = op.getValue("alpha").let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
-                        numberValue(value, streams).toFloat() }.value },
+                    alpha = op.getValue("alpha").let { wire -> com.pycompose.renderer.bound(wire, Float.VectorConverter) { value ->
+                        numberValue(value, streams).toFloat() } },
                 )
             "aspectRatio" ->
                 Modifier.aspectRatio(
-                    ratio = op.getValue("ratio").let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
-                        numberValue(value, streams).toFloat() }.value },
+                    ratio = op.getValue("ratio").let { wire -> com.pycompose.renderer.bound(wire, Float.VectorConverter) { value ->
+                        numberValue(value, streams).toFloat() } },
                     matchHeightConstraintsFirst = if ("matchHeightConstraintsFirst" in op) op.getValue("matchHeightConstraintsFirst").let { value -> value.jsonPrimitive.boolean } else false,
                 )
             "background" ->
@@ -156,8 +156,8 @@ object GeneratedModifiers {
                 )
             "basicMarquee" ->
                 Modifier.basicMarquee(
-                    velocity = if ("velocity" in op) op.getValue("velocity").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.foundation.MarqueeDefaults.Velocity,
+                    velocity = if ("velocity" in op) op.getValue("velocity").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.foundation.MarqueeDefaults.Velocity,
                 )
             "captionBarPadding" ->
                 Modifier.captionBarPadding(
@@ -176,28 +176,28 @@ object GeneratedModifiers {
                 )
             "defaultMinSize" ->
                 Modifier.defaultMinSize(
-                    minWidth = if ("minWidth" in op) op.getValue("minWidth").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    minHeight = if ("minHeight" in op) op.getValue("minHeight").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    minWidth = if ("minWidth" in op) op.getValue("minWidth").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    minHeight = if ("minHeight" in op) op.getValue("minHeight").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
                 )
             "displayCutoutPadding" ->
                 Modifier.displayCutoutPadding(
                 )
             "fillMaxHeight" ->
                 Modifier.fillMaxHeight(
-                    fraction = if ("fraction" in op) op.getValue("fraction").let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
-                        numberValue(value, streams).toFloat() }.value } else 1.0f,
+                    fraction = if ("fraction" in op) op.getValue("fraction").let { wire -> com.pycompose.renderer.bound(wire, Float.VectorConverter) { value ->
+                        numberValue(value, streams).toFloat() } } else 1.0f,
                 )
             "fillMaxSize" ->
                 Modifier.fillMaxSize(
-                    fraction = if ("fraction" in op) op.getValue("fraction").let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
-                        numberValue(value, streams).toFloat() }.value } else 1.0f,
+                    fraction = if ("fraction" in op) op.getValue("fraction").let { wire -> com.pycompose.renderer.bound(wire, Float.VectorConverter) { value ->
+                        numberValue(value, streams).toFloat() } } else 1.0f,
                 )
             "fillMaxWidth" ->
                 Modifier.fillMaxWidth(
-                    fraction = if ("fraction" in op) op.getValue("fraction").let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
-                        numberValue(value, streams).toFloat() }.value } else 1.0f,
+                    fraction = if ("fraction" in op) op.getValue("fraction").let { wire -> com.pycompose.renderer.bound(wire, Float.VectorConverter) { value ->
+                        numberValue(value, streams).toFloat() } } else 1.0f,
                 )
             "focusGroup" ->
                 Modifier.focusGroup(
@@ -280,15 +280,15 @@ object GeneratedModifiers {
                 )
             "height" ->
                 Modifier.height(
-                    height = op.getValue("height").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value },
+                    height = op.getValue("height").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } },
                 )
             "heightIn" ->
                 Modifier.heightIn(
-                    min = if ("min" in op) op.getValue("min").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    max = if ("max" in op) op.getValue("max").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    min = if ("min" in op) op.getValue("min").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    max = if ("max" in op) op.getValue("max").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
                 )
             "imeNestedScroll" ->
                 Modifier.imeNestedScroll(
@@ -341,51 +341,51 @@ object GeneratedModifiers {
                 )
             "preferredFrameRate" ->
                 Modifier.preferredFrameRate(
-                    frameRate = op.getValue("frameRate").let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
-                        numberValue(value, streams).toFloat() }.value },
+                    frameRate = op.getValue("frameRate").let { wire -> com.pycompose.renderer.bound(wire, Float.VectorConverter) { value ->
+                        numberValue(value, streams).toFloat() } },
                 )
             "recalculateWindowInsets" ->
                 Modifier.recalculateWindowInsets(
                 )
             "requiredHeight" ->
                 Modifier.requiredHeight(
-                    height = op.getValue("height").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value },
+                    height = op.getValue("height").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } },
                 )
             "requiredHeightIn" ->
                 Modifier.requiredHeightIn(
-                    min = if ("min" in op) op.getValue("min").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    max = if ("max" in op) op.getValue("max").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    min = if ("min" in op) op.getValue("min").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    max = if ("max" in op) op.getValue("max").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
                 )
             "requiredSizeIn" ->
                 Modifier.requiredSizeIn(
-                    minWidth = if ("minWidth" in op) op.getValue("minWidth").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    minHeight = if ("minHeight" in op) op.getValue("minHeight").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    maxWidth = if ("maxWidth" in op) op.getValue("maxWidth").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    maxHeight = if ("maxHeight" in op) op.getValue("maxHeight").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    minWidth = if ("minWidth" in op) op.getValue("minWidth").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    minHeight = if ("minHeight" in op) op.getValue("minHeight").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    maxWidth = if ("maxWidth" in op) op.getValue("maxWidth").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    maxHeight = if ("maxHeight" in op) op.getValue("maxHeight").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
                 )
             "requiredWidth" ->
                 Modifier.requiredWidth(
-                    width = op.getValue("width").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value },
+                    width = op.getValue("width").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } },
                 )
             "requiredWidthIn" ->
                 Modifier.requiredWidthIn(
-                    min = if ("min" in op) op.getValue("min").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    max = if ("max" in op) op.getValue("max").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    min = if ("min" in op) op.getValue("min").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    max = if ("max" in op) op.getValue("max").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
                 )
             "rotate" ->
                 Modifier.rotate(
-                    degrees = op.getValue("degrees").let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
-                        numberValue(value, streams).toFloat() }.value },
+                    degrees = op.getValue("degrees").let { wire -> com.pycompose.renderer.bound(wire, Float.VectorConverter) { value ->
+                        numberValue(value, streams).toFloat() } },
                 )
             "safeContentPadding" ->
                 Modifier.safeContentPadding(
@@ -403,8 +403,8 @@ object GeneratedModifiers {
                 val contentDescriptionValue = op["contentDescription"]?.let { value -> value.jsonPrimitive.content }
                 val stateDescriptionValue = op["stateDescription"]?.let { value -> value.jsonPrimitive.content }
                 val testTagValue = op["testTag"]?.let { value -> value.jsonPrimitive.content }
-                val traversalIndexValue = op["traversalIndex"]?.let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
-                        numberValue(value, streams).toFloat() }.value }
+                val traversalIndexValue = op["traversalIndex"]?.let { wire -> com.pycompose.renderer.bound(wire, Float.VectorConverter) { value ->
+                        numberValue(value, streams).toFloat() } }
                 Modifier.semantics(properties = {
                     contentDescriptionValue?.let { contentDescription = it }
                     stateDescriptionValue?.let { stateDescription = it }
@@ -442,31 +442,31 @@ object GeneratedModifiers {
                 )
             "shadow" ->
                 Modifier.shadow(
-                    elevation = op.getValue("elevation").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value },
+                    elevation = op.getValue("elevation").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } },
                     shape = if ("shape" in op) op.getValue("shape").let { value -> com.pycompose.renderer.generated.ValueResolver.shape(value).getOrThrow() } else androidx.compose.ui.graphics.RectangleShape,
-                    ambientColor = if ("ambientColor" in op) op.getValue("ambientColor").let { wire -> com.pycompose.renderer.bindingState(wire, Color.colorVectorConverter(ColorSpaces.Srgb)) { value ->
-                        com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() }.value } else androidx.compose.ui.graphics.DefaultShadowColor,
-                    spotColor = if ("spotColor" in op) op.getValue("spotColor").let { wire -> com.pycompose.renderer.bindingState(wire, Color.colorVectorConverter(ColorSpaces.Srgb)) { value ->
-                        com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() }.value } else androidx.compose.ui.graphics.DefaultShadowColor,
+                    ambientColor = if ("ambientColor" in op) op.getValue("ambientColor").let { wire -> com.pycompose.renderer.bound(wire, Color.colorVectorConverter(ColorSpaces.Srgb)) { value ->
+                        com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() } } else androidx.compose.ui.graphics.DefaultShadowColor,
+                    spotColor = if ("spotColor" in op) op.getValue("spotColor").let { wire -> com.pycompose.renderer.bound(wire, Color.colorVectorConverter(ColorSpaces.Srgb)) { value ->
+                        com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() } } else androidx.compose.ui.graphics.DefaultShadowColor,
                 )
             "size" ->
                 Modifier.size(
-                    width = op.getValue("width").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else if (value is JsonObject) com.pycompose.renderer.generated.ValueResolver.dp(value).getOrThrow() else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value },
-                    height = op.getValue("height").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else if (value is JsonObject) com.pycompose.renderer.generated.ValueResolver.dp(value).getOrThrow() else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value },
+                    width = op.getValue("width").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else if (value is JsonObject) com.pycompose.renderer.generated.ValueResolver.dp(value).getOrThrow() else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } },
+                    height = op.getValue("height").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else if (value is JsonObject) com.pycompose.renderer.generated.ValueResolver.dp(value).getOrThrow() else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } },
                 )
             "sizeIn" ->
                 Modifier.sizeIn(
-                    minWidth = if ("minWidth" in op) op.getValue("minWidth").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    minHeight = if ("minHeight" in op) op.getValue("minHeight").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    maxWidth = if ("maxWidth" in op) op.getValue("maxWidth").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    maxHeight = if ("maxHeight" in op) op.getValue("maxHeight").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    minWidth = if ("minWidth" in op) op.getValue("minWidth").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    minHeight = if ("minHeight" in op) op.getValue("minHeight").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    maxWidth = if ("maxWidth" in op) op.getValue("maxWidth").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    maxHeight = if ("maxHeight" in op) op.getValue("maxHeight").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
                 )
             "statusBarsPadding" ->
                 Modifier.statusBarsPadding(
@@ -493,15 +493,15 @@ object GeneratedModifiers {
                 )
             "width" ->
                 Modifier.width(
-                    width = op.getValue("width").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value },
+                    width = op.getValue("width").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } },
                 )
             "widthIn" ->
                 Modifier.widthIn(
-                    min = if ("min" in op) op.getValue("min").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
-                    max = if ("max" in op) op.getValue("max").let { wire -> com.pycompose.renderer.bindingState(wire, Dp.VectorConverter) { value ->
-                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }.value } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    min = if ("min" in op) op.getValue("min").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
+                    max = if ("max" in op) op.getValue("max").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
+                        if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.ui.unit.Dp.Companion.Unspecified,
                 )
             "windowInsetsBottomHeight" ->
                 Modifier.windowInsetsBottomHeight(
@@ -540,8 +540,8 @@ object GeneratedModifiers {
                 )
             "zIndex" ->
                 Modifier.zIndex(
-                    zIndex = op.getValue("zIndex").let { wire -> com.pycompose.renderer.bindingState(wire, Float.VectorConverter) { value ->
-                        numberValue(value, streams).toFloat() }.value },
+                    zIndex = op.getValue("zIndex").let { wire -> com.pycompose.renderer.bound(wire, Float.VectorConverter) { value ->
+                        numberValue(value, streams).toFloat() } },
                 )
             "alignByBaseline" ->
                 when (scope) {
@@ -587,8 +587,8 @@ object GeneratedModifiers {
                     is androidx.compose.foundation.layout.FlowColumnScope ->
                         with(scope) {
                             Modifier.fillMaxColumnWidth(
-                                fraction = if ("fraction" in op) com.pycompose.renderer.bindingState(op.getValue("fraction"), Float.VectorConverter) { value ->
-                        value.jsonPrimitive.double.toFloat() }.value else 1.0f,
+                                fraction = if ("fraction" in op) com.pycompose.renderer.bound(op.getValue("fraction"), Float.VectorConverter) { value ->
+                        value.jsonPrimitive.double.toFloat() } else 1.0f,
                             )
                         }
                     else -> null
@@ -598,8 +598,8 @@ object GeneratedModifiers {
                     is androidx.compose.foundation.layout.FlowRowScope ->
                         with(scope) {
                             Modifier.fillMaxRowHeight(
-                                fraction = if ("fraction" in op) com.pycompose.renderer.bindingState(op.getValue("fraction"), Float.VectorConverter) { value ->
-                        value.jsonPrimitive.double.toFloat() }.value else 1.0f,
+                                fraction = if ("fraction" in op) com.pycompose.renderer.bound(op.getValue("fraction"), Float.VectorConverter) { value ->
+                        value.jsonPrimitive.double.toFloat() } else 1.0f,
                             )
                         }
                     else -> null
@@ -650,8 +650,8 @@ object GeneratedModifiers {
                     is androidx.compose.animation.SharedTransitionScope ->
                         with(scope) {
                             Modifier.renderInSharedTransitionScopeOverlay(
-                                zIndexInOverlay = if ("zIndexInOverlay" in op) com.pycompose.renderer.bindingState(op.getValue("zIndexInOverlay"), Float.VectorConverter) { value ->
-                        value.jsonPrimitive.double.toFloat() }.value else 0.0f,
+                                zIndexInOverlay = if ("zIndexInOverlay" in op) com.pycompose.renderer.bound(op.getValue("zIndexInOverlay"), Float.VectorConverter) { value ->
+                        value.jsonPrimitive.double.toFloat() } else 0.0f,
                             )
                         }
                     else -> null
@@ -689,8 +689,8 @@ object GeneratedModifiers {
                     is androidx.compose.material3.TabIndicatorScope ->
                         with(scope) {
                             Modifier.tabIndicatorOffset(
-                                selectedTabIndex = com.pycompose.renderer.bindingState(op.getValue("selectedTabIndex"), Int.VectorConverter) { value ->
-                        value.jsonPrimitive.long.toInt() }.value,
+                                selectedTabIndex = com.pycompose.renderer.bound(op.getValue("selectedTabIndex"), Int.VectorConverter) { value ->
+                        value.jsonPrimitive.long.toInt() },
                                 matchContentSize = if ("matchContentSize" in op) op.getValue("matchContentSize").jsonPrimitive.boolean else false,
                             )
                         }
@@ -701,16 +701,16 @@ object GeneratedModifiers {
                     is androidx.compose.foundation.layout.ColumnScope ->
                         with(scope) {
                             Modifier.weight(
-                                weight = com.pycompose.renderer.bindingState(op.getValue("weight"), Float.VectorConverter) { value ->
-                        value.jsonPrimitive.double.toFloat() }.value,
+                                weight = com.pycompose.renderer.bound(op.getValue("weight"), Float.VectorConverter) { value ->
+                        value.jsonPrimitive.double.toFloat() },
                                 fill = if ("fill" in op) op.getValue("fill").jsonPrimitive.boolean else true,
                             )
                         }
                     is androidx.compose.foundation.layout.RowScope ->
                         with(scope) {
                             Modifier.weight(
-                                weight = com.pycompose.renderer.bindingState(op.getValue("weight"), Float.VectorConverter) { value ->
-                        value.jsonPrimitive.double.toFloat() }.value,
+                                weight = com.pycompose.renderer.bound(op.getValue("weight"), Float.VectorConverter) { value ->
+                        value.jsonPrimitive.double.toFloat() },
                                 fill = if ("fill" in op) op.getValue("fill").jsonPrimitive.boolean else true,
                             )
                         }

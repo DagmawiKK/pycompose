@@ -87,7 +87,7 @@ def plain(spec: dict[str, Any]) -> list[str]:
 
 
 def plain_imports(spec: dict[str, Any]) -> set[str]:
-    """What reading a plain wire value of this prop's type needs imported.
+    """What reading this prop, plain or bound, needs imported.
 
     Args:
         spec: The prop's lock entry.
@@ -95,6 +95,17 @@ def plain_imports(spec: dict[str, Any]) -> set[str]:
     Returns:
         Fully qualified names, for the adapter's import list.
     """
+    if not deferred(spec):
+        helper = {"color": "boundColor", "dp": "boundDp"}.get(spec["type"], "bound")
+        reads = set() if helper != "bound" else _read_imports(spec)
+        # A dp fallback is spelled with Kotlin's extension property.
+        units = {"androidx.compose.ui.unit.dp"} if spec["type"] == "dp" else set()
+        return {f"com.pycompose.renderer.{helper}", *reads, *units}
+    return _read_imports(spec)
+
+
+def _read_imports(spec: dict[str, Any]) -> set[str]:
+    """What decoding one plain wire value of this prop's type needs imported."""
     if spec["type"] == "color":
         return {
             "kotlinx.serialization.json.JsonObject",
@@ -151,6 +162,18 @@ def fallback(spec: dict[str, Any]) -> str | None:
     return literal.get(native, repr(value))
 
 
+def deferred(spec: dict[str, Any]) -> bool:
+    """Whether the value is read after the call: by a provider, or an index clamp.
+
+    Args:
+        spec: The prop's lock entry.
+
+    Returns:
+        True when the adapter keeps the value's state rather than reading it.
+    """
+    return "provider" in spec or "indexOf" in spec
+
+
 def state_lines(
     prop_name: str,
     spec: dict[str, Any],
@@ -204,6 +227,13 @@ def render_bound(
     expression = converter(spec, converters)
     if expression is None:
         return False
+    if not deferred(spec):
+        value = _composed(prop_name, spec, expression)
+        if value is None:
+            return False
+        out.locals.append(f"val {prop_name}Value = {value}")
+        out.arguments.append(f"{prop_name} = {prop_name}Value")
+        return True
     out.locals.extend(state_lines(prop_name, spec, expression, plain(spec)))
     if "indexOf" in spec:
         # Compose reads its items at this index while measuring and throws
@@ -214,27 +244,39 @@ def render_bound(
             f'model.children.inSlot("{spec["indexOf"]}"), node.id)'
         )
         out.gates.append(f"{prop_name}Value != null")
-    elif "provider" in spec:
-        # The native parameter is a lambda or a producer; Compose invokes it
-        # for the value while it draws, so the state is declared here and read
-        # there. An absent nullable producer is the component's own null.
-        provider = spec["provider"]
-        if model_nullable(spec):
-            produced = provided(provider, "state.value")
-            value = f"{prop_name}State?.let {{ state -> {produced} }}"
-        else:
-            value = provided(provider, f"{prop_name}State.value")
-        out.arguments.append(f"{provider['native']} = {value}")
+        out.arguments.append(f"{prop_name} = {prop_name}Value")
         return True
-    elif not model_nullable(spec):
-        out.locals.append(f"val {prop_name}Value = {prop_name}State.value")
+    # The native parameter is a lambda or a producer; Compose invokes it for the
+    # value while it draws, so the state is declared here and read there. An
+    # absent nullable producer is the component's own null.
+    provider = spec["provider"]
+    if model_nullable(spec):
+        produced = provided(provider, "state.value")
+        value = f"{prop_name}State?.let {{ state -> {produced} }}"
     else:
-        absent = fallback(spec)
-        if absent is None:
-            return False
-        out.locals.append(f"val {prop_name}Value = {prop_name}State?.value ?: {absent}")
-    out.arguments.append(f"{prop_name} = {prop_name}Value")
+        value = provided(provider, f"{prop_name}State.value")
+    out.arguments.append(f"{provider['native']} = {value}")
     return True
+
+
+def _composed(prop_name: str, spec: dict[str, Any], expression: str) -> str | None:
+    """A prop read in the call: one helper, the fallback stated once.
+
+    A plain value is read as it stands and keeps no state; a binding travels
+    through the converter.
+    """
+    wire = f"model.props.{prop_name}"
+    absent = fallback(spec) if model_nullable(spec) else None
+    if model_nullable(spec) and absent is None:
+        return None
+    if spec["type"] in {"color", "dp"} and absent is not None:
+        helper = "boundColor" if spec["type"] == "color" else "boundDp"
+        return f"context.{helper}({wire}, {expression}, {absent})"
+    read = " ".join(line.strip() for line in plain(spec))
+    call = f"bound({{wire}}, {expression}) {{ plain -> {read} }}"
+    if absent is None:
+        return call.replace("{wire}", wire)
+    return f"{wire}?.let {{ wire -> {call.replace('{wire}', 'wire')} }} ?: {absent}"
 
 
 def provided(provider: dict[str, Any], expression: str) -> str:

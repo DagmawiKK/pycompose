@@ -1,12 +1,12 @@
 """How generated modifier code reads an argument the app may have bound.
 
-A bound argument is a target the host keeps: the renderer's one ``bindingState``
-reads a plain value as it stands and animates a binding through the converter
-the pin declares for the prop's Kotlin type, so this module knows no types.
+A bound argument is a target the host keeps, animated through the converter the
+pin declares for the prop's Kotlin type, so this module knows no types.
 
-A prop read in composition passes ``.value`` as the argument. One read in
-layout or draw keeps its state and reads it inside the lambda the pin defers
-it to, so the animation invalidates that phase alone.
+A prop read in composition passes the renderer's ``bound`` read as the argument:
+a plain value as it stands, with no state kept for it. One read in layout or
+draw keeps its state (``bindingState``) and reads it inside the lambda the pin
+defers it to, so the animation invalidates that phase alone.
 """
 
 from __future__ import annotations
@@ -29,9 +29,9 @@ def animated(converter: str, wire: str, decode: str) -> str:
         The argument's Kotlin expression.
     """
     return (
-        f"com.pycompose.renderer.bindingState({wire}, {converter}) {{ value ->"
+        f"com.pycompose.renderer.bound({wire}, {converter}) {{ value ->"
         + _BREAK
-        + f"{decode} }}.value"
+        + f"{decode} }}"
     )
 
 
