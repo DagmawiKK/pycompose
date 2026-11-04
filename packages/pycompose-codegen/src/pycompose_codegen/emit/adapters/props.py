@@ -94,6 +94,13 @@ def _render_scalar(prop_name: str, spec: dict[str, Any], out: Fragments) -> bool
     elif spec.get("required") or "default" in spec:
         # A nullable property would not compile where Compose wants a value.
         out.arguments.append(f"{prop_name} = {scalar_wire(prop_name, spec)}")
+    elif "nativeDefault" in spec:
+        # Absent is the native default; a nullable native parameter's is null.
+        wire = scalar_wire(prop_name, spec)
+        native = spec["nativeDefault"]
+        out.arguments.append(
+            f"{prop_name} = {wire}" + ("" if native == "null" else f" ?: {native}")
+        )
     return True
 
 

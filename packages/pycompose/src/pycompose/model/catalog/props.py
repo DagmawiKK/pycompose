@@ -61,6 +61,10 @@ class PropDef:
             family's ``onSelectedDateMillisChange`` reports a cleared selection.
         decode: Which host loader reads a ``resource`` prop off the main
             thread. Every other family crosses the wire as its tagged value.
+        fills: The native parameter a resource prop's loaded value is passed
+            in, standing in for the plain prop of that name.
+        reads: The other props a resource prop's loader takes, such as the
+            locale a string is read in.
         value_type: Optional approved native value family for tagged inputs.
         native_default: Native default provider used by generated adapters.
         native_type: The narrower native Kotlin type when the wire type is
@@ -101,6 +105,8 @@ class PropDef:
     payload: tuple[tuple[str, str], ...] = ()
     nullable_payload: frozenset[str] = frozenset()
     decode: str | None = None
+    fills: str | None = None
+    reads: tuple[str, ...] = ()
     value_type: str | None = None
     native_default: str | None = None
     native_type: str | None = None
@@ -207,6 +213,8 @@ class PropDef:
                 if item.get("nullable") is True
             ),
             decode=_decode(ptype, cast("str | None", data.get("decode"))),
+            fills=cast("str | None", data.get("fills")),
+            reads=tuple(cast("list[str]", data.get("reads") or ())),
             value_type=cast("str | None", data.get("valueType")),
             native_default=cast("str | None", data.get("nativeDefault")),
             native_type=cast("str | None", data.get("nativeType")),
@@ -265,6 +273,8 @@ class PropDef:
             "content": None if self.content is None else self.content.to_mapping(),
             "payload": self._payload_mapping() or None,
             "decode": self.decode,
+            "fills": self.fills,
+            "reads": list(self.reads) or None,
             "provider": None if self.provider is None else self.provider.to_mapping(),
         }
         out.update({key: value for key, value in later.items() if value is not None})

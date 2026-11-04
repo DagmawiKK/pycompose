@@ -124,6 +124,8 @@
         },
         "indexOf": { "type": "string", "minLength": 1 },
         "decode": { "type": "string" },
+        "fills": { "type": "string", "minLength": 1, "description": "The native parameter a resource prop's loaded value is passed in." },
+        "reads": { "type": "array", "items": { "type": "string" }, "description": "Other props a resource prop's loader takes, such as its locale." },
         "default": {},
         "valueType": { "type": "string" },
         "since": { "$ref": "#/$defs/semver" },

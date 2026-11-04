@@ -811,12 +811,6 @@ private fun TextPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"text": "Preview"}, "type": "Text"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
-@Preview(name = "TextAnnotatedString", showBackground = true)
-@Composable
-private fun TextAnnotatedStringPreview() {
-    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"text": {"text": "Preview", "type": "AnnotatedString"}}, "type": "TextAnnotatedString"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
-}
-
 @Preview(name = "TextButton", showBackground = true)
 @Composable
 private fun TextButtonPreview() {

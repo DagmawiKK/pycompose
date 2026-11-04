@@ -254,12 +254,23 @@ def test_a_resource_prop_needs_a_wrapper() -> None:
     assert render_one("Icon", entry) == ""
 
 
-def test_a_wrapped_component_is_not_reduced_to_resolved_values() -> None:
-    """Text loads off the Compose thread; a String? cannot express that."""
-    for name in ("Text", "Image"):
-        entry = components()[name]
-        assert entry.get("wrapper"), f"{name} should declare a wrapper"
-        assert render(name, entry) == "", f"{name} must not be generated"
+def test_a_loaded_resource_stands_in_for_the_parameter_it_fills() -> None:
+    """Text and Image load off the Compose thread, then pass what arrived.
+
+    A resource whose parameter a plain prop also fills falls back to that prop
+    while it loads; one only the resource fills holds the component back.
+    """
+    text = render("Text", components()["Text"])
+    assert (
+        "val textResource = resources.resourceText(model.props.resource, "
+        "model.props.locale)"
+    ) in text
+    assert "text = textResource ?: model.props.text," in text
+    assert "fontFamily = fontFamilyResource ?: fontFamilyValue," in text
+    assert "locale = " not in text
+    image = render("Image", components()["Image"])
+    assert "if (painterResource != null) {" in image
+    assert "painter = painterResource," in image
 
 
 def test_the_registry_refuses_a_decoder_on_a_type_that_needs_none() -> None:

@@ -3848,8 +3848,33 @@
         "owner": "androidx.compose.foundation.ImageKt"
       },
       "props": {
+        "alignment": {
+          "type": "enum",
+          "valueType": "Alignment",
+          "values": [
+            "bottomCenter",
+            "bottomEnd",
+            "bottomLeft",
+            "bottomRight",
+            "bottomStart",
+            "center",
+            "centerEnd",
+            "centerLeft",
+            "centerRight",
+            "centerStart",
+            "topCenter",
+            "topEnd",
+            "topLeft",
+            "topRight",
+            "topStart"
+          ],
+          "default": "center",
+          "nativeDefault": "androidx.compose.ui.Alignment.Companion.Center",
+          "since": "1.23.0"
+        },
         "contentDescription": {
-          "type": "string"
+          "type": "string",
+          "nativeDefault": "null"
         },
         "contentScale": {
           "type": "enum",
@@ -3877,13 +3902,13 @@
             "file"
           ],
           "decode": "resourceImage",
+          "fills": "painter",
           "required": true
         }
       },
       "children": {
         "allowed": false
       },
-      "wrapper": "ResourceImage",
       "reshaped": [
         "resource"
       ]
@@ -9388,9 +9413,87 @@
           "animation": "androidx.compose.ui.graphics.Color",
           "phase": "composition"
         },
+        "fontFamily": {
+          "type": "enum",
+          "valueType": "FontFamily",
+          "values": [
+            "cursive",
+            "default",
+            "monospace",
+            "sansSerif",
+            "serif"
+          ],
+          "nativeDefault": "null",
+          "since": "1.23.0"
+        },
+        "fontSize": {
+          "type": "value",
+          "valueType": "TextUnit",
+          "nativeDefault": "androidx.compose.ui.unit.TextUnit.Companion.Unspecified",
+          "since": "1.23.0"
+        },
+        "fontStyle": {
+          "type": "enum",
+          "valueType": "FontStyle",
+          "values": [
+            "italic",
+            "normal"
+          ],
+          "nativeDefault": "null",
+          "since": "1.23.0"
+        },
+        "fontWeight": {
+          "type": "value",
+          "valueType": "FontWeight",
+          "nativeDefault": "null",
+          "nullable": true,
+          "since": "1.23.0"
+        },
+        "letterSpacing": {
+          "type": "value",
+          "valueType": "TextUnit",
+          "nativeDefault": "androidx.compose.ui.unit.TextUnit.Companion.Unspecified",
+          "since": "1.23.0"
+        },
+        "lineHeight": {
+          "type": "value",
+          "valueType": "TextUnit",
+          "nativeDefault": "androidx.compose.ui.unit.TextUnit.Companion.Unspecified",
+          "since": "1.23.0"
+        },
+        "minLines": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "default": 1,
+          "since": "1.23.0",
+          "animation": "kotlin.Int",
+          "phase": "composition"
+        },
+        "overflow": {
+          "type": "enum",
+          "valueType": "TextOverflow",
+          "values": [
+            "clip",
+            "ellipsis",
+            "middleEllipsis",
+            "startEllipsis",
+            "visible"
+          ],
+          "default": "clip",
+          "nativeDefault": "androidx.compose.ui.text.style.TextOverflow.Companion.Clip",
+          "since": "1.23.0"
+        },
+        "softWrap": {
+          "type": "boolean",
+          "default": true,
+          "since": "1.23.0"
+        },
         "style": {
           "type": "enum",
           "valueType": "TextStyle",
+          "nativeDefault": "androidx.compose.material3.MaterialTheme.typography.bodyMedium",
           "values": [
             "bodyLarge",
             "bodyMedium",
@@ -9406,139 +9509,6 @@
           "type": "string",
           "required": true
         },
-        "modifier": {
-          "type": "modifier"
-        },
-        "resource": {
-          "type": "resource",
-          "values": [
-            "string",
-            "asset"
-          ],
-          "decode": "resourceText",
-          "since": "1.1.0"
-        },
-        "fontResource": {
-          "type": "resource",
-          "values": [
-            "font"
-          ],
-          "decode": "resourceFont",
-          "since": "1.1.0"
-        },
-        "locale": {
-          "type": "string",
-          "since": "1.1.0"
-        }
-      },
-      "children": {
-        "allowed": false
-      },
-      "wrapper": "ResourceText",
-      "reshaped": [
-        "resource",
-        "fontResource",
-        "locale"
-      ]
-    },
-    "TextAnnotatedString": {
-      "package": "androidx.compose.material3",
-      "category": "typography",
-      "stability": "stable",
-      "since": "1.23.0",
-      "source": {
-        "artifact": "androidx.compose.material3:material3-android:1.4.0",
-        "descriptor": "(Landroidx/compose/ui/text/AnnotatedString;Landroidx/compose/ui/Modifier;JLandroidx/compose/foundation/text/TextAutoSize;JLandroidx/compose/ui/text/font/FontStyle;Landroidx/compose/ui/text/font/FontWeight;Landroidx/compose/ui/text/font/FontFamily;JLandroidx/compose/ui/text/style/TextDecoration;Landroidx/compose/ui/text/style/TextAlign;JIZIILjava/util/Map;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/runtime/Composer;III)V",
-        "jvmName": "Text-Z58ophY",
-        "name": "Text",
-        "owner": "androidx.compose.material3.TextKt"
-      },
-      "props": {
-        "color": {
-          "type": "color",
-          "valueType": "Color",
-          "fallback": "androidx.compose.ui.graphics.Color.Companion.Unspecified",
-          "animation": "androidx.compose.ui.graphics.Color",
-          "phase": "composition"
-        },
-        "fontFamily": {
-          "type": "enum",
-          "valueType": "FontFamily",
-          "values": [
-            "cursive",
-            "default",
-            "monospace",
-            "sansSerif",
-            "serif"
-          ],
-          "nativeDefault": "null"
-        },
-        "fontSize": {
-          "type": "value",
-          "valueType": "TextUnit",
-          "nativeDefault": "androidx.compose.ui.unit.TextUnit.Companion.Unspecified"
-        },
-        "fontStyle": {
-          "type": "enum",
-          "valueType": "FontStyle",
-          "values": [
-            "italic",
-            "normal"
-          ],
-          "nativeDefault": "null"
-        },
-        "fontWeight": {
-          "type": "value",
-          "valueType": "FontWeight",
-          "nativeDefault": "null",
-          "nullable": true
-        },
-        "letterSpacing": {
-          "type": "value",
-          "valueType": "TextUnit",
-          "nativeDefault": "androidx.compose.ui.unit.TextUnit.Companion.Unspecified"
-        },
-        "lineHeight": {
-          "type": "value",
-          "valueType": "TextUnit",
-          "nativeDefault": "androidx.compose.ui.unit.TextUnit.Companion.Unspecified"
-        },
-        "minLines": {
-          "type": "integer",
-          "nativeType": "Int",
-          "minimum": -2147483648,
-          "maximum": 2147483647,
-          "default": 1,
-          "animation": "kotlin.Int",
-          "phase": "composition"
-        },
-        "overflow": {
-          "type": "enum",
-          "valueType": "TextOverflow",
-          "values": [
-            "clip",
-            "ellipsis",
-            "middleEllipsis",
-            "startEllipsis",
-            "visible"
-          ],
-          "default": "clip",
-          "nativeDefault": "androidx.compose.ui.text.style.TextOverflow.Companion.Clip"
-        },
-        "softWrap": {
-          "type": "boolean",
-          "default": true
-        },
-        "style": {
-          "type": "value",
-          "valueType": "TextStyle",
-          "nativeDefault": "(androidx.compose.material3.LocalTextStyle).current"
-        },
-        "text": {
-          "type": "value",
-          "valueType": "AnnotatedString",
-          "required": true
-        },
         "textAlign": {
           "type": "enum",
           "valueType": "TextAlign",
@@ -9551,7 +9521,8 @@
             "start",
             "unspecified"
           ],
-          "nativeDefault": "null"
+          "nativeDefault": "null",
+          "since": "1.23.0"
         },
         "textDecoration": {
           "type": "enum",
@@ -9561,15 +9532,47 @@
             "none",
             "underline"
           ],
-          "nativeDefault": "null"
+          "nativeDefault": "null",
+          "since": "1.23.0"
         },
         "modifier": {
           "type": "modifier"
+        },
+        "resource": {
+          "type": "resource",
+          "values": [
+            "string",
+            "asset"
+          ],
+          "decode": "resourceText",
+          "fills": "text",
+          "reads": [
+            "locale"
+          ],
+          "since": "1.1.0"
+        },
+        "fontResource": {
+          "type": "resource",
+          "values": [
+            "font"
+          ],
+          "decode": "resourceFont",
+          "fills": "fontFamily",
+          "since": "1.1.0"
+        },
+        "locale": {
+          "type": "string",
+          "since": "1.1.0"
         }
       },
       "children": {
         "allowed": false
-      }
+      },
+      "reshaped": [
+        "resource",
+        "fontResource",
+        "locale"
+      ]
     },
     "TextButton": {
       "package": "androidx.compose.material3",

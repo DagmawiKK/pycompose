@@ -150,7 +150,6 @@ __all__ = [
     "Tab",
     "TabContent",
     "Text",
-    "TextAnnotatedString",
     "TextButton",
     "TextField",
     "TimeInput",
@@ -323,16 +322,6 @@ _SwipeToDismissBoxValue = Literal[
     "endToStart",
 ]
 
-_TextStyle = Literal[
-    "bodyLarge",
-    "bodyMedium",
-    "bodySmall",
-    "titleLarge",
-    "titleMedium",
-    "titleSmall",
-    "headlineMedium",
-]
-
 _FontFamily = Literal[
     "cursive",
     "default",
@@ -344,6 +333,16 @@ _FontFamily = Literal[
 _FontStyle = Literal[
     "italic",
     "normal",
+]
+
+_TextStyle = Literal[
+    "bodyLarge",
+    "bodyMedium",
+    "bodySmall",
+    "titleLarge",
+    "titleMedium",
+    "titleSmall",
+    "headlineMedium",
 ]
 
 _TextAlign = Literal[
@@ -3721,6 +3720,7 @@ class _Image(Component):
     )
     accepted_keywords = frozenset(
         {
+            "alignment",
             "content_description",
             "content_scale",
             "resource",
@@ -3731,6 +3731,7 @@ class _Image(Component):
         self,
         *,
         id: str | None = None,
+        alignment: _Alignment | None = None,
         content_description: str | None = None,
         content_scale: _ContentScale | None = None,
         modifier: Modifier | None = None,
@@ -3740,12 +3741,15 @@ class _Image(Component):
 
         Args:
             id: Stable instance key; None derives the node's path id.
+            alignment: Native alignment; None uses its default.
             content_description: Native contentDescription; None uses its default.
             content_scale: Native contentScale; None uses its default.
             modifier: Native modifier; None uses its default.
             resource: Required native resource.
         """
         props: dict[str, PropValue] = {}
+        if alignment is not None:
+            props["alignment"] = alignment
         if content_description is not None:
             props["content_description"] = content_description
         if content_scale is not None:
@@ -3764,6 +3768,7 @@ class Image(_Image):
         cls,
         *,
         id: str | None = None,
+        alignment: _Alignment | None = None,
         content_description: str | None = None,
         content_scale: _ContentScale | None = None,
         modifier: Modifier | None = None,
@@ -8178,80 +8183,41 @@ class Text(Component):
         *,
         id: str | None = None,
         color: JsonValue | Expression | Binding | None = None,
+        font_family: _FontFamily | None = None,
         font_resource: str | None = None,
+        font_size: JsonValue | None = None,
+        font_style: _FontStyle | None = None,
+        font_weight: JsonValue | None | _Unset = UNSET,
+        letter_spacing: JsonValue | None = None,
+        line_height: JsonValue | None = None,
         locale: str | None = None,
+        min_lines: int | Binding | None = None,
         modifier: Modifier | None = None,
+        overflow: _TextOverflow | None = None,
         resource: str | None = None,
+        soft_wrap: bool | None = None,
         style: _TextStyle | None = None,
         text: str,
+        text_align: _TextAlign | None = None,
+        text_decoration: _TextDecoration | None = None,
     ) -> None:
         """Construct a registered Text.
 
         Args:
             id: Stable instance key; None derives the node's path id.
             color: Native color; None uses its default.
-            font_resource: Native fontResource; None uses its default.
-            locale: Native locale; None uses its default.
-            modifier: Native modifier; None uses its default.
-            resource: Native resource; None uses its default.
-            style: Native style; None uses its default.
-            text: Required native text.
-        """
-        props: dict[str, PropValue] = {}
-        if color is not None:
-            props["color"] = lower_binding(color, "composition")
-        if font_resource is not None:
-            props["font_resource"] = font_resource
-        if locale is not None:
-            props["locale"] = locale
-        if resource is not None:
-            props["resource"] = resource
-        if style is not None:
-            props["style"] = style
-        props["text"] = text
-        super().__init__(id=id, children=(), modifier=modifier, **props)
-
-
-class TextAnnotatedString(Component):
-    """Native Text; props and defaults follow the component manifest."""
-
-    __slots__ = ()
-    component_type = "TextAnnotatedString"
-
-    def __init__(
-        self,
-        *,
-        id: str | None = None,
-        color: JsonValue | Expression | Binding | None = None,
-        font_family: _FontFamily | None = None,
-        font_size: JsonValue | None = None,
-        font_style: _FontStyle | None = None,
-        font_weight: JsonValue | None | _Unset = UNSET,
-        letter_spacing: JsonValue | None = None,
-        line_height: JsonValue | None = None,
-        min_lines: int | Binding | None = None,
-        modifier: Modifier | None = None,
-        overflow: _TextOverflow | None = None,
-        soft_wrap: bool | None = None,
-        style: JsonValue | None = None,
-        text: JsonValue,
-        text_align: _TextAlign | None = None,
-        text_decoration: _TextDecoration | None = None,
-    ) -> None:
-        """Construct a registered TextAnnotatedString.
-
-        Args:
-            id: Stable instance key; None derives the node's path id.
-            color: Native color; None uses its default.
             font_family: Native fontFamily; None uses its default.
+            font_resource: Native fontResource; None uses its default.
             font_size: Native fontSize; None uses its default.
             font_style: Native fontStyle; None uses its default.
             font_weight: Native fontWeight; omitted uses its default; None is null.
             letter_spacing: Native letterSpacing; None uses its default.
             line_height: Native lineHeight; None uses its default.
+            locale: Native locale; None uses its default.
             min_lines: Native minLines; None uses its default.
             modifier: Native modifier; None uses its default.
             overflow: Native overflow; None uses its default.
+            resource: Native resource; None uses its default.
             soft_wrap: Native softWrap; None uses its default.
             style: Native style; None uses its default.
             text: Required native text.
@@ -8263,6 +8229,8 @@ class TextAnnotatedString(Component):
             props["color"] = lower_binding(color, "composition")
         if font_family is not None:
             props["font_family"] = font_family
+        if font_resource is not None:
+            props["font_resource"] = font_resource
         if font_size is not None:
             props["font_size"] = font_size
         if font_style is not None:
@@ -8273,10 +8241,14 @@ class TextAnnotatedString(Component):
             props["letter_spacing"] = letter_spacing
         if line_height is not None:
             props["line_height"] = line_height
+        if locale is not None:
+            props["locale"] = locale
         if min_lines is not None:
             props["min_lines"] = lower_binding(min_lines, "composition")
         if overflow is not None:
             props["overflow"] = overflow
+        if resource is not None:
+            props["resource"] = resource
         if soft_wrap is not None:
             props["soft_wrap"] = soft_wrap
         if style is not None:

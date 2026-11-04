@@ -117,10 +117,12 @@ def _mechanical_prop(spec: dict[str, Any]) -> bool:
         )
     if spec.get("type") in MECHANICAL:
         return True
+    if spec.get("type") == "resource":
+        # A resource loads off the Compose thread, and stands in for the native
+        # parameter it names; one that names none has nowhere to go.
+        return "fills" in spec
     # A dp prop carries a plain number and needs no decoder, but only a prop
     # with some default to fall back to can be rendered at all.
-    # A resource loads off the Compose thread with its own diagnostics, so only
-    # a wrapper (Text's, Image's) renders one; see WRAPPERS.
     return spec.get("type") == "dp" and _dp_renderable(spec)
 
 

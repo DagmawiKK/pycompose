@@ -3,6 +3,7 @@
 @file:OptIn(androidx.compose.foundation.layout.ExperimentalFlexBoxApi::class, androidx.compose.material3.ExperimentalMaterial3Api::class)
 package com.pycompose.host.ui
 
+import com.pycompose.host.resources.ResourceResolver
 import com.pycompose.renderer.ComponentRegistry
 import kotlinx.serialization.json.JsonPrimitive
 import androidx.compose.animation.AnimatedContent
@@ -197,6 +198,7 @@ import com.pycompose.ir.generated.HorizontalDivider as HorizontalDividerNode
 import com.pycompose.ir.generated.Icon as IconNode
 import com.pycompose.ir.generated.IconButton as IconButtonNode
 import com.pycompose.ir.generated.IconToggleButton as IconToggleButtonNode
+import com.pycompose.ir.generated.Image as ImageNode
 import com.pycompose.ir.generated.ImageImageVector as ImageImageVectorNode
 import com.pycompose.ir.generated.InputChip as InputChipNode
 import com.pycompose.ir.generated.Label as LabelNode
@@ -265,7 +267,7 @@ import com.pycompose.ir.generated.SwipeToDismissBox as SwipeToDismissBoxNode
 import com.pycompose.ir.generated.Switch as SwitchNode
 import com.pycompose.ir.generated.Tab as TabNode
 import com.pycompose.ir.generated.TabContent as TabContentNode
-import com.pycompose.ir.generated.TextAnnotatedString as TextAnnotatedStringNode
+import com.pycompose.ir.generated.Text as TextNode
 import com.pycompose.ir.generated.TextButton as TextButtonNode
 import com.pycompose.ir.generated.TextField as TextFieldNode
 import com.pycompose.ir.generated.TimeInput as TimeInputNode
@@ -311,8 +313,9 @@ import kotlinx.serialization.json.long
 /** Adapters derived mechanically from the schema, for every component whose
  * props carry no decision a generator cannot make. */
 object GeneratedAdapters {
-    private fun ComponentRegistry.Builder.generated():
-        ComponentRegistry.Builder =
+    private fun ComponentRegistry.Builder.generated(
+        resources: ResourceResolver?,
+    ): ComponentRegistry.Builder =
         this
             .register("AlertDialog") { node, modifier, context ->
                 val model = node as AlertDialogNode
@@ -1336,6 +1339,23 @@ object GeneratedAdapters {
                     interactionSource = interactionSourceValue,
                     content = { context.children(model.children) },
                 )
+            }
+            .register("Image") { node, modifier, context ->
+                val model = node as ImageNode
+                val painterResource = resources.resourceImage(model.props.resource)
+                val alignmentValue = model.props.alignment?.let { com.pycompose.renderer.generated.ValueResolver.alignment(it).getOrThrow() }
+                    ?: androidx.compose.ui.Alignment.Companion.Center
+                val contentScaleValue = model.props.contentScale?.let { com.pycompose.renderer.generated.ValueResolver.contentScale(it).getOrThrow() }
+                    ?: androidx.compose.ui.layout.ContentScale.Companion.Fit
+                if (painterResource != null) {
+                    Image(
+                        modifier = modifier,
+                        alignment = alignmentValue,
+                        contentDescription = model.props.contentDescription,
+                        contentScale = contentScaleValue,
+                        painter = painterResource,
+                    )
+                }
             }
             .register("ImageImageVector") { node, modifier, context ->
                 val model = node as ImageImageVectorNode
@@ -2541,9 +2561,11 @@ object GeneratedAdapters {
                     content = { context.childrenIn(this, model.children) },
                 )
             }
-            .register("TextAnnotatedString") { node, modifier, context ->
-                val model = node as TextAnnotatedStringNode
-                val colorValue = context.boundColor(model.props.color, Color.colorVectorConverter(ColorSpaces.Srgb), androidx.compose.ui.graphics.Color.Companion.Unspecified)
+            .register("Text") { node, modifier, context ->
+                val model = node as TextNode
+                val textResource = resources.resourceText(model.props.resource, model.props.locale)
+                val fontFamilyResource = resources.resourceFont(model.props.fontResource)
+                val colorValue = context.boundColor(model.props.color, Color.colorVectorConverter(ColorSpaces.Srgb), androidx.compose.ui.graphics.Color.Unspecified)
                 val fontFamilyValue = model.props.fontFamily?.let { com.pycompose.renderer.generated.ValueResolver.fontFamily(it).getOrThrow() }
                     ?: null
                 val fontSizeWire = model.props.fontSize
@@ -2563,9 +2585,8 @@ object GeneratedAdapters {
                 val minLinesValue = bound(model.props.minLines, Int.VectorConverter) { plain -> plain.jsonPrimitive.long.toInt() }
                 val overflowValue = model.props.overflow?.let { com.pycompose.renderer.generated.ValueResolver.textOverflow(it).getOrThrow() }
                     ?: androidx.compose.ui.text.style.TextOverflow.Companion.Clip
-                val styleWire = model.props.style
-                val styleValue = if (styleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(styleWire).getOrThrow() else (androidx.compose.material3.LocalTextStyle).current
-                val textValue = com.pycompose.renderer.generated.ValueResolver.annotatedString(model.props.text).getOrThrow()
+                val styleValue = model.props.style?.let { com.pycompose.renderer.generated.ValueResolver.textStyle(it).getOrThrow() }
+                    ?: androidx.compose.material3.MaterialTheme.typography.bodyMedium
                 val textAlignValue = model.props.textAlign?.let { com.pycompose.renderer.generated.ValueResolver.textAlign(it).getOrThrow() }
                     ?: null
                 val textDecorationValue = model.props.textDecoration?.let { com.pycompose.renderer.generated.ValueResolver.textDecoration(it).getOrThrow() }
@@ -2573,7 +2594,7 @@ object GeneratedAdapters {
                 Text(
                     modifier = modifier,
                     color = colorValue,
-                    fontFamily = fontFamilyValue,
+                    fontFamily = fontFamilyResource ?: fontFamilyValue,
                     fontSize = fontSizeValue,
                     fontStyle = fontStyleValue,
                     fontWeight = fontWeightValue,
@@ -2583,7 +2604,7 @@ object GeneratedAdapters {
                     overflow = overflowValue,
                     softWrap = model.props.softWrap,
                     style = styleValue,
-                    text = textValue,
+                    text = textResource ?: model.props.text,
                     textAlign = textAlignValue,
                     textDecoration = textDecorationValue,
                 )
@@ -2800,7 +2821,8 @@ object GeneratedAdapters {
                     label = context.slot(model.children, "label"),
                 )
             }
-    fun register(into: ComponentRegistry.Builder):
-        ComponentRegistry.Builder =
-        into.generated()
+    fun register(
+        into: ComponentRegistry.Builder,
+        resources: ResourceResolver? = null,
+    ): ComponentRegistry.Builder = into.generated(resources)
 }

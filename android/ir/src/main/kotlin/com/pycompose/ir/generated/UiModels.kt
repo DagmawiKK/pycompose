@@ -1298,6 +1298,7 @@ data class IconToggleButton(
 
 @Serializable
 data class ImageProps(
+    val `alignment`: JsonElement? = null,
     val `contentDescription`: String? = null,
     val `contentScale`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
@@ -3004,12 +3005,23 @@ data class TabContent(
 @Serializable
 data class TextProps(
     val `color`: JsonElement? = null,
+    val `fontFamily`: JsonElement? = null,
     val `fontResource`: String? = null,
+    val `fontSize`: JsonElement? = null,
+    val `fontStyle`: JsonElement? = null,
+    val `fontWeight`: OptionalValue = OptionalValue.Absent,
+    val `letterSpacing`: JsonElement? = null,
+    val `lineHeight`: JsonElement? = null,
     val `locale`: String? = null,
+    val `minLines`: JsonElement = JsonPrimitive(1L),
     override val `modifier`: JsonObject? = null,
+    val `overflow`: JsonElement? = null,
     val `resource`: String? = null,
+    val `softWrap`: Boolean = true,
     val `style`: JsonElement? = null,
     val `text`: String,
+    val `textAlign`: JsonElement? = null,
+    val `textDecoration`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -3022,37 +3034,6 @@ data class Text(
     override val children: List<UiNode> get() = emptyList()
     override fun withChildren(children: List<UiNode>): UiNode = this
     override val componentType: String get() = "Text"
-}
-
-@Serializable
-data class TextAnnotatedStringProps(
-    val `color`: JsonElement? = null,
-    val `fontFamily`: JsonElement? = null,
-    val `fontSize`: JsonElement? = null,
-    val `fontStyle`: JsonElement? = null,
-    val `fontWeight`: OptionalValue = OptionalValue.Absent,
-    val `letterSpacing`: JsonElement? = null,
-    val `lineHeight`: JsonElement? = null,
-    val `minLines`: JsonElement = JsonPrimitive(1L),
-    override val `modifier`: JsonObject? = null,
-    val `overflow`: JsonElement? = null,
-    val `softWrap`: Boolean = true,
-    val `style`: JsonElement? = null,
-    val `text`: JsonElement,
-    val `textAlign`: JsonElement? = null,
-    val `textDecoration`: JsonElement? = null,
-) : UiProps
-
-@Serializable
-@SerialName("TextAnnotatedString")
-data class TextAnnotatedString(
-    override val id: String,
-    override val props: TextAnnotatedStringProps,
-    override val slot: String? = null,
-) : UiNode {
-    override val children: List<UiNode> get() = emptyList()
-    override fun withChildren(children: List<UiNode>): UiNode = this
-    override val componentType: String get() = "TextAnnotatedString"
 }
 
 @Serializable

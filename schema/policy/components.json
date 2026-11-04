@@ -404,7 +404,8 @@
       "props": {
         "contentDescription": {
           "required": null,
-          "nullable": null
+          "nullable": null,
+          "nativeDefault": "null"
         },
         "resource": {
           "type": "resource",
@@ -414,16 +415,13 @@
             "file"
           ],
           "decode": "resourceImage",
+          "fills": "painter",
           "required": true
         },
-        "alignment": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
         "painter": {
-          "refuse": "its hand-written adapter does not read it yet"
+          "refuse": "the host loads it from the resource the app names"
         }
       },
-      "wrapper": "ResourceImage",
       "reshaped": [
         "resource"
       ]
@@ -1028,7 +1026,7 @@
           "fallback": null
         },
         "style": {
-          "nativeDefault": null,
+          "nativeDefault": "androidx.compose.material3.MaterialTheme.typography.bodyMedium",
           "type": "enum",
           "values": [
             "bodyLarge",
@@ -1048,6 +1046,8 @@
             "asset"
           ],
           "decode": "resourceText",
+          "fills": "text",
+          "reads": ["locale"],
           "since": "1.1.0"
         },
         "fontResource": {
@@ -1056,47 +1056,14 @@
             "font"
           ],
           "decode": "resourceFont",
+          "fills": "fontFamily",
           "since": "1.1.0"
         },
         "locale": {
           "type": "string",
           "since": "1.1.0"
-        },
-        "fontFamily": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "fontSize": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "fontStyle": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "fontWeight": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "letterSpacing": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "lineHeight": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "minLines": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "overflow": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "softWrap": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "textAlign": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "textDecoration": {
-          "refuse": "its hand-written adapter does not read it yet"
         }
       },
-      "wrapper": "ResourceText",
       "reshaped": [
         "resource",
         "fontResource",

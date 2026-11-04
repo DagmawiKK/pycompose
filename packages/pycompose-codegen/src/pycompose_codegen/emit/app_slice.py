@@ -68,7 +68,6 @@ _ADAPTERS_RELATIVE = (
 
 FLOOR_COMPONENTS = frozenset(
     {
-        "Image",
         "PlainTooltip",
         "RichTooltip",
         "SearchBarInputField",
@@ -77,7 +76,6 @@ FLOOR_COMPONENTS = frozenset(
         "SearchBarStateInputField",
         "ExpandedDockedSearchBar",
         "ExpandedFullScreenSearchBar",
-        "Text",
         "TooltipBox",
     }
 )

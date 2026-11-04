@@ -20,6 +20,7 @@ import pytest
 from pycompose_codegen.emit.adapters.assemble import render, render_file
 from pycompose_codegen.emit.adapters.eligibility import held_props, is_mechanical
 from pycompose_codegen.emit.adapters.fragments import Fragments
+from pycompose_codegen.emit.adapters.resources import loaded_resources
 from pycompose_codegen.emit.adapters.text_echo import echoed_text
 
 SCHEMA_PATH = Path(__file__).resolve().parents[4] / "schema" / "catalog.lock.json"
@@ -223,7 +224,7 @@ def test_a_registry_with_no_mechanical_adapters_still_renders_the_object() -> No
     """
     source = render_file({"components": {}})
     assert "object GeneratedAdapters" in source
-    assert "into.generated()" in source
+    assert "into.generated(resources)" in source
 
 
 def test_a_manual_components_markers_never_reach_the_generated_file() -> None:
@@ -316,6 +317,12 @@ def test_no_optional_prop_is_passed_through() -> None:
         # A reconciled text field hands its value and caret to the host's
         # reconciler, which takes an absent caret as "the field keeps its own".
         held |= echoed_text(entry["props"], Fragments())
+        # A resource and the props its loader reads go to the host's loader.
+        held |= {
+            name
+            for prop, spec in loaded_resources(entry["props"], Fragments()).values()
+            for name in (prop, *spec.get("reads", ()))
+        }
         for prop, spec in entry["props"].items():
             if prop in held:
                 continue

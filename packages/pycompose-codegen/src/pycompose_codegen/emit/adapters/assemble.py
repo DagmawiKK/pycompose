@@ -30,6 +30,7 @@ from pycompose_codegen.emit.adapters.fragments import Fragments
 from pycompose_codegen.emit.adapters.imports import extra_imports
 from pycompose_codegen.emit.adapters.policy import simple
 from pycompose_codegen.emit.adapters.props import render_prop
+from pycompose_codegen.emit.adapters.resources import loaded_resources, stand_in
 from pycompose_codegen.emit.adapters.slots import (
     children_argument,
     composables,
@@ -104,6 +105,10 @@ def render(
     if not resolve_constructor(state, entry.get("props", {}), out):
         return ""
     held |= echoed_text(entry.get("props", {}), out)
+    fills = loaded_resources(entry.get("props", {}), out)
+    held |= {
+        name for prop, spec in fills.values() for name in (prop, *spec.get("reads", ()))
+    }
     for prop, spec in entry.get("props", {}).items():
         if "protocol" in spec or prop in observed or prop in held:
             # The host fills the source or the state holder; an observed prop
@@ -112,6 +117,7 @@ def render(
             continue
         if not render_prop(prop, spec, out, animations):
             return ""
+    stand_in(fills, out)
     gate = " && ".join(filter(None, [host_locals(entry, out), *out.gates])) or None
     for slot_name, slot in sorted(entry.get("slots", {}).items()):
         out.arguments.append(named_slot(slot_name, slot))
@@ -216,6 +222,7 @@ def render_file(registry: dict[str, Any]) -> str:
     header += [
         "package com.pycompose.host.ui",
         "",
+        "import com.pycompose.host.resources.ResourceResolver",
         "import com.pycompose.renderer.ComponentRegistry",
         "import kotlinx.serialization.json.JsonPrimitive",
     ]
@@ -224,13 +231,15 @@ def render_file(registry: dict[str, Any]) -> str:
         "/** Adapters derived mechanically from the schema, for every component whose",
         " * props carry no decision a generator cannot make. */",
         "object GeneratedAdapters {",
-        "    private fun ComponentRegistry.Builder.generated():",
-        "        ComponentRegistry.Builder =",
+        "    private fun ComponentRegistry.Builder.generated(",
+        "        resources: ResourceResolver?,",
+        "    ): ComponentRegistry.Builder =",
         "        this",
         *blocks,
-        "    fun register(into: ComponentRegistry.Builder):",
-        "        ComponentRegistry.Builder =",
-        "        into.generated()",
+        "    fun register(",
+        "        into: ComponentRegistry.Builder,",
+        "        resources: ResourceResolver? = null,",
+        "    ): ComponentRegistry.Builder = into.generated(resources)",
         "}",
     ]
     return "\n".join([*header, *sorted(imports), *body]) + "\n"

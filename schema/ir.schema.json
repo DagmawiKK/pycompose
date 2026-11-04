@@ -4457,6 +4457,9 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "alignment": {
+              "$ref": "#/definitions/Family_Alignment"
+            },
             "contentDescription": {
               "type": "string"
             },
@@ -10185,67 +10188,12 @@
                 }
               ]
             },
+            "fontFamily": {
+              "$ref": "#/definitions/Family_FontFamily"
+            },
             "fontResource": {
               "pattern": "^(@(font)/[a-z][a-z0-9_]*)(?![\\s\\S])",
               "type": "string"
-            },
-            "locale": {
-              "type": "string"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "resource": {
-              "pattern": "^(@(string)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
-              "type": "string"
-            },
-            "style": {
-              "$ref": "#/definitions/Family_TextStyle"
-            },
-            "text": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "text"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "Text"
-        }
-      },
-      "type": "object"
-    },
-    "C_TextAnnotatedString": {
-      "properties": {
-        "children": false,
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "color": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_Color"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                },
-                {
-                  "$ref": "#/definitions/Binding"
-                }
-              ]
-            },
-            "fontFamily": {
-              "$ref": "#/definitions/Family_FontFamily"
             },
             "fontSize": {
               "$ref": "#/definitions/Family_TextUnit"
@@ -10268,6 +10216,9 @@
             },
             "lineHeight": {
               "$ref": "#/definitions/Family_TextUnit"
+            },
+            "locale": {
+              "type": "string"
             },
             "minLines": {
               "anyOf": [
@@ -10296,6 +10247,10 @@
             "overflow": {
               "$ref": "#/definitions/Family_TextOverflow"
             },
+            "resource": {
+              "pattern": "^(@(string)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "type": "string"
+            },
             "softWrap": {
               "default": true,
               "type": "boolean"
@@ -10304,7 +10259,7 @@
               "$ref": "#/definitions/Family_TextStyle"
             },
             "text": {
-              "$ref": "#/definitions/Family_AnnotatedString"
+              "type": "string"
             },
             "textAlign": {
               "$ref": "#/definitions/Family_TextAlign"
@@ -10319,7 +10274,7 @@
           "type": "object"
         },
         "type": {
-          "const": "TextAnnotatedString"
+          "const": "Text"
         }
       },
       "type": "object"
@@ -14795,9 +14750,6 @@
             },
             {
               "$ref": "#/definitions/C_Text"
-            },
-            {
-              "$ref": "#/definitions/C_TextAnnotatedString"
             },
             {
               "$ref": "#/definitions/C_TextButton"
@@ -35670,6 +35622,9 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "alignment": {
+              "$ref": "#/definitions/Family_Alignment"
+            },
             "contentDescription": {
               "type": "string"
             },
@@ -40906,9 +40861,6 @@
               "$ref": "#/definitions/V_1_23_0_Text"
             },
             {
-              "$ref": "#/definitions/V_1_23_0_TextAnnotatedString"
-            },
-            {
               "$ref": "#/definitions/V_1_23_0_TextButton"
             },
             {
@@ -44603,67 +44555,12 @@
                 }
               ]
             },
+            "fontFamily": {
+              "$ref": "#/definitions/Family_FontFamily"
+            },
             "fontResource": {
               "pattern": "^(@(font)/[a-z][a-z0-9_]*)(?![\\s\\S])",
               "type": "string"
-            },
-            "locale": {
-              "type": "string"
-            },
-            "modifier": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "resource": {
-              "pattern": "^(@(string)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
-              "type": "string"
-            },
-            "style": {
-              "$ref": "#/definitions/Family_TextStyle"
-            },
-            "text": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "text"
-          ],
-          "type": "object"
-        },
-        "type": {
-          "const": "Text"
-        }
-      },
-      "type": "object"
-    },
-    "V_1_23_0_TextAnnotatedString": {
-      "properties": {
-        "children": false,
-        "props": {
-          "additionalProperties": false,
-          "properties": {
-            "color": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_Color"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                },
-                {
-                  "$ref": "#/definitions/Binding"
-                }
-              ]
-            },
-            "fontFamily": {
-              "$ref": "#/definitions/Family_FontFamily"
             },
             "fontSize": {
               "$ref": "#/definitions/Family_TextUnit"
@@ -44686,6 +44583,9 @@
             },
             "lineHeight": {
               "$ref": "#/definitions/Family_TextUnit"
+            },
+            "locale": {
+              "type": "string"
             },
             "minLines": {
               "anyOf": [
@@ -44714,6 +44614,10 @@
             "overflow": {
               "$ref": "#/definitions/Family_TextOverflow"
             },
+            "resource": {
+              "pattern": "^(@(string)/[a-z][a-z0-9_]*|@asset/[A-Za-z0-9_-][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)*)(?![\\s\\S])",
+              "type": "string"
+            },
             "softWrap": {
               "default": true,
               "type": "boolean"
@@ -44722,7 +44626,7 @@
               "$ref": "#/definitions/Family_TextStyle"
             },
             "text": {
-              "$ref": "#/definitions/Family_AnnotatedString"
+              "type": "string"
             },
             "textAlign": {
               "$ref": "#/definitions/Family_TextAlign"
@@ -44737,7 +44641,7 @@
           "type": "object"
         },
         "type": {
-          "const": "TextAnnotatedString"
+          "const": "Text"
         }
       },
       "type": "object"
