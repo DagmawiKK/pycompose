@@ -26,8 +26,8 @@ from notes_app.view_models import (
     SetTitle,
     SetTitleCaret,
 )
-from pycompose import composable
-from pycompose.ui import Node
+from pycompose import Stream, composable
+from pycompose.ui import Node, follow
 
 
 def editor_screen(state: EditorState) -> Node:
@@ -56,6 +56,8 @@ def editor_screen(state: EditorState) -> Node:
     return Scaffold(
         top_bar=back_bar(title=note.label),
         content=Column(
+            id="editor",
+            scrollable=True,
             modifier=Modifier().padding(20).fill_max_width(),
             children=[
                 Spacer(modifier=Modifier().size(16)),
@@ -65,7 +67,12 @@ def editor_screen(state: EditorState) -> Node:
                     selection=state.title_caret,
                     on_value_change=SetTitle.bind(note_id=note.id),
                     on_selection_change=SetTitleCaret,
-                    modifier=Modifier().fill_max_width(),
+                    # The title tucks away as the note scrolls. The host reads
+                    # the column's progress while laying out, so no frame of
+                    # the travel runs Python.
+                    modifier=Modifier()
+                    .fill_max_width()
+                    .offset(y=follow(Stream("editor", "progress").times(-72))),
                 ),
                 Spacer(modifier=Modifier().size(12)),
                 TextField(

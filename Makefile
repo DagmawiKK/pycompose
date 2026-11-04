@@ -1,7 +1,7 @@
 # Every distribution's source: what the Python checks cover.
 PY_SRC := packages/pycompose/src/pycompose packages/pycompose-cli/src/pycompose_cli packages/pycompose-codegen/src/pycompose_codegen packages/pycompose-testing/src/pycompose_testing
 
-.PHONY: lint lint-py lint-kt lint-workflows typecheck test fmt fmt-py fmt-kt precommit codegen codegen-check spec
+.PHONY: lint lint-py lint-kt lint-workflows typecheck test fmt fmt-py fmt-kt precommit codegen codegen-check spec phone-check
 
 lint: lint-py lint-kt lint-workflows
 
@@ -28,6 +28,11 @@ codegen:
 
 spec:
 	python tools/spec/check.py
+
+# One device (or emulator): a release APK, a spring, and a scroll with no
+# Python per frame. Builds its own copy of the sample, so nothing here changes.
+phone-check:
+	python -m tools.phone_check
 
 codegen-check:
 	python tools/schema/gen.py --check
