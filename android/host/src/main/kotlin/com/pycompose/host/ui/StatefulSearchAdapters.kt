@@ -35,7 +35,6 @@ internal fun ComponentRegistry.Builder.statefulSearchFields(): ComponentRegistry
                     field.props.onEdit,
                     field.props.selectionStart,
                     field.props.selectionEnd,
-                    field.props.revision,
                 ),
             onSearch = { context.event(field.props.onSearch, JsonPrimitive(it)) },
             expanded = field.props.expanded,
@@ -61,7 +60,7 @@ internal fun ComponentRegistry.Builder.statefulSearchFields(): ComponentRegistry
     }
 
 /**
- * One owner for editing, selection, revision and expansion, shared by every surface.
+ * One owner for editing, selection and expansion, shared by every surface.
  *
  * The collapsed bar and the expanded results surface are two views of one
  * search. Composing them from one node lets the host create the native
@@ -79,7 +78,6 @@ internal fun ComponentRegistry.Builder.sharedSearchBars(): ComponentRegistry.Bui
                 text = search.props.text,
                 selectionStart = search.props.selectionStart,
                 selectionEnd = search.props.selectionEnd,
-                revision = search.props.revision,
                 onEdit = search.props.onEdit,
             )
         CompositionLocalProvider(LocalHostSearchState provides state) {

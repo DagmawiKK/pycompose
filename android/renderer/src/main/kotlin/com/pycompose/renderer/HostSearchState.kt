@@ -16,12 +16,12 @@ import kotlinx.serialization.json.JsonPrimitive
  *
  * A search bar is one editing surface shown at two sizes: the collapsed bar and
  * the expanded results surface. Material 3 threads the same `TextFieldState`
- * and `SearchBarState` through both, so the text, selection, revision and
+ * and `SearchBarState` through both, so the text, selection and
  * expansion survive the transition. The owner creates the pair once; each
  * nested declaration reads it from [LocalHostSearchState] instead of creating
  * a second one.
  *
- * @param text The revisioned editing state the owner drives.
+ * @param text The reconciled editing state the owner drives.
  * @param bar The native expansion state the owner drives and reports.
  */
 @OptIn(ExperimentalMaterial3Api::class)

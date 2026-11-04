@@ -138,7 +138,7 @@ fun RenderContext.tooltipState(
 ): TooltipState = rememberHostTooltipState(visible, isPersistent, report, observations::observe)
 
 /**
- * The node's shared search projection: revisioned editing and native expansion.
+ * The node's shared search projection: reconciled editing and native expansion.
  *
  * One owner creates both native states and provides them to the surfaces it
  * composes; the collapsed bar, the expanded bar and every input field in their
@@ -153,7 +153,6 @@ fun RenderContext.tooltipState(
  * @param text Desired editing text.
  * @param selectionStart Anchor of the desired selection, clamped to the text.
  * @param selectionEnd Active end of the desired selection, clamped to the text.
- * @param revision Last acknowledged edit or a greater app-command revision.
  * @param onEdit Action receiving the complete editing value.
  */
 @Suppress("LongParameterList")
@@ -165,10 +164,9 @@ fun RenderContext.searchState(
     text: String,
     selectionStart: Long,
     selectionEnd: Long,
-    revision: Long,
     onEdit: String,
 ): HostSearchState {
-    val editing = textInputState(text, onEdit, selectionStart, selectionEnd, revision)
+    val editing = textInputState(text, onEdit, selectionStart, selectionEnd)
     val bar = rememberHostSearchBarState(expanded, onExpandedChange, observations::observe)
     return remember(editing, bar) { HostSearchState(editing, bar) }
 }

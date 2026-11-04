@@ -287,18 +287,9 @@ class AppDriver:
         node = self.find(**selector)
         props = node.get("props", {})
         if "onEdit" in props:
-            # The host's edit report: the text, a caret at its end, and the
-            # revision of the value it edited.
+            # The host's edit report: the text and a caret at its end.
             end = len(value)
-            revision = props.get("revision", 0)
-            self.act(
-                "onEdit",
-                node,
-                text=value,
-                selectionStart=end,
-                selectionEnd=end,
-                revision=revision,
-            )
+            self.act("onEdit", node, text=value, selectionStart=end, selectionEnd=end)
         else:
             self.act("onValueChange", node, value=value)
 

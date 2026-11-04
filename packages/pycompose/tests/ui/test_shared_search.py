@@ -24,7 +24,6 @@ def owner(**overrides: object) -> Node:
         "text": "compose",
         "selection_start": 7,
         "selection_end": 7,
-        "revision": 0,
         "on_edit": "submit",
         "expanded": False,
         "on_expanded_change": "submit",
@@ -69,7 +68,6 @@ def test_owner_emits_distinct_collapsed_and_expanded_input_slots() -> None:
         "text": "compose",
         "selectionStart": 7,
         "selectionEnd": 7,
-        "revision": 0,
         "onEdit": "submit",
         "expanded": False,
         "onExpandedChange": "submit",
@@ -170,10 +168,8 @@ def test_a_host_slot_rejects_a_native_policy(raw: dict[str, object]) -> None:
     [
         ("selectionStart", -1),
         ("selectionEnd", -1),
-        ("revision", -1),
         ("selectionStart", 2147483648),
         ("selectionEnd", 2147483648),
-        ("revision", 9223372036854775808),
     ],
 )
 def test_out_of_range_owner_coordinates_are_rejected(prop: str, value: int) -> None:
@@ -182,7 +178,6 @@ def test_out_of_range_owner_coordinates_are_rejected(prop: str, value: int) -> N
         "text": "compose",
         "selectionStart": 7,
         "selectionEnd": 7,
-        "revision": 0,
         "onEdit": "submit",
         "expanded": False,
         "onExpandedChange": "submit",
@@ -228,7 +223,6 @@ def test_expansion_is_optional_so_native_gestures_can_own_it() -> None:
                 text="compose",
                 selection_start=7,
                 selection_end=7,
-                revision=0,
                 on_edit="submit",
                 on_expanded_change="submit",
                 input_field=SearchBarStateInputField(

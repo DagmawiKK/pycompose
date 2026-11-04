@@ -340,12 +340,13 @@ def _validate_family_props(where: str, kind: str, props: dict[str, Any]) -> None
 def _validate_editing_projection(
     where: str, props: dict[str, Any], *, text: str, report: str | None
 ) -> None:
-    """Text, selection and revision form one required editing projection.
+    """Text and selection form one required editing projection.
 
     A component that owns editing names its text prop and its atomic report;
     the bounds are the native UTF-16 selection limits, and the report carries
-    all four fields in one payload so a host acknowledgement can never apply a
-    text and a selection from different edits.
+    all three fields in one payload so an answer can never apply a text and a
+    selection from different edits. Which answer is current is the report
+    numbers' business, never the app's.
 
     Args:
         where: Prefix for validation failures.
@@ -358,16 +359,14 @@ def _validate_editing_projection(
         text: "string",
         "selectionStart": "integer",
         "selectionEnd": "integer",
-        "revision": "integer",
     }
     for name, kind in expected.items():
         prop = props.get(name, {})
         if prop.get("type") != kind or not prop.get("required"):
             die(f"{where}: prop {name!r} must be a required {kind}")
-    for name in ("selectionStart", "selectionEnd", "revision"):
+    for name in ("selectionStart", "selectionEnd"):
         prop = props[name]
-        maximum = 9223372036854775807 if name == "revision" else 2147483647
-        if prop.get("minimum") != 0 or prop.get("maximum") != maximum:
+        if prop.get("minimum") != 0 or prop.get("maximum") != 2147483647:
             die(f"{where}: prop {name!r} needs native nonnegative bounds")
     report_prop = props.get(report, {}) if report is not None else {}
     payload = report_prop.get("payload", [])
@@ -375,16 +374,11 @@ def _validate_editing_projection(
     if (
         report_prop.get("type") != "actionId"
         or not report_prop.get("required")
-        or len(payload) != 4
+        or len(payload) != 3
         or fields
-        != {
-            "text": "string",
-            "selectionStart": "integer",
-            "selectionEnd": "integer",
-            "revision": "integer",
-        }
+        != {"text": "string", "selectionStart": "integer", "selectionEnd": "integer"}
     ):
-        die(f"{where}: report needs the atomic text/selection/revision payload")
+        die(f"{where}: report needs the atomic text/selection payload")
 
 
 def _validate_text_input(

@@ -55,7 +55,7 @@ modal surface that has to be composed to be shown at all; a slider drives the
 thumb to a desired number and reports the settled one; scroll and lazyList
 report a resting position once scrolling comes to rest; a tooltip reconciles a
 desired visible value through hover, focus and long-press gestures; textInput
-reconciles text and selection with a revisioned atomic edit report; search
+reconciles text and selection with an atomic, numbered edit report; search
 shares one editing projection and one expansion state across a collapsed bar
 and every expanded surface; a swipe reconciles a desired settled/dismissed
 anchor through horizontal gestures and reports the anchor it settled on. The

@@ -34,12 +34,6 @@ _SELECTION: dict[str, dict[str, Any]] = {
         "maximum": _INT,
         "nativeType": "Int",
     },
-    "revision": {
-        "type": "integer",
-        "required": True,
-        "minimum": 0,
-        "maximum": 2**63 - 1,
-    },
 }
 _EDIT = {
     "type": "actionId",
@@ -48,7 +42,6 @@ _EDIT = {
         {"name": "text", "type": "string"},
         {"name": "selectionStart", "type": "integer"},
         {"name": "selectionEnd", "type": "integer"},
-        {"name": "revision", "type": "integer"},
     ],
 }
 

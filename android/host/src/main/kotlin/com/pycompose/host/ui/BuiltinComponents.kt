@@ -7,8 +7,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import com.pycompose.host.resources.ResourceResolver
 import com.pycompose.renderer.ComponentRegistry
+import com.pycompose.renderer.edit
+import com.pycompose.renderer.edited
 import com.pycompose.renderer.generated.ValueResolver
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
@@ -66,39 +70,37 @@ object BuiltinComponents {
             val input = node as InputNode
             val caret = input.props.selection
             val onCaret = input.props.onSelectionChange
-            val echoed = rememberEchoedText(input.id, input.props.value, caret?.toInt())
-            val report: (String) -> Unit = { value ->
-                echoed.typed(value)
-                context.event(input.props.onValueChange, JsonPrimitive(value))
-            }
             // Controlled when the app says where the caret is, which puts it in
             // the snapshot and makes it testable. Uncontrolled otherwise, where
             // Compose owns it and the app never sees it. Both halves must be
             // declared: one alone would either drop every caret report or reject
             // every keystroke.
             if (caret != null && onCaret != null) {
+                val value = input.props.value
+                val stated =
+                    TextFieldValue(value, TextRange(caret.toInt().coerceIn(0, value.length)))
+                val field = context.edited(input.id, stated, input.props.onValueChange, onCaret)
                 TextField(
-                    value = echoed.value,
+                    value = field.value,
                     // The caret travels back on the same callback that reports the
-                    // text: the event channel carries one value per action, and M3
-                    // has no selection callback of its own at this version. A caret
-                    // moved without the text changing is therefore not reported.
-                    onValueChange = { updated ->
-                        val changed = updated.text != echoed.text
-                        echoed.typed(updated)
-                        if (changed) {
-                            context.event(input.props.onValueChange, JsonPrimitive(updated.text))
-                        }
-                        context.event(onCaret, JsonPrimitive(updated.selection.start))
+                    // text: M3 has no selection callback of its own at this version.
+                    onValueChange = { updated: TextFieldValue ->
+                        val text = input.props.onValueChange to JsonPrimitive(updated.text)
+                        val at = onCaret to JsonPrimitive(updated.selection.start)
+                        val changed = updated.text != field.value.text
+                        context.edit(field, updated, if (changed) mapOf(text, at) else mapOf(at))
                     },
                     modifier = modifier,
                     enabled = input.props.enabled,
                     label = input.props.label?.let { text -> { Text(text) } },
                 )
             } else {
+                val field = context.edited(input.id, input.props.value, input.props.onValueChange)
                 TextField(
-                    value = echoed.text,
-                    onValueChange = report,
+                    value = field.value,
+                    onValueChange = {
+                        context.edit(field, it, input.props.onValueChange, JsonPrimitive(it))
+                    },
                     modifier = modifier,
                     enabled = input.props.enabled,
                     label = input.props.label?.let { text -> { Text(text) } },
@@ -110,14 +112,17 @@ object BuiltinComponents {
     private fun ComponentRegistry.Builder.searchFields(): ComponentRegistry.Builder =
         register("SearchBarInputField") { node, modifier, context ->
             val field = node as SearchBarInputFieldNode
-            // The native field owns the caret, but the app owns the text: the
-            // latest keystroke stays until the app states other text.
-            val query = rememberEchoedText(field.id, field.props.query)
+            // The native field owns the caret, but the app owns the text.
+            val query = context.edited(field.id, field.props.query, field.props.onQueryChange)
             SearchBarDefaults.InputField(
-                query = query.text,
-                onQueryChange = { value ->
-                    query.typed(value)
-                    context.event(field.props.onQueryChange, JsonPrimitive(value))
+                query = query.value,
+                onQueryChange = {
+                    context.edit(
+                        query,
+                        it,
+                        field.props.onQueryChange,
+                        JsonPrimitive(it),
+                    )
                 },
                 onSearch = { query ->
                     context.event(field.props.onSearch, JsonPrimitive(query))

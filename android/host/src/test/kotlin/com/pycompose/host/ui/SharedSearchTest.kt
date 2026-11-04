@@ -51,7 +51,7 @@ class SharedSearchTest {
         assertEquals(JsonPrimitive(8), edits().last().payload["selectionStart"])
 
         compose.runOnIdle {
-            current.value = snapshot(Edit("composex", 8, 8, 1), expanded = true)
+            current.value = snapshot(Edit("composex", 8, 8), expanded = true)
         }
         val expanded = compose.field("E")
         expanded.assertTextEquals("composex")
@@ -60,7 +60,7 @@ class SharedSearchTest {
         expanded.performTextInput("y")
         compose.waitUntil(5000) { edits().size == 2 }
         assertEquals(JsonPrimitive("composexy"), edits().last().payload["text"])
-        assertEquals(JsonPrimitive(2), edits().last().payload["revision"])
+        assertEquals(2L, edits().last().seq)
         collapsed.assertTextEquals("composexy")
 
         expanded.performImeAction()
@@ -112,7 +112,7 @@ class SharedSearchTest {
         compose.runOnIdle {
             current.value =
                 snapshot(
-                    Edit("composex", 8, 8, 1),
+                    Edit("composex", 8, 8),
                     expanded = true,
                     kind = "ExpandedFullScreenSearchBar",
                 )
@@ -176,7 +176,6 @@ class SharedSearchTest {
         val text: String = "compose",
         val start: Int = 7,
         val end: Int = 7,
-        val revision: Long = 0,
     )
 
     private fun snapshot(
@@ -194,13 +193,12 @@ class SharedSearchTest {
                       "metadata":{"intents":{"demo.edit":{"payload":{
                         "text":{"type":"string","required":true},
                         "selectionStart":{"type":"integer","required":true},
-                        "selectionEnd":{"type":"integer","required":true},
-                        "revision":{"type":"integer","required":true}}},"demo.search":{"payload":{
+                        "selectionEnd":{"type":"integer","required":true}}},"demo.search":{"payload":{
                         "query":{"type":"string","required":true}}},"demo.expand":{"payload":{
                         "expanded":{"type":"boolean","required":true}}}}},
                      "root":{"id":"search","type":"StatefulSearchBar","props":{
                        "text":"${edit.text}","selectionStart":${edit.start},
-                       "selectionEnd":${edit.end},"revision":${edit.revision},
+                       "selectionEnd":${edit.end},
                        "onEdit":{"fields":{},"intent":"demo.edit"},$expansion
                        "onExpandedChange":{"fields":{},"intent":"demo.expand"}},"children":[
                        {"id":"collapsed","type":"SearchBarStateInputField","slot":"inputField",
@@ -230,19 +228,18 @@ class SharedSearchTest {
                       "metadata":{"intents":{"demo.edit":{"payload":{
                         "text":{"type":"string","required":true},
                         "selectionStart":{"type":"integer","required":true},
-                        "selectionEnd":{"type":"integer","required":true},
-                        "revision":{"type":"integer","required":true}}},"demo.expand":{"payload":{
+                        "selectionEnd":{"type":"integer","required":true}}},"demo.expand":{"payload":{
                         "expanded":{"type":"boolean","required":true}}}}},
                      "root":{"id":"column","type":"Column","props":{},"children":[
                        {"id":"alpha","type":"StatefulSearchBar","props":{
-                         "text":"alpha","selectionStart":5,"selectionEnd":5,"revision":0,
+                         "text":"alpha","selectionStart":5,"selectionEnd":5,
                          "onEdit":{"fields":{},"intent":"demo.edit"},"expanded":false,
                          "onExpandedChange":{"fields":{},"intent":"demo.expand"}},"children":[
                          {"id":"alpha.input","type":"SearchBarStateInputField","slot":"inputField",
                            "props":{
                            "onSearch":{"fields":{},"intent":"demo.expand"}}}]},
                        {"id":"beta","type":"StatefulSearchBar","props":{
-                         "text":"beta","selectionStart":4,"selectionEnd":4,"revision":0,
+                         "text":"beta","selectionStart":4,"selectionEnd":4,
                          "onEdit":{"fields":{},"intent":"demo.edit"},"expanded":false,
                          "onExpandedChange":{"fields":{},"intent":"demo.expand"}},"children":[
                          {"id":"beta.input","type":"SearchBarStateInputField","slot":"inputField",

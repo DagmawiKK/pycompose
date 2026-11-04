@@ -22,19 +22,31 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Typing faster than Python echoes loses no keystroke.
+ * Typing faster than Python answers loses no keystroke, and the app's answer still stands.
  *
- * Found on an emulator: "Groceries" typed quickly arrived as "Grocies",
- * because each key edited the last snapshot's text rather than the field's.
+ * Found on an emulator: "Groceries" typed quickly arrived as "Grocies", because each key
+ * edited the last snapshot's text rather than the field's. Each key is reported numbered,
+ * and a snapshot echoes the latest number the app answered: until it answers them all, the
+ * field keeps what was typed; once it has, what it states is its own.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], application = android.app.Application::class)
 class TextFieldEchoTest {
     @get:Rule val compose = createComposeRule()
 
+    /** The answers a snapshot echoes: the latest number per intent; 0 echoes none. */
+    private fun echoes(vararg answered: Pair<String, Int>): String {
+        val echoed = answered.filter { (_, seq) -> seq > 0 }
+        if (echoed.isEmpty()) return ""
+        return echoed.joinToString(",", ""","echoes":[""", "]") { (intent, seq) ->
+            """{"seq":$seq,"target":{"fields":{},"intent":"$intent"}}"""
+        }
+    }
+
     private fun snapshot(
         value: String,
         caret: Int? = null,
+        vararg answered: Pair<String, Int>,
     ): ValidatedIr =
         IrParser()
             .parse(
@@ -42,7 +54,7 @@ class TextFieldEchoTest {
                 {"version":"0.1.0","schemaVersion":"1.23.0",
                  "metadata":{"intents":{"note.title":{"payload":{
                      "value":{"required":true,"type":"string"}}},"note.caret":{"payload":{
-                     "value":{"required":true,"type":"integer"}}}}},
+                     "value":{"required":true,"type":"integer"}}}}${echoes(*answered)}},
                  "root":{"id":"title","type":"TextField","props":{
                    "value":"$value","label":"Title","onValueChange":{"fields":{},
                      "intent":"note.title"}
@@ -79,15 +91,19 @@ class TextFieldEchoTest {
             },
         )
 
-        // The echo of the first key arrives late: the field keeps "ab".
-        stated = snapshot("a")
+        // The answer to the first key arrives while the second is unanswered: "ab" stays.
+        stated = snapshot("a", null, "note.title" to 1)
         compose.waitForIdle()
         assertEquals("ab", shown())
 
-        // The app clears the note: that is its own text, not an echo.
-        stated = snapshot("ab")
+        // The app answered both and refused the second key: its word stands, though
+        // "a" is a value the user once typed.
+        stated = snapshot("a", null, "note.title" to 2)
         compose.waitForIdle()
-        stated = snapshot("")
+        assertEquals("a", shown())
+
+        // The app clears the note.
+        stated = snapshot("", null, "note.title" to 2)
         compose.waitForIdle()
         assertEquals("", shown())
     }
@@ -97,23 +113,27 @@ class TextFieldEchoTest {
         val actions = mutableListOf<Action>()
         val renderer = Renderer(BuiltinComponents.registry(), ActionDispatcher { actions.add(it) })
 
-        fun outlined(value: String) =
-            IrParser()
-                .parse(
-                    """
+        fun outlined(
+            value: String,
+            seq: Int,
+        ) = IrParser()
+            .parse(
+                """
                     {"version":"0.1.0","schemaVersion":"1.23.0",
                      "metadata":{"intents":{"note.title":{"payload":{
-                         "value":{"required":true,"type":"string"}}}}},
+                         "value":{"required":true,"type":"string"}}}}${echoes(
+                    "note.title" to seq,
+                )}},
                      "root":{"id":"title","type":"OutlinedTextField","props":{
                        "value":"$value","onValueChange":{"fields":{},"intent":"note.title"}}}}
-                    """.trimIndent(),
-                ).getOrThrow()
-        var stated by mutableStateOf(outlined(""))
+                """.trimIndent(),
+            ).getOrThrow()
+        var stated by mutableStateOf(outlined("", 0))
         compose.setContent { PyComposeTheme { renderer.Render(stated) } }
 
         compose.onNode(hasSetTextAction()).performTextInput("a")
         compose.onNode(hasSetTextAction()).performTextInput("b")
-        stated = outlined("a")
+        stated = outlined("a", 1)
         compose.waitForIdle()
         assertEquals("ab", shown())
     }
@@ -133,7 +153,8 @@ class TextFieldEchoTest {
         compose.waitForIdle()
         assertEquals("abc", shown())
 
-        stated = snapshot("a", caret = 1)
+        // An answer to the first key only: text and caret both stay the field's.
+        stated = snapshot("a", 1, "note.title" to 1, "note.caret" to 1)
         compose.waitForIdle()
         compose.onNode(hasSetTextAction()).performTextInput("d")
         compose.waitForIdle()

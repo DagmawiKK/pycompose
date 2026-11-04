@@ -985,7 +985,6 @@
         "text",
         "selectionStart",
         "selectionEnd",
-        "revision",
         "onEdit"
       ],
       "adapter": "manual"

@@ -13,6 +13,12 @@ import kotlinx.serialization.json.longOrNull
  * desired value answers an older report, and driving to it would undo a newer gesture.
  */
 object Echoes {
+    /** The first schema whose snapshots echo; an older one never answers a report. */
+    const val SINCE = "1.23.0"
+
+    /** Whether snapshots of [schema] echo the reports they answer. */
+    fun echoing(schema: String): Boolean = VersionGate.available(schema, SINCE)
+
     /** The echoed numbers by action id; empty when the snapshot echoes none. */
     fun read(metadata: JsonObject?): Map<String, Long> {
         val raw = metadata?.get("echoes") ?: return emptyMap()

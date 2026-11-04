@@ -165,7 +165,6 @@ def test_every_declared_state_names_a_typed_value_and_a_matching_report() -> Non
                 {"name": "text", "type": "string"},
                 {"name": "selectionStart", "type": "integer"},
                 {"name": "selectionEnd", "type": "integer"},
-                {"name": "revision", "type": "integer"},
             ], name
             continue
         if state["kind"] == "swipe":

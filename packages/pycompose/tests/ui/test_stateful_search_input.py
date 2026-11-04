@@ -8,7 +8,7 @@ from pycompose.model.snapshot import Snapshot
 from pycompose.ui import StatefulSearchBarInputField
 
 
-def test_text_selection_and_revision_travel_in_one_snapshot() -> None:
+def test_text_and_selection_travel_in_one_snapshot() -> None:
     """Python states a complete editing value; no native object crosses the wire."""
     from pycompose.ui import Text
 
@@ -19,7 +19,6 @@ def test_text_selection_and_revision_travel_in_one_snapshot() -> None:
                 text="compose",
                 selection_start=7,
                 selection_end=2,
-                revision=4,
                 on_edit="submit",
                 on_search="submit",
                 expanded=False,
@@ -37,7 +36,6 @@ def test_text_selection_and_revision_travel_in_one_snapshot() -> None:
         "text": "compose",
         "selectionStart": 7,
         "selectionEnd": 2,
-        "revision": 4,
         "onEdit": "submit",
         "onSearch": "submit",
         "expanded": False,
@@ -51,21 +49,18 @@ def test_text_selection_and_revision_travel_in_one_snapshot() -> None:
     [
         ("selectionStart", -1),
         ("selectionEnd", -1),
-        ("revision", -1),
         ("selectionStart", 2147483648),
         ("selectionEnd", 2147483648),
-        ("revision", 9223372036854775808),
     ],
 )
 def test_out_of_range_editing_coordinates_are_rejected(prop: str, value: int) -> None:
-    """Native coordinates and revisions never wrap through unsigned coercion."""
+    """Native coordinates never wrap through unsigned coercion."""
     from pycompose.model.nodes.node import Node
 
     props = {
         "text": "compose",
         "selectionStart": 7,
         "selectionEnd": 7,
-        "revision": 0,
         "onEdit": "submit",
         "onSearch": "submit",
         "expanded": False,

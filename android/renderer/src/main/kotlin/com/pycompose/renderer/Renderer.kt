@@ -254,7 +254,10 @@ class Renderer(
         val answered =
             remember(ir) {
                 val echoes = Echoes.read(ir.snapshot.metadata)
-                val check: (String) -> Boolean = { reports.answered(it, echoes) }
+                // A schema older than echoes never answers: waiting for one would hold
+                // a field or a holder against the app forever, so the app's word stands.
+                val echoing = Echoes.echoing(ir.snapshot.schemaVersion)
+                val check: (String) -> Boolean = { !echoing || reports.answered(it, echoes) }
                 check
             }
         CompositionLocalProvider(LocalAnswered provides answered) {

@@ -6309,10 +6309,6 @@
             {
               "name": "selectionEnd",
               "type": "integer"
-            },
-            {
-              "name": "revision",
-              "type": "integer"
             }
           ]
         },
@@ -6329,12 +6325,6 @@
           "minimum": 0,
           "maximum": 2147483647,
           "nativeType": "Int"
-        },
-        "revision": {
-          "type": "integer",
-          "required": true,
-          "minimum": 0,
-          "maximum": 9223372036854775807
         }
       },
       "children": {
@@ -6392,8 +6382,7 @@
         "text",
         "onEdit",
         "selectionStart",
-        "selectionEnd",
-        "revision"
+        "selectionEnd"
       ]
     },
     "OutlinedTextField": {
@@ -7525,10 +7514,6 @@
             {
               "name": "selectionEnd",
               "type": "integer"
-            },
-            {
-              "name": "revision",
-              "type": "integer"
             }
           ]
         },
@@ -7545,12 +7530,6 @@
           "minimum": 0,
           "maximum": 2147483647,
           "nativeType": "Int"
-        },
-        "revision": {
-          "type": "integer",
-          "required": true,
-          "minimum": 0,
-          "maximum": 9223372036854775807
         }
       },
       "children": {
@@ -7608,8 +7587,7 @@
         "text",
         "onEdit",
         "selectionStart",
-        "selectionEnd",
-        "revision"
+        "selectionEnd"
       ]
     },
     "SegmentedButton": {
@@ -8415,12 +8393,6 @@
           "maximum": 2147483647,
           "nativeType": "Int"
         },
-        "revision": {
-          "type": "integer",
-          "required": true,
-          "minimum": 0,
-          "maximum": 9223372036854775807
-        },
         "onEdit": {
           "type": "actionId",
           "required": true,
@@ -8435,10 +8407,6 @@
             },
             {
               "name": "selectionEnd",
-              "type": "integer"
-            },
-            {
-              "name": "revision",
               "type": "integer"
             }
           ]
@@ -8468,7 +8436,6 @@
         "text",
         "selectionStart",
         "selectionEnd",
-        "revision",
         "onEdit"
       ]
     },
@@ -8557,10 +8524,6 @@
             {
               "name": "selectionEnd",
               "type": "integer"
-            },
-            {
-              "name": "revision",
-              "type": "integer"
             }
           ]
         },
@@ -8577,12 +8540,6 @@
           "minimum": 0,
           "maximum": 2147483647,
           "nativeType": "Int"
-        },
-        "revision": {
-          "type": "integer",
-          "required": true,
-          "minimum": 0,
-          "maximum": 9223372036854775807
         }
       },
       "children": {
@@ -8620,7 +8577,6 @@
         "text",
         "selectionStart",
         "selectionEnd",
-        "revision",
         "onEdit"
       ],
       "adapter": "manual"

@@ -281,6 +281,8 @@ import com.pycompose.renderer.bound
 import com.pycompose.renderer.boundColor
 import com.pycompose.renderer.boundDp
 import com.pycompose.renderer.drawerState
+import com.pycompose.renderer.edit
+import com.pycompose.renderer.edited
 import com.pycompose.renderer.expressionColor
 import com.pycompose.renderer.inSlot
 import com.pycompose.renderer.index
@@ -436,15 +438,15 @@ object GeneratedAdapters {
             }
             .register("BasicTextField") { node, modifier, context ->
                 val model = node as BasicTextFieldNode
-                val echoed = rememberEchoedText(model.id, model.props.value)
+                val field = context.edited(model.id, model.props.value, model.props.onValueChange)
                 val minLinesValue = bound(model.props.minLines, Int.VectorConverter) { plain -> plain.jsonPrimitive.long.toInt() }
                 val textStyleWire = model.props.textStyle
                 val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else androidx.compose.ui.text.TextStyle.Companion.Default
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 BasicTextField(
                     modifier = modifier,
-                    value = echoed.text,
-                    onValueChange = { value -> echoed.typed(value); context.event(model.props.onValueChange, JsonPrimitive(value)) },
+                    value = field.value,
+                    onValueChange = { value -> context.edit(field, value, model.props.onValueChange, JsonPrimitive(value)) },
                     enabled = model.props.enabled,
                     minLines = minLinesValue,
                     readOnly = model.props.readOnly,
@@ -1903,7 +1905,7 @@ object GeneratedAdapters {
                 val textStyleWire = model.props.textStyle
                 val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else (androidx.compose.material3.LocalTextStyle).current
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
-                val stateValue = context.textInputState(model.props.text, model.props.onEdit, model.props.selectionStart, model.props.selectionEnd, model.props.revision)
+                val stateValue = context.textInputState(model.props.text, model.props.onEdit, model.props.selectionStart, model.props.selectionEnd)
                 OutlinedSecureTextField(
                     modifier = modifier,
                     colors = colorsValue,
@@ -1926,7 +1928,7 @@ object GeneratedAdapters {
             }
             .register("OutlinedTextField") { node, modifier, context ->
                 val model = node as OutlinedTextFieldNode
-                val echoed = rememberEchoedText(model.id, model.props.value)
+                val field = context.edited(model.id, model.props.value, model.props.onValueChange)
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.textFieldColors(colorsWire).getOrThrow() else androidx.compose.material3.OutlinedTextFieldDefaults.colors()
                 val minLinesValue = bound(model.props.minLines, Int.VectorConverter) { plain -> plain.jsonPrimitive.long.toInt() }
@@ -1937,8 +1939,8 @@ object GeneratedAdapters {
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 OutlinedTextField(
                     modifier = modifier,
-                    value = echoed.text,
-                    onValueChange = { value -> echoed.typed(value); context.event(model.props.onValueChange, JsonPrimitive(value)) },
+                    value = field.value,
+                    onValueChange = { value -> context.edit(field, value, model.props.onValueChange, JsonPrimitive(value)) },
                     colors = colorsValue,
                     enabled = model.props.enabled,
                     isError = model.props.isError,
@@ -2164,7 +2166,7 @@ object GeneratedAdapters {
                 val textStyleWire = model.props.textStyle
                 val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else (androidx.compose.material3.LocalTextStyle).current
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
-                val stateValue = context.textInputState(model.props.text, model.props.onEdit, model.props.selectionStart, model.props.selectionEnd, model.props.revision)
+                val stateValue = context.textInputState(model.props.text, model.props.onEdit, model.props.selectionStart, model.props.selectionEnd)
                 SecureTextField(
                     modifier = modifier,
                     colors = colorsValue,

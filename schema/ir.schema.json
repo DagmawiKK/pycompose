@@ -6898,11 +6898,6 @@
             "onPress": {
               "$ref": "#/definitions/Action"
             },
-            "revision": {
-              "maximum": 9223372036854775807,
-              "minimum": 0,
-              "type": "integer"
-            },
             "selectionEnd": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -6928,7 +6923,6 @@
           },
           "required": [
             "onEdit",
-            "revision",
             "selectionEnd",
             "selectionStart",
             "text"
@@ -8327,11 +8321,6 @@
             "onPress": {
               "$ref": "#/definitions/Action"
             },
-            "revision": {
-              "maximum": 9223372036854775807,
-              "minimum": 0,
-              "type": "integer"
-            },
             "selectionEnd": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -8357,7 +8346,6 @@
           },
           "required": [
             "onEdit",
-            "revision",
             "selectionEnd",
             "selectionStart",
             "text"
@@ -9104,11 +9092,6 @@
             "onExpandedChange": {
               "$ref": "#/definitions/Action"
             },
-            "revision": {
-              "maximum": 9223372036854775807,
-              "minimum": 0,
-              "type": "integer"
-            },
             "selectionEnd": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -9192,7 +9175,6 @@
           },
           "required": [
             "onEdit",
-            "revision",
             "selectionEnd",
             "selectionStart",
             "text"
@@ -9263,11 +9245,6 @@
               "default": false,
               "type": "boolean"
             },
-            "revision": {
-              "maximum": 9223372036854775807,
-              "minimum": 0,
-              "type": "integer"
-            },
             "selectionEnd": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -9293,7 +9270,6 @@
             "onEdit",
             "onExpandedChange",
             "onSearch",
-            "revision",
             "selectionEnd",
             "selectionStart",
             "text"
@@ -41002,11 +40978,6 @@
             "onPress": {
               "$ref": "#/definitions/Action"
             },
-            "revision": {
-              "maximum": 9223372036854775807,
-              "minimum": 0,
-              "type": "integer"
-            },
             "selectionEnd": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -41032,7 +41003,6 @@
           },
           "required": [
             "onEdit",
-            "revision",
             "selectionEnd",
             "selectionStart",
             "text"
@@ -42431,11 +42401,6 @@
             "onPress": {
               "$ref": "#/definitions/Action"
             },
-            "revision": {
-              "maximum": 9223372036854775807,
-              "minimum": 0,
-              "type": "integer"
-            },
             "selectionEnd": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -42461,7 +42426,6 @@
           },
           "required": [
             "onEdit",
-            "revision",
             "selectionEnd",
             "selectionStart",
             "text"
@@ -43208,11 +43172,6 @@
             "onExpandedChange": {
               "$ref": "#/definitions/Action"
             },
-            "revision": {
-              "maximum": 9223372036854775807,
-              "minimum": 0,
-              "type": "integer"
-            },
             "selectionEnd": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -43296,7 +43255,6 @@
           },
           "required": [
             "onEdit",
-            "revision",
             "selectionEnd",
             "selectionStart",
             "text"
@@ -43367,11 +43325,6 @@
               "default": false,
               "type": "boolean"
             },
-            "revision": {
-              "maximum": 9223372036854775807,
-              "minimum": 0,
-              "type": "integer"
-            },
             "selectionEnd": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -43397,7 +43350,6 @@
             "onEdit",
             "onExpandedChange",
             "onSearch",
-            "revision",
             "selectionEnd",
             "selectionStart",
             "text"

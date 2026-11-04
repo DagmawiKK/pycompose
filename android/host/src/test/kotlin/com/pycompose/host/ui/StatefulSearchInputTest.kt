@@ -36,7 +36,13 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-/** State-based input, observed through native editing semantics and typed actions. */
+/**
+ * State-based input, observed through native editing semantics and typed actions.
+ *
+ * Each edit is reported numbered; a snapshot states the app's editing value and echoes the
+ * latest edit it answered. Until every edit is answered the field keeps the user's; once they
+ * are, the app's value stands.
+ */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], application = android.app.Application::class)
 class StatefulSearchInputTest {
@@ -64,11 +70,11 @@ class StatefulSearchInputTest {
         assertEquals(JsonPrimitive("compose"), payload["text"])
         assertEquals(JsonPrimitive(2), payload["selectionStart"])
         assertEquals(JsonPrimitive(5), payload["selectionEnd"])
-        assertEquals(JsonPrimitive(1), payload["revision"])
+        assertEquals(1L, edits().last().seq)
     }
 
     @Test
-    fun staleEchoesDoNotUndoNewerTypingAndAcknowledgementsDoNotReportAgain() {
+    fun anAnswerToAnOlderEditDoesNotUndoNewerTypingAndAnAnswerDoesNotReportAgain() {
         val current = mutableStateOf(snapshot())
         compose.setContent { PyComposeTheme { renderer.Render(current.value) } }
         val field = compose.onNode(hasSetTextAction())
@@ -89,7 +95,7 @@ class StatefulSearchInputTest {
     }
 
     @Test
-    fun anAcknowledgementCannotOverwriteAnEditPendingObservation() {
+    fun anAnswerCannotOverwriteAnEditPendingObservation() {
         val current = mutableStateOf(snapshot())
         var pending: (() -> Unit)? = null
         compose.setContent {
@@ -112,17 +118,17 @@ class StatefulSearchInputTest {
         }
         field.assertTextEquals("composexy")
         compose.waitUntil(5000) { edits().size == 2 }
-        assertEquals(JsonPrimitive(2), edits().last().payload["revision"])
+        assertEquals(2L, edits().last().seq)
     }
 
     @Test
-    fun newerAppCommandsReplaceTextAndClampReversedSelectionWithoutEchoReports() {
+    fun anAnsweredAppValueReplacesTextAndClampsReversedSelectionWithoutReports() {
         val current = mutableStateOf(snapshot())
         compose.setContent { PyComposeTheme { renderer.Render(current.value) } }
         val field = compose.onNode(hasSetTextAction())
         field.performTextInput("x")
         compose.waitUntil(5000) { edits().size == 1 }
-        compose.runOnIdle { current.value = snapshot(Edit("new", 100, 1, 5)) }
+        compose.runOnIdle { current.value = snapshot(Edit("new", 100, 1, 1)) }
         field.assertTextEquals("new")
         assertEquals(
             TextRange(3, 1),
@@ -132,7 +138,6 @@ class StatefulSearchInputTest {
         field.performTextInput("!")
         compose.waitUntil(5000) { edits().size == 2 }
         assertEquals(JsonPrimitive("n!"), edits().last().payload["text"])
-        assertEquals(JsonPrimitive(6), edits().last().payload["revision"])
     }
 
     @Test
@@ -190,7 +195,7 @@ class StatefulSearchInputTest {
     private fun edits(): List<Action> = actions.filter { it.actionId == intent("demo.edit") }
 
     @Test
-    fun acknowledgingAnEditPreservesNativeImeComposition() {
+    fun answeringAnEditPreservesNativeImeComposition() {
         val current = mutableStateOf(snapshot())
         compose.setContent { PyComposeTheme { renderer.Render(current.value) } }
         val field = compose.onNode(hasSetTextAction())
@@ -223,7 +228,7 @@ class StatefulSearchInputTest {
         }
 
     @Test
-    fun equalRevisionCanNormalizeAndNewIdentityStartsFromItsSnapshot() {
+    fun anAnswerCanNormalizeAndNewIdentityStartsFromItsSnapshot() {
         val current = mutableStateOf(snapshot())
         compose.setContent { PyComposeTheme { renderer.Render(current.value) } }
         val field = compose.onNode(hasSetTextAction())
@@ -232,7 +237,7 @@ class StatefulSearchInputTest {
         compose.runOnIdle { current.value = snapshot(Edit("normalized", 2, 2, 1)) }
         field.assertTextEquals("normalized")
         assertEquals(1, edits().size)
-        compose.runOnIdle { current.value = snapshot(Edit("fresh", 5, 5, 0), id = "new-field") }
+        compose.runOnIdle { current.value = snapshot(Edit("fresh", 5, 5, 1), id = "new-field") }
         field.assertTextEquals("fresh")
         field.performClick()
         compose.waitForIdle()
@@ -240,29 +245,17 @@ class StatefulSearchInputTest {
         field.performTextInput("!")
         compose.waitForIdle()
         assertEquals("actions=$actions diagnostics=$diagnostics", 1, edits().size)
-        assertEquals(JsonPrimitive(1), edits().last().payload["revision"])
         assertEquals(JsonPrimitive("fresh!"), edits().last().payload["text"])
-    }
-
-    @Test
-    fun exhaustedRevisionsNeverWrapAndFurtherNativeEditsAreRejected() {
-        val current = mutableStateOf(snapshot(Edit(revision = Long.MAX_VALUE - 1)))
-        compose.setContent { PyComposeTheme { renderer.Render(current.value) } }
-        val field = compose.onNode(hasSetTextAction())
-        field.performTextInput("x")
-        compose.waitUntil(5000) { edits().size == 1 }
-        assertEquals(JsonPrimitive(Long.MAX_VALUE), edits().last().payload["revision"])
-        compose.runOnIdle { current.value = snapshot(Edit("composex", 8, 8, Long.MAX_VALUE)) }
-        field.performTextInput("y")
-        field.assertTextEquals("composex")
-        assertEquals(1, edits().size)
-        assertEquals(1, diagnostics.size)
     }
 
     @Test
     fun anIncompatibleAtomicBindingIsDiagnosedInsteadOfDispatchingInvalidData() {
         compose.setContent {
-            PyComposeTheme { renderer.Render(snapshot(options = Options(revisionType = "string"))) }
+            PyComposeTheme {
+                renderer.Render(
+                    snapshot(options = Options(selectionType = "string")),
+                )
+            }
         }
         compose.onNode(hasSetTextAction()).performTextInput("x")
         compose.waitForIdle()
@@ -275,14 +268,15 @@ class StatefulSearchInputTest {
         val readOnly: Boolean = false,
         val enabled: Boolean = true,
         val slots: Boolean = false,
-        val revisionType: String = "integer",
+        val selectionType: String = "integer",
     )
 
+    /** What a snapshot states, and the latest edit the app answered (0 for none). */
     private data class Edit(
         val text: String = "compose",
         val start: Int = 7,
         val end: Int = 7,
-        val revision: Long = 0,
+        val answered: Long = 0,
     )
 
     private fun snapshot(
@@ -297,21 +291,27 @@ class StatefulSearchInputTest {
             } else {
                 ""
             }
+        val echoes =
+            if (edit.answered > 0) {
+                val target = """{"fields":{},"intent":"demo.edit"}"""
+                ""","echoes":[{"seq":${edit.answered},"target":$target}]"""
+            } else {
+                ""
+            }
         return IrParser()
             .parse(
                 """
                 {"version":"0.1.0","schemaVersion":"1.23.0",
                   "metadata":{"intents":{"demo.edit":{"payload":{
                     "text":{"type":"string","required":true},
-                    "selectionStart":{"type":"integer","required":true},
-                    "selectionEnd":{"type":"integer","required":true},
-                     "revision":{"type":"${options.revisionType}","required":true}}},
+                    "selectionStart":{"type":"${options.selectionType}","required":true},
+                    "selectionEnd":{"type":"integer","required":true}}},
                        "demo.search":{"payload":{
                     "query":{"type":"string","required":true}}},"demo.expand":{"payload":{
-                    "expanded":{"type":"boolean","required":true}}}}},
+                    "expanded":{"type":"boolean","required":true}}}}$echoes},
                  "root":{"id":"$id","type":"StatefulSearchBarInputField","props":{
                    "text":"${edit.text}","selectionStart":${edit.start},
-                   "selectionEnd":${edit.end},"revision":${edit.revision},
+                   "selectionEnd":${edit.end},
                    "onEdit":{"fields":{},"intent":"demo.edit"},"onSearch":{"fields":{},
                      "intent":"demo.search"},
                     "expanded":${options.expanded},"readOnly":${options.readOnly},

@@ -5791,7 +5791,6 @@ class OutlinedSecureTextField(Component):
         on_focus: ActionTarget | None = None,
         on_hover: ActionTarget | None = None,
         on_press: ActionTarget | None = None,
-        revision: int,
         selection_end: int,
         selection_start: int,
         shape: JsonValue | None = None,
@@ -5819,7 +5818,6 @@ class OutlinedSecureTextField(Component):
             on_focus: Native onFocus; None uses its default.
             on_hover: Native onHover; None uses its default.
             on_press: Native onPress; None uses its default.
-            revision: Required native revision.
             selection_end: Required native selectionEnd.
             selection_start: Required native selectionStart.
             shape: Native shape; None uses its default.
@@ -5851,7 +5849,6 @@ class OutlinedSecureTextField(Component):
             props["on_hover"] = on_hover
         if on_press is not None:
             props["on_press"] = on_press
-        props["revision"] = revision
         props["selection_end"] = selection_end
         props["selection_start"] = selection_start
         if shape is not None:
@@ -6845,7 +6842,6 @@ class SecureTextField(Component):
         on_focus: ActionTarget | None = None,
         on_hover: ActionTarget | None = None,
         on_press: ActionTarget | None = None,
-        revision: int,
         selection_end: int,
         selection_start: int,
         shape: JsonValue | None = None,
@@ -6872,7 +6868,6 @@ class SecureTextField(Component):
             on_focus: Native onFocus; None uses its default.
             on_hover: Native onHover; None uses its default.
             on_press: Native onPress; None uses its default.
-            revision: Required native revision.
             selection_end: Required native selectionEnd.
             selection_start: Required native selectionStart.
             shape: Native shape; None uses its default.
@@ -6902,7 +6897,6 @@ class SecureTextField(Component):
             props["on_hover"] = on_hover
         if on_press is not None:
             props["on_press"] = on_press
-        props["revision"] = revision
         props["selection_end"] = selection_end
         props["selection_start"] = selection_start
         if shape is not None:
@@ -7562,7 +7556,6 @@ class StatefulSearchBar(Component):
         modifier: Modifier | None = None,
         on_edit: ActionTarget,
         on_expanded_change: ActionTarget | None = None,
-        revision: int,
         selection_end: int,
         selection_start: int,
         shadow_elevation: int | float | Expression | Binding | None = None,
@@ -7580,7 +7573,6 @@ class StatefulSearchBar(Component):
             modifier: Native modifier; None uses its default.
             on_edit: Required native onEdit.
             on_expanded_change: Native onExpandedChange; None uses its default.
-            revision: Required native revision.
             selection_end: Required native selectionEnd.
             selection_start: Required native selectionStart.
             shadow_elevation: Native shadowElevation; None uses its default.
@@ -7596,7 +7588,6 @@ class StatefulSearchBar(Component):
         props["on_edit"] = on_edit
         if on_expanded_change is not None:
             props["on_expanded_change"] = on_expanded_change
-        props["revision"] = revision
         props["selection_end"] = selection_end
         props["selection_start"] = selection_start
         if shadow_elevation is not None:
@@ -7632,7 +7623,6 @@ class StatefulSearchBarInputField(Component):
         on_expanded_change: ActionTarget,
         on_search: ActionTarget,
         read_only: bool | None = None,
-        revision: int,
         selection_end: int,
         selection_start: int,
         shape: JsonValue | None = None,
@@ -7656,7 +7646,6 @@ class StatefulSearchBarInputField(Component):
             on_expanded_change: Required native onExpandedChange.
             on_search: Required native onSearch.
             read_only: Native readOnly; None uses its default.
-            revision: Required native revision.
             selection_end: Required native selectionEnd.
             selection_start: Required native selectionStart.
             shape: Native shape; None uses its default.
@@ -7679,7 +7668,6 @@ class StatefulSearchBarInputField(Component):
         props["on_search"] = on_search
         if read_only is not None:
             props["read_only"] = read_only
-        props["revision"] = revision
         props["selection_end"] = selection_end
         props["selection_start"] = selection_start
         if shape is not None:
