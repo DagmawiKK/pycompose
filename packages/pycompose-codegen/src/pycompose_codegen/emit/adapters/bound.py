@@ -24,8 +24,8 @@ from pycompose_codegen.emit.values import resolver_call
 UNSPECIFIED = "androidx.compose.ui.graphics.Color.Unspecified"
 """What a colour prop with no stated fallback resolves to: the colour in scope."""
 
-PHASE = "com.pycompose.program.Phase.Composition"
-"""Where a component reads its props: the call itself, while composing."""
+PHASE = "com.pycompose.program.Phase"
+"""The phases a binding names, as the host's enum spells them."""
 
 READS = {
     "number": "double",
@@ -67,7 +67,8 @@ def plain(spec: dict[str, Any]) -> list[str]:
         relative to the first.
     """
     if spec["type"] == "color":
-        fallback = spec.get("fallback", UNSPECIFIED)
+        # A nullable producer's absence is handled before any value is read.
+        fallback = spec.get("fallback", UNSPECIFIED).replace("null", UNSPECIFIED)
         tagged = resolver_call(spec["valueType"], "plain")
         return [
             "when (plain) {",
@@ -171,10 +172,11 @@ def state_lines(
         The declaration's lines.
     """
     absent = "?" if model_nullable(spec) else ""
+    phase = f"{PHASE}.{spec.get('phase', 'composition').capitalize()}"
     return [
         f"val {prop_name}State =",
         f"    model.props.{prop_name}{absent}.let {{ wire ->",
-        f"        com.pycompose.renderer.bindingState(wire, {expression}, {PHASE}) {{",
+        f"        com.pycompose.renderer.bindingState(wire, {expression}, {phase}) {{",
         "            plain ->",
         *(f"            {line}" for line in read),
         "        }",
@@ -213,11 +215,16 @@ def render_bound(
         )
         out.gates.append(f"{prop_name}Value != null")
     elif "provider" in spec:
-        # The native parameter is a lambda; Compose invokes it for the value, so
-        # the state is declared here and read there.
-        out.arguments.append(
-            f"{spec['provider']['native']} = {{ {prop_name}State.value }}"
-        )
+        # The native parameter is a lambda or a producer; Compose invokes it
+        # for the value while it draws, so the state is declared here and read
+        # there. An absent nullable producer is the component's own null.
+        provider = spec["provider"]
+        if model_nullable(spec):
+            produced = provided(provider, "state.value")
+            value = f"{prop_name}State?.let {{ state -> {produced} }}"
+        else:
+            value = provided(provider, f"{prop_name}State.value")
+        out.arguments.append(f"{provider['native']} = {value}")
         return True
     elif not model_nullable(spec):
         out.locals.append(f"val {prop_name}Value = {prop_name}State.value")
@@ -228,3 +235,21 @@ def render_bound(
         out.locals.append(f"val {prop_name}Value = {prop_name}State?.value ?: {absent}")
     out.arguments.append(f"{prop_name} = {prop_name}Value")
     return True
+
+
+def provided(provider: dict[str, Any], expression: str) -> str:
+    """What the component asks for the value through: a lambda or a producer.
+
+    Args:
+        provider: The prop's ``provider`` record.
+        expression: Kotlin source for the value, read each time it is asked.
+
+    Returns:
+        Kotlin source for the argument.
+    """
+    if "interface" not in provider:
+        return f"{{ {expression} }}"
+    return (
+        f"object : {provider['interface']} {{ "
+        f"override fun {provider['member']}() = {expression} }}"
+    )

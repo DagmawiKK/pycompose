@@ -133,7 +133,24 @@ def wire_prop(
     families: dict[str, dict[str, Any]],
     review: list[str],
 ) -> dict[str, Any] | None:
-    """Derive the wire prop one value-carrying policy becomes."""
+    """Derive the wire prop one value-carrying policy becomes.
+
+    A producer's prop is the value it produces; the host builds the producer
+    around it, so the component reads it when it asks rather than in the call.
+    """
+    prop = _policy_prop(name, parameter, spec, families, review)
+    if prop is not None and "producer" in spec:
+        prop["provider"] = {"native": parameter, **spec["producer"]}
+    return prop
+
+
+def _policy_prop(
+    name: str,
+    parameter: str,
+    spec: dict[str, Any],
+    families: dict[str, dict[str, Any]],
+    review: list[str],
+) -> dict[str, Any] | None:
     policy = spec["policy"]
     if policy == "scalar":
         return _scalar_prop(name, parameter, spec, review)

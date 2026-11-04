@@ -177,6 +177,7 @@ data class BasicAlertDialog(
 
 @Serializable
 data class BasicTextProps(
+    val `color`: JsonElement? = null,
     val `minLines`: JsonElement = JsonPrimitive(1L),
     override val `modifier`: JsonObject? = null,
     val `overflow`: JsonElement? = null,

@@ -768,6 +768,7 @@ class BasicText(Component):
         self,
         *,
         id: str | None = None,
+        color: JsonValue | Expression | Binding | None = None,
         min_lines: int | Binding | None = None,
         modifier: Modifier | None = None,
         overflow: _TextOverflow | None = None,
@@ -779,6 +780,7 @@ class BasicText(Component):
 
         Args:
             id: Stable instance key; None derives the node's path id.
+            color: Native color; None uses its default.
             min_lines: Native minLines; None uses its default.
             modifier: Native modifier; None uses its default.
             overflow: Native overflow; None uses its default.
@@ -787,6 +789,8 @@ class BasicText(Component):
             text: Required native text.
         """
         props: dict[str, PropValue] = {}
+        if color is not None:
+            props["color"] = lower_binding(color, "draw")
         if min_lines is not None:
             props["min_lines"] = lower_binding(min_lines, "composition")
         if overflow is not None:
@@ -4286,7 +4290,7 @@ class _LinearProgressIndicator(Component):
             props["color"] = lower_binding(color, "composition")
         if gap_size is not None:
             props["gap_size"] = lower_binding(gap_size, "composition")
-        props["progress"] = lower_binding(progress, "composition")
+        props["progress"] = lower_binding(progress, "draw")
         if stroke_cap is not None:
             props["stroke_cap"] = stroke_cap
         if track_color is not None:
@@ -9051,7 +9055,7 @@ class CircularProgressIndicatorProgress(CircularProgressIndicator):
             props["color"] = lower_binding(color, "composition")
         if gap_size is not None:
             props["gap_size"] = lower_binding(gap_size, "composition")
-        props["progress"] = lower_binding(progress, "composition")
+        props["progress"] = lower_binding(progress, "draw")
         if stroke_cap is not None:
             props["stroke_cap"] = stroke_cap
         if stroke_width is not None:

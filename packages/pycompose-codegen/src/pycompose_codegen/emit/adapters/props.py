@@ -10,7 +10,7 @@ from __future__ import annotations
 from typing import Any
 
 from pycompose.model.programs.bindings import animatable
-from pycompose_codegen.emit.adapters.bound import render_bound
+from pycompose_codegen.emit.adapters.bound import provided, render_bound
 from pycompose_codegen.emit.adapters.fragments import Fragments
 from pycompose_codegen.emit.adapters.policy import (
     NUMERIC_CONVERSIONS,
@@ -366,7 +366,7 @@ def _render_provider(
     argument = _provided(f"{prop_name}Value", wire, provider["returns"])
     if argument is None:
         return False
-    return out.add((local, f"{provider['native']} = {{ {argument} }}"))
+    return out.add((local, f"{provider['native']} = {provided(provider, argument)}"))
 
 
 def _provided(expression: str, wire: str | None, target: str) -> str | None:

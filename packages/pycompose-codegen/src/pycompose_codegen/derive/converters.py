@@ -250,8 +250,11 @@ def _mark(
     if kotlin in table:
         spec["animation"] = kotlin
         # The call states where its arguments are read; a prop read in
-        # composition is the default, and every other phase must say so.
-        spec["phase"] = call.get("phase", "composition")
+        # composition is the default, and every other phase must say so. A
+        # provider is read when the component asks for it, while it draws.
+        spec["phase"] = (
+            "draw" if "provider" in spec else call.get("phase", "composition")
+        )
 
 
 def kotlin_type(

@@ -141,6 +141,12 @@ def _prop_face(
     for prop, spec in entry.get("props", {}).items():
         if prop in held or (spec["type"] == "modifier" and entry.get("boxed")):
             continue
+        if "provider" in spec and "interface" in spec["provider"]:
+            # A producer interface is a value of that interface's type.
+            native = spec["provider"]["native"]
+            interface = spec["provider"]["interface"].replace(".", "/")
+            named[native] = Argument(native, "value", classifier=interface)
+            continue
         if "provider" in spec:
             native = spec["provider"]["native"]
             named[native] = Argument(

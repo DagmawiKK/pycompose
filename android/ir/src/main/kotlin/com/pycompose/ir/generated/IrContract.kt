@@ -102,6 +102,7 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
+                "color" to PropertyRule("color", required = false, since = "1.23.0", valueType = "Color", animation = true),
                 "minLines" to PropertyRule("integer", required = false, animation = true, minimum = -2147483648.0, maximum = 2147483647.0),
                 "modifier" to PropertyRule("modifier", required = false),
                 "overflow" to PropertyRule("enum", required = false, valueType = "TextOverflow"),

@@ -466,6 +466,17 @@ object GeneratedAdapters {
             }
             .register("BasicText") { node, modifier, context ->
                 val model = node as BasicTextNode
+                val colorState =
+                    model.props.color?.let { wire ->
+                        com.pycompose.renderer.bindingState(wire, Color.colorVectorConverter(ColorSpaces.Srgb), com.pycompose.program.Phase.Draw) {
+                            plain ->
+                            when (plain) {
+                                is JsonObject -> context.expressionColor(plain)
+                                    ?: com.pycompose.renderer.generated.ValueResolver.color(plain).getOrDefault(androidx.compose.ui.graphics.Color.Unspecified)
+                                else -> androidx.compose.ui.graphics.Color.Unspecified
+                            }
+                        }
+                    }
                 val minLinesState =
                     model.props.minLines.let { wire ->
                         com.pycompose.renderer.bindingState(wire, Int.VectorConverter, com.pycompose.program.Phase.Composition) {
@@ -481,6 +492,7 @@ object GeneratedAdapters {
                 val textValue = com.pycompose.renderer.generated.ValueResolver.annotatedString(model.props.text).getOrThrow()
                 BasicText(
                     modifier = modifier,
+                    color = colorState?.let { state -> object : androidx.compose.ui.graphics.ColorProducer { override fun invoke() = state.value } },
                     minLines = minLinesValue,
                     overflow = overflowValue,
                     softWrap = model.props.softWrap,
@@ -871,7 +883,7 @@ object GeneratedAdapters {
                 val gapSizeValue = gapSizeState?.value ?: androidx.compose.material3.ProgressIndicatorDefaults.CircularIndicatorTrackGapSize
                 val progressState =
                     model.props.progress.let { wire ->
-                        com.pycompose.renderer.bindingState(wire, Float.VectorConverter, com.pycompose.program.Phase.Composition) {
+                        com.pycompose.renderer.bindingState(wire, Float.VectorConverter, com.pycompose.program.Phase.Draw) {
                             plain ->
                             context.number(plain).toFloat()
                         }
@@ -1920,7 +1932,7 @@ object GeneratedAdapters {
                 val gapSizeValue = gapSizeState?.value ?: androidx.compose.material3.ProgressIndicatorDefaults.LinearIndicatorTrackGapSize
                 val progressState =
                     model.props.progress.let { wire ->
-                        com.pycompose.renderer.bindingState(wire, Float.VectorConverter, com.pycompose.program.Phase.Composition) {
+                        com.pycompose.renderer.bindingState(wire, Float.VectorConverter, com.pycompose.program.Phase.Draw) {
                             plain ->
                             context.number(plain).toFloat()
                         }

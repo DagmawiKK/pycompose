@@ -90,17 +90,23 @@ class ContentSlot:
 
 @dataclass(frozen=True, slots=True)
 class ProviderDef:
-    """A prop the native call receives as a zero-arg lambda.
+    """A prop the native call receives as a zero-arg lambda or a producer.
 
     Attributes:
         native: The pinned parameter the host fills during composition.
         returns: The lambda's pinned return type. Recorded so a generated
             adapter can coerce the wire value instead of guessing, and so the
             drift check can re-derive it from the pinned declaration.
+        interface: A producer interface the host implements, when not a lambda.
+        member: The producer's one method.
+        nullable: Whether an absent producer is the component's own null.
     """
 
     native: str
     returns: str
+    interface: str | None = None
+    member: str | None = None
+    nullable: bool = False
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object], *, where: str) -> ProviderDef:
@@ -126,7 +132,20 @@ class ProviderDef:
             raise ComponentRegistryError(
                 f"{where}: provider 'returns' must be a Kotlin type name"
             )
-        return cls(native=native, returns=returns)
+        interface, member = data.get("interface"), data.get("member")
+        if (interface is None) != (member is None) or not all(
+            isinstance(name, str) and name for name in (interface, member) if name
+        ):
+            raise ComponentRegistryError(
+                f"{where}: a producer names its interface and its member"
+            )
+        return cls(
+            native=native,
+            returns=returns,
+            interface=cast("str | None", interface),
+            member=cast("str | None", member),
+            nullable=data.get("nullable") is True,
+        )
 
     def to_mapping(self) -> dict[str, object]:
         """Render back to the catalog lock provider shape.
@@ -134,7 +153,17 @@ class ProviderDef:
         Returns:
             A JSON-ready dict.
         """
-        return {"native": self.native, "returns": self.returns}
+        producer = (
+            {"interface": self.interface, "member": self.member}
+            if self.interface
+            else {}
+        )
+        return {
+            "native": self.native,
+            "returns": self.returns,
+            **producer,
+            **({"nullable": True} if self.nullable else {}),
+        }
 
 
 @dataclass(frozen=True, slots=True)

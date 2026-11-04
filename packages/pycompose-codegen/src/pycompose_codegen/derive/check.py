@@ -92,18 +92,24 @@ def provider_errors(
         provider = spec.get("provider")
         if provider is None:
             continue
+        # A lambda's return is its type argument; a producer interface's is
+        # its member's, which the planner read off the same pin.
+        wanted = provider.get("interface", "kotlin.Function0").replace(".", "/")
         returns = {
-            argument[1].classifier.rsplit("/", 1)[-1]
+            provider["returns"]
+            if "interface" in provider
+            else argument[1].classifier.rsplit("/", 1)[-1]
             for declaration in overloads
             for parameter in declaration.parameters
             if parameter.name == provider["native"]
-            and parameter.type.classifier == "kotlin/Function0"
-            for argument in parameter.type.arguments
+            and parameter.type.classifier == wanted
+            for argument in (parameter.type.arguments or [(None, None)])
+            if "interface" in provider or argument[1] is not None
         }
         if not returns:
             errors.append(
                 f"{name}.{prop}: provider parameter {provider['native']!r} "
-                "is not a pinned zero-arg function"
+                "is not a pinned zero-arg function or producer"
             )
         elif provider["returns"] not in returns:
             errors.append(

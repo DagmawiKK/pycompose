@@ -34,6 +34,7 @@ from pycompose_codegen.derive.classpath_dump import (
 from pycompose_codegen.derive.classpath_types import KotlinType
 from pycompose_codegen.derive.keyed import KEY, is_keyed
 from pycompose_codegen.derive.opt_ins import OptInIndex, opt_in_index
+from pycompose_codegen.derive.producers import producer_interfaces
 from pycompose_codegen.derive.property_holders import property_holders
 from pycompose_codegen.derive.propose import (
     SCALARS,
@@ -105,6 +106,27 @@ def _binding_rule(
     return rule
 
 
+def _produced(
+    parameter: Parameter,
+    producer: dict[str, Any],
+    families: dict[str, str],
+    defaults: dict[str, Any],
+    holders: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    """A producer is the value it produces, read when the component asks."""
+    produced = Parameter(
+        parameter.name, producer["returns"], parameter.has_default, None
+    )
+    rule = _binding_rule(produced, families, defaults, holders)
+    rule["producer"] = {
+        "returns": producer["returns"].classifier.rsplit("/", 1)[-1],
+        "interface": producer["interface"],
+        "member": producer["member"],
+        **({"nullable": True} if parameter.type.nullable else {}),
+    }
+    return rule
+
+
 def _holder(
     value: KotlinType, holders: dict[str, dict[str, Any]]
 ) -> dict[str, Any] | None:
@@ -147,6 +169,7 @@ def bind_parameter(
     families: dict[str, str],
     defaults: dict[str, Any],
     holders: dict[str, dict[str, Any]],
+    producers: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Decide how one native parameter reaches the wire, with its default.
 
@@ -155,6 +178,7 @@ def bind_parameter(
         families: Approved value families, by the classifier they bind.
         defaults: The declaration's compiler-resolved defaults, by parameter.
         holders: Holders the pin derives a family for (``property_holders``).
+        producers: Interfaces that produce a value (``producer_interfaces``).
 
     Returns:
         The parameter's rule.
@@ -162,7 +186,12 @@ def bind_parameter(
     Raises:
         ValueError: The parameter has no wire policy, or an unusable default.
     """
-    rule = _binding_rule(parameter, families, defaults, holders)
+    producer = (producers or {}).get(parameter.type.classifier)
+    rule = (
+        _binding_rule(parameter, families, defaults, holders)
+        if producer is None
+        else _produced(parameter, producer, families, defaults, holders)
+    )
     if rule["policy"] in {"modifier", "holder", "transient", "hostValue"}:
         # The host supplies both: the wire never carries their defaults.
         return rule
@@ -218,6 +247,7 @@ def _plan(
     objects: frozenset[str] = frozenset(),
     scopes: frozenset[str] = frozenset(),
     holders: dict[str, dict[str, Any]] | None = None,
+    producers: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Plan one exact overload, recording every capability it would need.
 
@@ -246,7 +276,9 @@ def _plan(
         )
     for parameter in source.parameters:
         try:
-            rule = bind_parameter(parameter, families, defaults, holders or {})
+            rule = bind_parameter(
+                parameter, families, defaults, holders or {}, producers
+            )
         except ValueError as exc:
             rule = {"policy": "blocked" if parameter.required else "omit"}
             gaps.append(
@@ -383,6 +415,7 @@ def propose_components(
     providers = scope_providers((d for d in found.declarations if d.composable), scopes)
     objects = frozenset(c.classifier for c in found.classes if c.class_kind == "OBJECT")
     holders = property_holders(found, defaults)
+    producers = producer_interfaces(found)
     candidates = [
         _plan(
             source,
@@ -394,6 +427,7 @@ def propose_components(
             objects,
             scopes,
             holders,
+            producers,
         )
         for source in sorted(
             found.ui,

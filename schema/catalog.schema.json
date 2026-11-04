@@ -173,12 +173,17 @@
     },
     "provider": {
       "type": "object",
+      "description": "A value the component asks for while it draws: a zero-arg lambda, or a producer interface whose one member returns it.",
       "required": ["native", "returns"],
       "additionalProperties": false,
       "properties": {
         "native": { "type": "string" },
-        "returns": { "type": "string" }
-      }
+        "returns": { "type": "string" },
+        "interface": { "$ref": "#/$defs/dottedName" },
+        "member": { "$ref": "#/$defs/identifier" },
+        "nullable": { "const": true }
+      },
+      "dependentRequired": { "interface": ["member"], "member": ["interface"] }
     },
     "modifier": {
       "type": "object",

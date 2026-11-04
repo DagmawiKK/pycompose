@@ -89,8 +89,10 @@ def test_a_value_prop_can_be_provided_through_its_family_resolver() -> None:
     assert "contentWindowInsets = { windowInsetsValue }" in block
 
 
-def test_every_provider_in_the_catalog_is_required_and_non_nullable() -> None:
-    """An absent value would need two call shapes; the schema forbids that."""
+def test_every_provider_in_the_catalog_has_one_call_shape() -> None:
+    """A lambda provider is required: an absent value would need a second call
+    shape. A nullable producer's absence is the component's own null, which
+    the one call passes."""
     providers = [
         (name, prop, spec)
         for name, entry in components().items()
@@ -99,8 +101,22 @@ def test_every_provider_in_the_catalog_is_required_and_non_nullable() -> None:
     ]
     assert providers, "the catalog should exercise a provider"
     for name, prop, spec in providers:
-        assert spec.get("required"), f"{name}.{prop} provider must be required"
+        absent = spec["provider"].get("nullable") is True
+        assert (
+            spec.get("required") or absent
+        ), f"{name}.{prop} provider must be required"
         assert not spec.get("nullable"), f"{name}.{prop} provider cannot be nullable"
+
+
+def test_a_producer_reads_its_value_inside_the_interface_it_implements() -> None:
+    """``BasicText(color: ColorProducer?)`` asks for its colour while it draws."""
+    block = render("BasicText", components()["BasicText"])
+    assert "com.pycompose.program.Phase.Draw" in block
+    assert (
+        "color = colorState?.let { state -> object : "
+        "androidx.compose.ui.graphics.ColorProducer { "
+        "override fun invoke() = state.value } }"
+    ) in block
 
 
 @pytest.mark.parametrize(

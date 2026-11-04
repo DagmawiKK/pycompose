@@ -19,7 +19,7 @@ from pycompose_codegen.emit.rules import (
     die,
 )
 
-PROVIDER_KEYS = frozenset({"native", "returns"})
+PROVIDER_KEYS = frozenset({"native", "returns", "interface", "member", "nullable"})
 
 
 def _validate_children(
@@ -353,8 +353,11 @@ def _validate_provider(name: str, prop_name: str, prop: dict[str, Any]) -> None:
     unknown = sorted(set(provider) - PROVIDER_KEYS)
     if unknown:
         die(f"prop {name}.{prop_name} provider has unknown keys: " + ", ".join(unknown))
-    if not prop.get("required"):
+    if not prop.get("required") and not provider.get("nullable"):
+        # Only a nullable producer has an absence: the component's own null.
         die(f"prop {name}.{prop_name} provider 'native' needs the prop to be required")
+    if ("interface" in provider) != ("member" in provider):
+        die(f"prop {name}.{prop_name} producer names its interface and its member")
     if prop.get("type") in {"modifier", "actionId"}:
         die(f"prop {name}.{prop_name} provider cannot wrap a {prop['type']} prop")
 

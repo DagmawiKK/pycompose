@@ -854,6 +854,19 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "color": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
             "minLines": {
               "anyOf": [
                 {
@@ -31740,6 +31753,19 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "color": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
             "minLines": {
               "anyOf": [
                 {
