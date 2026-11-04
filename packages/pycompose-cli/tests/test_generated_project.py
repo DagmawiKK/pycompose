@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import shutil
 import tarfile
+import zipfile
 from pathlib import Path
 
 import pytest
@@ -169,6 +170,17 @@ def test_an_archive_member_escaping_its_directory_is_refused(tmp_path: Path) -> 
         bundle.add(payload, arcname="../escape")
     with pytest.raises(ProjectError, match="escapes"):
         toolchain.unpack(archive, tmp_path / "out")
+
+
+def test_a_zip_archive_is_detected_without_a_zip_suffix(tmp_path: Path) -> None:
+    archive = tmp_path / "latest.download"
+    with zipfile.ZipFile(archive, "w") as bundle:
+        bundle.writestr("cmdline-tools/bin/sdkmanager", "sdkmanager")
+
+    target = tmp_path / "latest"
+    toolchain.unpack(archive, target)
+
+    assert (target / "bin/sdkmanager").read_text() == "sdkmanager"
 
 
 def test_the_apps_permissions_are_written_into_the_generated_manifest(
