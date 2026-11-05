@@ -11193,7 +11193,7 @@
       },
       "type": "object"
     },
-    "Drawing": {
+    "DrawProgram": {
       "additionalProperties": false,
       "properties": {
         "body": {
@@ -11223,6 +11223,33 @@
         "body"
       ],
       "type": "object"
+    },
+    "Drawing": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/DrawProgram"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "args": {
+              "type": "array"
+            },
+            "program": {
+              "$ref": "#/definitions/DrawProgram"
+            },
+            "type": {
+              "const": "bound"
+            }
+          },
+          "required": [
+            "type",
+            "program",
+            "args"
+          ],
+          "type": "object"
+        }
+      ]
     },
     "Expression": {
       "additionalProperties": false,

@@ -2,7 +2,7 @@ package com.pycompose.ir
 
 import com.pycompose.ir.generated.IrContract
 import com.pycompose.program.Bindings
-import com.pycompose.program.Drawings
+import com.pycompose.program.BoundDrawing
 import com.pycompose.program.Expressions
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -150,8 +150,8 @@ internal object WireValidator {
                 error("$path must be its family's tagged value object")
             // Checked whole before its first frame, so a frame never meets a bad program.
             rule.type == "draw" ->
-                Drawings.read(
-                    checked as? JsonObject ?: error("$path must be a draw program"),
+                BoundDrawing.read(
+                    checked as? JsonObject ?: error("$path must be a drawing"),
                     FUNCTIONS,
                     DRAWINGS,
                 )

@@ -44,7 +44,7 @@ def python_type(
             "number": "int | float",
             "dp": "int | float",
             "modifier": "Modifier",
-            "draw": "HostFunction",
+            "draw": "HostFunction | BoundFunction",
         }[prop["type"]]
     if animatable(prop):
         # The host animates to the target the app states with animate().

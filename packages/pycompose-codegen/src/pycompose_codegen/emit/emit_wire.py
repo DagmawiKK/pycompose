@@ -86,7 +86,7 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
             },
             # Its shape only; the draw calls, types and limits are the
             # validators' (pycompose/model/programs/drawing.py, Drawing.kt).
-            "Drawing": {
+            "DrawProgram": {
                 "type": "object",
                 "required": ["type", "params", "result", "body"],
                 "properties": {
@@ -99,6 +99,22 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
                     "body": {"type": "array"},
                 },
                 "additionalProperties": False,
+            },
+            # A draw program of the canvas's size, or one with the rest bound.
+            "Drawing": {
+                "anyOf": [
+                    {"$ref": "#/definitions/DrawProgram"},
+                    {
+                        "type": "object",
+                        "required": ["type", "program", "args"],
+                        "properties": {
+                            "type": {"const": "bound"},
+                            "program": {"$ref": "#/definitions/DrawProgram"},
+                            "args": {"type": "array"},
+                        },
+                        "additionalProperties": False,
+                    },
+                ]
             },
             **component_defs,
             **json_definitions(registry),

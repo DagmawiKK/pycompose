@@ -1,8 +1,8 @@
 package com.pycompose.ir
 
 import com.pycompose.ir.generated.IrContract
+import com.pycompose.program.BoundDrawing
 import com.pycompose.program.DrawCall
-import com.pycompose.program.Drawings
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
@@ -28,10 +28,10 @@ class DrawingsGoldenTest {
 
     @Test
     fun `the host draws every golden frame as Python did`() {
-        assertEquals(2, cases.size)
+        assertEquals(3, cases.size)
         cases.forEach { case ->
             val drawing =
-                Drawings.read(
+                BoundDrawing.read(
                     case.jsonObject.getValue("program").jsonObject,
                     FUNCTIONS,
                     DRAWINGS,
@@ -44,7 +44,7 @@ class DrawingsGoldenTest {
                         ).jsonArray
                         .map { it.jsonPrimitive.double }
                 val drawn = mutableListOf<DrawCall>()
-                drawing.draw(*size.toTypedArray()) { drawn += it }
+                drawing.draw(size[0], size[1]) { drawn += it }
                 val wanted =
                     frame.jsonObject
                         .getValue("draws")

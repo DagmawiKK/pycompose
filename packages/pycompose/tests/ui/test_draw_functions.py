@@ -52,10 +52,25 @@ def bars(width: float, height: float) -> None:
     line(0xFF000000, 0, height, width, 0, stroke_width=1.5)
 
 
-CALLS = {"dial": (dial, [[100.0, 80.0], [48.0, 48.0]]), "bars": (bars, [[120.0, 90.0]])}
+@host
+def gauge(width: float, height: float, level: float, warn: bool, ticks: int) -> None:
+    """A track, filled to the level the app binds; red past its warning."""
+    rect(0x1F000000, 0, 0, width, height)
+    rect(0xFFB3261E if warn else PURPLE, 0, 0, width * level, height)
+    for i in range(10):
+        if i < ticks:
+            line(0xFF000000, width * i / 10, 0, width * i / 10, height / 4, 1)
+
+
+CALLS = {
+    "dial": (dial, [[100.0, 80.0], [48.0, 48.0]]),
+    "bars": (bars, [[120.0, 90.0]]),
+    "gauge": (gauge.bind(0.25, True, 4), [[200.0, 20.0]]),
+}
 
 
 def _golden() -> list[dict[str, object]]:
+    # "program" is what a canvas's draw prop carries: a drawing, or one bound.
     return [
         {
             "name": name,
@@ -101,6 +116,40 @@ def half(width: float, height: float) -> float:
 def test_a_canvas_refuses_a_function_that_gives_a_value() -> None:
     with pytest.raises(IrValidationError):
         emit_ir(Snapshot(root=Canvas(on_draw=half)), SCHEMA_VERSION)
+
+
+def test_a_canvas_carries_a_drawing_with_its_bound_arguments() -> None:
+    node = Canvas(on_draw=gauge.bind(1, False, 10))
+    snapshot = emit_ir(Snapshot(root=node), SCHEMA_VERSION)
+    assert validate_ir(snapshot).snapshot is snapshot
+    assert thaw_json(snapshot.root.props.get("onDraw")) == {
+        "type": "bound",
+        "program": gauge.to_wire(),
+        "args": [1.0, False, 10],
+    }
+
+
+@pytest.mark.parametrize(
+    ("args", "message"),
+    [
+        ((0.5, True, 4, 9, 9, 9), "takes 5 arguments"),
+        (("full", True, 4), "number parameter cannot take 'full'"),
+        ((0.5, 1, 4), "boolean parameter cannot take 1"),
+        ((0.5, True, 4.0), "integer parameter cannot take 4.0"),
+        ((float("nan"), True, 4), "number parameter cannot take nan"),
+    ],
+)
+def test_a_bound_argument_must_have_its_parameter_type(
+    args: tuple[object, ...], message: str
+) -> None:
+    with pytest.raises(IrValidationError, match=message):
+        gauge.bind(*args)
+
+
+def test_a_canvas_refuses_a_drawing_left_unbound_or_bound_short() -> None:
+    for drawing in (gauge, gauge.bind(False, 4)):
+        with pytest.raises(IrValidationError):
+            emit_ir(Snapshot(root=Canvas(on_draw=drawing)), SCHEMA_VERSION)
 
 
 def test_a_draw_call_outside_a_draw_function_has_nothing_to_draw_on() -> None:

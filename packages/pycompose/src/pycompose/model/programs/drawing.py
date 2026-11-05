@@ -26,6 +26,7 @@ from typing import Any, Final, cast
 from pycompose.errors import IrValidationError
 from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.catalog.vocabulary import DRAW_LIMITS, FUNCTION_LIMITS
+from pycompose.model.programs.bound import valid_value
 from pycompose.model.programs.functions import TYPES, Signature, Type, Walk
 
 DRAW: Final = "draw"
@@ -76,6 +77,35 @@ def validate_drawing(value: object) -> Signature:
     signature = Signature(cast("tuple[Type, ...]", tuple(params)), DRAW)
     _Statements(signature.params).block(value["body"], 1)
     return signature
+
+
+def validate_canvas(value: object) -> None:
+    """Check what a canvas draws with: a drawing of its size, or one bound.
+
+    A drawing that reads more than the canvas's size has the rest bound, as
+    ``{"type": "bound", "program": ..., "args": [...]}``.
+
+    Args:
+        value: The draw prop's wire value.
+
+    Raises:
+        IrValidationError: If it is no drawing, or its bound arguments do not
+            fill its remaining parameters with their types.
+    """
+    bound = isinstance(value, Mapping) and value.get("type") == "bound"
+    if bound and set(cast("Mapping[str, object]", value)) != {
+        "type",
+        "program",
+        "args",
+    }:
+        raise IrValidationError("a bound drawing is {type: bound, program, args}")
+    program = cast("Mapping[str, object]", value)["program"] if bound else value
+    args = cast("Mapping[str, object]", value)["args"] if bound else []
+    rest = validate_drawing(program).params[len(CANVAS) :]
+    if not isinstance(args, list | tuple) or len(args) != len(rest):
+        raise IrValidationError(f"a drawing needs {len(rest)} bound arguments")
+    if not all(valid_value(t, a) for t, a in zip(rest, args, strict=True)):
+        raise IrValidationError(f"a drawing's bound arguments are {list(rest)}")
 
 
 class _Statements:

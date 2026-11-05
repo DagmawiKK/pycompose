@@ -21,7 +21,7 @@ from pycompose.model.nodes.values import (
     validate_value,
 )
 from pycompose.model.programs.bindings import check_binding, is_binding
-from pycompose.model.programs.drawing import validate_drawing
+from pycompose.model.programs.drawing import validate_canvas
 from pycompose.model.programs.expressions import (
     EXPRESSION_KINDS,
     is_expression,
@@ -39,8 +39,9 @@ def _is_long(value: object) -> bool:
 
 
 def _is_drawing(value: object) -> bool:
+    # A drawing of the canvas's size, or one with the rest of its arguments bound.
     try:
-        validate_drawing(value)
+        validate_canvas(value)
     except IrValidationError:
         return False
     return True

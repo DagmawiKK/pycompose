@@ -12,6 +12,7 @@ from pycompose.model.nodes.node import Node
 from pycompose.model.nodes.props import JsonValue
 from pycompose.model.nodes.values import UNSET, _Unset
 from pycompose.model.programs.bindings import Binding, lower_binding
+from pycompose.model.programs.bound import BoundFunction
 from pycompose.model.programs.expressions import Expression
 from pycompose.model.programs.functions import HostFunction
 from pycompose.ui.component import ActionTarget, Component, PropValue
@@ -1184,7 +1185,7 @@ class _Canvas(Component):
         id: str | None = None,
         content_description: str,
         modifier: Modifier | None = None,
-        on_draw: HostFunction,
+        on_draw: HostFunction | BoundFunction,
     ) -> None:
         """Construct a registered Canvas.
 
@@ -1212,7 +1213,7 @@ class Canvas(_Canvas):
         id: str | None = None,
         content_description: str,
         modifier: Modifier | None = None,
-        on_draw: HostFunction,
+        on_draw: HostFunction | BoundFunction,
     ) -> Canvas: ...
     @overload
     def __new__(
@@ -1220,7 +1221,7 @@ class Canvas(_Canvas):
         *,
         id: str | None = None,
         modifier: Modifier | None = None,
-        on_draw: HostFunction,
+        on_draw: HostFunction | BoundFunction,
     ) -> CanvasWithoutContentDescription: ...
     def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
         """Construct the overload the keywords select.
@@ -9048,7 +9049,7 @@ class CanvasWithoutContentDescription(Canvas):
         *,
         id: str | None = None,
         modifier: Modifier | None = None,
-        on_draw: HostFunction,
+        on_draw: HostFunction | BoundFunction,
     ) -> None:
         """Construct a registered CanvasWithoutContentDescription.
 

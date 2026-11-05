@@ -58,9 +58,34 @@ class Drawing internal constructor(
         draw: (DrawCall) -> Unit,
     ) {
         require(args.size == signature.params.size) { "Drawing takes ${signature.params.size}" }
-        val frame = Array(args.size + loops) { args.getOrElse(it) { 0L } }
-        body.forEach { it.run(frame, args.size, draw) }
+        run(Array(args.size + loops) { args.getOrElse(it) { 0L } }, args.size, draw)
     }
+
+    /** One frame on a canvas of this size, with [bound] after it in the frame. */
+    internal fun draw(
+        width: Double,
+        height: Double,
+        bound: List<Any>,
+        draw: (DrawCall) -> Unit,
+    ) {
+        val given = 2 + bound.size
+        val frame =
+            Array(given + loops) {
+                when {
+                    it == 0 -> width
+                    it == 1 -> height
+                    it < given -> bound[it - 2]
+                    else -> 0L
+                }
+            }
+        run(frame, given, draw)
+    }
+
+    private fun run(
+        frame: Array<Any>,
+        base: Int,
+        draw: (DrawCall) -> Unit,
+    ) = body.forEach { it.run(frame, base, draw) }
 }
 
 /** One statement of a checked body. */

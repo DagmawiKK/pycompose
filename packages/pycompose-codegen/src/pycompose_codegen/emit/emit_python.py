@@ -134,6 +134,7 @@ _FIRST_PARTY = tuple(
             ("pycompose.model.nodes.props", ("JsonValue",)),
             ("pycompose.model.nodes.values", ("UNSET", "_Unset")),
             ("pycompose.model.programs.bindings", ("Binding", "lower_binding")),
+            ("pycompose.model.programs.bound", ("BoundFunction",)),
             ("pycompose.model.programs.functions", ("HostFunction",)),
             ("pycompose.ui.component", ("ActionTarget", "Component", "PropValue")),
             ("pycompose.ui.composition", ("Content", "content_nodes", "slot_nodes")),

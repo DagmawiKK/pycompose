@@ -20,12 +20,15 @@ from __future__ import annotations
 import math
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
-from typing import Literal, cast
+from typing import TYPE_CHECKING, Literal, cast
 
 from pycompose.errors import IrValidationError
 from pycompose.model.canonical import FrozenJsonValue, freeze_json, thaw_json
 from pycompose.model.catalog.vocabulary import FUNCTION_LIMITS, FUNCTION_SIGNATURES
 from pycompose.model.nodes.props import JsonValue
+
+if TYPE_CHECKING:
+    from pycompose.model.programs.bound import BoundFunction
 
 Type = Literal["integer", "number", "boolean"]
 Result = Literal["integer", "number", "boolean", "draw"]
@@ -97,6 +100,25 @@ class HostFunction:
             "result": self.signature.result,
             "body": cast("JsonValue", thaw_json(self.body)),
         }
+
+    def bind(self, *args: object) -> BoundFunction:
+        """Fix the function's last arguments; the host gives the first.
+
+        A canvas gives a draw function its size each frame, so whatever else
+        it reads -- a value from the app's state, say -- is bound here::
+
+            Canvas(on_draw=gauge.bind(state.level))
+
+        Args:
+            *args: Values for its last parameters, in order.
+
+        Returns:
+            The function with those arguments fixed.
+        """
+        # bound.py builds on this module, so it is imported where it is used.
+        from pycompose.model.programs.bound import bind
+
+        return bind(self, args)
 
 
 def host_function(

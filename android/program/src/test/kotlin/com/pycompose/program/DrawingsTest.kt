@@ -50,6 +50,33 @@ class DrawingsTest {
         assertEquals(listOf(listOf(0L, 5.0), listOf(1L, 5.0)), drawn)
     }
 
+    @Test
+    fun `a bound drawing reads its bound arguments after the canvas's size`() {
+        val program = """{"type":"program","params":["number","number","integer"],"result":"draw",
+            "body":[{"draw":"dot","args":[{"arg":2},{"arg":1}]}]}"""
+        val bound =
+            BoundDrawing.read(
+                json("""{"type":"bound","program":$program,"args":[7]}"""),
+                functions,
+                contract,
+            )
+        val drawn = mutableListOf<List<Any>>()
+        bound.draw(5.0, 6.0) { drawn += it.args }
+        assertEquals(listOf(listOf(7L, 6.0)), drawn)
+        listOf("[]", "[7.5]", "[true]", "[7, 8]", "[\"7\"]").forEach { args ->
+            assertThrows<RuntimeException> {
+                BoundDrawing.read(
+                    json("""{"type":"bound","program":$program,"args":$args}"""),
+                    functions,
+                    contract,
+                )
+            }
+        }
+        assertThrows<RuntimeException> { BoundDrawing.read(json(program), functions, contract) }
+    }
+
+    private fun json(text: String): JsonObject = Json.parseToJsonElement(text).jsonObject
+
     @ParameterizedTest
     @ValueSource(
         strings = [
