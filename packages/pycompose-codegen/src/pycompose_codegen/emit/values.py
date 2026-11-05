@@ -422,7 +422,7 @@ def parameter_schema(rule: dict[str, Any]) -> dict[str, Any]:
         if bounds:
             schema = {"allOf": [schema, {"properties": {"value": bounds}}]}
     elif rule["type"] == "program":
-        schema = {"$ref": "#/definitions/Program"}
+        schema = {"$ref": "#/definitions/ProgramRef"}
     elif rule["type"] == "list":
         schema = {
             "type": "array",

@@ -39,6 +39,17 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
             "version": {"type": "string"},
             "schemaVersion": {"enum": supported(registry)},
             "root": {"$ref": "#/definitions/Node"},
+            # Other metadata sections are each their validators' to judge.
+            "metadata": {
+                "type": "object",
+                "properties": {
+                    # Keyed by each program's hash, which the validators check.
+                    "programs": {
+                        "type": "object",
+                        "additionalProperties": {"$ref": "#/definitions/Program"},
+                    }
+                },
+            },
         },
         "definitions": {
             "Action": action_schema(action_ids),
@@ -69,7 +80,9 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
                 "additionalProperties": False,
             },
             # Its shape only; the vocabulary, types and limits are the
-            # validators' (pycompose/model/programs/functions.py, Functions.kt).
+            # validators' (model/programs/functions.py and drawing.py, Functions.kt
+            # and Drawing.kt). A value function's body is an expression, a draw
+            # function's a list of statements.
             "Program": {
                 "type": "object",
                 "required": ["type", "params", "result", "body"],
@@ -79,37 +92,32 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
                         "type": "array",
                         "items": {"enum": ["integer", "number", "boolean"]},
                     },
-                    "result": {"enum": ["integer", "number", "boolean"]},
-                    "body": {"type": "object"},
+                    "result": {"enum": ["integer", "number", "boolean", "draw"]},
+                    "body": {},
                 },
                 "additionalProperties": False,
             },
-            # Its shape only; the draw calls, types and limits are the
-            # validators' (pycompose/model/programs/drawing.py, Drawing.kt).
-            "DrawProgram": {
+            # Where a prop holds a program, the snapshot names it by content;
+            # the program itself is in the metadata's programs section.
+            "ProgramRef": {
                 "type": "object",
-                "required": ["type", "params", "result", "body"],
+                "required": ["type", "hash"],
                 "properties": {
-                    "type": {"const": "program"},
-                    "params": {
-                        "type": "array",
-                        "items": {"enum": ["integer", "number", "boolean"]},
-                    },
-                    "result": {"const": "draw"},
-                    "body": {"type": "array"},
+                    "type": {"const": "ref"},
+                    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
                 },
                 "additionalProperties": False,
             },
             # A draw program of the canvas's size, or one with the rest bound.
             "Drawing": {
                 "anyOf": [
-                    {"$ref": "#/definitions/DrawProgram"},
+                    {"$ref": "#/definitions/ProgramRef"},
                     {
                         "type": "object",
                         "required": ["type", "program", "args"],
                         "properties": {
                             "type": {"const": "bound"},
-                            "program": {"$ref": "#/definitions/DrawProgram"},
+                            "program": {"$ref": "#/definitions/ProgramRef"},
                             "args": {"type": "array"},
                         },
                         "additionalProperties": False,

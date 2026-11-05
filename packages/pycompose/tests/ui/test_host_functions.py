@@ -19,6 +19,7 @@ from pycompose.model.canonical import thaw_json
 from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.catalog.vocabulary import FUNCTION_LIMITS
 from pycompose.model.programs.functions import HostFunction, validate_function
+from pycompose.model.programs.refs import program_hash
 from pycompose.model.snapshot import Snapshot
 from pycompose.ui import DatePicker, SelectableDates, host
 from pycompose.ui._sources import host_sources
@@ -207,9 +208,14 @@ def test_a_date_picker_carries_its_python_predicate_to_the_host() -> None:
     node = DatePicker(selectable_dates=SelectableDates(is_selectable_date=weekdays))
     snapshot = emit_ir(Snapshot(root=node), SCHEMA_VERSION)
     assert validate_ir(snapshot).snapshot is snapshot
+    # The program crosses once, in the snapshot's programs; the prop names it.
+    name = program_hash(weekdays.to_wire())
     assert thaw_json(snapshot.root.props.get("selectableDates")) == {
         "type": "SelectableDates",
-        "isSelectableDate": weekdays.to_wire(),
+        "isSelectableDate": {"type": "ref", "hash": name},
+    }
+    assert thaw_json((snapshot.metadata or {})["programs"]) == {
+        name: weekdays.to_wire()
     }
 
 

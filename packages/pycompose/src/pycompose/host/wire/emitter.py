@@ -27,10 +27,11 @@ from pycompose.model.catalog.lock import (
 from pycompose.model.catalog.version import require_version
 from pycompose.model.nodes.expansion import expand_nodes
 from pycompose.model.nodes.ids import Handles, IdRegistry, sibling_keys
-from pycompose.model.nodes.node import Node
+from pycompose.model.nodes.node import Node, Props
 from pycompose.model.nodes.props import JsonValue
 from pycompose.model.nodes.reuse import Reuse, SubtreeMemo
 from pycompose.model.nodes.traversal import walk_nodes
+from pycompose.model.programs.refs import PROGRAMS, Declare, lift
 from pycompose.model.snapshot import Snapshot
 
 __all__ = ["emit_ir"]
@@ -82,11 +83,17 @@ def emit_ir(
     bindings = (
         cast("Mapping[str, JsonValue]", {"intents": contracts}) if contracts else None
     )
+    programs = (
+        {PROGRAMS: dict(sorted(emission.programs.items()))}
+        if emission.programs
+        else None
+    )
     merged: dict[str, object] = {}
-    # Intent contracts, effect requests and app data share one metadata object;
-    # their keys never collide, so a merge preserves both declaration orders.
+    # Intent contracts, programs, effects and app data share one metadata
+    # object; their keys never collide, so a merge preserves declaration orders.
     for member in (
         bindings,
+        cast("Mapping[str, JsonValue]", programs),
         lower_effects(state.effects),
         lower_data(state.data),
         cast("Mapping[str, JsonValue]", {"echoes": lower_echoes(echoes)})
@@ -113,6 +120,7 @@ class _Emitted:
     contracts: tuple[tuple[str, object], ...]
     keyed: tuple[tuple[str, str], ...] = ()
     streams: bool = False
+    programs: tuple[tuple[str, object], ...] = ()
 
 
 @dataclass(slots=True)
@@ -126,6 +134,7 @@ class _Frame:
     contracts: list[tuple[str, object]] = field(default_factory=list)
     keyed: list[tuple[str, str]] = field(default_factory=list)
     streams: bool = False
+    programs: list[tuple[str, object]] = field(default_factory=list)
 
 
 class _Emission:
@@ -144,6 +153,7 @@ class _Emission:
         self.handles = handles
         self.memo = memo
         self.contracts: dict[str, object] = {}
+        self.programs: dict[str, object] = {}
         self.keyed: dict[str, list[str]] = {}
         self.streams = False
         self.frames: list[_Frame] = []
@@ -198,6 +208,7 @@ class _Emission:
                 self.ids.claim(node_id, node_type=node_type)
             for key, wire in emitted.contracts:
                 record(self.contracts, key, wire)
+            self.programs.update(emitted.programs)
         else:
             emitted = self.build(source, frame)
             if self.memo is not None and self.frames:
@@ -214,6 +225,7 @@ class _Emission:
             parent.contracts.extend(emitted.contracts)
             parent.keyed.extend(emitted.keyed)
             parent.streams |= emitted.streams
+            parent.programs.extend(emitted.programs)
         return emitted.node
 
     def build(self, source: Node, frame: _Frame) -> _Emitted:
@@ -221,7 +233,11 @@ class _Emission:
             record(self.contracts, key, wire)
             frame.contracts.append((key, wire))
 
-        props = lower_props(source.props, declare)
+        def program(name: str, wire: object) -> None:
+            self.programs[name] = wire
+            frame.programs.append((name, wire))
+
+        props = lift_props(lower_props(source.props, declare), program)
         unchanged = (
             frame.qualified == source.id
             and props is source.props
@@ -249,7 +265,16 @@ class _Emission:
             keyed=own + tuple(frame.keyed),
             streams=frame.streams
             or any(has_stream(value) for value in props.values.values()),
+            programs=tuple(frame.programs),
         )
+
+
+def lift_props(props: Props, declare: Declare) -> Props:
+    """One node's props with each program replaced by a reference to it."""
+    lifted = {name: lift(value, declare) for name, value in props.values.items()}
+    if all(lifted[name] is props.values[name] for name in lifted):
+        return props
+    return Props(cast("Mapping[str, JsonValue]", lifted))
 
 
 def _emit_node(root: Node, emission: _Emission) -> tuple[Node, dict[str, object]]:

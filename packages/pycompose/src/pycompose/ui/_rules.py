@@ -19,6 +19,7 @@ from pycompose.model.nodes.node import Node
 from pycompose.model.nodes.reuse import SubtreeMemo
 from pycompose.model.nodes.target import RenderTarget
 from pycompose.model.programs.bindings import BINDINGS_SINCE, is_binding
+from pycompose.model.programs.refs import resolve
 from pycompose.ui._bound import binding_refusal
 from pycompose.ui._props import Intents, validate_prop
 
@@ -45,6 +46,8 @@ class _Validation:
         # A snapshot bound for a host refuses what it cannot render (ADR-0050).
         self.host = host
         self.intents: Intents = {}
+        # The snapshot's programs, by hash, for the props that name them.
+        self.programs: Mapping[str, object] = {}
         self.ids: set[str] = set()
         self.path: list[str] = []
         # Clean subtrees from the last pass, with every id each one claims.
@@ -106,18 +109,19 @@ class _Validation:
             if declared.required and name not in props:
                 self.report("missing required prop", node, name)
         for name in sorted(node.props):
+            value = self.resolved(props[name], node, name)
             prop = spec.props.get(name)
             if prop is None:
                 self.report("unknown prop", node, name)
             if (
                 prop.since is not None and not self.available(prop.since)
-            ) or not self.values_available(props[name]):
+            ) or not self.values_available(value):
                 self.report("prop requires newer schema", node, name)
-            if is_binding(props[name]):
-                refusal = binding_refusal(props[name], prop)
+            if is_binding(value):
+                refusal = binding_refusal(value, prop)
                 if refusal is not None:
                     self.report(refusal, node, name)
-            elif not validate_prop(props[name], prop, intents=self.intents):
+            elif not validate_prop(value, prop, intents=self.intents):
                 self.report("invalid prop value", node, name)
         self.child_rules(node, spec)
         return _NodeFrame(
@@ -125,6 +129,12 @@ class _Validation:
             spec.children.allowed,
             frozenset(spec.slots),
         )
+
+    def resolved(self, value: FrozenJsonValue, node: Node, name: str) -> object:
+        try:
+            return resolve(value, self.programs)
+        except IrValidationError:
+            self.report("prop names a program the snapshot lacks", node, name)
 
     def available(self, since: str) -> bool:
         return tuple(map(int, self.schema_version.split("."))) >= tuple(

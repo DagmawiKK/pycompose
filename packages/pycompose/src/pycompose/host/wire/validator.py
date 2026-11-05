@@ -31,6 +31,7 @@ from pycompose.model.catalog.lock import (
 from pycompose.model.catalog.version import require_version
 from pycompose.model.nodes.node import Node
 from pycompose.model.nodes.reuse import Reuse
+from pycompose.model.programs.refs import PROGRAMS_SINCE, read_programs
 from pycompose.ui._props import Intents
 from pycompose.ui._rules import _Validation
 from pycompose.ui.intents import read_intents
@@ -149,6 +150,12 @@ def validate_ir(snapshot: IRRoot, *, reuse: Reuse | None = None) -> ValidationRe
             validation, metadata, read, absent, invalid, stale, since, snapshot.root
         )
     validation.intents = intents
+    try:
+        validation.programs = read_programs(metadata)
+    except IrValidationError:
+        validation.report("invalid programs", snapshot.root)
+    if validation.programs and not validation.available(PROGRAMS_SINCE):
+        validation.report("programs require newer schema", snapshot.root)
     walk(validation, snapshot.root)
     # An expression may read a holder anywhere in the snapshot.
     for node, prop, message in stream_problems(snapshot.root):

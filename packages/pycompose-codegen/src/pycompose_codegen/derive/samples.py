@@ -13,6 +13,7 @@ from typing import Any
 
 from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.programs.drawing import CANVAS, DRAW, draws
+from pycompose.model.programs.refs import lift
 
 SEARCH_OWNERS: dict[str, tuple[str, str | None]] = {
     "ExpandedDockedSearchBar": ("StatefulSearchBar", "expandedBar"),
@@ -235,13 +236,7 @@ def sample(catalog: dict[str, Any], name: str) -> dict[str, Any]:
         The snapshot document.
     """
     builder = _Sample(catalog)
-    root = builder.scoped(name)
-    return {
-        "version": "0.1.0",
-        "schemaVersion": SCHEMA_VERSION,
-        "root": root,
-        "metadata": {"intents": builder.bindings},
-    }
+    return _document(builder.scoped(name), builder.bindings)
 
 
 def modifier_sample(catalog: dict[str, Any], name: str) -> dict[str, Any]:
@@ -268,9 +263,19 @@ def modifier_sample(catalog: dict[str, Any], name: str) -> dict[str, Any]:
         "props": {"modifier": {"operations": [operation]}},
         "children": [{"id": "preview.child", "type": "Text", "props": {"text": name}}],
     }
+    return _document(root, builder.bindings)
+
+
+def _document(root: dict[str, Any], intents: dict[str, Any]) -> dict[str, Any]:
+    """The snapshot holding ``root``, its programs named by content as emission does."""
+    programs: dict[str, object] = {}
+    lifted = lift(root, programs.__setitem__)
+    metadata: dict[str, Any] = {"intents": intents}
+    if programs:
+        metadata["programs"] = dict(sorted(programs.items()))
     return {
         "version": "0.1.0",
         "schemaVersion": SCHEMA_VERSION,
-        "root": root,
-        "metadata": {"intents": builder.bindings},
+        "root": lifted,
+        "metadata": metadata,
     }

@@ -16,6 +16,7 @@ from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.catalog.vocabulary import DRAW_LIMITS
 from pycompose.model.programs.drawing import validate_drawing
 from pycompose.model.programs.recording import drawn
+from pycompose.model.programs.refs import program_hash
 from pycompose.model.snapshot import Snapshot
 from pycompose.ui import Canvas, circle, host, line, rect, round_rect
 
@@ -105,7 +106,9 @@ def test_a_canvas_carries_its_draw_function_to_the_host() -> None:
     node = Canvas(content_description="A dial", on_draw=dial)
     snapshot = emit_ir(Snapshot(root=node), SCHEMA_VERSION)
     assert validate_ir(snapshot).snapshot is snapshot
-    assert thaw_json(snapshot.root.props.get("onDraw")) == dial.to_wire()
+    name = program_hash(dial.to_wire())
+    assert thaw_json(snapshot.root.props.get("onDraw")) == {"type": "ref", "hash": name}
+    assert thaw_json((snapshot.metadata or {})["programs"]) == {name: dial.to_wire()}
 
 
 @host
@@ -124,7 +127,7 @@ def test_a_canvas_carries_a_drawing_with_its_bound_arguments() -> None:
     assert validate_ir(snapshot).snapshot is snapshot
     assert thaw_json(snapshot.root.props.get("onDraw")) == {
         "type": "bound",
-        "program": gauge.to_wire(),
+        "program": {"type": "ref", "hash": program_hash(gauge.to_wire())},
         "args": [1.0, False, 10],
     }
 

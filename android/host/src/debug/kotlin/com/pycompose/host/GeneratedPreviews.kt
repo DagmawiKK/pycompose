@@ -106,13 +106,13 @@ private fun ButtonPreview() {
 @Preview(name = "Canvas", showBackground = true)
 @Composable
 private fun CanvasPreview() {
-    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"contentDescription": "Preview", "onDraw": {"body": [{"args": [{"integer": 4284960932}, {"number": 8.0}, {"number": 8.0}, {"boolean": true}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}], "draw": "arc"}], "params": ["number", "number"], "result": "draw", "type": "program"}}, "type": "Canvas"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}, "programs": {"b6940acae8097e9f81b85b46b4ee21242d7b8eb04c5a835a2af2e0c27e401faf": {"body": [{"args": [{"integer": 4284960932}, {"number": 8.0}, {"number": 8.0}, {"boolean": true}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}], "draw": "arc"}], "params": ["number", "number"], "result": "draw", "type": "program"}}}, "root": {"id": "preview", "props": {"contentDescription": "Preview", "onDraw": {"hash": "b6940acae8097e9f81b85b46b4ee21242d7b8eb04c5a835a2af2e0c27e401faf", "type": "ref"}}, "type": "Canvas"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "CanvasWithoutContentDescription", showBackground = true)
 @Composable
 private fun CanvasWithoutContentDescriptionPreview() {
-    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "CanvasWithoutContentDescription", "type": "semantics"}]}, "onDraw": {"body": [{"args": [{"integer": 4284960932}, {"number": 8.0}, {"number": 8.0}, {"boolean": true}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}], "draw": "arc"}], "params": ["number", "number"], "result": "draw", "type": "program"}}, "type": "CanvasWithoutContentDescription"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}, "programs": {"b6940acae8097e9f81b85b46b4ee21242d7b8eb04c5a835a2af2e0c27e401faf": {"body": [{"args": [{"integer": 4284960932}, {"number": 8.0}, {"number": 8.0}, {"boolean": true}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}], "draw": "arc"}], "params": ["number", "number"], "result": "draw", "type": "program"}}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "CanvasWithoutContentDescription", "type": "semantics"}]}, "onDraw": {"hash": "b6940acae8097e9f81b85b46b4ee21242d7b8eb04c5a835a2af2e0c27e401faf", "type": "ref"}}, "type": "CanvasWithoutContentDescription"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Card", showBackground = true)

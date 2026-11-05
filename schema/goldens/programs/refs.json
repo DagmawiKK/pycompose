@@ -1,0 +1,128 @@
+{
+ "full": {
+  "kind": "full",
+  "metadata": {
+   "programs": {
+    "ad742e4944e0fd48d0749b9aea7168c49570b2460468a34949650b62281651d3": {
+     "body": [
+      {
+       "args": [
+        {
+         "integer": 4284960932
+        },
+        {
+         "number": 0.0
+        },
+        {
+         "number": 0.0
+        },
+        {
+         "args": [
+          {
+           "arg": 0
+          },
+          {
+           "arg": 2
+          }
+         ],
+         "op": "times"
+        },
+        {
+         "arg": 1
+        },
+        {
+         "number": 1.0
+        },
+        {
+         "number": 0.0
+        }
+       ],
+       "draw": "rect"
+      }
+     ],
+     "params": [
+      "number",
+      "number",
+      "number"
+     ],
+     "result": "draw",
+     "type": "program"
+    }
+   }
+  },
+  "root": {
+   "children": [
+    {
+     "id": "1",
+     "props": {
+      "onDraw": {
+       "args": [
+        0.25
+       ],
+       "program": {
+        "hash": "ad742e4944e0fd48d0749b9aea7168c49570b2460468a34949650b62281651d3",
+        "type": "ref"
+       },
+       "type": "bound"
+      }
+     },
+     "type": "CanvasWithoutContentDescription"
+    },
+    {
+     "id": "2",
+     "props": {
+      "onDraw": {
+       "args": [
+        0.5
+       ],
+       "program": {
+        "hash": "ad742e4944e0fd48d0749b9aea7168c49570b2460468a34949650b62281651d3",
+        "type": "ref"
+       },
+       "type": "bound"
+      }
+     },
+     "type": "CanvasWithoutContentDescription"
+    }
+   ],
+   "id": "0",
+   "props": {},
+   "type": "Column"
+  },
+  "schemaVersion": "1.23.0",
+  "serial": 1,
+  "surface": "main",
+  "version": "0.1.0"
+ },
+ "patch": {
+  "baseSerial": 1,
+  "keep": [
+   "programs"
+  ],
+  "kind": "patch",
+  "ops": [
+   {
+    "at": [
+     1
+    ],
+    "id": "2",
+    "op": "setProp",
+    "prop": "onDraw",
+    "value": {
+     "args": [
+      0.75
+     ],
+     "program": {
+      "hash": "ad742e4944e0fd48d0749b9aea7168c49570b2460468a34949650b62281651d3",
+      "type": "ref"
+     },
+     "type": "bound"
+    }
+   }
+  ],
+  "schemaVersion": "1.23.0",
+  "serial": 2,
+  "surface": "main",
+  "version": "0.1.0"
+ }
+}

@@ -11193,41 +11193,10 @@
       },
       "type": "object"
     },
-    "DrawProgram": {
-      "additionalProperties": false,
-      "properties": {
-        "body": {
-          "type": "array"
-        },
-        "params": {
-          "items": {
-            "enum": [
-              "integer",
-              "number",
-              "boolean"
-            ]
-          },
-          "type": "array"
-        },
-        "result": {
-          "const": "draw"
-        },
-        "type": {
-          "const": "program"
-        }
-      },
-      "required": [
-        "type",
-        "params",
-        "result",
-        "body"
-      ],
-      "type": "object"
-    },
     "Drawing": {
       "anyOf": [
         {
-          "$ref": "#/definitions/DrawProgram"
+          "$ref": "#/definitions/ProgramRef"
         },
         {
           "additionalProperties": false,
@@ -11236,7 +11205,7 @@
               "type": "array"
             },
             "program": {
-              "$ref": "#/definitions/DrawProgram"
+              "$ref": "#/definitions/ProgramRef"
             },
             "type": {
               "const": "bound"
@@ -15058,9 +15027,7 @@
     "Program": {
       "additionalProperties": false,
       "properties": {
-        "body": {
-          "type": "object"
-        },
+        "body": {},
         "params": {
           "items": {
             "enum": [
@@ -15075,7 +15042,8 @@
           "enum": [
             "integer",
             "number",
-            "boolean"
+            "boolean",
+            "draw"
           ]
         },
         "type": {
@@ -15087,6 +15055,23 @@
         "params",
         "result",
         "body"
+      ],
+      "type": "object"
+    },
+    "ProgramRef": {
+      "additionalProperties": false,
+      "properties": {
+        "hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "type": {
+          "const": "ref"
+        }
+      },
+      "required": [
+        "type",
+        "hash"
       ],
       "type": "object"
     },
@@ -54211,10 +54196,10 @@
       "additionalProperties": false,
       "properties": {
         "isSelectableDate": {
-          "$ref": "#/definitions/Program"
+          "$ref": "#/definitions/ProgramRef"
         },
         "isSelectableYear": {
-          "$ref": "#/definitions/Program"
+          "$ref": "#/definitions/ProgramRef"
         },
         "type": {
           "const": "SelectableDates"
@@ -54309,10 +54294,10 @@
       "additionalProperties": false,
       "properties": {
         "calculateApproachOffset": {
-          "$ref": "#/definitions/Program"
+          "$ref": "#/definitions/ProgramRef"
         },
         "calculateSnapOffset": {
-          "$ref": "#/definitions/Program"
+          "$ref": "#/definitions/ProgramRef"
         },
         "type": {
           "const": "SnapLayoutInfoProvider"
@@ -54328,7 +54313,7 @@
       "additionalProperties": false,
       "properties": {
         "position": {
-          "$ref": "#/definitions/Program"
+          "$ref": "#/definitions/ProgramRef"
         },
         "type": {
           "const": "SnapPosition"
@@ -57021,6 +57006,17 @@
     }
   },
   "properties": {
+    "metadata": {
+      "properties": {
+        "programs": {
+          "additionalProperties": {
+            "$ref": "#/definitions/Program"
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
     "root": {
       "$ref": "#/definitions/Node"
     },
