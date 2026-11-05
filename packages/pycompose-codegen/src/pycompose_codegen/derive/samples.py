@@ -12,6 +12,7 @@ from __future__ import annotations
 from typing import Any
 
 from pycompose.model.catalog.lock import SCHEMA_VERSION
+from pycompose.model.programs.drawing import CANVAS, DRAW, draws
 
 SEARCH_OWNERS: dict[str, tuple[str, str | None]] = {
     "ExpandedDockedSearchBar": ("StatefulSearchBar", "expandedBar"),
@@ -56,11 +57,37 @@ def _value(
         return min(
             max(number, spec.get("minimum", number)), spec.get("maximum", number)
         )
+    return _structured(where, spec, values)
+
+
+def _structured(where: str, spec: dict[str, Any], values: dict[str, Any]) -> Any:
+    """A sample of a type that is more than one literal."""
+    kind = spec["type"]
     if kind == "resource":
         return f"@{spec['values'][0]}/preview"
     if kind == "value":
         return _family(where, spec["valueType"], values)
+    if kind == "draw":
+        return _drawing()
     raise ValueError(f"{where}: no sample for a required {kind} prop")
+
+
+def _drawing() -> dict[str, Any]:
+    """A draw program making the pin's first draw call once, every argument set."""
+    name, spec = sorted(draws().items())[0]
+    literals = {
+        "integer": {"integer": 0xFF6750A4},
+        "number": {"number": 8.0},
+        "boolean": {"boolean": True},
+    }
+    return {
+        "type": "program",
+        "params": list(CANVAS),
+        "result": DRAW,
+        "body": [
+            {"draw": name, "args": [literals[a["type"]] for a in spec["arguments"]]}
+        ],
+    }
 
 
 def _family(where: str, family: str, values: dict[str, Any], depth: int = 0) -> Any:

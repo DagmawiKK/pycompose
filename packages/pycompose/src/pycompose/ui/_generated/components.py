@@ -13,6 +13,7 @@ from pycompose.model.nodes.props import JsonValue
 from pycompose.model.nodes.values import UNSET, _Unset
 from pycompose.model.programs.bindings import Binding, lower_binding
 from pycompose.model.programs.expressions import Expression
+from pycompose.model.programs.functions import HostFunction
 from pycompose.ui.component import ActionTarget, Component, PropValue
 from pycompose.ui.composition import Content, content_nodes, slot_nodes
 from pycompose.ui.modifier import Modifier
@@ -32,6 +33,8 @@ __all__ = [
     "BottomSheetScaffold",
     "Box",
     "Button",
+    "Canvas",
+    "CanvasWithoutContentDescription",
     "Card",
     "CardWithoutOnClick",
     "CenterAlignedTopAppBar",
@@ -1155,6 +1158,81 @@ class Button(Component):
             props["shape"] = shape
         props["text"] = text
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class _Canvas(Component):
+    """Native Canvas; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "Canvas"
+    required_keywords = frozenset(
+        {
+            "content_description",
+            "on_draw",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "content_description",
+            "on_draw",
+        }
+    )
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        content_description: str,
+        modifier: Modifier | None = None,
+        on_draw: HostFunction,
+    ) -> None:
+        """Construct a registered Canvas.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            content_description: Required native contentDescription.
+            modifier: Native modifier; None uses its default.
+            on_draw: Required native onDraw.
+        """
+        props: dict[str, PropValue] = {}
+        props["content_description"] = content_description
+        props["on_draw"] = on_draw.to_wire()
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class Canvas(_Canvas):
+    """Native Canvas; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        content_description: str,
+        modifier: Modifier | None = None,
+        on_draw: HostFunction,
+    ) -> Canvas: ...
+    @overload
+    def __new__(
+        cls,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        on_draw: HostFunction,
+    ) -> CanvasWithoutContentDescription: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class _Card(Component):
@@ -8949,6 +9027,41 @@ class WideNavigationRailItem(Component):
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
+class CanvasWithoutContentDescription(Canvas):
+    """Native Canvas; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "CanvasWithoutContentDescription"
+    required_keywords = frozenset(
+        {
+            "on_draw",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "on_draw",
+        }
+    )
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        on_draw: HostFunction,
+    ) -> None:
+        """Construct a registered CanvasWithoutContentDescription.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            on_draw: Required native onDraw.
+        """
+        props: dict[str, PropValue] = {}
+        props["on_draw"] = on_draw.to_wire()
+        Component.__init__(self, id=id, children=(), modifier=modifier, **props)
+
+
 class CardWithoutOnClick(Card):
     """Native Card; props and defaults follow the component manifest."""
 
@@ -9720,6 +9833,7 @@ class SurfaceSelected(Surface):
         Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
 
 
+Canvas.overloads = (CanvasWithoutContentDescription,)
 Card.overloads = (CardWithoutOnClick,)
 CircularProgressIndicator.overloads = (CircularProgressIndicatorProgress,)
 ElevatedCard.overloads = (ElevatedCardWithoutOnClick,)

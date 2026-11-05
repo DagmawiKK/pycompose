@@ -37,6 +37,7 @@ def _kt_type(prop: dict[str, Any]) -> str:
         "integer": "Long",
         "durationMs": "Long",
         "modifier": "JsonObject",
+        "draw": "JsonObject",
     }[prop["type"]] + suffix
 
 

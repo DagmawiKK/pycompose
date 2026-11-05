@@ -19,6 +19,7 @@ ANDROID = Path("android")
 DUMP_DIR = ANDROID / "build/compose-api"
 COMPOSABLE = "androidx/compose/runtime/Composable"
 EXTENSION = "kotlin/ExtensionFunctionType"
+DRAW_SCOPE = "androidx/compose/ui/graphics/drawscope/DrawScope"
 BUILDERS = {
     "androidx/compose/foundation/lazy/LazyListScope",
     "androidx/compose/foundation/lazy/grid/LazyGridScope",
@@ -34,6 +35,7 @@ class Kind(Enum):
     SLOT = "slot"
     PROVIDER = "provider"
     BUILDER = "builder"
+    DRAW = "draw"
     UNKNOWN = "unknown"
 
 
@@ -86,13 +88,16 @@ class KotlinType:
             # Confirmation/draw/layout lambdas require an explicit protocol.
             return Kind.PROVIDER if len(self.arguments) == 1 else Kind.UNKNOWN
         if EXTENSION in self.annotations:
-            receiver = self.arguments[0][1]
-            return (
-                Kind.BUILDER
-                if receiver is not None and receiver.classifier in BUILDERS
-                else Kind.UNKNOWN
-            )
+            return self._receiver_kind()
         return Kind.CALLBACK
+
+    def _receiver_kind(self) -> Kind:
+        """A Unit lambda on a receiver: a builder's scope, or a canvas's."""
+        receiver = self.arguments[0][1]
+        classifier = receiver.classifier if receiver is not None else None
+        if classifier == DRAW_SCOPE and len(self.arguments) == 2:
+            return Kind.DRAW
+        return Kind.BUILDER if classifier in BUILDERS else Kind.UNKNOWN
 
 
 def _type(data: dict[str, Any] | None) -> KotlinType | None:

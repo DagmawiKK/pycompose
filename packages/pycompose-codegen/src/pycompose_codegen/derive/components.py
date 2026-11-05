@@ -44,30 +44,14 @@ from pycompose_codegen.derive.propose import (
 )
 from pycompose_codegen.derive.resolution import MODIFIER, block_unaddressable_overloads
 from pycompose_codegen.derive.slots import (
-    builder_rule,
-    function_arguments,
+    LAMBDA_RULES,
     scope_providers,
-    slot_rule,
     slot_scopes,
 )
 from pycompose_codegen.emit.defaults import render_default
 
 HOLDER_KINDS = {holder: kind for kind, holder in STATE_HOLDERS.items()}
 TRANSIENT_BY_HOLDER = {holder: kind for kind, holder in TRANSIENT_HOLDERS.items()}
-
-
-def _event_rule(value: KotlinType) -> dict[str, Any]:
-    """A callback's binding: its arguments become the event's scalar payload."""
-    arguments = function_arguments(value)
-    if any(t.classifier not in SCALARS for t in arguments):
-        raise ValueError("event payload needs a structured value codec")
-    return {
-        "policy": "event",
-        "payload": [
-            {"name": f"arg{i}", "type": SCALARS[t.classifier], "nullable": t.nullable}
-            for i, t in enumerate(arguments)
-        ],
-    }
 
 
 def _binding_rule(
@@ -89,12 +73,8 @@ def _binding_rule(
         }:
             raise ValueError("modifier default is not the native identity")
         return {"policy": "modifier"}
-    if parameter.kind == Kind.SLOT:
-        rule = slot_rule(value)
-    elif parameter.kind == Kind.BUILDER:
-        rule = builder_rule(value)
-    elif parameter.kind == Kind.CALLBACK:
-        rule = _event_rule(value)
+    if (lambda_rule := LAMBDA_RULES.get(parameter.kind)) is not None:
+        rule = lambda_rule(value)
     elif (typed := _host_filled(parameter, holders)) is not None:
         rule = typed
     elif value.classifier in SCALARS and not value.arguments:

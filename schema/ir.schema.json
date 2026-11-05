@@ -1474,6 +1474,74 @@
       },
       "type": "object"
     },
+    "C_Canvas": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onDraw": {
+              "$ref": "#/definitions/Drawing"
+            }
+          },
+          "required": [
+            "contentDescription",
+            "onDraw"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Canvas"
+        }
+      },
+      "type": "object"
+    },
+    "C_CanvasWithoutContentDescription": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onDraw": {
+              "$ref": "#/definitions/Drawing"
+            }
+          },
+          "required": [
+            "onDraw"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "CanvasWithoutContentDescription"
+        }
+      },
+      "type": "object"
+    },
     "C_Card": {
       "properties": {
         "children": {
@@ -11125,6 +11193,37 @@
       },
       "type": "object"
     },
+    "Drawing": {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "type": "array"
+        },
+        "params": {
+          "items": {
+            "enum": [
+              "integer",
+              "number",
+              "boolean"
+            ]
+          },
+          "type": "array"
+        },
+        "result": {
+          "const": "draw"
+        },
+        "type": {
+          "const": "program"
+        }
+      },
+      "required": [
+        "type",
+        "params",
+        "result",
+        "body"
+      ],
+      "type": "object"
+    },
     "Expression": {
       "additionalProperties": false,
       "properties": {
@@ -14500,6 +14599,12 @@
             },
             {
               "$ref": "#/definitions/C_Button"
+            },
+            {
+              "$ref": "#/definitions/C_Canvas"
+            },
+            {
+              "$ref": "#/definitions/C_CanvasWithoutContentDescription"
             },
             {
               "$ref": "#/definitions/C_Card"
@@ -32743,6 +32848,74 @@
       },
       "type": "object"
     },
+    "V_1_23_0_Canvas": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "contentDescription": {
+              "type": "string"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onDraw": {
+              "$ref": "#/definitions/Drawing"
+            }
+          },
+          "required": [
+            "contentDescription",
+            "onDraw"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Canvas"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_CanvasWithoutContentDescription": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onDraw": {
+              "$ref": "#/definitions/Drawing"
+            }
+          },
+          "required": [
+            "onDraw"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "CanvasWithoutContentDescription"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_Card": {
       "properties": {
         "children": {
@@ -40609,6 +40782,12 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_Button"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_Canvas"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_CanvasWithoutContentDescription"
             },
             {
               "$ref": "#/definitions/V_1_23_0_Card"

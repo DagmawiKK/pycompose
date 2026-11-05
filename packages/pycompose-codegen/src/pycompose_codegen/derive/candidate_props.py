@@ -160,6 +160,8 @@ def _policy_prop(
         return _resource_prop(parameter, spec, review)
     if policy == "event":
         return _event_prop(name, parameter, spec, review)
+    if policy == "draw":
+        return {"type": "draw", **({"required": True} if spec["required"] else {})}
     if policy == "value":
         family = families.get(spec["family"])
         if family is None:

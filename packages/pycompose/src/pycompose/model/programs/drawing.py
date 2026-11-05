@@ -21,7 +21,7 @@ counted through its loops, stay within ``DRAW_LIMITS``.
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Final, cast
+from typing import Any, Final, cast
 
 from pycompose.errors import IrValidationError
 from pycompose.model.catalog.lock import REGISTRY
@@ -35,7 +35,7 @@ CANVAS = ("number", "number")
 """What every draw program is called with: the canvas's width and height, in px."""
 
 
-def draws() -> Mapping[str, Mapping[str, object]]:
+def draws() -> Mapping[str, Mapping[str, Any]]:
     """The draw calls the pinned ``DrawScope`` declares.
 
     Returns:

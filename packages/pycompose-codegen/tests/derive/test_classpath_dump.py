@@ -406,7 +406,7 @@ def test_inventory_preserves_recursive_types_and_distinguishes_builders(
     assert params["mapping"].type.arguments[1][0] == "OUT"
     assert params["mapping"].type.arguments[1][1].nullable is True
     assert params["items"].kind.value == "builder"
-    assert params["draw"].kind.value == "unknown"
+    assert params["draw"].kind.value == "draw"
 
 
 def test_gap_report_is_a_capability_worklist_not_a_support_claim(

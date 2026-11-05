@@ -21,6 +21,7 @@ from pycompose.model.nodes.values import (
     validate_value,
 )
 from pycompose.model.programs.bindings import check_binding, is_binding
+from pycompose.model.programs.drawing import validate_drawing
 from pycompose.model.programs.expressions import (
     EXPRESSION_KINDS,
     is_expression,
@@ -37,6 +38,14 @@ def _is_long(value: object) -> bool:
     return isinstance(value, int) and not isinstance(value, bool) and value in _LONG
 
 
+def _is_drawing(value: object) -> bool:
+    try:
+        validate_drawing(value)
+    except IrValidationError:
+        return False
+    return True
+
+
 _TYPE_CHECKS: dict[str, Callable[[object, PropDef], bool]] = {
     "string": lambda value, _: isinstance(value, str),
     "resource": lambda value, prop: valid_resource(value, prop.values),
@@ -49,6 +58,7 @@ _TYPE_CHECKS: dict[str, Callable[[object, PropDef], bool]] = {
     and not isinstance(value, bool),
     "dp": lambda value, _: _is_native_float(value),
     "modifier": lambda value, _: isinstance(value, Mapping),
+    "draw": lambda value, _: _is_drawing(value),
     # A named constant of a value family crosses the wire only tagged.
     "enum": lambda value, prop: isinstance(value, str)
     and prop.value_type is None

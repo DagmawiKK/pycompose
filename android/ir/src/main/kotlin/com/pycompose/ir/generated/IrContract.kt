@@ -204,6 +204,27 @@ object IrContract {
                 "text" to PropertyRule("string", required = true),
             ),
         ),
+        "Canvas" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "contentDescription" to PropertyRule("string", required = true),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onDraw" to PropertyRule("draw", required = true),
+            ),
+        ),
+        "CanvasWithoutContentDescription" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+                "onDraw" to PropertyRule("draw", required = true),
+            ),
+        ),
         "Card" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,

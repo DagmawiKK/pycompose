@@ -18,6 +18,7 @@ PAYLOADS_PATH = PACKAGE / "host" / "bridge" / "_generated" / "payloads.py"
 
 PROP_TYPE_VOCABULARY = {
     "resource",
+    "draw",
     "actionId",
     "boolean",
     "color",

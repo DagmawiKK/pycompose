@@ -44,6 +44,7 @@ def python_type(
             "number": "int | float",
             "dp": "int | float",
             "modifier": "Modifier",
+            "draw": "HostFunction",
         }[prop["type"]]
     if animatable(prop):
         # The host animates to the target the app states with animate().
@@ -61,6 +62,8 @@ def stored_value(field: str, prop: dict[str, Any]) -> str | None:
     Returns:
         The expression to store, or None to store the argument unchanged.
     """
+    if prop["type"] == "draw":
+        return f"{python_name(field)}.to_wire()"
     if not animatable(prop):
         return None
     phase = json.dumps(prop.get("phase", "composition"))

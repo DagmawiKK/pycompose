@@ -60,6 +60,8 @@ def render_prop(
         emitted = callback is not None and out.add(("", callback))
     elif prop_type == "dp":
         emitted = _render_dp(prop_name, spec, out)
+    elif prop_type == "draw":
+        emitted = out.add(_drawing(prop_name))
     else:
         emitted = _render_scalar(prop_name, spec, out)
     return emitted
@@ -296,6 +298,15 @@ def _color(prop_name: str, spec: dict[str, Any]) -> tuple[str, str]:
         f"                    else -> {fallback}\n"
         "                }",
         f"{prop_name} = {value}",
+    )
+
+
+def _drawing(prop_name: str) -> tuple[str, str]:
+    """Run a draw program on the canvas's size, painting each call it makes."""
+    return (
+        f"val {prop_name}Drawing = rememberDrawing(model.props.{prop_name})",
+        f"{prop_name} = {{ {prop_name}Drawing.draw(size.width.toDouble(), "
+        "size.height.toDouble()) { paint(it) } }",
     )
 
 

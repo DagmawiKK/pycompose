@@ -10,10 +10,14 @@ import pytest
 from goldens import GOLDENS
 
 from pycompose.errors import IrValidationError
+from pycompose.host.wire import emit_ir, validate_ir
+from pycompose.model.canonical import thaw_json
+from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.catalog.vocabulary import DRAW_LIMITS
 from pycompose.model.programs.drawing import validate_drawing
 from pycompose.model.programs.recording import drawn
-from pycompose.ui import circle, host, line, rect, round_rect
+from pycompose.model.snapshot import Snapshot
+from pycompose.ui import Canvas, circle, host, line, rect, round_rect
 
 PURPLE = 0xFF6750A4
 
@@ -80,6 +84,23 @@ def test_a_draw_function_compiles_to_a_draw_program() -> None:
     assert program["result"] == "draw"
     assert program["params"] == ["number", "number"]
     assert validate_drawing(program).result == "draw"
+
+
+def test_a_canvas_carries_its_draw_function_to_the_host() -> None:
+    node = Canvas(content_description="A dial", on_draw=dial)
+    snapshot = emit_ir(Snapshot(root=node), SCHEMA_VERSION)
+    assert validate_ir(snapshot).snapshot is snapshot
+    assert thaw_json(snapshot.root.props.get("onDraw")) == dial.to_wire()
+
+
+@host
+def half(width: float, height: float) -> float:
+    return (width + height) / 2
+
+
+def test_a_canvas_refuses_a_function_that_gives_a_value() -> None:
+    with pytest.raises(IrValidationError):
+        emit_ir(Snapshot(root=Canvas(on_draw=half)), SCHEMA_VERSION)
 
 
 def test_a_draw_call_outside_a_draw_function_has_nothing_to_draw_on() -> None:

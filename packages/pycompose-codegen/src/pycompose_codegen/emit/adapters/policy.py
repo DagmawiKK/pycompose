@@ -15,11 +15,12 @@ SCALAR_KOTLIN = {
 }
 
 
-MECHANICAL = {"string", "boolean", "integer", "number", "actionId", "modifier"}
+MECHANICAL = {"string", "boolean", "integer", "number", "actionId", "modifier", "draw"}
 """Schema prop types an adapter can render with no decision.
 
 A colour or a named constant renders through its value family's resolver; a
-resource through the host's loader, in the parameter it fills.
+resource through the host's loader, in the parameter it fills. A draw program
+runs inside the native draw lambda, painting each call it makes.
 """
 
 

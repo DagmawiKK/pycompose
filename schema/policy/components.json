@@ -100,6 +100,12 @@
       }
     }
   },
+  "Canvas": {
+    "decision": {
+      "category": "media",
+      "identity": "androidx.compose.foundation:foundation-android androidx.compose.foundation.CanvasKt.Canvas(Landroidx/compose/ui/Modifier;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V"
+    }
+  },
   "Card": {
     "decision": {
       "category": "layout",

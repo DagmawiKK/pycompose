@@ -84,6 +84,22 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
                 },
                 "additionalProperties": False,
             },
+            # Its shape only; the draw calls, types and limits are the
+            # validators' (pycompose/model/programs/drawing.py, Drawing.kt).
+            "Drawing": {
+                "type": "object",
+                "required": ["type", "params", "result", "body"],
+                "properties": {
+                    "type": {"const": "program"},
+                    "params": {
+                        "type": "array",
+                        "items": {"enum": ["integer", "number", "boolean"]},
+                    },
+                    "result": {"const": "draw"},
+                    "body": {"type": "array"},
+                },
+                "additionalProperties": False,
+            },
             **component_defs,
             **json_definitions(registry),
         },
@@ -308,6 +324,10 @@ def _resource_schema(kinds: list[str]) -> dict[str, Any]:
     return {"type": "string", "pattern": "^(" + "|".join(patterns) + r")(?![\s\S])"}
 
 
+SHARED = {"actionId": "Action", "draw": "Drawing"}
+"""Prop types whose one shape is stated once under definitions."""
+
+
 def _prop_schema(prop: dict[str, Any]) -> dict[str, Any]:
     from pycompose_codegen.emit.values import parameter_schema
 
@@ -332,9 +352,8 @@ def _prop_schema(prop: dict[str, Any]) -> dict[str, Any]:
         value = _resource_schema(prop["values"])
     elif ptype == "enum":
         value = {"enum": sorted(prop["values"])}
-    elif ptype == "actionId":
-        # One shape for every action prop, stated once under definitions.
-        value = {"$ref": "#/definitions/Action"}
+    elif ptype in SHARED:
+        value = {"$ref": f"#/definitions/{SHARED[ptype]}"}
     elif ptype == "modifier":
         value = {
             "type": "object",

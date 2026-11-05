@@ -340,6 +340,43 @@ data class Button(
 }
 
 @Serializable
+data class CanvasProps(
+    val `contentDescription`: String,
+    override val `modifier`: JsonObject? = null,
+    val `onDraw`: JsonObject,
+) : UiProps
+
+@Serializable
+@SerialName("Canvas")
+data class Canvas(
+    override val id: String,
+    override val props: CanvasProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
+    override val componentType: String get() = "Canvas"
+}
+
+@Serializable
+data class CanvasWithoutContentDescriptionProps(
+    override val `modifier`: JsonObject? = null,
+    val `onDraw`: JsonObject,
+) : UiProps
+
+@Serializable
+@SerialName("CanvasWithoutContentDescription")
+data class CanvasWithoutContentDescription(
+    override val id: String,
+    override val props: CanvasWithoutContentDescriptionProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
+    override val componentType: String get() = "CanvasWithoutContentDescription"
+}
+
+@Serializable
 data class CardProps(
     val `border`: OptionalValue = OptionalValue.Absent,
     val `colors`: JsonElement? = null,

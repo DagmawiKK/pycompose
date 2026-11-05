@@ -12,6 +12,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.VectorConverter as colorVectorConverter
 import androidx.compose.animation.core.VectorConverter
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -160,6 +161,8 @@ import com.pycompose.ir.generated.BottomAppBarActions as BottomAppBarActionsNode
 import com.pycompose.ir.generated.BottomSheetScaffold as BottomSheetScaffoldNode
 import com.pycompose.ir.generated.Box as BoxNode
 import com.pycompose.ir.generated.Button as ButtonNode
+import com.pycompose.ir.generated.Canvas as CanvasNode
+import com.pycompose.ir.generated.CanvasWithoutContentDescription as CanvasWithoutContentDescriptionNode
 import com.pycompose.ir.generated.Card as CardNode
 import com.pycompose.ir.generated.CardWithoutOnClick as CardWithoutOnClickNode
 import com.pycompose.ir.generated.CenterAlignedTopAppBar as CenterAlignedTopAppBarNode
@@ -295,12 +298,14 @@ import com.pycompose.renderer.editText
 import com.pycompose.renderer.edited
 import com.pycompose.renderer.editedText
 import com.pycompose.renderer.expressionColor
+import com.pycompose.renderer.generated.paint
 import com.pycompose.renderer.inSlot
 import com.pycompose.renderer.index
 import com.pycompose.renderer.lazyListState
 import com.pycompose.renderer.number
 import com.pycompose.renderer.publish
 import com.pycompose.renderer.reconcileProperty
+import com.pycompose.renderer.rememberDrawing
 import com.pycompose.renderer.scrollState
 import com.pycompose.renderer.sheetState
 import com.pycompose.renderer.sliderState
@@ -572,6 +577,23 @@ object GeneratedAdapters {
                 ) {
                     Text(model.props.text)
                 }
+            }
+            .register("Canvas") { node, modifier, context ->
+                val model = node as CanvasNode
+                val onDrawDrawing = rememberDrawing(model.props.onDraw)
+                Canvas(
+                    modifier = modifier,
+                    contentDescription = model.props.contentDescription,
+                    onDraw = { onDrawDrawing.draw(size.width.toDouble(), size.height.toDouble()) { paint(it) } },
+                )
+            }
+            .register("CanvasWithoutContentDescription") { node, modifier, context ->
+                val model = node as CanvasWithoutContentDescriptionNode
+                val onDrawDrawing = rememberDrawing(model.props.onDraw)
+                Canvas(
+                    modifier = modifier,
+                    onDraw = { onDrawDrawing.draw(size.width.toDouble(), size.height.toDouble()) { paint(it) } },
+                )
             }
             .register("Card") { node, modifier, context ->
                 val model = node as CardNode

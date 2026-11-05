@@ -123,6 +123,7 @@ def build_app(
         slice_registry,
         with_app_lock,
     )
+    from pycompose_codegen.emit.draws import render_draws_kotlin
     from pycompose_codegen.emit.effects import (
         render_kotlin_effects,
     )
@@ -192,6 +193,9 @@ def build_app(
         native / _ADAPTERS_RELATIVE: render_generated_adapters(sliced),
         native / _VALUES_RELATIVE.with_name("GeneratedModifiers.kt"): (
             render_modifiers(sliced)
+        ),
+        native / _VALUES_RELATIVE.with_name("DrawCalls.kt"): (
+            render_draws_kotlin(sliced)
         ),
     }
     owned = [python_root / package]

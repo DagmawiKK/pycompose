@@ -896,6 +896,61 @@
         "onHover"
       ]
     },
+    "Canvas": {
+      "package": "androidx.compose.foundation",
+      "category": "media",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V",
+        "jvmName": "Canvas",
+        "name": "Canvas",
+        "owner": "androidx.compose.foundation.CanvasKt"
+      },
+      "props": {
+        "contentDescription": {
+          "type": "string",
+          "required": true
+        },
+        "onDraw": {
+          "type": "draw",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      }
+    },
+    "CanvasWithoutContentDescription": {
+      "package": "androidx.compose.foundation",
+      "category": "media",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V",
+        "jvmName": "Canvas",
+        "name": "Canvas",
+        "owner": "androidx.compose.foundation.CanvasKt"
+      },
+      "props": {
+        "onDraw": {
+          "type": "draw",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "overloadOf": "Canvas"
+    },
     "Card": {
       "package": "androidx.compose.material3",
       "category": "layout",

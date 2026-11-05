@@ -1,5 +1,6 @@
 package com.pycompose.ir
 
+import com.pycompose.ir.generated.IrContract
 import com.pycompose.program.DrawCall
 import com.pycompose.program.Drawings
 import kotlinx.serialization.json.Json
@@ -11,6 +12,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.long
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import kotlin.math.abs
 
@@ -59,6 +61,20 @@ class DrawingsGoldenTest {
                 }
             }
         }
+    }
+
+    @Test
+    fun `a canvas whose draw program the host could not run is refused before it draws`() {
+        val program = cases[0].jsonObject.getValue("program").toString()
+        val canvas = "CanvasWithoutContentDescription"
+
+        fun snapshot(onDraw: String) =
+            """{"root":{"id":"0","type":"$canvas","props":{"onDraw":$onDraw}},""" +
+                """"schemaVersion":"${IrContract.SCHEMA_VERSION}","version":"0.1.0"}"""
+        assertTrue(IrParser().parse(snapshot(program)).isSuccess)
+        assertTrue(
+            IrParser().parse(snapshot(program.replace("\"circle\"", "\"spiral\""))).isFailure,
+        )
     }
 
     // sin and cos are not correctly rounded on either side, so a number may differ in its last bit.

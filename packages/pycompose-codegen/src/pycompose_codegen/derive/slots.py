@@ -1,18 +1,20 @@
-"""How a composable lambda parameter reaches the wire: slots, builders, scopes.
+"""How a lambda parameter reaches the wire: slots, builders, events, drawings.
 
 A slot's receiver is handed to its children (ADR-0055); a keyed slot draws one
-subtree per key (ADR-0057); a lazy list's builder lists its items. Every other
+subtree per key (ADR-0057); a lazy list's builder lists its items; a callback
+dispatches an event; a canvas's draw lambda runs a draw program. Every other
 function parameter needs a protocol the planner records as a gap.
 """
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from typing import Any
 
 from pycompose_codegen.derive.classpath_dump import Declaration
-from pycompose_codegen.derive.classpath_types import KotlinType
+from pycompose_codegen.derive.classpath_types import Kind, KotlinType
 from pycompose_codegen.derive.keyed import keyed_arguments
+from pycompose_codegen.derive.propose import SCALARS
 
 
 def function_arguments(value: KotlinType) -> list[KotlinType]:
@@ -100,3 +102,31 @@ def slot_scopes(declarations: Iterable[Declaration]) -> frozenset[str]:
         and not receiver.nullable
         and not receiver.arguments
     )
+
+
+def event_rule(value: KotlinType) -> dict[str, Any]:
+    """A callback's binding: its arguments become the event's scalar payload."""
+    arguments = function_arguments(value)
+    if any(t.classifier not in SCALARS for t in arguments):
+        raise ValueError("event payload needs a structured value codec")
+    return {
+        "policy": "event",
+        "payload": [
+            {"name": f"arg{i}", "type": SCALARS[t.classifier], "nullable": t.nullable}
+            for i, t in enumerate(arguments)
+        ],
+    }
+
+
+def draw_rule(_: KotlinType) -> dict[str, Any]:
+    """A canvas's draw lambda: a draw program the host runs every frame."""
+    return {"policy": "draw"}
+
+
+LAMBDA_RULES: dict[Kind, Callable[[KotlinType], dict[str, Any]]] = {
+    Kind.SLOT: slot_rule,
+    Kind.BUILDER: builder_rule,
+    Kind.CALLBACK: event_rule,
+    Kind.DRAW: draw_rule,
+}
+"""How each kind of lambda parameter reaches the wire."""
