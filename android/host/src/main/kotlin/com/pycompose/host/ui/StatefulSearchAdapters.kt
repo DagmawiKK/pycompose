@@ -2,6 +2,7 @@
 
 package com.pycompose.host.ui
 
+import androidx.compose.animation.core.VectorConverter
 import androidx.compose.material3.ExpandedDockedSearchBar
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.LocalTextStyle
@@ -10,10 +11,12 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.unit.Dp
 import com.pycompose.ir.generated.UiNode
 import com.pycompose.renderer.ComponentRegistry
 import com.pycompose.renderer.LocalHostSearchState
 import com.pycompose.renderer.RenderContext
+import com.pycompose.renderer.boundDp
 import com.pycompose.renderer.generated.ValueResolver
 import com.pycompose.renderer.searchState
 import com.pycompose.renderer.textInputState
@@ -89,9 +92,17 @@ internal fun ComponentRegistry.Builder.sharedSearchBars(): ComponentRegistry.Bui
                     search.props.shape?.let { ValueResolver.shape(it).getOrThrow() }
                         ?: SearchBarDefaults.inputFieldShape,
                 tonalElevation =
-                    dpProp(search.props.tonalElevation, SearchBarDefaults.TonalElevation),
+                    context.boundDp(
+                        search.props.tonalElevation,
+                        Dp.VectorConverter,
+                        SearchBarDefaults.TonalElevation,
+                    ),
                 shadowElevation =
-                    dpProp(search.props.shadowElevation, SearchBarDefaults.ShadowElevation),
+                    context.boundDp(
+                        search.props.shadowElevation,
+                        Dp.VectorConverter,
+                        SearchBarDefaults.ShadowElevation,
+                    ),
             )
             context.slot(search.children, "expandedBar")?.invoke()
         }
@@ -162,9 +173,17 @@ private fun ComponentRegistry.Builder.dockedExpandedBars(): ComponentRegistry.Bu
                     docked.props.shape?.let { ValueResolver.shape(it).getOrThrow() }
                         ?: SearchBarDefaults.dockedShape,
                 tonalElevation =
-                    dpProp(docked.props.tonalElevation, SearchBarDefaults.TonalElevation),
+                    context.boundDp(
+                        docked.props.tonalElevation,
+                        Dp.VectorConverter,
+                        SearchBarDefaults.TonalElevation,
+                    ),
                 shadowElevation =
-                    dpProp(docked.props.shadowElevation, SearchBarDefaults.ShadowElevation),
+                    context.boundDp(
+                        docked.props.shadowElevation,
+                        Dp.VectorConverter,
+                        SearchBarDefaults.ShadowElevation,
+                    ),
                 content = { context.childrenIn(this, docked.children) },
             )
         }
@@ -191,9 +210,17 @@ private fun ComponentRegistry.Builder.fullScreenExpandedBars(): ComponentRegistr
                     full.props.collapsedShape?.let { ValueResolver.shape(it).getOrThrow() }
                         ?: SearchBarDefaults.inputFieldShape,
                 tonalElevation =
-                    dpProp(full.props.tonalElevation, SearchBarDefaults.TonalElevation),
+                    context.boundDp(
+                        full.props.tonalElevation,
+                        Dp.VectorConverter,
+                        SearchBarDefaults.TonalElevation,
+                    ),
                 shadowElevation =
-                    dpProp(full.props.shadowElevation, SearchBarDefaults.ShadowElevation),
+                    context.boundDp(
+                        full.props.shadowElevation,
+                        Dp.VectorConverter,
+                        SearchBarDefaults.ShadowElevation,
+                    ),
                 windowInsets = { SearchBarDefaults.fullScreenWindowInsets },
                 content = { context.childrenIn(this, full.children) },
             )

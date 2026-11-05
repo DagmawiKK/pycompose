@@ -8,7 +8,8 @@ the converter the pin names for its type. A prop added to the catalog is covered
 the moment it derives, and a prop that stops deriving fails here.
 
 The props no generated adapter carries are read by a hand-written one, which
-goes through the same readers (``dpProp``, ``nativeColor``, ``bindingState``).
+goes through the same readers (``boundDp``, ``boundColor``, ``bound``,
+``bindingState``).
 """
 
 from __future__ import annotations
@@ -29,7 +30,13 @@ GENERATED = MANUAL_DIR / "GeneratedAdapters.kt"
 
 """Where a component reads its props: the call itself, while composing."""
 
-READERS = ("dpProp(", "nativeColor(", "bindingState(", "optionalBindingState(")
+READERS = (
+    "boundDp(",
+    "boundColor(",
+    "bound(",
+    "bindingState(",
+    "optionalBindingState(",
+)
 """The host functions that read a prop the app may bind."""
 
 DISCOVERY_FLOOR = 100
