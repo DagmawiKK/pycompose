@@ -31,8 +31,8 @@ if TYPE_CHECKING:
     from pycompose.model.programs.bound import BoundFunction
 
 Type = Literal["integer", "number", "boolean"]
-Result = Literal["integer", "number", "boolean", "draw"]
-"""What a program gives: a value of a type, or (``draw``) the paint it makes."""
+Result = Literal["integer", "number", "boolean", "draw", "layout"]
+"""What a program gives: a value of a type, or the paint or placement it makes."""
 TYPES: tuple[Type, ...] = ("integer", "number", "boolean")
 LONG = 2**63
 
@@ -213,21 +213,28 @@ class Walk:
     """Types one program's expressions, counting their nodes against a limit.
 
     ``loops`` is how many loops enclose the expression being typed; a loop's
-    index is an integer leaf, ``{"loop": k}`` for the k-th outermost.
+    index is an integer leaf, ``{"loop": k}`` for the k-th outermost. ``locals``
+    holds the type of each local open there, read as ``{"local": k}``.
     """
 
     def __init__(
-        self, params: tuple[Type, ...], nodes: int = FUNCTION_LIMITS["nodes"]
+        self,
+        params: tuple[Type, ...],
+        nodes: int = FUNCTION_LIMITS["nodes"],
+        ops: Mapping[str, Mapping[tuple[Type, ...], Type]] | None = None,
     ) -> None:
         """Start a walk.
 
         Args:
             params: The program's argument types.
             nodes: How many nodes the whole program may hold.
+            ops: Operations a program kind adds to the catalog's, by signature.
         """
         self.params = params
         self.nodes = nodes
+        self.ops = ops or {}
         self.loops = 0
+        self.locals: list[Type] = []
         self.count = 0
 
     def type(self, node: object, depth: int) -> Type:
@@ -252,7 +259,7 @@ class Walk:
             ((key, literal),) = node.items()
             return self.leaf(str(key), literal)
         op, args = node.get("op"), node.get("args")
-        signatures = FUNCTION_SIGNATURES.get(str(op), {})
+        signatures = FUNCTION_SIGNATURES.get(str(op)) or self.ops.get(str(op), {})
         if (
             set(node) != {"op", "args"}
             or not signatures
@@ -261,13 +268,13 @@ class Walk:
         ):
             raise IrValidationError(f"unknown program op {op!r}")
         given = [self.type(arg, depth + 1) for arg in args]
-        typed = result_type(str(op), given)
+        typed = cast("Type | None", signatures.get(tuple(given)))
         if typed is None:
             raise IrValidationError(f"program op {op!r} does not take {given}")
         return typed
 
     def leaf(self, key: str, literal: object) -> Type:
-        """The type one leaf gives: a literal, an argument or a loop's index.
+        """The type one leaf gives: a literal, an argument, a loop's index or a local.
 
         Args:
             key: The leaf's kind.
@@ -285,10 +292,10 @@ class Walk:
         elif isinstance(literal, int):
             if key == "integer" and -LONG <= literal < LONG:
                 return "integer"
-            if key == "arg" and 0 <= literal < len(self.params):
-                return self.params[literal]
-            if key == "loop" and 0 <= literal < self.loops:
-                return "integer"
+            slots = {"arg": self.params, "local": self.locals}
+            slots["loop"] = ["integer"] * self.loops
+            if key in slots and 0 <= literal < len(slots[key]):
+                return cast("Type", slots[key][literal])
             if key == "number":
                 return "number"
         elif isinstance(literal, float) and key == "number" and math.isfinite(literal):

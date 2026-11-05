@@ -3,7 +3,7 @@
   "kind": "full",
   "metadata": {
    "programs": {
-    "ad742e4944e0fd48d0749b9aea7168c49570b2460468a34949650b62281651d3": {
+    "6981a8c05cd82224fd33b586f8a95e167b6e22875293c425c5e1ea2966ef0d60": {
      "body": [
       {
        "args": [
@@ -37,7 +37,7 @@
          "number": 0.0
         }
        ],
-       "draw": "rect"
+       "call": "rect"
       }
      ],
      "params": [
@@ -60,7 +60,7 @@
         0.25
        ],
        "program": {
-        "hash": "ad742e4944e0fd48d0749b9aea7168c49570b2460468a34949650b62281651d3",
+        "hash": "6981a8c05cd82224fd33b586f8a95e167b6e22875293c425c5e1ea2966ef0d60",
         "type": "ref"
        },
        "type": "bound"
@@ -76,7 +76,7 @@
         0.5
        ],
        "program": {
-        "hash": "ad742e4944e0fd48d0749b9aea7168c49570b2460468a34949650b62281651d3",
+        "hash": "6981a8c05cd82224fd33b586f8a95e167b6e22875293c425c5e1ea2966ef0d60",
         "type": "ref"
        },
        "type": "bound"
@@ -113,7 +113,7 @@
       0.75
      ],
      "program": {
-      "hash": "ad742e4944e0fd48d0749b9aea7168c49570b2460468a34949650b62281651d3",
+      "hash": "6981a8c05cd82224fd33b586f8a95e167b6e22875293c425c5e1ea2966ef0d60",
       "type": "ref"
      },
      "type": "bound"

@@ -12,6 +12,21 @@
 # artifact androidx.compose.ui:ui-graphics-android:1.12.1
 # artifact androidx.compose.ui:ui-text-android:1.12.1
 # artifact androidx.compose.ui:ui-unit-android:1.12.1
+# artifact androidx.lifecycle:lifecycle-viewmodel-android:2.11.0
+# artifact androidx.savedstate:savedstate-android:1.5.0
+androidx.lifecycle.ViewModelStore constructor <init>(): androidx.lifecycle.ViewModelStore
+androidx.lifecycle.ViewModelStore fun clear(): Unit
+androidx.lifecycle.ViewModelStore fun toString(): String
+androidx.lifecycle.ViewModelStoreOwner val viewModelStore(): androidx.lifecycle.ViewModelStore
+androidx.savedstate.SavedStateRegistry fun consumeRestoredStateForKey(key: String): android.os.Bundle?
+androidx.savedstate.SavedStateRegistry fun getSavedStateProvider(key: String): androidx.savedstate.SavedStateRegistry.SavedStateProvider?
+androidx.savedstate.SavedStateRegistry fun registerSavedStateProvider(key: String, provider: androidx.savedstate.SavedStateRegistry.SavedStateProvider): Unit
+androidx.savedstate.SavedStateRegistry fun runOnNextRecreation(clazz: java.lang.Class<out androidx.savedstate.SavedStateRegistry.AutoRecreated>): Unit
+androidx.savedstate.SavedStateRegistry fun unregisterSavedStateProvider(key: String): Unit
+androidx.savedstate.SavedStateRegistry val isRestored(): Boolean
+androidx.savedstate.SavedStateRegistry$AutoRecreated fun onRecreated(owner: androidx.savedstate.SavedStateRegistryOwner): Unit
+androidx.savedstate.SavedStateRegistry$SavedStateProvider fun saveState(): android.os.Bundle
+androidx.savedstate.SavedStateRegistryOwner val savedStateRegistry(): androidx.savedstate.SavedStateRegistry
 animation.AnimatedContentKt @Composable fun AnimatedContent(targetState: #0, modifier: ui.Modifier = …, transitionSpec: animation.AnimatedContentTransitionScope<#0>.() -> animation.ContentTransform = …, contentAlignment: ui.Alignment = …, label: String = …, contentKey: (#0) -> Any? = …, content: @Composable animation.AnimatedContentScope.(#0) -> Unit): Unit
 animation.AnimatedContentKt @Composable fun animation.core.DeferredTransition<#0>.DeferredAnimatedContent(modifier: ui.Modifier = …, transitionSpec: animation.AnimatedContentTransitionScope<#0>.() -> animation.ContentTransform = …, contentAlignment: ui.Alignment = …, contentKey: (#0) -> Any? = …, mutableTransformSpec: animation.AnimatedContentTransitionScope<#0>.() -> animation.MutableContentTransform? = …, content: @Composable animation.AnimatedContentScope.(#0) -> Unit): Unit
 animation.AnimatedContentKt @Composable fun animation.core.Transition<#0>.AnimatedContent(modifier: ui.Modifier = …, transitionSpec: animation.AnimatedContentTransitionScope<#0>.() -> animation.ContentTransform = …, contentAlignment: ui.Alignment = …, contentKey: (#0) -> Any? = …, content: @Composable animation.AnimatedContentScope.(#0) -> Unit): Unit
@@ -1590,6 +1605,10 @@ material3.pulltorefresh.PullToRefreshState suspend fun animateToThreshold(): Uni
 material3.pulltorefresh.PullToRefreshState suspend fun snapTo(targetValue: Float): Unit
 material3.pulltorefresh.PullToRefreshState val distanceFraction(): Float
 material3.pulltorefresh.PullToRefreshState val isAnimating(): Boolean
+runtime.CancellationHandle fun cancel(): Unit
+runtime.CompositionContext fun scheduleFrameEndCallback(action: () -> Unit): runtime.CancellationHandle
+runtime.CompositionContext val effectCoroutineContext(): kotlin.coroutines.CoroutineContext
+runtime.ShouldPauseCallback fun shouldPause(): Boolean
 runtime.State val value(): #0
 ui.Alignment fun align(size: ui.unit.IntSize, space: ui.unit.IntSize, layoutDirection: ui.unit.LayoutDirection): ui.unit.IntOffset
 ui.Alignment$Horizontal fun align(size: Int, space: Int, layoutDirection: ui.unit.LayoutDirection): Int
@@ -2163,10 +2182,20 @@ ui.layout.LayoutCoordinates val parentCoordinates(): ui.layout.LayoutCoordinates
 ui.layout.LayoutCoordinates val parentLayoutCoordinates(): ui.layout.LayoutCoordinates?
 ui.layout.LayoutCoordinates val providedAlignmentLines(): kotlin.collections.Set<ui.layout.AlignmentLine>
 ui.layout.LayoutCoordinates val size(): ui.unit.IntSize
+ui.layout.LayoutKt @Composable fun MultiMeasureLayout(modifier: ui.Modifier = …, content: @Composable () -> Unit, measurePolicy: ui.layout.MeasurePolicy): Unit
+ui.layout.LayoutKt @Composable inline fun Layout(content: @Composable () -> Unit, modifier: ui.Modifier = …, measurePolicy: ui.layout.MeasurePolicy): Unit
+ui.layout.LayoutKt @Composable inline fun Layout(contents: kotlin.collections.List<@Composable () -> Unit>, modifier: ui.Modifier = …, measurePolicy: ui.layout.MultiContentMeasurePolicy): Unit
+ui.layout.LayoutKt @Composable inline fun Layout(modifier: ui.Modifier = …, measurePolicy: ui.layout.MeasurePolicy): Unit
 ui.layout.LookaheadScope fun ui.layout.LayoutCoordinates.localLookaheadPositionOf(sourceCoordinates: ui.layout.LayoutCoordinates, relativeToSource: ui.geometry.Offset = …, includeMotionFrameOfReference: Boolean = …): ui.geometry.Offset
 ui.layout.LookaheadScope fun ui.layout.LayoutCoordinates.toLookaheadCoordinates(): ui.layout.LayoutCoordinates
 ui.layout.LookaheadScope val ui.layout.Placeable.PlacementScope.lookaheadScopeCoordinates(): ui.layout.LayoutCoordinates
+ui.layout.LookaheadScopeKt @Composable fun LookaheadScope(content: @Composable ui.layout.LookaheadScope.() -> Unit): Unit
 ui.layout.Measurable fun measure(constraints: ui.unit.Constraints): ui.layout.Placeable
+ui.layout.MeasurePolicy fun ui.layout.IntrinsicMeasureScope.maxIntrinsicHeight(measurables: kotlin.collections.List<ui.layout.IntrinsicMeasurable>, width: Int): Int
+ui.layout.MeasurePolicy fun ui.layout.IntrinsicMeasureScope.maxIntrinsicWidth(measurables: kotlin.collections.List<ui.layout.IntrinsicMeasurable>, height: Int): Int
+ui.layout.MeasurePolicy fun ui.layout.IntrinsicMeasureScope.minIntrinsicHeight(measurables: kotlin.collections.List<ui.layout.IntrinsicMeasurable>, width: Int): Int
+ui.layout.MeasurePolicy fun ui.layout.IntrinsicMeasureScope.minIntrinsicWidth(measurables: kotlin.collections.List<ui.layout.IntrinsicMeasurable>, height: Int): Int
+ui.layout.MeasurePolicy fun ui.layout.MeasureScope.measure(measurables: kotlin.collections.List<ui.layout.Measurable>, constraints: ui.unit.Constraints): ui.layout.MeasureResult
 ui.layout.MeasureResult fun placeChildren(): Unit
 ui.layout.MeasureResult val alignmentLines(): kotlin.collections.Map<ui.layout.AlignmentLine, Int>
 ui.layout.MeasureResult val height(): Int
@@ -2181,6 +2210,11 @@ ui.layout.Measured fun get(alignmentLine: ui.layout.AlignmentLine): Int
 ui.layout.Measured val measuredHeight(): Int
 ui.layout.Measured val measuredWidth(): Int
 ui.layout.Measured val parentData(): Any?
+ui.layout.MultiContentMeasurePolicy fun ui.layout.IntrinsicMeasureScope.maxIntrinsicHeight(measurables: kotlin.collections.List<kotlin.collections.List<ui.layout.IntrinsicMeasurable>>, width: Int): Int
+ui.layout.MultiContentMeasurePolicy fun ui.layout.IntrinsicMeasureScope.maxIntrinsicWidth(measurables: kotlin.collections.List<kotlin.collections.List<ui.layout.IntrinsicMeasurable>>, height: Int): Int
+ui.layout.MultiContentMeasurePolicy fun ui.layout.IntrinsicMeasureScope.minIntrinsicHeight(measurables: kotlin.collections.List<kotlin.collections.List<ui.layout.IntrinsicMeasurable>>, width: Int): Int
+ui.layout.MultiContentMeasurePolicy fun ui.layout.IntrinsicMeasureScope.minIntrinsicWidth(measurables: kotlin.collections.List<kotlin.collections.List<ui.layout.IntrinsicMeasurable>>, height: Int): Int
+ui.layout.MultiContentMeasurePolicy fun ui.layout.MeasureScope.measure(measurables: kotlin.collections.List<kotlin.collections.List<ui.layout.Measurable>>, constraints: ui.unit.Constraints): ui.layout.MeasureResult
 ui.layout.Placeable constructor <init>(): ui.layout.Placeable
 ui.layout.Placeable val height(): Int
 ui.layout.Placeable val measuredHeight(): Int
@@ -2219,11 +2253,80 @@ ui.layout.ScaleFactor inline fun component2(): Float
 ui.layout.ScaleFactor val packedValue(): Long
 ui.layout.ScaleFactor val scaleX(): Float
 ui.layout.ScaleFactor val scaleY(): Float
+ui.layout.SubcomposeLayoutKt @Composable fun SubcomposeLayout(modifier: ui.Modifier = …, measurePolicy: ui.layout.SubcomposeMeasureScope.(ui.unit.Constraints) -> ui.layout.MeasureResult): Unit
+ui.layout.SubcomposeLayoutKt @Composable fun SubcomposeLayout(state: ui.layout.SubcomposeLayoutState, modifier: ui.Modifier = …, measurePolicy: ui.layout.SubcomposeMeasureScope.(ui.unit.Constraints) -> ui.layout.MeasureResult): Unit
+ui.layout.SubcomposeLayoutState constructor <init>(): ui.layout.SubcomposeLayoutState
+ui.layout.SubcomposeLayoutState constructor <init>(maxSlotsToRetainForReuse: Int): ui.layout.SubcomposeLayoutState
+ui.layout.SubcomposeLayoutState constructor <init>(slotReusePolicy: ui.layout.SubcomposeSlotReusePolicy): ui.layout.SubcomposeLayoutState
+ui.layout.SubcomposeLayoutState fun createPausedPrecomposition(slotId: Any?, content: @Composable () -> Unit): ui.layout.SubcomposeLayoutState.PausedPrecomposition
+ui.layout.SubcomposeLayoutState fun precompose(slotId: Any?, content: @Composable () -> Unit): ui.layout.SubcomposeLayoutState.PrecomposedSlotHandle
+ui.layout.SubcomposeLayoutState$PausedPrecomposition fun apply(): ui.layout.SubcomposeLayoutState.PrecomposedSlotHandle
+ui.layout.SubcomposeLayoutState$PausedPrecomposition fun cancel(): Unit
+ui.layout.SubcomposeLayoutState$PausedPrecomposition fun resume(shouldPause: runtime.ShouldPauseCallback): Boolean
+ui.layout.SubcomposeLayoutState$PausedPrecomposition val isComplete(): Boolean
+ui.layout.SubcomposeLayoutState$PrecomposedSlotHandle fun dispose(): Unit
+ui.layout.SubcomposeLayoutState$PrecomposedSlotHandle fun getSize(index: Int): ui.unit.IntSize
+ui.layout.SubcomposeLayoutState$PrecomposedSlotHandle fun premeasure(index: Int, constraints: ui.unit.Constraints): Unit
+ui.layout.SubcomposeLayoutState$PrecomposedSlotHandle fun traverseDescendants(key: Any?, block: (ui.node.TraversableNode) -> ui.node.TraversableNode.Companion.TraverseDescendantsAction): Unit
+ui.layout.SubcomposeLayoutState$PrecomposedSlotHandle val placeablesCount(): Int
+ui.layout.SubcomposeMeasureScope fun subcompose(slotId: Any?, content: @Composable () -> Unit): kotlin.collections.List<ui.layout.Measurable>
+ui.layout.SubcomposeSlotReusePolicy fun areCompatible(slotId: Any?, reusableSlotId: Any?): Boolean
+ui.layout.SubcomposeSlotReusePolicy fun getSlotsToRetain(slotIds: ui.layout.SubcomposeSlotReusePolicy.SlotIdsSet): Unit
+ui.layout.SubcomposeSlotReusePolicy$SlotIdsSet fun clear(): Unit
+ui.layout.SubcomposeSlotReusePolicy$SlotIdsSet fun contains(element: Any?): Boolean
+ui.layout.SubcomposeSlotReusePolicy$SlotIdsSet fun containsAll(elements: kotlin.collections.Collection<Any?>): Boolean
+ui.layout.SubcomposeSlotReusePolicy$SlotIdsSet fun forEach(block: (Any?) -> Unit): Unit
+ui.layout.SubcomposeSlotReusePolicy$SlotIdsSet fun isEmpty(): Boolean
+ui.layout.SubcomposeSlotReusePolicy$SlotIdsSet fun iterator(): kotlin.collections.MutableIterator<Any?>
+ui.layout.SubcomposeSlotReusePolicy$SlotIdsSet fun remove(slotId: Any?): Boolean
+ui.layout.SubcomposeSlotReusePolicy$SlotIdsSet fun removeAll(predicate: (Any?) -> Boolean): Boolean
+ui.layout.SubcomposeSlotReusePolicy$SlotIdsSet fun removeAll(slotIds: kotlin.collections.Collection<Any?>): Boolean
+ui.layout.SubcomposeSlotReusePolicy$SlotIdsSet fun retainAll(predicate: (Any?) -> Boolean): Boolean
+ui.layout.SubcomposeSlotReusePolicy$SlotIdsSet fun retainAll(slotIds: kotlin.collections.Collection<Any?>): Boolean
+ui.layout.SubcomposeSlotReusePolicy$SlotIdsSet fun trimToSize(maxSlotsToRetainForReuse: Int): Unit
+ui.layout.SubcomposeSlotReusePolicy$SlotIdsSet inline fun fastForEach(block: (Any?) -> Unit): Unit
+ui.layout.SubcomposeSlotReusePolicy$SlotIdsSet val size(): Int
 ui.layout.VerticalAlignmentLine constructor <init>(merger: (Int, Int) -> Int): ui.layout.VerticalAlignmentLine
 ui.layout.VerticalRuler constructor <init>(): ui.layout.VerticalRuler
 ui.node.DelegatableNode fun onDensityChange(): Unit
 ui.node.DelegatableNode fun onLayoutDirectionChange(): Unit
 ui.node.DelegatableNode val node(): ui.Modifier.Node
+ui.node.TraversableNode val traverseKey(): Any
+ui.platform.AbstractComposeView @Composable fun Content(): Unit
+ui.platform.AbstractComposeView constructor <init>(context: android.content.Context, attrs: android.util.AttributeSet? = …, defStyleAttr: Int = …): ui.platform.AbstractComposeView
+ui.platform.AbstractComposeView fun addView(child: android.view.View?): Unit
+ui.platform.AbstractComposeView fun addView(child: android.view.View?, index: Int): Unit
+ui.platform.AbstractComposeView fun addView(child: android.view.View?, index: Int, params: android.view.ViewGroup.LayoutParams?): Unit
+ui.platform.AbstractComposeView fun addView(child: android.view.View?, params: android.view.ViewGroup.LayoutParams?): Unit
+ui.platform.AbstractComposeView fun addView(child: android.view.View?, width: Int, height: Int): Unit
+ui.platform.AbstractComposeView fun createComposition(): Unit
+ui.platform.AbstractComposeView fun createComposition(composeViewContext: ui.platform.ComposeViewContext): Unit
+ui.platform.AbstractComposeView fun disposeComposition(): Unit
+ui.platform.AbstractComposeView fun isTransitionGroup(): Boolean
+ui.platform.AbstractComposeView fun onRtlPropertiesChanged(layoutDirection: Int): Unit
+ui.platform.AbstractComposeView fun setParentCompositionContext(parent: runtime.CompositionContext?): Unit
+ui.platform.AbstractComposeView fun setTransitionGroup(isTransitionGroup: Boolean): Unit
+ui.platform.AbstractComposeView fun setViewCompositionStrategy(strategy: ui.platform.ViewCompositionStrategy): Unit
+ui.platform.AbstractComposeView fun shouldDelayChildPressedState(): Boolean
+ui.platform.AbstractComposeView val autoClearFocusBehavior(): ui.platform.AutoClearFocusBehavior
+ui.platform.AbstractComposeView val hasComposition(): Boolean
+ui.platform.AbstractComposeView val showLayoutBounds(): Boolean
+ui.platform.AutoClearFocusBehavior fun equals(other: Any?): Boolean
+ui.platform.AutoClearFocusBehavior fun hashCode(): Int
+ui.platform.AutoClearFocusBehavior fun toString(): String
+ui.platform.ComposeView @Composable fun Content(): Unit
+ui.platform.ComposeView constructor <init>(context: android.content.Context, attrs: android.util.AttributeSet? = …, defStyleAttr: Int = …): ui.platform.ComposeView
+ui.platform.ComposeView fun getAccessibilityClassName(): CharSequence
+ui.platform.ComposeView fun setContent(content: @Composable () -> Unit): Unit
+ui.platform.ComposeViewContext constructor <init>(view: android.view.View, compositionContext: runtime.CompositionContext? = …, lifecycleOwner: androidx.lifecycle.LifecycleOwner? = …, savedStateRegistryOwner: androidx.savedstate.SavedStateRegistryOwner? = …, viewModelStoreOwner: androidx.lifecycle.ViewModelStoreOwner? = …): ui.platform.ComposeViewContext
+ui.platform.ComposeViewContext fun copy(view: android.view.View = …, compositionContext: runtime.CompositionContext? = …, lifecycleOwner: androidx.lifecycle.LifecycleOwner? = …, savedStateRegistryOwner: androidx.savedstate.SavedStateRegistryOwner? = …, viewModelStoreOwner: androidx.lifecycle.ViewModelStoreOwner? = …): ui.platform.ComposeViewContext
+ui.platform.PlatformTextInputInterceptor suspend fun interceptStartInputMethod(request: ui.platform.PlatformTextInputMethodRequest, nextHandler: ui.platform.PlatformTextInputSession): Nothing
+ui.platform.PlatformTextInputMethodRequest fun createInputConnection(outAttributes: android.view.inputmethod.EditorInfo): android.view.inputmethod.InputConnection
+ui.platform.PlatformTextInputModifierNodeKt @Composable fun InterceptPlatformTextInput(interceptor: ui.platform.PlatformTextInputInterceptor, content: @Composable () -> Unit): Unit
+ui.platform.PlatformTextInputSession suspend fun startInputMethod(request: ui.platform.PlatformTextInputMethodRequest): Nothing
+ui.platform.PlatformTextInputSession val view(): android.view.View
+ui.platform.SoundEffectOnInteraction_androidKt @Composable fun SoundEffectOnInteraction(enabled: Boolean, content: @Composable () -> Unit): Unit
+ui.platform.ViewCompositionStrategy fun installFor(view: ui.platform.AbstractComposeView): () -> Unit
 ui.semantics.SemanticsPropertyKey constructor <init>(name: String, mergePolicy: (#0?, #0) -> #0? = …): ui.semantics.SemanticsPropertyKey
 ui.semantics.SemanticsPropertyKey fun getValue(thisRef: ui.semantics.SemanticsPropertyReceiver, property: kotlin.reflect.KProperty<*>): #0
 ui.semantics.SemanticsPropertyKey fun merge(parentValue: #0?, childValue: #0): #0?
@@ -2871,6 +2974,11 @@ ui.unit.Velocity inline fun component1(): Float
 ui.unit.Velocity inline fun component2(): Float
 ui.unit.Velocity val x(): Float
 ui.unit.Velocity val y(): Float
+ui.viewinterop.AndroidView_androidKt @Composable fun AndroidView(factory: (android.content.Context) -> #0, modifier: ui.Modifier = …, onReset: ((#0) -> Unit)? = …, onRelease: (#0) -> Unit = …, update: (#0) -> Unit = …): Unit
+ui.viewinterop.AndroidView_androidKt @Composable fun AndroidView(factory: (android.content.Context) -> #0, modifier: ui.Modifier = …, update: (#0) -> Unit = …): Unit
+ui.window.AndroidDialog_androidKt @Composable fun Dialog(onDismissRequest: () -> Unit, properties: ui.window.DialogProperties = …, content: @Composable () -> Unit): Unit
+ui.window.AndroidPopup_androidKt @Composable fun Popup(alignment: ui.Alignment = …, offset: ui.unit.IntOffset = …, onDismissRequest: (() -> Unit)? = …, properties: ui.window.PopupProperties = …, content: @Composable () -> Unit): Unit
+ui.window.AndroidPopup_androidKt @Composable fun Popup(popupPositionProvider: ui.window.PopupPositionProvider, onDismissRequest: (() -> Unit)? = …, properties: ui.window.PopupProperties = …, content: @Composable () -> Unit): Unit
 ui.window.DialogProperties constructor <init>(dismissOnBackPress: Boolean = …, dismissOnClickOutside: Boolean = …, securePolicy: ui.window.SecureFlagPolicy = …, usePlatformDefaultWidth: Boolean = …, decorFitsSystemWindows: Boolean = …, windowTitle: String = …, windowType: Int = …, windowToken: android.os.IBinder? = …): ui.window.DialogProperties
 ui.window.DialogProperties constructor <init>(dismissOnBackPress: Boolean = …, dismissOnClickOutside: Boolean = …, usePlatformDefaultWidth: Boolean = …): ui.window.DialogProperties
 ui.window.DialogProperties fun equals(other: Any?): Boolean

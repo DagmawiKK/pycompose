@@ -45,6 +45,7 @@ from pycompose_codegen.derive.propose import (
 from pycompose_codegen.derive.resolution import MODIFIER, block_unaddressable_overloads
 from pycompose_codegen.derive.slots import (
     LAMBDA_RULES,
+    PROGRAM_INTERFACES,
     scope_providers,
     slot_scopes,
 )
@@ -75,6 +76,8 @@ def _binding_rule(
         return {"policy": "modifier"}
     if (lambda_rule := LAMBDA_RULES.get(parameter.kind)) is not None:
         rule = lambda_rule(value)
+    elif value.classifier in PROGRAM_INTERFACES and not value.nullable:
+        rule = {"policy": PROGRAM_INTERFACES[value.classifier]}
     elif (typed := _host_filled(parameter, holders)) is not None:
         rule = typed
     elif value.classifier in SCALARS and not value.arguments:

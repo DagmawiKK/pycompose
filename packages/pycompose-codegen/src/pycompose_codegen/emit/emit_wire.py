@@ -108,8 +108,9 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
                 },
                 "additionalProperties": False,
             },
-            # A draw program of the canvas's size, or one with the rest bound.
-            "Drawing": {
+            # A program the host runs -- a drawing, a layout -- of the arguments
+            # the host gives, or one with the rest bound.
+            "HostCall": {
                 "anyOf": [
                     {"$ref": "#/definitions/ProgramRef"},
                     {
@@ -348,7 +349,7 @@ def _resource_schema(kinds: list[str]) -> dict[str, Any]:
     return {"type": "string", "pattern": "^(" + "|".join(patterns) + r")(?![\s\S])"}
 
 
-SHARED = {"actionId": "Action", "draw": "Drawing"}
+SHARED = {"actionId": "Action", "draw": "HostCall", "layout": "HostCall"}
 """Prop types whose one shape is stated once under definitions."""
 
 

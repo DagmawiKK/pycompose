@@ -106,13 +106,13 @@ private fun ButtonPreview() {
 @Preview(name = "Canvas", showBackground = true)
 @Composable
 private fun CanvasPreview() {
-    Sample("""{"metadata": {"intents": {}, "programs": {"b6940acae8097e9f81b85b46b4ee21242d7b8eb04c5a835a2af2e0c27e401faf": {"body": [{"args": [{"integer": 4284960932}, {"number": 8.0}, {"number": 8.0}, {"boolean": true}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}], "draw": "arc"}], "params": ["number", "number"], "result": "draw", "type": "program"}}}, "root": {"id": "preview", "props": {"contentDescription": "Preview", "onDraw": {"hash": "b6940acae8097e9f81b85b46b4ee21242d7b8eb04c5a835a2af2e0c27e401faf", "type": "ref"}}, "type": "Canvas"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}, "programs": {"4ee9868430f1800bffa2c071be196beef084c2cabd1001131e16d59a76eb25d8": {"body": [{"args": [{"integer": 4284960932}, {"number": 8.0}, {"number": 8.0}, {"boolean": true}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}], "call": "arc"}], "params": ["number", "number"], "result": "draw", "type": "program"}}}, "root": {"id": "preview", "props": {"contentDescription": "Preview", "onDraw": {"hash": "4ee9868430f1800bffa2c071be196beef084c2cabd1001131e16d59a76eb25d8", "type": "ref"}}, "type": "Canvas"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "CanvasWithoutContentDescription", showBackground = true)
 @Composable
 private fun CanvasWithoutContentDescriptionPreview() {
-    Sample("""{"metadata": {"intents": {}, "programs": {"b6940acae8097e9f81b85b46b4ee21242d7b8eb04c5a835a2af2e0c27e401faf": {"body": [{"args": [{"integer": 4284960932}, {"number": 8.0}, {"number": 8.0}, {"boolean": true}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}], "draw": "arc"}], "params": ["number", "number"], "result": "draw", "type": "program"}}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "CanvasWithoutContentDescription", "type": "semantics"}]}, "onDraw": {"hash": "b6940acae8097e9f81b85b46b4ee21242d7b8eb04c5a835a2af2e0c27e401faf", "type": "ref"}}, "type": "CanvasWithoutContentDescription"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}, "programs": {"4ee9868430f1800bffa2c071be196beef084c2cabd1001131e16d59a76eb25d8": {"body": [{"args": [{"integer": 4284960932}, {"number": 8.0}, {"number": 8.0}, {"boolean": true}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}, {"number": 8.0}], "call": "arc"}], "params": ["number", "number"], "result": "draw", "type": "program"}}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "CanvasWithoutContentDescription", "type": "semantics"}]}, "onDraw": {"hash": "4ee9868430f1800bffa2c071be196beef084c2cabd1001131e16d59a76eb25d8", "type": "ref"}}, "type": "CanvasWithoutContentDescription"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Card", showBackground = true)
@@ -173,6 +173,12 @@ private fun DatePickerPreview() {
 @Composable
 private fun DatePickerDialogPreview() {
     Sample("""{"metadata": {"intents": {"preview.onDismissRequest": {"payload": {}}}}, "root": {"children": [{"id": "preview.confirmButton", "props": {"text": "confirmButton"}, "slot": "confirmButton", "type": "Text"}, {"id": "preview.child", "props": {"text": "DatePickerDialog"}, "type": "Text"}], "id": "preview", "props": {"onDismissRequest": {"fields": {}, "intent": "preview.onDismissRequest"}}, "type": "DatePickerDialog"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "Dialog", showBackground = true)
+@Composable
+private fun DialogPreview() {
+    Sample("""{"metadata": {"intents": {"preview.onDismissRequest": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Dialog"}, "type": "Text"}], "id": "preview", "props": {"onDismissRequest": {"fields": {}, "intent": "preview.onDismissRequest"}}, "type": "Dialog"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "DisableSelection", showBackground = true)
@@ -403,6 +409,12 @@ private fun LargeTopAppBarPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.actions", "props": {"text": "actions"}, "slot": "actions", "type": "Text"}, {"id": "preview.navigationIcon", "props": {"text": "navigationIcon"}, "slot": "navigationIcon", "type": "Text"}, {"id": "preview.title", "props": {"text": "title"}, "slot": "title", "type": "Text"}], "id": "preview", "props": {}, "type": "LargeTopAppBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "Layout", showBackground = true)
+@Composable
+private fun LayoutPreview() {
+    Sample("""{"metadata": {"intents": {}, "programs": {"f4bdaebcf7aac556250d28e2f8ef98bb9734eb070be062b541a038c5d03aaab4": {"body": [{"body": [{"args": [{"loop": 0}, {"number": 0.0}, {"number": 0.0}], "call": "place"}], "repeat": "children"}, {"args": [{"args": [{"integer": 0}], "op": "childWidth"}, {"args": [{"integer": 0}], "op": "childHeight"}], "call": "size"}], "params": ["number", "number", "integer"], "result": "layout", "type": "program"}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Layout"}, "type": "Text"}], "id": "preview", "props": {"measurePolicy": {"hash": "f4bdaebcf7aac556250d28e2f8ef98bb9734eb070be062b541a038c5d03aaab4", "type": "ref"}}, "type": "Layout"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "LazyColumn", showBackground = true)
 @Composable
 private fun LazyColumnPreview() {
@@ -437,6 +449,12 @@ private fun LinearProgressIndicatorWithoutProgressPreview() {
 @Composable
 private fun ListItemPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.headlineContent", "props": {"text": "headlineContent"}, "slot": "headlineContent", "type": "Text"}], "id": "preview", "props": {}, "type": "ListItem"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "LookaheadScope", showBackground = true)
+@Composable
+private fun LookaheadScopePreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "LookaheadScope"}, "type": "Text"}], "id": "preview", "props": {}, "type": "LookaheadScope"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "MediumTopAppBar", showBackground = true)
@@ -601,6 +619,12 @@ private fun PlainTooltipPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "provider.child", "props": {"text": "Label"}, "type": "Text"}, {"children": [{"id": "preview.child", "props": {"text": "PlainTooltip"}, "type": "Text"}], "id": "preview", "props": {}, "slot": "label", "type": "PlainTooltip"}], "id": "provider", "props": {}, "type": "Label"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "Popup", showBackground = true)
+@Composable
+private fun PopupPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Popup"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Popup"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "PrimaryScrollableTabRow", showBackground = true)
 @Composable
 private fun PrimaryScrollableTabRowPreview() {
@@ -743,6 +767,12 @@ private fun SnackbarPreview() {
 @Composable
 private fun SnackbarHostPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"message": "Preview", "serial": 0}, "type": "SnackbarHost"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "SoundEffectOnInteraction", showBackground = true)
+@Composable
+private fun SoundEffectOnInteractionPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "SoundEffectOnInteraction"}, "type": "Text"}], "id": "preview", "props": {"enabled": true}, "type": "SoundEffectOnInteraction"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Spacer", showBackground = true)

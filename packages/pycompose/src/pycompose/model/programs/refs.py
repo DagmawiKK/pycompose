@@ -22,6 +22,7 @@ from pycompose.errors import IrValidationError
 from pycompose.model.canonical import canonical_json_bytes
 from pycompose.model.programs.drawing import DRAW, validate_drawing
 from pycompose.model.programs.functions import validate_function
+from pycompose.model.programs.layout import LAYOUT, validate_layout
 
 PROGRAMS = "programs"
 """The metadata section holding a snapshot's programs, by hash."""
@@ -105,9 +106,8 @@ def read_programs(metadata: Mapping[str, object] | None) -> Mapping[str, object]
     for name, program in section.items():
         if not isinstance(program, Mapping) or program_hash(program) != name:
             raise IrValidationError(f"program {name!r} is not named by its content")
-        (validate_drawing if program.get("result") == DRAW else validate_function)(
-            program
-        )
+        check = {DRAW: validate_drawing, LAYOUT: validate_layout}
+        check.get(str(program.get("result")), validate_function)(program)
     return cast("Mapping[str, object]", section)
 
 

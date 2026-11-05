@@ -367,6 +367,16 @@ object IrContract {
                 "tonalElevation" to PropertyRule("dp", required = false, animation = true),
             ),
         ),
+        "Dialog" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+                "onDismissRequest" to PropertyRule("actionId", required = true),
+            ),
+        ),
         "DisableSelection" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -932,6 +942,16 @@ object IrContract {
                 "windowInsets" to PropertyRule("value", required = false, valueType = "WindowInsets"),
             ),
         ),
+        "Layout" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "measurePolicy" to PropertyRule("layout", required = true),
+                "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
         "LazyColumn" to ComponentRule(
             slots = setOf(),
             childrenAllowed = true,
@@ -1019,6 +1039,15 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
                 "shadowElevation" to PropertyRule("dp", required = false, animation = true),
                 "tonalElevation" to PropertyRule("dp", required = false, animation = true),
+            ),
+        ),
+        "LookaheadScope" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
             ),
         ),
         "MediumTopAppBar" to ComponentRule(
@@ -1416,6 +1445,15 @@ object IrContract {
                 "tonalElevation" to PropertyRule("dp", required = false, since = "1.23.0", animation = true),
             ),
         ),
+        "Popup" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
         "PrimaryScrollableTabRow" to ComponentRule(
             slots = setOf("tabs"),
             childrenAllowed = false,
@@ -1753,6 +1791,16 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
                 "onDismiss" to PropertyRule("actionId", required = false),
                 "serial" to PropertyRule("integer", required = true),
+            ),
+        ),
+        "SoundEffectOnInteraction" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "enabled" to PropertyRule("boolean", required = true),
+                "modifier" to PropertyRule("modifier", required = false),
             ),
         ),
         "Spacer" to ComponentRule(
@@ -2484,6 +2532,17 @@ object IrContract {
     const val DRAW_DRAWS = 4096
     const val DRAW_REPEAT = 1024
     const val DRAW_LOOPS = 3
+    val layoutCalls: Map<String, List<String>> = mapOf(
+        "place" to listOf("integer", "number", "number"),
+        "size" to listOf("number", "number"),
+    )
+    val layoutSignatures: Map<String, Map<List<String>, String>> = mapOf(
+        "childWidth" to mapOf(listOf("integer") to "number"),
+        "childHeight" to mapOf(listOf("integer") to "number"),
+    )
+    const val LAYOUT_NODES = 4096
+    const val LAYOUT_REPEAT = 1024
+    const val LAYOUT_LOOPS = 3
     val actionPayloads: Map<String, Map<String, PropertyRule>> = mapOf(
         "increment" to mapOf(
                 "by" to PropertyRule("integer", required = false),

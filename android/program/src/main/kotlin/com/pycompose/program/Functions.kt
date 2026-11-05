@@ -105,16 +105,24 @@ object Functions {
      * @property params The program's argument types; a term reads argument i at index i.
      * @property contract The catalog's operations and depth limit.
      * @property nodes How many nodes the whole program may hold.
+     * @property loopBase Where loop indices start in the frame; locals follow at [localBase].
+     * @property ops Operations a program kind adds, and what each means.
      */
     internal class Walk(
         val params: List<String>,
         val contract: FunctionContract,
         private val nodes: Int = contract.nodes,
+        private val loopBase: Int = params.size,
+        private val localBase: Int = params.size,
+        private val ops: KindOps = KindOps(),
     ) {
         var count = 0
 
-        /** How many loops enclose the expression; loop k's index is read at params + k. */
+        /** How many loops enclose the expression; loop k's index is read at loopBase + k. */
         var loops = 0
+
+        /** Each open local's type; local k is read at localBase + k. */
+        val locals = mutableListOf<String>()
 
         fun node(
             node: JsonElement,
@@ -131,7 +139,7 @@ object Functions {
             }
             val op = (node["op"] as? JsonPrimitive)?.content
             val args = node["args"] as? JsonArray
-            val signatures = contract.signatures[op]
+            val signatures = contract.signatures[op] ?: ops.signatures[op]
             require(
                 node.keys == setOf("op", "args") &&
                     signatures != null &&
@@ -141,7 +149,16 @@ object Functions {
             val given = args.map { node(it, depth + 1) }
             val types = given.map { it.first }
             val result = signatures[types] ?: error("Program op $op does not take $types")
-            return result to term(checkNotNull(op), types[0], given.map { it.second })
+            val terms = given.map { it.second }
+            val meaning =
+                if (op in
+                    contract.signatures
+                ) {
+                    term(checkNotNull(op), types[0], terms)
+                } else {
+                    ops.term(op!!, terms, params.size)
+                }
+            return result to meaning
         }
 
         private fun leaf(
@@ -160,23 +177,28 @@ object Functions {
                         literal.doubleOrNull
                             ?.takeIf { it.isFinite() }
                             ?.let { value -> NUMBER to Term { value } }
-                    "arg" -> integer?.let(::arg)
-                    "loop" -> integer?.let(::loop)
+                    "arg", "loop", "local" -> integer?.let { slot(key, it) }
                     else -> null
                 }
             return leaf ?: error("Unknown program leaf $key")
         }
 
-        /** An argument, read from the frame. */
-        private fun arg(arg: Long): Pair<String, Term>? {
-            val index = arg.toInt()
-            return if (arg in params.indices) params[index] to Term { it[index] } else null
-        }
-
-        /** A loop's index, kept in the frame after the arguments. */
-        private fun loop(loop: Long): Pair<String, Term>? {
-            val index = params.size + loop.toInt()
-            return if (loop in 0L until loops) INTEGER to Term { it[index] } else null
+        /**
+         * An argument, a loop's index or a local, read from the frame: arguments first, loop
+         * indices from [loopBase], locals from [localBase].
+         */
+        private fun slot(
+            key: String,
+            at: Long,
+        ): Pair<String, Term>? {
+            val (types, base) =
+                when (key) {
+                    "arg" -> params to 0
+                    "loop" -> List(loops) { INTEGER } to loopBase
+                    else -> locals to localBase
+                }
+            val index = base + at.toInt()
+            return if (at in 0L until types.size) types[at.toInt()] to Term { it[index] } else null
         }
     }
 

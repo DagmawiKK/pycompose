@@ -130,3 +130,6 @@ LAMBDA_RULES: dict[Kind, Callable[[KotlinType], dict[str, Any]]] = {
     Kind.DRAW: draw_rule,
 }
 """How each kind of lambda parameter reaches the wire."""
+
+PROGRAM_INTERFACES = {"androidx/compose/ui/layout/MeasurePolicy": "layout"}
+"""Interfaces a host program implements, by the program kind that does."""

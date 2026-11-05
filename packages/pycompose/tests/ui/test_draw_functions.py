@@ -181,7 +181,7 @@ def _refusal(body: str) -> SyntaxError:
         ("    while True:\n        circle(1, 4, 0, 0)", "cannot use While"),
         (
             "    n = 3\n    for i in range(n):\n        circle(1, 4, 0, 0)",
-            "cannot use For",
+            "a loop runs range(N) with a literal N",
         ),
         ("    circle(1, 4, 0, 0, hue=2)", "no argument 'hue'"),
         ("    return", "cannot use Return"),
@@ -196,7 +196,7 @@ def test_what_a_draw_function_cannot_say_is_refused_with_its_line(
 
 
 def test_a_frame_that_could_draw_too_much_is_refused() -> None:
-    draw = {"draw": "circle", "args": [{"integer": 1}] + [{"number": 1.0}] * 5}
+    draw = {"call": "circle", "args": [{"integer": 1}] + [{"number": 1.0}] * 5}
     inner = {"repeat": DRAW_LIMITS["repeat"], "body": [draw]}
     program = {
         "type": "program",
@@ -209,21 +209,21 @@ def test_a_frame_that_could_draw_too_much_is_refused() -> None:
             }
         ],
     }
-    with pytest.raises(IrValidationError, match="more draws"):
+    with pytest.raises(IrValidationError, match="more calls"):
         validate_drawing(program)
 
 
 @pytest.mark.parametrize(
     "body",
     [
-        [{"draw": "spiral", "args": []}],
-        [{"draw": "circle", "args": [{"number": 1.0}] * 6}],
+        [{"call": "spiral", "args": []}],
+        [{"call": "circle", "args": [{"number": 1.0}] * 6}],
         [{"repeat": 2.5, "body": []}],
         [
             {
                 "repeat": 2,
                 "body": [
-                    {"draw": "circle", "args": [{"loop": 1}] + [{"number": 1.0}] * 5}
+                    {"call": "circle", "args": [{"loop": 1}] + [{"number": 1.0}] * 5}
                 ],
             }
         ],

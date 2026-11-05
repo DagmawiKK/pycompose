@@ -46,6 +46,7 @@ __all__ = [
     "Crossfade",
     "DatePicker",
     "DatePickerDialog",
+    "Dialog",
     "DisableSelection",
     "DismissibleDrawerSheet",
     "DismissibleNavigationDrawer",
@@ -84,12 +85,14 @@ __all__ = [
     "Label",
     "LargeFloatingActionButton",
     "LargeTopAppBar",
+    "Layout",
     "LazyColumn",
     "LazyRow",
     "LeadingIconTab",
     "LinearProgressIndicator",
     "LinearProgressIndicatorWithoutProgress",
     "ListItem",
+    "LookaheadScope",
     "MediumTopAppBar",
     "ModalBottomSheet",
     "ModalDrawerSheet",
@@ -117,6 +120,7 @@ __all__ = [
     "PermanentDrawerSheet",
     "PermanentNavigationDrawer",
     "PlainTooltip",
+    "Popup",
     "PrimaryScrollableTabRow",
     "PrimaryTabRow",
     "PullToRefreshBox",
@@ -141,6 +145,7 @@ __all__ = [
     "SmallFloatingActionButton",
     "Snackbar",
     "SnackbarHost",
+    "SoundEffectOnInteraction",
     "Spacer",
     "StatefulSearchBar",
     "StatefulSearchBarInputField",
@@ -1796,6 +1801,42 @@ class DatePickerDialog(Component):
         super().__init__(
             id=id, children=normalized + slotted, modifier=modifier, **props
         )
+
+
+class Dialog(Component):
+    """Native Dialog; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "Dialog"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        on_dismiss_request: ActionTarget,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered Dialog.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            on_dismiss_request: Required native onDismissRequest.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        props["on_dismiss_request"] = on_dismiss_request
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class DisableSelection(Component):
@@ -4126,6 +4167,42 @@ class LargeTopAppBar(Component):
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
+class Layout(Component):
+    """Native Layout; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "Layout"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        measure_policy: HostFunction | BoundFunction,
+        modifier: Modifier | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered Layout.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            measure_policy: Required native measurePolicy.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        props["measure_policy"] = measure_policy.to_wire()
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
 class LazyColumn(Component):
     """Native LazyColumn; props and defaults follow the component manifest."""
 
@@ -4492,6 +4569,47 @@ class ListItem(Component):
                 slot="trailingContent",
             )
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class LookaheadScope(Component):
+    """Native LookaheadScope; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "LookaheadScope"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered LookaheadScope.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class MediumTopAppBar(Component):
@@ -6254,6 +6372,39 @@ class PlainTooltip(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
+class Popup(Component):
+    """Native Popup; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "Popup"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered Popup.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
 class PrimaryScrollableTabRow(Component):
     """Native PrimaryScrollableTabRow;
     props and defaults follow the component manifest."""
@@ -7593,6 +7744,43 @@ class SnackbarHost(Component):
             props["on_dismiss"] = on_dismiss
         props["serial"] = serial
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class SoundEffectOnInteraction(Component):
+    """Native SoundEffectOnInteraction;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "SoundEffectOnInteraction"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        enabled: bool,
+        modifier: Modifier | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered SoundEffectOnInteraction.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            enabled: Required native enabled.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        props["enabled"] = enabled
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class Spacer(Component):

@@ -41,6 +41,7 @@ PROP_TYPE_VOCABULARY = frozenset(
         "string",
         "resource",
         "draw",
+        "layout",
     }
 )
 

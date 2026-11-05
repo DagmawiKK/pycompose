@@ -28,6 +28,7 @@ from pycompose.model.programs.expressions import Expression
 from pycompose.model.programs.functions import HostFunction
 from pycompose.ui._compile import compile_function
 from pycompose.ui._drawing import DrawCompiler
+from pycompose.ui._layout import LayoutCompiler, is_size
 
 __all__ = [
     "Binding",
@@ -52,9 +53,12 @@ def host(function: Callable[..., object]) -> HostFunction:
     Returns:
         The host function; it still calls as the Python it was written as.
     """
-    # A function annotated to return None draws; any other gives a value.
-    if function.__annotations__.get("return", ...) in (None, "None"):
+    # Annotated to return None it draws, Size it lays out; else it gives a value.
+    returns = function.__annotations__.get("return", ...)
+    if returns in (None, "None"):
         return DrawCompiler(function).run()
+    if is_size(returns):
+        return LayoutCompiler(function).run()
     return compile_function(function)
 
 

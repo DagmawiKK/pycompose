@@ -183,3 +183,22 @@ RESOURCE_TYPES = {
 The host loads the referenced resource and hands the native call the result,
 so a parameter of such a type is a ``resource`` prop, not a value family.
 """
+
+LAYOUT_LIMITS = {"nodes": 4096, "repeat": 1024, "loops": 3}
+"""The largest layout program a snapshot may carry: its nodes in all, the count
+one literal loop may run, and how deeply loops nest. A loop over the children
+runs once per child, which the host has measured, so it needs no count."""
+
+LAYOUT_CALLS: dict[str, tuple[str, ...]] = {
+    "place": ("integer", "number", "number"),
+    "size": ("number", "number"),
+}
+"""What a layout program's statements do: place a child (its index, x and y in
+px), and state the layout's own size; the last size stated stands."""
+
+LAYOUT_SIGNATURES: dict[str, dict[tuple[str, ...], str]] = {
+    "childWidth": {("integer",): "number"},
+    "childHeight": {("integer",): "number"},
+}
+"""What a layout program's expressions add: a child's measured width and
+height, by index; one out of range measures 0."""

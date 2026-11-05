@@ -1495,7 +1495,7 @@
               "type": "object"
             },
             "onDraw": {
-              "$ref": "#/definitions/Drawing"
+              "$ref": "#/definitions/HostCall"
             }
           },
           "required": [
@@ -1528,7 +1528,7 @@
               "type": "object"
             },
             "onDraw": {
-              "$ref": "#/definitions/Drawing"
+              "$ref": "#/definitions/HostCall"
             }
           },
           "required": [
@@ -2266,6 +2266,41 @@
         },
         "type": {
           "const": "DatePickerDialog"
+        }
+      },
+      "type": "object"
+    },
+    "C_Dialog": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onDismissRequest": {
+              "$ref": "#/definitions/Action"
+            }
+          },
+          "required": [
+            "onDismissRequest"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Dialog"
         }
       },
       "type": "object"
@@ -4917,6 +4952,41 @@
       },
       "type": "object"
     },
+    "C_Layout": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "measurePolicy": {
+              "$ref": "#/definitions/HostCall"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "measurePolicy"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Layout"
+        }
+      },
+      "type": "object"
+    },
     "C_LazyColumn": {
       "properties": {
         "children": {
@@ -5413,6 +5483,35 @@
         },
         "type": {
           "const": "ListItem"
+        }
+      },
+      "type": "object"
+    },
+    "C_LookaheadScope": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "LookaheadScope"
         }
       },
       "type": "object"
@@ -7390,6 +7489,35 @@
       },
       "type": "object"
     },
+    "C_Popup": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Popup"
+        }
+      },
+      "type": "object"
+    },
     "C_PrimaryScrollableTabRow": {
       "properties": {
         "children": {
@@ -9193,6 +9321,41 @@
         },
         "type": {
           "const": "SnackbarHost"
+        }
+      },
+      "type": "object"
+    },
+    "C_SoundEffectOnInteraction": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "enabled"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SoundEffectOnInteraction"
         }
       },
       "type": "object"
@@ -11193,33 +11356,6 @@
       },
       "type": "object"
     },
-    "Drawing": {
-      "anyOf": [
-        {
-          "$ref": "#/definitions/ProgramRef"
-        },
-        {
-          "additionalProperties": false,
-          "properties": {
-            "args": {
-              "type": "array"
-            },
-            "program": {
-              "$ref": "#/definitions/ProgramRef"
-            },
-            "type": {
-              "const": "bound"
-            }
-          },
-          "required": [
-            "type",
-            "program",
-            "args"
-          ],
-          "type": "object"
-        }
-      ]
-    },
     "Expression": {
       "additionalProperties": false,
       "properties": {
@@ -11526,6 +11662,13 @@
         }
       ]
     },
+    "Family_IntOffset": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_IntOffset"
+        }
+      ]
+    },
     "Family_MenuItemColors": {
       "oneOf": [
         {
@@ -11813,6 +11956,33 @@
       "oneOf": [
         {
           "$ref": "#/definitions/Value_WindowInsets"
+        }
+      ]
+    },
+    "HostCall": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/ProgramRef"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "args": {
+              "type": "array"
+            },
+            "program": {
+              "$ref": "#/definitions/ProgramRef"
+            },
+            "type": {
+              "const": "bound"
+            }
+          },
+          "required": [
+            "type",
+            "program",
+            "args"
+          ],
+          "type": "object"
         }
       ]
     },
@@ -14633,6 +14803,9 @@
               "$ref": "#/definitions/C_DatePickerDialog"
             },
             {
+              "$ref": "#/definitions/C_Dialog"
+            },
+            {
               "$ref": "#/definitions/C_DisableSelection"
             },
             {
@@ -14747,6 +14920,9 @@
               "$ref": "#/definitions/C_LargeTopAppBar"
             },
             {
+              "$ref": "#/definitions/C_Layout"
+            },
+            {
               "$ref": "#/definitions/C_LazyColumn"
             },
             {
@@ -14763,6 +14939,9 @@
             },
             {
               "$ref": "#/definitions/C_ListItem"
+            },
+            {
+              "$ref": "#/definitions/C_LookaheadScope"
             },
             {
               "$ref": "#/definitions/C_MediumTopAppBar"
@@ -14846,6 +15025,9 @@
               "$ref": "#/definitions/C_PlainTooltip"
             },
             {
+              "$ref": "#/definitions/C_Popup"
+            },
+            {
               "$ref": "#/definitions/C_PrimaryScrollableTabRow"
             },
             {
@@ -14916,6 +15098,9 @@
             },
             {
               "$ref": "#/definitions/C_SnackbarHost"
+            },
+            {
+              "$ref": "#/definitions/C_SoundEffectOnInteraction"
             },
             {
               "$ref": "#/definitions/C_Spacer"
@@ -32881,7 +33066,7 @@
               "type": "object"
             },
             "onDraw": {
-              "$ref": "#/definitions/Drawing"
+              "$ref": "#/definitions/HostCall"
             }
           },
           "required": [
@@ -32914,7 +33099,7 @@
               "type": "object"
             },
             "onDraw": {
-              "$ref": "#/definitions/Drawing"
+              "$ref": "#/definitions/HostCall"
             }
           },
           "required": [
@@ -33652,6 +33837,41 @@
         },
         "type": {
           "const": "DatePickerDialog"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_Dialog": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onDismissRequest": {
+              "$ref": "#/definitions/Action"
+            }
+          },
+          "required": [
+            "onDismissRequest"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Dialog"
         }
       },
       "type": "object"
@@ -36303,6 +36523,41 @@
       },
       "type": "object"
     },
+    "V_1_23_0_Layout": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "measurePolicy": {
+              "$ref": "#/definitions/HostCall"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "measurePolicy"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "Layout"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_LazyColumn": {
       "properties": {
         "children": {
@@ -36799,6 +37054,35 @@
         },
         "type": {
           "const": "ListItem"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_LookaheadScope": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "LookaheadScope"
         }
       },
       "type": "object"
@@ -40832,6 +41116,9 @@
               "$ref": "#/definitions/V_1_23_0_DatePickerDialog"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_Dialog"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_DisableSelection"
             },
             {
@@ -40946,6 +41233,9 @@
               "$ref": "#/definitions/V_1_23_0_LargeTopAppBar"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_Layout"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_LazyColumn"
             },
             {
@@ -40962,6 +41252,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_ListItem"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_LookaheadScope"
             },
             {
               "$ref": "#/definitions/V_1_23_0_MediumTopAppBar"
@@ -41045,6 +41338,9 @@
               "$ref": "#/definitions/V_1_23_0_PlainTooltip"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_Popup"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_PrimaryScrollableTabRow"
             },
             {
@@ -41115,6 +41411,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_SnackbarHost"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_SoundEffectOnInteraction"
             },
             {
               "$ref": "#/definitions/V_1_23_0_Spacer"
@@ -41980,6 +42279,35 @@
         },
         "type": {
           "const": "PlainTooltip"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_Popup": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Popup"
         }
       },
       "type": "object"
@@ -43787,6 +44115,41 @@
         },
         "type": {
           "const": "SnackbarHost"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_SoundEffectOnInteraction": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "enabled"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "SoundEffectOnInteraction"
         }
       },
       "type": "object"
@@ -53912,6 +54275,26 @@
       "required": [
         "type",
         "weight"
+      ],
+      "type": "object"
+    },
+    "Value_IntOffset": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "Max",
+            "Zero"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "IntOffset"
+        }
+      },
+      "required": [
+        "type",
+        "name"
       ],
       "type": "object"
     },

@@ -125,6 +125,8 @@ def _prop_imports(
             qualified.update(
                 {"com.pycompose.renderer.index", "com.pycompose.renderer.inSlot"}
             )
+        if spec.get("type") == "layout":
+            qualified.add("com.pycompose.renderer.rememberMeasurePolicy")
         if spec.get("type") == "draw":
             qualified.update(
                 {

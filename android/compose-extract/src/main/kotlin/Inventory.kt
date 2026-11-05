@@ -10,6 +10,10 @@ import java.util.zip.ZipFile
 // resolved desktop/stub artifact or AndroidX main. The runtime uses no metadata.
 
 internal const val COMPOSE_ANNOTATION = "androidx/compose/runtime/Composable"
+internal const val COMPOSABLE_TARGET = "androidx/compose/runtime/ComposableTarget"
+internal const val UI_APPLIER = "androidx.compose.ui.UiComposable"
+internal const val UI_MARKER = "androidx/compose/ui/UiComposable"
+internal const val TARGET_MARKER = "androidx/compose/runtime/ComposableTargetMarker"
 private const val FORMAT_VERSION = 1
 
 /** How many target errors a failed extraction lists before truncating. */

@@ -27,6 +27,7 @@ from pycompose.model.programs.expressions import (
     is_expression,
     validate_expression,
 )
+from pycompose.model.programs.layout import validate_placement
 from pycompose.ui._bound import binding_refusal
 from pycompose.ui.intents import BoundIntent, valid_intent
 
@@ -38,10 +39,10 @@ def _is_long(value: object) -> bool:
     return isinstance(value, int) and not isinstance(value, bool) and value in _LONG
 
 
-def _is_drawing(value: object) -> bool:
-    # A drawing of the canvas's size, or one with the rest of its arguments bound.
+def _runs(check: Callable[[object], None], value: object) -> bool:
+    # A program of the host's arguments, or one with the rest of them bound.
     try:
-        validate_canvas(value)
+        check(value)
     except IrValidationError:
         return False
     return True
@@ -59,7 +60,8 @@ _TYPE_CHECKS: dict[str, Callable[[object, PropDef], bool]] = {
     and not isinstance(value, bool),
     "dp": lambda value, _: _is_native_float(value),
     "modifier": lambda value, _: isinstance(value, Mapping),
-    "draw": lambda value, _: _is_drawing(value),
+    "draw": lambda value, _: _runs(validate_canvas, value),
+    "layout": lambda value, _: _runs(validate_placement, value),
     # A named constant of a value family crosses the wire only tagged.
     "enum": lambda value, prop: isinstance(value, str)
     and prop.value_type is None

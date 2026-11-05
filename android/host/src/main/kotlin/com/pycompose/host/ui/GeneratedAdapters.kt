@@ -144,9 +144,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.colorspace.ColorSpaces
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.LookaheadScope
+import androidx.compose.ui.platform.SoundEffectOnInteraction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.Popup
 import com.pycompose.ir.generated.AlertDialog as AlertDialogNode
 import com.pycompose.ir.generated.AnimatedContent as AnimatedContentNode
 import com.pycompose.ir.generated.AnimatedVisibility as AnimatedVisibilityNode
@@ -173,6 +178,7 @@ import com.pycompose.ir.generated.Column as ColumnNode
 import com.pycompose.ir.generated.Crossfade as CrossfadeNode
 import com.pycompose.ir.generated.DatePicker as DatePickerNode
 import com.pycompose.ir.generated.DatePickerDialog as DatePickerDialogNode
+import com.pycompose.ir.generated.Dialog as DialogNode
 import com.pycompose.ir.generated.DisableSelection as DisableSelectionNode
 import com.pycompose.ir.generated.DismissibleDrawerSheet as DismissibleDrawerSheetNode
 import com.pycompose.ir.generated.DismissibleNavigationDrawer as DismissibleNavigationDrawerNode
@@ -209,12 +215,14 @@ import com.pycompose.ir.generated.InputChip as InputChipNode
 import com.pycompose.ir.generated.Label as LabelNode
 import com.pycompose.ir.generated.LargeFloatingActionButton as LargeFloatingActionButtonNode
 import com.pycompose.ir.generated.LargeTopAppBar as LargeTopAppBarNode
+import com.pycompose.ir.generated.Layout as LayoutNode
 import com.pycompose.ir.generated.LazyColumn as LazyColumnNode
 import com.pycompose.ir.generated.LazyRow as LazyRowNode
 import com.pycompose.ir.generated.LeadingIconTab as LeadingIconTabNode
 import com.pycompose.ir.generated.LinearProgressIndicator as LinearProgressIndicatorNode
 import com.pycompose.ir.generated.LinearProgressIndicatorWithoutProgress as LinearProgressIndicatorWithoutProgressNode
 import com.pycompose.ir.generated.ListItem as ListItemNode
+import com.pycompose.ir.generated.LookaheadScope as LookaheadScopeNode
 import com.pycompose.ir.generated.MediumTopAppBar as MediumTopAppBarNode
 import com.pycompose.ir.generated.ModalBottomSheet as ModalBottomSheetNode
 import com.pycompose.ir.generated.ModalDrawerSheet as ModalDrawerSheetNode
@@ -242,6 +250,7 @@ import com.pycompose.ir.generated.OutlinedTextField as OutlinedTextFieldNode
 import com.pycompose.ir.generated.PermanentDrawerSheet as PermanentDrawerSheetNode
 import com.pycompose.ir.generated.PermanentNavigationDrawer as PermanentNavigationDrawerNode
 import com.pycompose.ir.generated.PlainTooltip as PlainTooltipNode
+import com.pycompose.ir.generated.Popup as PopupNode
 import com.pycompose.ir.generated.PrimaryScrollableTabRow as PrimaryScrollableTabRowNode
 import com.pycompose.ir.generated.PrimaryTabRow as PrimaryTabRowNode
 import com.pycompose.ir.generated.PullToRefreshBox as PullToRefreshBoxNode
@@ -264,6 +273,7 @@ import com.pycompose.ir.generated.SliderValue as SliderValueNode
 import com.pycompose.ir.generated.SmallFloatingActionButton as SmallFloatingActionButtonNode
 import com.pycompose.ir.generated.Snackbar as SnackbarNode
 import com.pycompose.ir.generated.SnackbarHost as SnackbarHostNode
+import com.pycompose.ir.generated.SoundEffectOnInteraction as SoundEffectOnInteractionNode
 import com.pycompose.ir.generated.Spacer as SpacerNode
 import com.pycompose.ir.generated.SuggestionChip as SuggestionChipNode
 import com.pycompose.ir.generated.Surface as SurfaceNode
@@ -306,6 +316,7 @@ import com.pycompose.renderer.number
 import com.pycompose.renderer.publish
 import com.pycompose.renderer.reconcileProperty
 import com.pycompose.renderer.rememberDrawing
+import com.pycompose.renderer.rememberMeasurePolicy
 import com.pycompose.renderer.scrollState
 import com.pycompose.renderer.sheetState
 import com.pycompose.renderer.sliderState
@@ -780,6 +791,15 @@ object GeneratedAdapters {
                     dismissButton = context.slot(model.children, "dismissButton"),
                     content = { context.childrenIn(this, model.children) },
                 )
+            }
+            .register("Dialog") { node, modifier, context ->
+                val model = node as DialogNode
+                Box(modifier = modifier) {
+                Dialog(
+                    onDismissRequest = { context.actions.dispatch(model.props.onDismissRequest) },
+                    content = { context.children(model.children) },
+                )
+                }
             }
             .register("DisableSelection") { node, modifier, context ->
                 val model = node as DisableSelectionNode
@@ -1474,6 +1494,14 @@ object GeneratedAdapters {
                     title = { context.slot(model.children, "title")?.invoke() },
                 )
             }
+            .register("Layout") { node, modifier, context ->
+                val model = node as LayoutNode
+                Layout(
+                    modifier = modifier,
+                    measurePolicy = rememberMeasurePolicy(model.props.measurePolicy),
+                    content = { context.children(model.children) },
+                )
+            }
             .register("LazyColumn") { node, modifier, context ->
                 val model = node as LazyColumnNode
                 val horizontalAlignmentValue = model.props.horizontalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentHorizontal(it).getOrThrow() }
@@ -1574,6 +1602,14 @@ object GeneratedAdapters {
                     supportingContent = context.slot(model.children, "supportingContent"),
                     trailingContent = context.slot(model.children, "trailingContent"),
                 )
+            }
+            .register("LookaheadScope") { node, modifier, context ->
+                val model = node as LookaheadScopeNode
+                Box(modifier = modifier) {
+                LookaheadScope(
+                    content = { context.childrenIn(this, model.children) },
+                )
+                }
             }
             .register("MediumTopAppBar") { node, modifier, context ->
                 val model = node as MediumTopAppBarNode
@@ -2062,6 +2098,14 @@ object GeneratedAdapters {
                     content = { context.children(model.children) },
                 )
             }
+            .register("Popup") { node, modifier, context ->
+                val model = node as PopupNode
+                Box(modifier = modifier) {
+                Popup(
+                    content = { context.children(model.children) },
+                )
+                }
+            }
             .register("PrimaryScrollableTabRow") { node, modifier, context ->
                 val model = node as PrimaryScrollableTabRowNode
                 val containerColorValue = context.boundColor(model.props.containerColor, Color.colorVectorConverter(ColorSpaces.Srgb), androidx.compose.material3.TabRowDefaults.primaryContainerColor)
@@ -2447,6 +2491,15 @@ object GeneratedAdapters {
                     modifier = modifier,
                     hostState = hostStateValue,
                 )
+            }
+            .register("SoundEffectOnInteraction") { node, modifier, context ->
+                val model = node as SoundEffectOnInteractionNode
+                Box(modifier = modifier) {
+                SoundEffectOnInteraction(
+                    enabled = model.props.enabled,
+                    content = { context.children(model.children) },
+                )
+                }
             }
             .register("Spacer") { node, modifier, context ->
                 val model = node as SpacerNode

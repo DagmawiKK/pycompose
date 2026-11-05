@@ -55,11 +55,13 @@ COMPONENT_GROUPS = {
     "androidx.compose.foundation",
     "androidx.compose.material3",
     "androidx.compose.material3.adaptive",
+    "androidx.compose.ui",
 }
 """Groups whose public, Unit-returning composables are components (plan 31 step 1).
 
 M2 is extracted but contributes none: design profiles are never merged
-(ADR-0021).
+(ADR-0021). The ui group contributes ``Layout``, a host layout program's
+component; its composables that target another applier (a vector's) are none.
 """
 
 DOMAIN_OVERRIDES = {"icons", "tooling"}

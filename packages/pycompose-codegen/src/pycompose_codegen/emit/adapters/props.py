@@ -60,8 +60,8 @@ def render_prop(
         emitted = callback is not None and out.add(("", callback))
     elif prop_type == "dp":
         emitted = _render_dp(prop_name, spec, out)
-    elif prop_type == "draw":
-        emitted = out.add(_drawing(prop_name))
+    elif prop_type in PROGRAMS:
+        emitted = out.add(PROGRAMS[prop_type](prop_name))
     else:
         emitted = _render_scalar(prop_name, spec, out)
     return emitted
@@ -308,6 +308,15 @@ def _drawing(prop_name: str) -> tuple[str, str]:
         f"{prop_name} = {{ {prop_name}Drawing.draw(size.width.toDouble(), "
         "size.height.toDouble()) { paint(it) } }",
     )
+
+
+def _measure_policy(prop_name: str) -> tuple[str, str]:
+    """A layout program as the native measure policy."""
+    return "", f"{prop_name} = rememberMeasurePolicy(model.props.{prop_name})"
+
+
+PROGRAMS = {"draw": _drawing, "layout": _measure_policy}
+"""How each program a prop carries reaches its native parameter."""
 
 
 def _callback(prop_name: str, spec: dict[str, Any]) -> str | None:

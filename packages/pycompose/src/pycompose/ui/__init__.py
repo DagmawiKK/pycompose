@@ -17,6 +17,9 @@ from typing import TYPE_CHECKING, Any
 from pycompose.model.nodes.node import Node as Node  # noqa: PLC0414
 from pycompose.ui._generated.draws import *  # noqa: F403 -- the pin's draw calls
 from pycompose.ui._generated.values import *  # noqa: F403 -- the catalog's values
+from pycompose.ui._layout import child_height as child_height  # noqa: PLC0414
+from pycompose.ui._layout import child_width as child_width  # noqa: PLC0414
+from pycompose.ui._layout import place as place  # noqa: PLC0414
 from pycompose.ui.fallback import Fallback as Fallback  # noqa: PLC0414
 from pycompose.ui.host import Binding as Binding  # noqa: PLC0414
 from pycompose.ui.host import HostFunction as HostFunction  # noqa: PLC0414

@@ -9,7 +9,7 @@
     "androidx.compose.material3": {"status": "extracted", "category": "app-surface", "domain": "material3", "design": "m3", "components": true},
     "androidx.compose.material3.adaptive": {"status": "extracted", "category": "app-surface", "domain": "adaptive", "design": "m3", "components": true},
     "androidx.compose.runtime": {"status": "extracted", "category": "app-surface", "domain": "runtime"},
-    "androidx.compose.ui": {"status": "extracted", "category": "app-surface", "domain": "ui"},
+    "androidx.compose.ui": {"status": "extracted", "category": "app-surface", "domain": "ui", "components": true},
     "androidx.constraintlayout": {"status": "extracted", "category": "app-surface", "domain": "constraintlayout"},
     "androidx.lifecycle": {"status": "extracted", "category": "app-surface", "domain": "lifecycle"},
     "androidx.navigation": {"status": "extracted", "category": "app-surface", "domain": "navigation"},

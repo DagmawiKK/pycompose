@@ -5,6 +5,7 @@ GeneratedAdapters so every approved component gets performance-tuned wiring.
 """
 
 import re
+from collections.abc import Mapping
 from typing import Any
 
 from pycompose.model.programs.bindings import animatable
@@ -38,6 +39,7 @@ def _kt_type(prop: dict[str, Any]) -> str:
         "durationMs": "Long",
         "modifier": "JsonObject",
         "draw": "JsonObject",
+        "layout": "JsonObject",
     }[prop["type"]] + suffix
 
 
@@ -226,8 +228,42 @@ def _kt_streams(registry: dict[str, Any]) -> list[str]:
         EXPRESSION_OPS,
         FUNCTION_LIMITS,
         FUNCTION_SIGNATURES,
+        LAYOUT_CALLS,
+        LAYOUT_LIMITS,
+        LAYOUT_SIGNATURES,
         STATE_STREAMS,
     )
+
+    def signatures_map(
+        name: str, table: Mapping[str, Mapping[tuple[str, ...], str]]
+    ) -> list[str]:
+        return [
+            f"    val {name}: Map<String, Map<List<String>, String>> = mapOf(",
+            *(
+                f"        {kotlin_string(op)} to mapOf("
+                + ", ".join(
+                    "listOf("
+                    + ", ".join(map(kotlin_string, args))
+                    + f") to {kotlin_string(result)}"
+                    for args, result in signatures.items()
+                )
+                + "),"
+                for op, signatures in table.items()
+            ),
+            "    )",
+        ]
+
+    def calls_map(name: str, table: Mapping[str, tuple[str, ...]]) -> list[str]:
+        return [
+            f"    val {name}: Map<String, List<String>> = mapOf(",
+            *(
+                f"        {kotlin_string(call)} to listOf("
+                + ", ".join(map(kotlin_string, types))
+                + "),"
+                for call, types in table.items()
+            ),
+            "    )",
+        ]
 
     exposing = {
         name: STATE_STREAMS[spec["state"]["kind"]]
@@ -254,33 +290,26 @@ def _kt_streams(registry: dict[str, Any]) -> list[str]:
         + ")",
         f"    const val EXPRESSION_DEPTH = {EXPRESSION_LIMITS['depth']}",
         f"    const val EXPRESSION_NODES = {EXPRESSION_LIMITS['nodes']}",
-        "    val functionSignatures: Map<String, Map<List<String>, String>> = mapOf(",
-        *(
-            f"        {kotlin_string(op)} to mapOf("
-            + ", ".join(
-                "listOf("
-                + ", ".join(map(kotlin_string, args))
-                + f") to {kotlin_string(result)}"
-                for args, result in signatures.items()
-            )
-            + "),"
-            for op, signatures in FUNCTION_SIGNATURES.items()
-        ),
-        "    )",
+        *signatures_map("functionSignatures", FUNCTION_SIGNATURES),
         f"    const val FUNCTION_DEPTH = {FUNCTION_LIMITS['depth']}",
         f"    const val FUNCTION_NODES = {FUNCTION_LIMITS['nodes']}",
         f"    const val FUNCTION_ARGUMENTS = {FUNCTION_LIMITS['arguments']}",
-        "    val drawCalls: Map<String, List<String>> = mapOf(",
-        *(
-            f"        {kotlin_string(name)} to listOf("
-            + ", ".join(kotlin_string(a["type"]) for a in spec["arguments"])
-            + "),"
-            for name, spec in registry.get("draws", {}).items()
+        *calls_map(
+            "drawCalls",
+            {
+                name: tuple(a["type"] for a in spec["arguments"])
+                for name, spec in registry.get("draws", {}).items()
+            },
         ),
-        "    )",
         *(
             f"    const val DRAW_{key.upper()} = {value}"
             for key, value in DRAW_LIMITS.items()
+        ),
+        *calls_map("layoutCalls", LAYOUT_CALLS),
+        *signatures_map("layoutSignatures", LAYOUT_SIGNATURES),
+        *(
+            f"    const val LAYOUT_{key.upper()} = {value}"
+            for key, value in LAYOUT_LIMITS.items()
         ),
     ]
 

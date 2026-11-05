@@ -1601,6 +1601,32 @@
         }
       }
     },
+    "Dialog": {
+      "package": "androidx.compose.ui.window",
+      "category": "ui",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.ui:ui-android:1.12.1",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/window/DialogProperties;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Dialog",
+        "name": "Dialog",
+        "owner": "androidx.compose.ui.window.AndroidDialog_androidKt"
+      },
+      "props": {
+        "onDismissRequest": {
+          "type": "actionId",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      },
+      "boxed": true
+    },
     "DisableSelection": {
       "package": "androidx.compose.foundation.text.selection",
       "category": "foundation",
@@ -4358,6 +4384,31 @@
         }
       }
     },
+    "Layout": {
+      "package": "androidx.compose.ui.layout",
+      "category": "ui",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.ui:ui-android:1.12.1",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/layout/MeasurePolicy;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Layout",
+        "name": "Layout",
+        "owner": "androidx.compose.ui.layout.LayoutKt"
+      },
+      "props": {
+        "measurePolicy": {
+          "type": "layout",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      }
+    },
     "LazyColumn": {
       "package": "androidx.compose.foundation.lazy",
       "category": "lists",
@@ -4775,6 +4826,30 @@
           "nullable": true
         }
       }
+    },
+    "LookaheadScope": {
+      "package": "androidx.compose.ui.layout",
+      "category": "ui",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.ui:ui-android:1.12.1",
+        "descriptor": "(Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;I)V",
+        "jvmName": "LookaheadScope",
+        "name": "LookaheadScope",
+        "owner": "androidx.compose.ui.layout.LookaheadScopeKt"
+      },
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "androidx.compose.ui.layout.LookaheadScope"
+      },
+      "boxed": true
     },
     "MediumTopAppBar": {
       "package": "androidx.compose.material3",
@@ -6755,6 +6830,28 @@
       },
       "scope": "androidx.compose.material3.TooltipScope"
     },
+    "Popup": {
+      "package": "androidx.compose.ui.window",
+      "category": "ui",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.ui:ui-android:1.12.1",
+        "descriptor": "(Landroidx/compose/ui/Alignment;JLkotlin/jvm/functions/Function0;Landroidx/compose/ui/window/PopupProperties;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Popup-K5zGePQ",
+        "name": "Popup",
+        "owner": "androidx.compose.ui.window.AndroidPopup_androidKt"
+      },
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      },
+      "boxed": true
+    },
     "PrimaryScrollableTabRow": {
       "package": "androidx.compose.material3",
       "category": "layout",
@@ -8400,6 +8497,32 @@
         "serial",
         "onDismiss"
       ]
+    },
+    "SoundEffectOnInteraction": {
+      "package": "androidx.compose.ui.platform",
+      "category": "ui",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.ui:ui-android:1.12.1",
+        "descriptor": "(ZLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V",
+        "jvmName": "SoundEffectOnInteraction",
+        "name": "SoundEffectOnInteraction",
+        "owner": "androidx.compose.ui.platform.SoundEffectOnInteraction_androidKt"
+      },
+      "props": {
+        "enabled": {
+          "type": "boolean",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      },
+      "boxed": true
     },
     "Spacer": {
       "package": "androidx.compose.foundation.layout",
@@ -20048,6 +20171,30 @@
       "native": {
         "constantParameter": "name",
         "propertyOwner": "androidx.compose.ui.text.style.TextOverflow"
+      }
+    },
+    "IntOffset": {
+      "family": "IntOffset",
+      "kind": "constant",
+      "kotlinType": "androidx.compose.ui.unit.IntOffset",
+      "since": "1.23.0",
+      "source": {
+        "owner": "androidx/compose/ui/unit/IntOffset$Companion",
+        "members": "public properties"
+      },
+      "parameters": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "Max",
+            "Zero"
+          ]
+        }
+      },
+      "native": {
+        "constantParameter": "name",
+        "propertyOwner": "androidx.compose.ui.unit.IntOffset"
       }
     },
     "SnapLayoutInfoProvider": {

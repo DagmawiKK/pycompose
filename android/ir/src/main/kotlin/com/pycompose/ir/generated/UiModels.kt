@@ -599,6 +599,24 @@ data class DatePickerDialog(
 }
 
 @Serializable
+data class DialogProps(
+    override val `modifier`: JsonObject? = null,
+    val `onDismissRequest`: String,
+) : UiProps
+
+@Serializable
+@SerialName("Dialog")
+data class Dialog(
+    override val id: String,
+    override val props: DialogProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "Dialog"
+}
+
+@Serializable
 data class DisableSelectionProps(
     override val `modifier`: JsonObject? = null,
 ) : UiProps
@@ -1468,6 +1486,24 @@ data class LargeTopAppBar(
 }
 
 @Serializable
+data class LayoutProps(
+    val `measurePolicy`: JsonObject,
+    override val `modifier`: JsonObject? = null,
+) : UiProps
+
+@Serializable
+@SerialName("Layout")
+data class Layout(
+    override val id: String,
+    override val props: LayoutProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "Layout"
+}
+
+@Serializable
 data class LazyColumnProps(
     val `firstVisibleIndex`: Long? = null,
     val `horizontalAlignment`: JsonElement? = null,
@@ -1602,6 +1638,23 @@ data class ListItem(
 ) : UiNode {
     override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "ListItem"
+}
+
+@Serializable
+data class LookaheadScopeProps(
+    override val `modifier`: JsonObject? = null,
+) : UiProps
+
+@Serializable
+@SerialName("LookaheadScope")
+data class LookaheadScope(
+    override val id: String,
+    override val props: LookaheadScopeProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "LookaheadScope"
 }
 
 @Serializable
@@ -2216,6 +2269,23 @@ data class PlainTooltip(
 }
 
 @Serializable
+data class PopupProps(
+    override val `modifier`: JsonObject? = null,
+) : UiProps
+
+@Serializable
+@SerialName("Popup")
+data class Popup(
+    override val id: String,
+    override val props: PopupProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "Popup"
+}
+
+@Serializable
 data class PrimaryScrollableTabRowProps(
     val `containerColor`: JsonElement? = null,
     val `contentColor`: JsonElement? = null,
@@ -2744,6 +2814,24 @@ data class SnackbarHost(
     override val children: List<UiNode> get() = emptyList()
     override fun withChildren(children: List<UiNode>): UiNode = this
     override val componentType: String get() = "SnackbarHost"
+}
+
+@Serializable
+data class SoundEffectOnInteractionProps(
+    val `enabled`: Boolean,
+    override val `modifier`: JsonObject? = null,
+) : UiProps
+
+@Serializable
+@SerialName("SoundEffectOnInteraction")
+data class SoundEffectOnInteraction(
+    override val id: String,
+    override val props: SoundEffectOnInteractionProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "SoundEffectOnInteraction"
 }
 
 @Serializable

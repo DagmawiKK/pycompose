@@ -13,6 +13,7 @@ from typing import Any
 
 from pycompose.model.catalog.lock import SCHEMA_VERSION
 from pycompose.model.programs.drawing import CANVAS, DRAW, draws
+from pycompose.model.programs.layout import LAYOUT, MEASURED
 from pycompose.model.programs.refs import lift
 
 SEARCH_OWNERS: dict[str, tuple[str, str | None]] = {
@@ -70,6 +71,8 @@ def _structured(where: str, spec: dict[str, Any], values: dict[str, Any]) -> Any
         return _family(where, spec["valueType"], values)
     if kind == "draw":
         return _drawing()
+    if kind == "layout":
+        return _layout()
     raise ValueError(f"{where}: no sample for a required {kind} prop")
 
 
@@ -86,7 +89,24 @@ def _drawing() -> dict[str, Any]:
         "params": list(CANVAS),
         "result": DRAW,
         "body": [
-            {"draw": name, "args": [literals[a["type"]] for a in spec["arguments"]]}
+            {"call": name, "args": [literals[a["type"]] for a in spec["arguments"]]}
+        ],
+    }
+
+
+def _layout() -> dict[str, Any]:
+    """A layout program placing every child at the origin, sized to the first."""
+    first = [
+        {"op": f"child{side}", "args": [{"integer": 0}]} for side in ("Width", "Height")
+    ]
+    origin = [{"loop": 0}, {"number": 0.0}, {"number": 0.0}]
+    return {
+        "type": "program",
+        "params": list(MEASURED),
+        "result": LAYOUT,
+        "body": [
+            {"repeat": "children", "body": [{"call": "place", "args": origin}]},
+            {"call": "size", "args": first},
         ],
     }
 

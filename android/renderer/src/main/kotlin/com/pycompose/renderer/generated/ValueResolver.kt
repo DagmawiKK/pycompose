@@ -48,6 +48,7 @@ import com.pycompose.ir.generated.FontWeightValue
 import com.pycompose.ir.generated.IconButtonColorsValue
 import com.pycompose.ir.generated.IconToggleButtonColorsValue
 import com.pycompose.ir.generated.ImageVectorValue
+import com.pycompose.ir.generated.IntOffsetValue
 import com.pycompose.ir.generated.MenuItemColorsValue
 import com.pycompose.ir.generated.NavigationBarItemColorsValue
 import com.pycompose.ir.generated.NavigationItemIconPositionValue
@@ -105,6 +106,7 @@ import com.pycompose.ir.generated.WireFilterQuality
 import com.pycompose.ir.generated.WireFontFamily
 import com.pycompose.ir.generated.WireFontStyle
 import com.pycompose.ir.generated.WireFontWeight
+import com.pycompose.ir.generated.WireIntOffset
 import com.pycompose.ir.generated.WireNamedShape
 import com.pycompose.ir.generated.WireNavigationItemIconPosition
 import com.pycompose.ir.generated.WireNavigationSuiteType
@@ -1286,6 +1288,24 @@ object ValueResolver {
                     "TwoTone.Star" -> androidx.compose.material.icons.Icons.TwoTone.Star
                     "TwoTone.ThumbUp" -> androidx.compose.material.icons.Icons.TwoTone.ThumbUp
                     "TwoTone.Warning" -> androidx.compose.material.icons.Icons.TwoTone.Warning
+                    else -> error("Unknown native constant")
+                }
+            }
+        }
+
+    @Composable
+    fun intOffset(value: JsonElement): Result<androidx.compose.ui.unit.IntOffset> {
+        val parsed = runCatching { ValueContract.readIntOffset(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(intOffset(parsed))
+    }
+
+    @Composable
+    fun intOffset(value: IntOffsetValue): androidx.compose.ui.unit.IntOffset =
+        when (value) {
+            is WireIntOffset -> {
+                when (value.name) {
+                    "Max" -> androidx.compose.ui.unit.IntOffset.Max
+                    "Zero" -> androidx.compose.ui.unit.IntOffset.Zero
                     else -> error("Unknown native constant")
                 }
             }

@@ -374,8 +374,18 @@ private fun withClassFacts(
 ): Map<String, Any?> {
     val owner = declaration["owner"].toString().replace('.', '/')
     val kmClass = (metadata[owner] as? KotlinClassMetadata.Class)?.kmClass
+
+    @Suppress("UNCHECKED_CAST")
+    val annotations = declaration["annotations"] as? Map<String, Map<String, Any?>>
+    val disposition =
+        if (declaration["disposition"] == "ui" && !targetsUi(annotations.orEmpty(), classes)) {
+            "support"
+        } else {
+            declaration["disposition"]
+        }
     return declaration +
         mapOf(
+            "disposition" to disposition,
             "sourceFile" to classes[owner]?.sourceFile,
             "classKind" to kmClass?.kind?.name,
             // Modality decides whether a constructor is callable at all: an
@@ -387,6 +397,23 @@ private fun withClassFacts(
             },
             "classSupertypes" to kmClass?.supertypes.orEmpty().map { it.document() },
         )
+}
+
+/**
+ * Whether a composable composes into the UI tree. One targeting another applier -- a vector's,
+ * named by `@ComposableTarget` or by a marker annotation such as `@VectorComposable` -- composes
+ * into that tree, so it is no component however its group is marked.
+ */
+private fun targetsUi(
+    annotations: Map<String, Map<String, Any?>>,
+    classes: Map<String, ClassApi>,
+): Boolean {
+    val applier = annotations[COMPOSABLE_TARGET]?.get("applier")
+    val marker =
+        annotations.keys.firstOrNull {
+            classes[it]?.annotations?.containsKey(TARGET_MARKER) == true
+        }
+    return (applier == null || applier == UI_APPLIER) && (marker == null || marker == UI_MARKER)
 }
 
 /** The class itself followed by every enclosing class or file facade. */

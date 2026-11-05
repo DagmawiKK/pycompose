@@ -9,7 +9,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
-private const val DOT = """{"draw":"dot","args":[{"integer":1},{"arg":0}]}"""
+private const val DOT = """{"call":"dot","args":[{"integer":1},{"arg":0}]}"""
 
 class DrawingsTest {
     private val functions =
@@ -40,7 +40,7 @@ class DrawingsTest {
             Drawings.read(
                 program(
                     """[{"repeat":3,"body":[{"if":{"op":"lt","args":[{"loop":0},{"integer":2}]},
-                    "then":[{"draw":"dot","args":[{"loop":0},{"arg":0}]}],"else":[]}]}]""",
+                    "then":[{"call":"dot","args":[{"loop":0},{"arg":0}]}],"else":[]}]}]""",
                 ),
                 functions,
                 contract,
@@ -53,7 +53,7 @@ class DrawingsTest {
     @Test
     fun `a bound drawing reads its bound arguments after the canvas's size`() {
         val program = """{"type":"program","params":["number","number","integer"],"result":"draw",
-            "body":[{"draw":"dot","args":[{"arg":2},{"arg":1}]}]}"""
+            "body":[{"call":"dot","args":[{"arg":2},{"arg":1}]}]}"""
         val bound =
             BoundDrawing.read(
                 json("""{"type":"bound","program":$program,"args":[7]}"""),
@@ -80,12 +80,12 @@ class DrawingsTest {
     @ParameterizedTest
     @ValueSource(
         strings = [
-            """[{"draw":"spiral","args":[]}]""",
-            """[{"draw":"dot","args":[{"number":1.0},{"number":1.0}]}]""",
+            """[{"call":"spiral","args":[]}]""",
+            """[{"call":"dot","args":[{"number":1.0},{"number":1.0}]}]""",
             """[{"repeat":2.5,"body":[]}]""",
             """[{"repeat":5,"body":[]}]""",
             """[{"repeat":4,"body":[{"repeat":4,"body":[$DOT]}]}]""",
-            """[{"repeat":2,"body":[{"draw":"dot","args":[{"loop":1},{"arg":0}]}]}]""",
+            """[{"repeat":2,"body":[{"call":"dot","args":[{"loop":1},{"arg":0}]}]}]""",
             """[{"if":{"integer":1},"then":[],"else":[]}]""",
         ],
     )

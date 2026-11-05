@@ -333,10 +333,104 @@
        "number": 2.0
       }
      ],
-     "draw": "rect"
+     "call": "rect"
     },
     {
      "body": [
+      {
+       "let": {
+        "args": [
+         {
+          "args": [
+           {
+            "args": [
+             {
+              "loop": 0
+             }
+            ],
+            "op": "toNumber"
+           },
+           {
+            "number": 3.141592653589793
+           }
+          ],
+          "op": "times"
+         },
+         {
+          "number": 6.0
+         }
+        ],
+        "op": "div"
+       }
+      },
+      {
+       "let": {
+        "args": [
+         {
+          "args": [
+           {
+            "arg": 0
+           },
+           {
+            "number": 2.0
+           }
+          ],
+          "op": "div"
+         },
+         {
+          "args": [
+           {
+            "args": [
+             {
+              "local": 0
+             }
+            ],
+            "op": "cos"
+           },
+           {
+            "number": 40.0
+           }
+          ],
+          "op": "times"
+         }
+        ],
+        "op": "plus"
+       }
+      },
+      {
+       "let": {
+        "args": [
+         {
+          "args": [
+           {
+            "arg": 1
+           },
+           {
+            "number": 2.0
+           }
+          ],
+          "op": "div"
+         },
+         {
+          "args": [
+           {
+            "args": [
+             {
+              "local": 0
+             }
+            ],
+            "op": "sin"
+           },
+           {
+            "number": 40.0
+           }
+          ],
+          "op": "times"
+         }
+        ],
+        "op": "plus"
+       }
+      },
       {
        "else": [
         {
@@ -348,110 +442,10 @@
            "number": 4.0
           },
           {
-           "args": [
-            {
-             "args": [
-              {
-               "arg": 0
-              },
-              {
-               "number": 2.0
-              }
-             ],
-             "op": "div"
-            },
-            {
-             "args": [
-              {
-               "args": [
-                {
-                 "args": [
-                  {
-                   "args": [
-                    {
-                     "args": [
-                      {
-                       "loop": 0
-                      }
-                     ],
-                     "op": "toNumber"
-                    },
-                    {
-                     "number": 3.141592653589793
-                    }
-                   ],
-                   "op": "times"
-                  },
-                  {
-                   "number": 6.0
-                  }
-                 ],
-                 "op": "div"
-                }
-               ],
-               "op": "cos"
-              },
-              {
-               "number": 40.0
-              }
-             ],
-             "op": "times"
-            }
-           ],
-           "op": "plus"
+           "local": 1
           },
           {
-           "args": [
-            {
-             "args": [
-              {
-               "arg": 1
-              },
-              {
-               "number": 2.0
-              }
-             ],
-             "op": "div"
-            },
-            {
-             "args": [
-              {
-               "args": [
-                {
-                 "args": [
-                  {
-                   "args": [
-                    {
-                     "args": [
-                      {
-                       "loop": 0
-                      }
-                     ],
-                     "op": "toNumber"
-                    },
-                    {
-                     "number": 3.141592653589793
-                    }
-                   ],
-                   "op": "times"
-                  },
-                  {
-                   "number": 6.0
-                  }
-                 ],
-                 "op": "div"
-                }
-               ],
-               "op": "sin"
-              },
-              {
-               "number": 40.0
-              }
-             ],
-             "op": "times"
-            }
-           ],
-           "op": "plus"
+           "local": 2
           },
           {
            "number": 0.5
@@ -460,7 +454,7 @@
            "number": 0.0
           }
          ],
-         "draw": "circle"
+         "call": "circle"
         }
        ],
        "if": {
@@ -492,110 +486,10 @@
            "number": 8.0
           },
           {
-           "args": [
-            {
-             "args": [
-              {
-               "arg": 0
-              },
-              {
-               "number": 2.0
-              }
-             ],
-             "op": "div"
-            },
-            {
-             "args": [
-              {
-               "args": [
-                {
-                 "args": [
-                  {
-                   "args": [
-                    {
-                     "args": [
-                      {
-                       "loop": 0
-                      }
-                     ],
-                     "op": "toNumber"
-                    },
-                    {
-                     "number": 3.141592653589793
-                    }
-                   ],
-                   "op": "times"
-                  },
-                  {
-                   "number": 6.0
-                  }
-                 ],
-                 "op": "div"
-                }
-               ],
-               "op": "cos"
-              },
-              {
-               "number": 40.0
-              }
-             ],
-             "op": "times"
-            }
-           ],
-           "op": "plus"
+           "local": 1
           },
           {
-           "args": [
-            {
-             "args": [
-              {
-               "arg": 1
-              },
-              {
-               "number": 2.0
-              }
-             ],
-             "op": "div"
-            },
-            {
-             "args": [
-              {
-               "args": [
-                {
-                 "args": [
-                  {
-                   "args": [
-                    {
-                     "args": [
-                      {
-                       "loop": 0
-                      }
-                     ],
-                     "op": "toNumber"
-                    },
-                    {
-                     "number": 3.141592653589793
-                    }
-                   ],
-                   "op": "times"
-                  },
-                  {
-                   "number": 6.0
-                  }
-                 ],
-                 "op": "div"
-                }
-               ],
-               "op": "sin"
-              },
-              {
-               "number": 40.0
-              }
-             ],
-             "op": "times"
-            }
-           ],
-           "op": "plus"
+           "local": 2
           },
           {
            "number": 1.0
@@ -604,7 +498,7 @@
            "number": 0.0
           }
          ],
-         "draw": "circle"
+         "call": "circle"
         }
        ]
       }
@@ -922,7 +816,7 @@
            "number": 1.0
           }
          ],
-         "draw": "roundRect"
+         "call": "roundRect"
         }
        ],
        "repeat": 4
@@ -954,7 +848,7 @@
        "number": 1.0
       }
      ],
-     "draw": "line"
+     "call": "line"
     }
    ],
    "params": [
@@ -1081,7 +975,7 @@
         "number": 0.0
        }
       ],
-      "draw": "rect"
+      "call": "rect"
      },
      {
       "args": [
@@ -1126,7 +1020,7 @@
         "number": 0.0
        }
       ],
-      "draw": "rect"
+      "call": "rect"
      },
      {
       "body": [
@@ -1218,7 +1112,7 @@
             "number": 1.0
            }
           ],
-          "draw": "line"
+          "call": "line"
          }
         ]
        }

@@ -33,6 +33,7 @@ __all__ = [
     "FontFamily",
     "FontStyle",
     "FontWeight",
+    "IntOffset",
     "NamedShape",
     "NavigationItemIconPosition",
     "NavigationSuiteType",
@@ -181,7 +182,10 @@ DEFINITIONS: dict[str, dict[str, object]] = json.loads(
     '"values":["Italic","Normal"]}},"since":"1.13.0"},"FontWeight":{"'
     'family":"FontWeight","parameters":{"weight":{"maximum":1000,"min'
     'imum":1,"required":true,"type":"int"}},'
-    '"since":"1.11.0"},"NamedShape":{"family":"Shape",'
+    '"since":"1.11.0"},"IntOffset":{"family":"IntOffset","parameters"'
+    ':{"name":{"required":true,"type":"string",'
+    '"values":["Max","Zero"]}},'
+    '"since":"1.23.0"},"NamedShape":{"family":"Shape",'
     '"parameters":{"name":{"required":true,"type":"string",'
     '"values":["CircleShape","RectangleShape"]}},'
     '"since":"1.23.0"},"NavigationItemIconPosition":{"family":"Naviga'
@@ -981,6 +985,12 @@ _FontFamilyName = Literal[
 _FontStyleName = Literal[
     "Italic",
     "Normal",
+]
+
+
+_IntOffsetName = Literal[
+    "Max",
+    "Zero",
 ]
 
 
@@ -1838,6 +1848,26 @@ def FontWeight(
         "FontWeight",
         {
             "weight": weight,
+        },
+        DEFINITIONS,
+    )
+
+
+def IntOffset(
+    name: _IntOffsetName,
+) -> dict[str, JsonValue]:
+    """Construct IntOffset data for native evaluation.
+
+    Args:
+        name: Native name argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "IntOffset",
+        {
+            "name": name,
         },
         DEFINITIONS,
     )

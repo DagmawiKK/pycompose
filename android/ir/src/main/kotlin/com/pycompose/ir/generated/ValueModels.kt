@@ -78,6 +78,8 @@ sealed interface IconToggleButtonColorsValue
 
 sealed interface ImageVectorValue
 
+sealed interface IntOffsetValue
+
 sealed interface MenuItemColorsValue
 
 sealed interface NavigationBarItemColorsValue
@@ -255,6 +257,11 @@ data class WireFontWeight(
     val supplied: Set<String>,
     val weight: Int,
 ) : FontWeightValue
+
+data class WireIntOffset(
+    val supplied: Set<String>,
+    val name: String,
+) : IntOffsetValue
 
 data class WireNamedShape(
     val supplied: Set<String>,
@@ -1076,7 +1083,10 @@ object ValueContract {
             "\"values\":[\"Italic\",\"Normal\"]}},\"since\":\"1.13.0\"},\"FontWeight\":{\"",
             "family\":\"FontWeight\",\"parameters\":{\"weight\":{\"maximum\":1000,\"min",
             "imum\":1,\"required\":true,\"type\":\"int\"}},",
-            "\"since\":\"1.11.0\"},\"NamedShape\":{\"family\":\"Shape\",",
+            "\"since\":\"1.11.0\"},\"IntOffset\":{\"family\":\"IntOffset\",\"parameters\"",
+            ":{\"name\":{\"required\":true,\"type\":\"string\",",
+            "\"values\":[\"Max\",\"Zero\"]}},",
+            "\"since\":\"1.23.0\"},\"NamedShape\":{\"family\":\"Shape\",",
             "\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\",",
             "\"values\":[\"CircleShape\",\"RectangleShape\"]}},",
             "\"since\":\"1.23.0\"},\"NavigationItemIconPosition\":{\"family\":\"Naviga",
@@ -2364,6 +2374,18 @@ object ValueContract {
         val data = value.jsonObject
         return when (data.getValue("type").jsonPrimitive.content) {
             "materialIcon" -> WirematerialIcon(
+                supplied = data.keys,
+                name = data.getValue("name").jsonPrimitive.content,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readIntOffset(value: JsonElement): IntOffsetValue {
+        ValueParser.validate(value, "IntOffset", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "IntOffset" -> WireIntOffset(
                 supplied = data.keys,
                 name = data.getValue("name").jsonPrimitive.content,
             )
