@@ -43,6 +43,7 @@ def _values(
                 f'op["{prop}"]',
                 prop_value(spec, cast("str", spec["animation"])),
                 call["phase"],
+                pure="valueType" not in spec,
             )
             continue
         if animatable(spec):

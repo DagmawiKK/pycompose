@@ -4,6 +4,7 @@ import androidx.compose.animation.core.VectorConverter
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -28,6 +29,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.util.concurrent.atomic.AtomicInteger
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], application = android.app.Application::class)
@@ -189,5 +191,52 @@ class BindingsTest {
 
         repeat(12) { compose.mainClock.advanceTimeByFrame() }
         assertEquals("the frames place the node alone", 2, compositions)
+    }
+
+    /** How often the content composes while a stream it reads moves through five frames. */
+    private fun compositionsWhileStreaming(body: @Composable (() -> Float) -> Unit): Int {
+        var progress by mutableStateOf(0f)
+        var compositions = 0
+        compose.mainClock.autoAdvance = false
+        compose.setContent {
+            compositions++
+            body { progress }
+        }
+        compose.mainClock.advanceTimeByFrame()
+        repeat(5) { step ->
+            progress = (step + 1) / 10f
+            Snapshot.sendApplyNotifications()
+            compose.mainClock.advanceTimeByFrame()
+            // Layout runs on the view's own traversal, which the frame alone does not drive.
+            compose.waitForIdle()
+        }
+        return compositions
+    }
+
+    @Test
+    fun `a stream followed while laying out moves the node without recomposing it`() {
+        val follow =
+            Json.parseToJsonElement(
+                """{"type":"binding","travel":{"kind":"none"},"phase":"layout","target":
+                   {"type":"expression","node":{"op":"times","args":[
+                     {"stream":"list","name":"progress"},{"number":100}]}}}""",
+            )
+        val placed = AtomicInteger()
+        val compositions =
+            compositionsWhileStreaming { progress ->
+                val streams: Streams = mapOf("list" to mapOf("progress" to progress))
+                val x =
+                    deferredState(follow, Float.VectorConverter, Phase.Layout) {
+                        numberValue(it, streams).toFloat()
+                    }
+                Box(
+                    Modifier.size(10.dp).offset {
+                        placed.set(x?.value?.toInt() ?: 0)
+                        IntOffset(placed.get(), 0)
+                    },
+                )
+            }
+        assertEquals("the stream moved the node", 50, placed.get())
+        assertEquals("and the node was never recomposed", 1, compositions)
     }
 }

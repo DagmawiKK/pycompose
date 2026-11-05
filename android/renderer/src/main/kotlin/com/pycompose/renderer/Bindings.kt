@@ -10,6 +10,8 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
@@ -138,6 +140,42 @@ fun <V : AnimationVector> RenderContext.boundDp(
     converter: TwoWayConverter<Dp, V>,
     fallback: Dp,
 ): Dp = if (wire == null) fallback else bound(wire, converter) { number(it).dp }
+
+/**
+ * A prop a block Compose invokes later reads -- while laying out or drawing -- whose reader
+ * needs no composition, as a number's or a dp's does.
+ *
+ * A live value -- an expression over holder streams, or a follow of one -- is read inside a
+ * derived state the block reads, so a moving stream invalidates that phase alone and never
+ * the composition. A value that travels animates as any binding does.
+ *
+ * @param wire The prop's wire value: plain, a binding, or null when omitted.
+ * @param converter The pin's converter for the prop's type.
+ * @param phase Where the block reads the value.
+ * @param read Reads a plain wire value; it may read holder streams, never composition.
+ * @return The value's state, or null when the prop was omitted.
+ */
+@Composable
+fun <T, V : AnimationVector> deferredState(
+    wire: JsonElement?,
+    converter: TwoWayConverter<T, V>,
+    phase: Phase,
+    read: (JsonElement) -> T,
+): State<T>? {
+    if (wire == null) return null
+    val binding = bound(wire)?.at(phase)
+    return if (binding == null || binding.travel == Travel.None) {
+        val current = rememberUpdatedState(binding?.target ?: wire)
+        remember { derivedStateOf { read(current.value) } }
+    } else {
+        animateValueAsState(
+            read(binding.target),
+            converter,
+            spec(binding.travel),
+            label = "binding",
+        )
+    }
+}
 
 /** The binding a prop value carries, or null for a plain value. */
 private fun bound(wire: JsonElement): Binding? {

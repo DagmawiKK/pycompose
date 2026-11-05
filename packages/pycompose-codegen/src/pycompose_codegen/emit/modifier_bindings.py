@@ -36,9 +36,13 @@ def animated(converter: str, wire: str, decode: str) -> str:
 
 
 def deferred(
-    name: str, converter: str, wire: str, decode: str, phase: str
+    name: str, converter: str, wire: str, decode: str, phase: str, *, pure: bool
 ) -> list[str]:
     """The declaration of a state a deferred lambda reads when it runs.
+
+    A pure decode (a number's, a dp's) reads a live value inside a derived
+    state the lambda reads, so a moving stream invalidates that phase alone; a
+    decode that reads composition (a colour resolving a theme role) cannot.
 
     Args:
         name: The prop's wire name; the state is ``<name>State``.
@@ -46,13 +50,15 @@ def deferred(
         wire: Kotlin for the prop's wire value, which may be absent.
         decode: Kotlin reading a plain wire value named ``value``.
         phase: Where the lambda reads it: ``draw`` or ``layout``.
+        pure: Whether the decode reads nothing from composition.
 
     Returns:
         The declaration's lines, indented for a branch body.
     """
+    reader = "deferredState" if pure else "optionalBindingState"
     return [
         f"                val {name}State =",
-        "                    com.pycompose.renderer.optionalBindingState(",
+        f"                    com.pycompose.renderer.{reader}(",
         f"                        {wire}, {converter}, {PHASE}.{phase.title()},",
         f"                    ) {{ value -> {decode} }}",
     ]

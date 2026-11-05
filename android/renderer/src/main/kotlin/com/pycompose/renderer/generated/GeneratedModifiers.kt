@@ -114,11 +114,11 @@ object GeneratedModifiers {
         when (type) {
             "absoluteOffset" -> {
                 val xState =
-                    com.pycompose.renderer.optionalBindingState(
+                    com.pycompose.renderer.deferredState(
                         op["x"], Dp.VectorConverter, com.pycompose.program.Phase.Layout,
                     ) { value -> if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }
                 val yState =
-                    com.pycompose.renderer.optionalBindingState(
+                    com.pycompose.renderer.deferredState(
                         op["y"], Dp.VectorConverter, com.pycompose.program.Phase.Layout,
                     ) { value -> if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }
                 Modifier.absoluteOffset(offset = {
@@ -214,39 +214,39 @@ object GeneratedModifiers {
                 )
             "graphicsLayer" -> {
                 val scaleXState =
-                    com.pycompose.renderer.optionalBindingState(
+                    com.pycompose.renderer.deferredState(
                         op["scaleX"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
                     ) { value -> numberValue(value, streams).toFloat() }
                 val scaleYState =
-                    com.pycompose.renderer.optionalBindingState(
+                    com.pycompose.renderer.deferredState(
                         op["scaleY"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
                     ) { value -> numberValue(value, streams).toFloat() }
                 val alphaState =
-                    com.pycompose.renderer.optionalBindingState(
+                    com.pycompose.renderer.deferredState(
                         op["alpha"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
                     ) { value -> numberValue(value, streams).toFloat() }
                 val translationXState =
-                    com.pycompose.renderer.optionalBindingState(
+                    com.pycompose.renderer.deferredState(
                         op["translationX"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
                     ) { value -> numberValue(value, streams).toFloat() }
                 val translationYState =
-                    com.pycompose.renderer.optionalBindingState(
+                    com.pycompose.renderer.deferredState(
                         op["translationY"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
                     ) { value -> numberValue(value, streams).toFloat() }
                 val shadowElevationState =
-                    com.pycompose.renderer.optionalBindingState(
+                    com.pycompose.renderer.deferredState(
                         op["shadowElevation"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
                     ) { value -> numberValue(value, streams).toFloat() }
                 val rotationXState =
-                    com.pycompose.renderer.optionalBindingState(
+                    com.pycompose.renderer.deferredState(
                         op["rotationX"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
                     ) { value -> numberValue(value, streams).toFloat() }
                 val rotationYState =
-                    com.pycompose.renderer.optionalBindingState(
+                    com.pycompose.renderer.deferredState(
                         op["rotationY"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
                     ) { value -> numberValue(value, streams).toFloat() }
                 val rotationZState =
-                    com.pycompose.renderer.optionalBindingState(
+                    com.pycompose.renderer.deferredState(
                         op["rotationZ"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
                     ) { value -> numberValue(value, streams).toFloat() }
                 val shapeValue = op["shape"]?.let { value -> com.pycompose.renderer.generated.ValueResolver.shape(value).getOrThrow() }
@@ -314,11 +314,11 @@ object GeneratedModifiers {
                 )
             "offset" -> {
                 val xState =
-                    com.pycompose.renderer.optionalBindingState(
+                    com.pycompose.renderer.deferredState(
                         op["x"], Dp.VectorConverter, com.pycompose.program.Phase.Layout,
                     ) { value -> if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }
                 val yState =
-                    com.pycompose.renderer.optionalBindingState(
+                    com.pycompose.renderer.deferredState(
                         op["y"], Dp.VectorConverter, com.pycompose.program.Phase.Layout,
                     ) { value -> if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() }
                 Modifier.offset(offset = {
