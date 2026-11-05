@@ -135,10 +135,14 @@ def _content_scope(declaration: Any, native: str) -> str | None:
         if "kotlin/ExtensionFunctionType" not in parameter.type.annotations:
             continue
         arguments = [type_ for _, type_ in parameter.type.arguments]
-        # Children compose in a receiver-only lambda, or keyed content's: one
-        # passing any other argument (an item) is another protocol's.
+        # Children compose in a receiver-only lambda, keyed content's, or an
+        # indexed template's: one passing any other argument is another protocol's.
+        indexed = [a.classifier if a else None for a in arguments[1:]] == [
+            "kotlin/Int",
+            "kotlin/Unit",
+        ]
         if arguments[0] is None or not (
-            len(arguments) == 2 or keyed_arguments(parameter.type)
+            len(arguments) == 2 or keyed_arguments(parameter.type) or indexed
         ):
             continue
         return scope_for(arguments[0].classifier)

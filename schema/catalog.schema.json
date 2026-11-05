@@ -412,6 +412,10 @@
         "key": {
           "type": "string",
           "description": "Keyed content: the string prop naming the key the children are drawn for."
+        },
+        "native": {
+          "type": "string",
+          "description": "The native parameter the children fill, when it is not content: a pager's pageContent."
         }
       }
     },

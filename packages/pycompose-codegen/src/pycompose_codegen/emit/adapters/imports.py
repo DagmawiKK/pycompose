@@ -83,6 +83,9 @@ def extra_imports(
                 "com.pycompose.renderer.unslotted",
             }
         )
+    if entry.get("children", {}).get("kind") == "indexed":
+        # One page per child: the unslotted ones, in order.
+        qualified.add("com.pycompose.renderer.unslotted")
     if any("indexOf" in spec for spec in entry.get("props", {}).values()):
         qualified.update(
             {"com.pycompose.renderer.index", "com.pycompose.renderer.inSlot"}

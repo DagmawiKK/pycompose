@@ -15,11 +15,14 @@ from __future__ import annotations
 OWNERS = ("python", "host")
 """Who may set a prop. Anything else is refused rather than ignored."""
 
-SLOT_KINDS = ("content", "items", "keyed")
-"""How a subtree is composed: nodes in order, lazy list items, or one per key.
+SLOT_KINDS = ("content", "items", "keyed", "indexed")
+"""How a subtree is composed: nodes in order, lazy list items, one per key, or one
+per index.
 
 ``keyed`` is the primary children's alone: keyed content draws the subtree Python
 sent for the current key, and keeps an outgoing key's while it animates out.
+``indexed`` is a template over an index (a pager's ``page``): the i-th child is
+what the lambda draws for index i.
 """
 
 CONSUMERS = ("paddingValues",)
@@ -45,6 +48,7 @@ STATE_KINDS = (
     "textInput",
     "search",
     "swipe",
+    "pager",
 )
 """State families the host creates, drives and reports for a component.
 
@@ -57,7 +61,8 @@ desired visible value through hover, focus and long-press gestures; textInput
 reconciles text and selection with an atomic, numbered edit report; search
 shares one editing projection and one expansion state across a collapsed bar
 and every expanded surface; a swipe reconciles a desired settled/dismissed
-anchor through horizontal gestures and reports the anchor it settled on. The
+anchor through horizontal gestures and reports the anchor it settled on; a
+pager scrolls to a desired page and reports the page it settled on. The
 vocabulary is closed for the same reason the interaction kinds are: the host
 must not be asked to drive a state object whose transitions it does not
 understand.
@@ -73,6 +78,7 @@ STATE_HOLDERS = {
     "textInput": "androidx.compose.foundation.text.input.TextFieldState",
     "search": "androidx.compose.material3.SearchBarState",
     "swipe": "androidx.compose.material3.SwipeToDismissBoxState",
+    "pager": "androidx.compose.foundation.pager.PagerState",
 }
 """The native holder each state family creates and drives.
 

@@ -3708,6 +3708,84 @@
         "allowed": false
       }
     },
+    "HorizontalPager": {
+      "package": "androidx.compose.foundation.pager",
+      "category": "foundation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "descriptor": "(Landroidx/compose/foundation/pager/PagerState;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/pager/PageSize;IFLandroidx/compose/ui/Alignment$Vertical;Landroidx/compose/foundation/gestures/TargetedFlingBehavior;ZZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/input/nestedscroll/NestedScrollConnection;Landroidx/compose/foundation/gestures/snapping/SnapPosition;Landroidx/compose/foundation/OverscrollEffect;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "HorizontalPager--8jOkeI",
+        "name": "HorizontalPager",
+        "owner": "androidx.compose.foundation.pager.PagerKt"
+      },
+      "props": {
+        "pageSpacing": {
+          "type": "dp",
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "reverseLayout": {
+          "type": "boolean",
+          "default": false
+        },
+        "snapPosition": {
+          "type": "value",
+          "valueType": "SnapPosition",
+          "nativeDefault": "androidx.compose.foundation.gestures.snapping.SnapPosition.Start"
+        },
+        "userScrollEnabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "verticalAlignment": {
+          "type": "enum",
+          "valueType": "AlignmentVertical",
+          "values": [
+            "bottom",
+            "centerVertically",
+            "top"
+          ],
+          "default": "centerVertically",
+          "nativeDefault": "androidx.compose.ui.Alignment.Companion.CenterVertically"
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "onPageSettled": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "page",
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "indexed",
+        "native": "pageContent",
+        "provides": "androidx.compose.foundation.pager.PagerScope"
+      },
+      "state": {
+        "native": "state",
+        "kind": "pager",
+        "value": "page",
+        "report": "onPageSettled"
+      },
+      "reshaped": [
+        "page",
+        "onPageSettled"
+      ]
+    },
     "Icon": {
       "package": "androidx.compose.material3",
       "category": "media",
@@ -10637,6 +10715,86 @@
         "onPress",
         "onFocus",
         "onHover"
+      ]
+    },
+    "VerticalPager": {
+      "package": "androidx.compose.foundation.pager",
+      "category": "foundation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "descriptor": "(Landroidx/compose/foundation/pager/PagerState;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/pager/PageSize;IFLandroidx/compose/ui/Alignment$Horizontal;Landroidx/compose/foundation/gestures/TargetedFlingBehavior;ZZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/input/nestedscroll/NestedScrollConnection;Landroidx/compose/foundation/gestures/snapping/SnapPosition;Landroidx/compose/foundation/OverscrollEffect;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "VerticalPager--8jOkeI",
+        "name": "VerticalPager",
+        "owner": "androidx.compose.foundation.pager.PagerKt"
+      },
+      "props": {
+        "horizontalAlignment": {
+          "type": "enum",
+          "valueType": "AlignmentHorizontal",
+          "values": [
+            "centerHorizontally",
+            "end",
+            "left",
+            "right",
+            "start"
+          ],
+          "default": "centerHorizontally",
+          "nativeDefault": "androidx.compose.ui.Alignment.Companion.CenterHorizontally"
+        },
+        "pageSpacing": {
+          "type": "dp",
+          "nativeDefault": "(0).dp",
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "reverseLayout": {
+          "type": "boolean",
+          "default": false
+        },
+        "snapPosition": {
+          "type": "value",
+          "valueType": "SnapPosition",
+          "nativeDefault": "androidx.compose.foundation.gestures.snapping.SnapPosition.Start"
+        },
+        "userScrollEnabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "onPageSettled": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "page",
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "indexed",
+        "native": "pageContent",
+        "provides": "androidx.compose.foundation.pager.PagerScope"
+      },
+      "state": {
+        "native": "state",
+        "kind": "pager",
+        "value": "page",
+        "report": "onPageSettled"
+      },
+      "reshaped": [
+        "page",
+        "onPageSettled"
       ]
     },
     "WideNavigationRail": {

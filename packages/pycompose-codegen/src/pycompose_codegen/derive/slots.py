@@ -64,6 +64,9 @@ def slot_rule(value: KotlinType) -> dict[str, Any]:
         and arguments[0].classifier in CONSUMED
     ):
         rule["consume"] = CONSUMED[arguments[0].classifier]
+    elif [(a.classifier, a.nullable) for a in arguments] == [("kotlin/Int", False)]:
+        # A template over an index: Python sends one subtree per index, in order.
+        rule["kind"] = "indexed"
     elif arguments:
         raise ValueError("slot-supplied arguments need typed context references")
     return rule

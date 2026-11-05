@@ -14,6 +14,7 @@ def children_argument(children: dict[str, Any], out: Fragments) -> str:
     The schema says which parameter the children reach, and nothing about
     where it sits. Keyed content draws, for each key Compose asks for, the
     subtree Python sent for it: an outgoing key keeps its own while it animates.
+    Indexed content draws, for each index, the child at that position.
     """
     native = children.get("native", "content")
     if children.get("kind") == "keyed":
@@ -23,6 +24,15 @@ def children_argument(children: dict[str, Any], out: Fragments) -> str:
         )
         scope = "this" if children.get("provides") else "null"
         return f"{native} = {{ key -> keyed.Content({scope}, key) }}"
+    if children.get("kind") == "indexed":
+        # One subtree per index, in order: the lambda draws the one for its index.
+        page = "listOfNotNull(model.children.unslotted().getOrNull(index))"
+        draw = (
+            f"context.childrenIn(this, {page})"
+            if children.get("provides")
+            else f"context.children({page})"
+        )
+        return f"{native} = {{ index -> {draw} }}"
     body, parameter = _slot_body(
         "model.children",
         None,

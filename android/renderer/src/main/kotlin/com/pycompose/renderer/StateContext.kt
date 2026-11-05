@@ -2,6 +2,7 @@ package com.pycompose.renderer
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -195,6 +196,20 @@ fun RenderContext.lazyListState(
     index: Long?,
     report: String?,
 ): LazyListState = rememberHostLazyListState(index, report, observations::observe)
+
+/**
+ * The node's pager projection, reporting the page it settles on.
+ *
+ * @param page Desired page; null leaves paging to gestures.
+ * @param report Action id settled pages report to; null reports none.
+ * @param count How many pages there are: the children Python sent.
+ */
+@Composable
+fun RenderContext.pagerState(
+    page: Long?,
+    report: String?,
+    count: Int,
+): PagerState = rememberHostPagerState(page, report, count, observations::observe)
 
 /**
  * The node's snackbar host, showing a request only for a greater serial.

@@ -76,6 +76,7 @@ __all__ = [
     "FlowColumn",
     "FlowRow",
     "HorizontalDivider",
+    "HorizontalPager",
     "Icon",
     "IconButton",
     "IconToggleButton",
@@ -171,6 +172,7 @@ __all__ = [
     "TriStateCheckbox",
     "VerticalDivider",
     "VerticalDragHandle",
+    "VerticalPager",
     "WideNavigationRail",
     "WideNavigationRailItem",
 ]
@@ -247,6 +249,12 @@ _FlowRowItemVerticalAlignment = Literal[
     "bottom",
 ]
 
+_AlignmentVertical = Literal[
+    "bottom",
+    "centerVertically",
+    "top",
+]
+
 _ContentScale = Literal[
     "crop",
     "fillBounds",
@@ -272,12 +280,6 @@ _LazyColumnVerticalArrangement = Literal[
     "spaceEvenly",
     "spaceBetween",
     "spaceAround",
-]
-
-_AlignmentVertical = Literal[
-    "bottom",
-    "centerVertically",
-    "top",
 ]
 
 _ModalBottomSheetValue = Literal[
@@ -3665,6 +3667,67 @@ class HorizontalDivider(Component):
         if thickness is not None:
             props["thickness"] = lower_binding(thickness, "composition")
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class HorizontalPager(Component):
+    """Native HorizontalPager; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "HorizontalPager"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        on_page_settled: ActionTarget | None = None,
+        page: int | None = None,
+        page_spacing: int | float | Expression | Binding | None = None,
+        reverse_layout: bool | None = None,
+        snap_position: JsonValue | None = None,
+        user_scroll_enabled: bool | None = None,
+        vertical_alignment: _AlignmentVertical | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered HorizontalPager.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            on_page_settled: Native onPageSettled; None uses its default.
+            page: Native page; None uses its default.
+            page_spacing: Native pageSpacing; None uses its default.
+            reverse_layout: Native reverseLayout; None uses its default.
+            snap_position: Native snapPosition; None uses its default.
+            user_scroll_enabled: Native userScrollEnabled; None uses its default.
+            vertical_alignment: Native verticalAlignment; None uses its default.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if on_page_settled is not None:
+            props["on_page_settled"] = on_page_settled
+        if page is not None:
+            props["page"] = page
+        if page_spacing is not None:
+            props["page_spacing"] = lower_binding(page_spacing, "composition")
+        if reverse_layout is not None:
+            props["reverse_layout"] = reverse_layout
+        if snap_position is not None:
+            props["snap_position"] = snap_position
+        if user_scroll_enabled is not None:
+            props["user_scroll_enabled"] = user_scroll_enabled
+        if vertical_alignment is not None:
+            props["vertical_alignment"] = vertical_alignment
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class Icon(Component):
@@ -9183,6 +9246,67 @@ class VerticalDragHandle(Component):
         if on_press is not None:
             props["on_press"] = on_press
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class VerticalPager(Component):
+    """Native VerticalPager; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "VerticalPager"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        horizontal_alignment: _AlignmentHorizontal | None = None,
+        modifier: Modifier | None = None,
+        on_page_settled: ActionTarget | None = None,
+        page: int | None = None,
+        page_spacing: int | float | Expression | Binding | None = None,
+        reverse_layout: bool | None = None,
+        snap_position: JsonValue | None = None,
+        user_scroll_enabled: bool | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered VerticalPager.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            horizontal_alignment: Native horizontalAlignment; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_page_settled: Native onPageSettled; None uses its default.
+            page: Native page; None uses its default.
+            page_spacing: Native pageSpacing; None uses its default.
+            reverse_layout: Native reverseLayout; None uses its default.
+            snap_position: Native snapPosition; None uses its default.
+            user_scroll_enabled: Native userScrollEnabled; None uses its default.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if horizontal_alignment is not None:
+            props["horizontal_alignment"] = horizontal_alignment
+        if on_page_settled is not None:
+            props["on_page_settled"] = on_page_settled
+        if page is not None:
+            props["page"] = page
+        if page_spacing is not None:
+            props["page_spacing"] = lower_binding(page_spacing, "composition")
+        if reverse_layout is not None:
+            props["reverse_layout"] = reverse_layout
+        if snap_position is not None:
+            props["snap_position"] = snap_position
+        if user_scroll_enabled is not None:
+            props["user_scroll_enabled"] = user_scroll_enabled
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class WideNavigationRail(Component):

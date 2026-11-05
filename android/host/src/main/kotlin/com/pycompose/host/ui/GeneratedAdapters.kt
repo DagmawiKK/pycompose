@@ -27,6 +27,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.selection.DisableSelection
@@ -208,6 +210,7 @@ import com.pycompose.ir.generated.FloatingActionButton as FloatingActionButtonNo
 import com.pycompose.ir.generated.FlowColumn as FlowColumnNode
 import com.pycompose.ir.generated.FlowRow as FlowRowNode
 import com.pycompose.ir.generated.HorizontalDivider as HorizontalDividerNode
+import com.pycompose.ir.generated.HorizontalPager as HorizontalPagerNode
 import com.pycompose.ir.generated.Icon as IconNode
 import com.pycompose.ir.generated.IconButton as IconButtonNode
 import com.pycompose.ir.generated.IconToggleButton as IconToggleButtonNode
@@ -298,6 +301,7 @@ import com.pycompose.ir.generated.TopAppBar as TopAppBarNode
 import com.pycompose.ir.generated.TriStateCheckbox as TriStateCheckboxNode
 import com.pycompose.ir.generated.VerticalDivider as VerticalDividerNode
 import com.pycompose.ir.generated.VerticalDragHandle as VerticalDragHandleNode
+import com.pycompose.ir.generated.VerticalPager as VerticalPagerNode
 import com.pycompose.ir.generated.WideNavigationRail as WideNavigationRailNode
 import com.pycompose.ir.generated.WideNavigationRailItem as WideNavigationRailItemNode
 import com.pycompose.renderer.Reseed
@@ -317,6 +321,7 @@ import com.pycompose.renderer.inSlot
 import com.pycompose.renderer.index
 import com.pycompose.renderer.lazyListState
 import com.pycompose.renderer.number
+import com.pycompose.renderer.pagerState
 import com.pycompose.renderer.publish
 import com.pycompose.renderer.reconcileProperty
 import com.pycompose.renderer.rememberDrawing
@@ -1342,6 +1347,25 @@ object GeneratedAdapters {
                     modifier = modifier,
                     color = colorValue,
                     thickness = thicknessValue,
+                )
+            }
+            .register("HorizontalPager") { node, modifier, context ->
+                val model = node as HorizontalPagerNode
+                val pageSpacingValue = context.boundDp(model.props.pageSpacing, Dp.VectorConverter, (0).dp)
+                val snapPositionWire = model.props.snapPosition
+                val snapPositionValue = if (snapPositionWire != null) com.pycompose.renderer.generated.ValueResolver.snapPosition(snapPositionWire).getOrThrow() else androidx.compose.foundation.gestures.snapping.SnapPosition.Start
+                val verticalAlignmentValue = model.props.verticalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentVertical(it).getOrThrow() }
+                    ?: androidx.compose.ui.Alignment.Companion.CenterVertically
+                val stateValue = context.pagerState(model.props.page, model.props.onPageSettled, model.children.unslotted().size)
+                HorizontalPager(
+                    modifier = modifier,
+                    pageSpacing = pageSpacingValue,
+                    reverseLayout = model.props.reverseLayout,
+                    snapPosition = snapPositionValue,
+                    userScrollEnabled = model.props.userScrollEnabled,
+                    verticalAlignment = verticalAlignmentValue,
+                    state = stateValue,
+                    pageContent = { index -> context.childrenIn(this, listOfNotNull(model.children.unslotted().getOrNull(index))) },
                 )
             }
             .register("Icon") { node, modifier, context ->
@@ -2945,6 +2969,25 @@ object GeneratedAdapters {
                 VerticalDragHandle(
                     modifier = modifier,
                     interactionSource = interactionSourceValue,
+                )
+            }
+            .register("VerticalPager") { node, modifier, context ->
+                val model = node as VerticalPagerNode
+                val horizontalAlignmentValue = model.props.horizontalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentHorizontal(it).getOrThrow() }
+                    ?: androidx.compose.ui.Alignment.Companion.CenterHorizontally
+                val pageSpacingValue = context.boundDp(model.props.pageSpacing, Dp.VectorConverter, (0).dp)
+                val snapPositionWire = model.props.snapPosition
+                val snapPositionValue = if (snapPositionWire != null) com.pycompose.renderer.generated.ValueResolver.snapPosition(snapPositionWire).getOrThrow() else androidx.compose.foundation.gestures.snapping.SnapPosition.Start
+                val stateValue = context.pagerState(model.props.page, model.props.onPageSettled, model.children.unslotted().size)
+                VerticalPager(
+                    modifier = modifier,
+                    horizontalAlignment = horizontalAlignmentValue,
+                    pageSpacing = pageSpacingValue,
+                    reverseLayout = model.props.reverseLayout,
+                    snapPosition = snapPositionValue,
+                    userScrollEnabled = model.props.userScrollEnabled,
+                    state = stateValue,
+                    pageContent = { index -> context.childrenIn(this, listOfNotNull(model.children.unslotted().getOrNull(index))) },
                 )
             }
             .register("WideNavigationRail") { node, modifier, context ->

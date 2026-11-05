@@ -355,6 +355,12 @@ private fun HorizontalDividerPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "HorizontalDivider", "type": "semantics"}]}}, "type": "HorizontalDivider"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "HorizontalPager", showBackground = true)
+@Composable
+private fun HorizontalPagerPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "HorizontalPager"}, "type": "Text"}], "id": "preview", "props": {}, "type": "HorizontalPager"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "Icon", showBackground = true)
 @Composable
 private fun IconPreview() {
@@ -923,6 +929,12 @@ private fun VerticalDividerPreview() {
 @Composable
 private fun VerticalDragHandlePreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "VerticalDragHandle", "type": "semantics"}]}}, "type": "VerticalDragHandle"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "VerticalPager", showBackground = true)
+@Composable
+private fun VerticalPagerPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "VerticalPager"}, "type": "Text"}], "id": "preview", "props": {}, "type": "VerticalPager"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "WideNavigationRail", showBackground = true)

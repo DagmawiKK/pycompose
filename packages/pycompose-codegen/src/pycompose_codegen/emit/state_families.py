@@ -114,6 +114,10 @@ STATE_FAMILIES: dict[str, Family] = {
         ("firstVisibleIndex", {"type": "integer", "minimum": 0, "maximum": _INT}),
         "onScrollIdle",
     ),
+    "pager": Family(
+        ("page", {"type": "integer", "minimum": 0, "maximum": _INT}),
+        "onPageSettled",
+    ),
     "tooltip": Family(
         ("visible", {"type": "boolean"}),
         "onVisibilityChange",

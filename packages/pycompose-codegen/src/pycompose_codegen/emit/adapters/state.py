@@ -173,6 +173,9 @@ def _state(
         f", {_constructor_argument(name, props.get(name) or {})}"
         for name in STATE_CONSTRUCTOR_PROPS.get(state["kind"], ())
     )
+    if state["kind"] == "pager":
+        # A pager has as many pages as Python sent.
+        extras += ", model.children.unslotted().size"
     dismiss = state.get("dismiss")
     if dismiss is not None:
         # The component announces a dismissal it has already carried out; the

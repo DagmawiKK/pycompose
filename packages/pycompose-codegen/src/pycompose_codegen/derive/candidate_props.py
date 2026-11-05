@@ -420,14 +420,16 @@ def place_slot(
     """
     receiver = spec.get("receiver")
     nullable = bool(spec["type"]["nullable"])
-    if spec.get("keyed"):
-        # The children are the subtree Python sends for the current key.
-        children.update({"allowed": True, "kind": "keyed"})
+    if spec.get("keyed") or spec.get("kind") == "indexed":
+        # The children are the subtree Python sends for the current key, or one
+        # subtree per index, in order.
+        kind = "keyed" if spec.get("keyed") else "indexed"
+        children.update({"allowed": True, "kind": kind})
         if parameter != "content":
             children["native"] = parameter
         if receiver is not None:
             children["provides"] = scope_for(receiver)
-        review.append(f"{parameter}: keyed content, one subtree per key")
+        review.append(f"{parameter}: {kind} content, one subtree per {kind[:-2]}")
         return
     if receiver is not None:
         scope = scope_for(receiver)

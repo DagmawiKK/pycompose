@@ -1283,6 +1283,30 @@ data class HorizontalDivider(
 }
 
 @Serializable
+data class HorizontalPagerProps(
+    override val `modifier`: JsonObject? = null,
+    val `onPageSettled`: String? = null,
+    val `page`: Long? = null,
+    val `pageSpacing`: JsonElement? = null,
+    val `reverseLayout`: Boolean = false,
+    val `snapPosition`: JsonElement? = null,
+    val `userScrollEnabled`: Boolean = true,
+    val `verticalAlignment`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("HorizontalPager")
+data class HorizontalPager(
+    override val id: String,
+    override val props: HorizontalPagerProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "HorizontalPager"
+}
+
+@Serializable
 data class IconProps(
     val `contentDescription`: String?,
     val `imageVector`: JsonElement,
@@ -3431,6 +3455,30 @@ data class VerticalDragHandle(
     override val children: List<UiNode> get() = emptyList()
     override fun withChildren(children: List<UiNode>): UiNode = this
     override val componentType: String get() = "VerticalDragHandle"
+}
+
+@Serializable
+data class VerticalPagerProps(
+    val `horizontalAlignment`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `onPageSettled`: String? = null,
+    val `page`: Long? = null,
+    val `pageSpacing`: JsonElement? = null,
+    val `reverseLayout`: Boolean = false,
+    val `snapPosition`: JsonElement? = null,
+    val `userScrollEnabled`: Boolean = true,
+) : UiProps
+
+@Serializable
+@SerialName("VerticalPager")
+data class VerticalPager(
+    override val id: String,
+    override val props: VerticalPagerProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "VerticalPager"
 }
 
 @Serializable

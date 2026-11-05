@@ -63,7 +63,7 @@ def _validate_children(
         die(f"component {name!r} children.provides must name a receiver class")
     if children.get("consume") is not None:
         die(f"component {name!r} children cannot consume and provide a scope")
-    if children.get("kind", "content") not in {"content", "keyed"}:
+    if children.get("kind", "content") not in {"content", "keyed", "indexed"}:
         die(f"component {name!r} children.provides needs the content kind")
 
 

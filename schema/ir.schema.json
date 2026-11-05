@@ -4386,6 +4386,89 @@
       },
       "type": "object"
     },
+    "C_HorizontalPager": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onPageSettled": {
+              "$ref": "#/definitions/Action"
+            },
+            "page": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "pageSpacing": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "reverseLayout": {
+              "default": false,
+              "type": "boolean"
+            },
+            "snapPosition": {
+              "$ref": "#/definitions/Family_SnapPosition"
+            },
+            "userScrollEnabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "verticalAlignment": {
+              "$ref": "#/definitions/Family_AlignmentVertical"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "HorizontalPager"
+        }
+      },
+      "type": "object"
+    },
     "C_Icon": {
       "properties": {
         "children": false,
@@ -11314,6 +11397,89 @@
       },
       "type": "object"
     },
+    "C_VerticalPager": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "horizontalAlignment": {
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onPageSettled": {
+              "$ref": "#/definitions/Action"
+            },
+            "page": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "pageSpacing": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "reverseLayout": {
+              "default": false,
+              "type": "boolean"
+            },
+            "snapPosition": {
+              "$ref": "#/definitions/Family_SnapPosition"
+            },
+            "userScrollEnabled": {
+              "default": true,
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "VerticalPager"
+        }
+      },
+      "type": "object"
+    },
     "C_WideNavigationRail": {
       "properties": {
         "children": {
@@ -15062,6 +15228,9 @@
               "$ref": "#/definitions/C_HorizontalDivider"
             },
             {
+              "$ref": "#/definitions/C_HorizontalPager"
+            },
+            {
               "$ref": "#/definitions/C_Icon"
             },
             {
@@ -15345,6 +15514,9 @@
             },
             {
               "$ref": "#/definitions/C_VerticalDragHandle"
+            },
+            {
+              "$ref": "#/definitions/C_VerticalPager"
             },
             {
               "$ref": "#/definitions/C_WideNavigationRail"
@@ -36132,6 +36304,89 @@
       },
       "type": "object"
     },
+    "V_1_23_0_HorizontalPager": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onPageSettled": {
+              "$ref": "#/definitions/Action"
+            },
+            "page": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "pageSpacing": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "reverseLayout": {
+              "default": false,
+              "type": "boolean"
+            },
+            "snapPosition": {
+              "$ref": "#/definitions/Family_SnapPosition"
+            },
+            "userScrollEnabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "verticalAlignment": {
+              "$ref": "#/definitions/Family_AlignmentVertical"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "HorizontalPager"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_Icon": {
       "properties": {
         "children": false,
@@ -41515,6 +41770,9 @@
               "$ref": "#/definitions/V_1_23_0_HorizontalDivider"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_HorizontalPager"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_Icon"
             },
             {
@@ -41798,6 +42056,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_VerticalDragHandle"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_VerticalPager"
             },
             {
               "$ref": "#/definitions/V_1_23_0_WideNavigationRail"
@@ -46390,6 +46651,89 @@
         },
         "type": {
           "const": "VerticalDragHandle"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_VerticalPager": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "horizontalAlignment": {
+              "$ref": "#/definitions/Family_AlignmentHorizontal"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onPageSettled": {
+              "$ref": "#/definitions/Action"
+            },
+            "page": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "pageSpacing": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "reverseLayout": {
+              "default": false,
+              "type": "boolean"
+            },
+            "snapPosition": {
+              "$ref": "#/definitions/Family_SnapPosition"
+            },
+            "userScrollEnabled": {
+              "default": true,
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "VerticalPager"
         }
       },
       "type": "object"
