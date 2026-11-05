@@ -93,6 +93,7 @@ __all__ = [
     "LinearProgressIndicatorWithoutProgress",
     "ListItem",
     "LookaheadScope",
+    "MaterialTheme",
     "MediumTopAppBar",
     "ModalBottomSheet",
     "ModalDrawerSheet",
@@ -123,6 +124,7 @@ __all__ = [
     "Popup",
     "PrimaryScrollableTabRow",
     "PrimaryTabRow",
+    "ProvideTextStyle",
     "PullToRefreshBox",
     "RadioButton",
     "RichTooltip",
@@ -4612,6 +4614,39 @@ class LookaheadScope(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
+class MaterialTheme(Component):
+    """Native MaterialTheme; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "MaterialTheme"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered MaterialTheme.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
 class MediumTopAppBar(Component):
     """Native MediumTopAppBar; props and defaults follow the component manifest."""
 
@@ -6488,6 +6523,42 @@ class PrimaryTabRow(Component):
         if tabs is not None:
             slotted += slot_nodes(tabs, key="tabs", slot="tabs")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class ProvideTextStyle(Component):
+    """Native ProvideTextStyle; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ProvideTextStyle"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        value: JsonValue,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered ProvideTextStyle.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            value: Required native value.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        props["value"] = value
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class PullToRefreshBox(Component):

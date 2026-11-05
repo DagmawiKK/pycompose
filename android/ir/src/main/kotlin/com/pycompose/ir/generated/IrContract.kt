@@ -1050,6 +1050,15 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
             ),
         ),
+        "MaterialTheme" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
         "MediumTopAppBar" to ComponentRule(
             slots = setOf("actions", "navigationIcon", "title"),
             childrenAllowed = false,
@@ -1478,6 +1487,16 @@ object IrContract {
                 "contentColor" to PropertyRule("color", required = false, valueType = "Color", animation = true),
                 "modifier" to PropertyRule("modifier", required = false),
                 "selectedTabIndex" to PropertyRule("integer", required = true, animation = true, minimum = -2147483648.0, maximum = 2147483647.0),
+            ),
+        ),
+        "ProvideTextStyle" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+                "value" to PropertyRule("value", required = true, valueType = "TextStyle"),
             ),
         ),
         "PullToRefreshBox" to ComponentRule(

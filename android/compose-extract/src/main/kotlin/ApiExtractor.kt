@@ -23,8 +23,6 @@ import kotlinx.metadata.visibility
 import org.objectweb.asm.Opcodes
 
 /** The library composables that provide context rather than render a component. */
-private val CONTEXT_PROVIDERS = setOf("MaterialTheme", "ProvideTextStyle")
-
 /** One class or file facade being read, with what every member inherits from it. */
 private class Owner(
     val name: String,
@@ -113,7 +111,6 @@ internal class ApiExtractor(
         }
         val returnsUnit =
             (function.returnType.classifier as? KmClassifier.Class)?.name == "kotlin/Unit"
-        val contextProvider = function.name in CONTEXT_PROVIDERS
         return owner.header(coordinate, function.name, "function") +
             mapOf(
                 "suspend" to function.isSuspend,
@@ -130,10 +127,10 @@ internal class ApiExtractor(
                     when {
                         eligibility == null && method == null -> "error"
                         reason != null -> "excluded"
-                        components && composable && returnsUnit && !contextProvider -> "ui"
+                        components && composable && returnsUnit -> "ui"
                         else -> "support"
                     },
-                "category" to category(reason, composable, returnsUnit, contextProvider),
+                "category" to category(reason, composable, returnsUnit),
                 "reason" to reason,
                 "composable" to composable,
                 "annotations" to annotations,
@@ -443,11 +440,9 @@ private fun ApiExtractor.category(
     reason: String?,
     composable: Boolean,
     returnsUnit: Boolean,
-    contextProvider: Boolean,
 ): String = when {
     reason != null -> "excluded"
     !components -> "support"
-    contextProvider -> "composition-provider"
     composable && !returnsUnit -> "composable-factory"
     else -> "component"
 }

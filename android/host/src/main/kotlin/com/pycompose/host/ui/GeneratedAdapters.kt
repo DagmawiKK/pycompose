@@ -76,6 +76,7 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.LeadingIconTab
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
@@ -99,6 +100,7 @@ import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Scaffold
@@ -223,6 +225,7 @@ import com.pycompose.ir.generated.LinearProgressIndicator as LinearProgressIndic
 import com.pycompose.ir.generated.LinearProgressIndicatorWithoutProgress as LinearProgressIndicatorWithoutProgressNode
 import com.pycompose.ir.generated.ListItem as ListItemNode
 import com.pycompose.ir.generated.LookaheadScope as LookaheadScopeNode
+import com.pycompose.ir.generated.MaterialTheme as MaterialThemeNode
 import com.pycompose.ir.generated.MediumTopAppBar as MediumTopAppBarNode
 import com.pycompose.ir.generated.ModalBottomSheet as ModalBottomSheetNode
 import com.pycompose.ir.generated.ModalDrawerSheet as ModalDrawerSheetNode
@@ -253,6 +256,7 @@ import com.pycompose.ir.generated.PlainTooltip as PlainTooltipNode
 import com.pycompose.ir.generated.Popup as PopupNode
 import com.pycompose.ir.generated.PrimaryScrollableTabRow as PrimaryScrollableTabRowNode
 import com.pycompose.ir.generated.PrimaryTabRow as PrimaryTabRowNode
+import com.pycompose.ir.generated.ProvideTextStyle as ProvideTextStyleNode
 import com.pycompose.ir.generated.PullToRefreshBox as PullToRefreshBoxNode
 import com.pycompose.ir.generated.RadioButton as RadioButtonNode
 import com.pycompose.ir.generated.RichTooltip as RichTooltipNode
@@ -1611,6 +1615,14 @@ object GeneratedAdapters {
                 )
                 }
             }
+            .register("MaterialTheme") { node, modifier, context ->
+                val model = node as MaterialThemeNode
+                Box(modifier = modifier) {
+                MaterialTheme(
+                    content = { context.children(model.children) },
+                )
+                }
+            }
             .register("MediumTopAppBar") { node, modifier, context ->
                 val model = node as MediumTopAppBarNode
                 val collapsedHeightValue = context.boundDp(model.props.collapsedHeight, Dp.VectorConverter, androidx.compose.material3.TopAppBarDefaults.MediumAppBarCollapsedHeight)
@@ -2152,6 +2164,16 @@ object GeneratedAdapters {
                         selectedTabIndex = selectedTabIndexValue,
                         tabs = { context.slot(model.children, "tabs")?.invoke() },
                     )
+                }
+            }
+            .register("ProvideTextStyle") { node, modifier, context ->
+                val model = node as ProvideTextStyleNode
+                val valueValue = com.pycompose.renderer.generated.ValueResolver.textStyle(model.props.value).getOrThrow()
+                Box(modifier = modifier) {
+                ProvideTextStyle(
+                    value = valueValue,
+                    content = { context.children(model.children) },
+                )
                 }
             }
             .register("PullToRefreshBox") { node, modifier, context ->

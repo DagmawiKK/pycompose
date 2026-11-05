@@ -1658,6 +1658,23 @@ data class LookaheadScope(
 }
 
 @Serializable
+data class MaterialThemeProps(
+    override val `modifier`: JsonObject? = null,
+) : UiProps
+
+@Serializable
+@SerialName("MaterialTheme")
+data class MaterialTheme(
+    override val id: String,
+    override val props: MaterialThemeProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "MaterialTheme"
+}
+
+@Serializable
 data class MediumTopAppBarProps(
     val `collapsedHeight`: JsonElement? = null,
     val `colors`: JsonElement? = null,
@@ -2325,6 +2342,24 @@ data class PrimaryTabRow(
 ) : UiNode {
     override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "PrimaryTabRow"
+}
+
+@Serializable
+data class ProvideTextStyleProps(
+    override val `modifier`: JsonObject? = null,
+    val `value`: JsonElement,
+) : UiProps
+
+@Serializable
+@SerialName("ProvideTextStyle")
+data class ProvideTextStyle(
+    override val id: String,
+    override val props: ProvideTextStyleProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "ProvideTextStyle"
 }
 
 @Serializable

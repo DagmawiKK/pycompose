@@ -4851,6 +4851,28 @@
       },
       "boxed": true
     },
+    "MaterialTheme": {
+      "package": "androidx.compose.material3",
+      "category": "material3",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/ColorScheme;Landroidx/compose/material3/Shapes;Landroidx/compose/material3/Typography;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "MaterialTheme",
+        "name": "MaterialTheme",
+        "owner": "androidx.compose.material3.MaterialThemeKt"
+      },
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      },
+      "boxed": true
+    },
     "MediumTopAppBar": {
       "package": "androidx.compose.material3",
       "category": "app-bars",
@@ -6963,6 +6985,33 @@
           "native": "tabs"
         }
       }
+    },
+    "ProvideTextStyle": {
+      "package": "androidx.compose.material3",
+      "category": "material3",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V",
+        "jvmName": "ProvideTextStyle",
+        "name": "ProvideTextStyle",
+        "owner": "androidx.compose.material3.TextKt"
+      },
+      "props": {
+        "value": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "required": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true
+      },
+      "boxed": true
     },
     "PullToRefreshBox": {
       "package": "androidx.compose.material3.pulltorefresh",

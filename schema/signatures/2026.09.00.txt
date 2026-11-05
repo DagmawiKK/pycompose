@@ -849,6 +849,59 @@ material3.ChipKt @Composable fun ElevatedSuggestionChip(onClick: () -> Unit, lab
 material3.ChipKt @Composable fun FilterChip(selected: Boolean, onClick: () -> Unit, label: @Composable () -> Unit, modifier: ui.Modifier = …, enabled: Boolean = …, leadingIcon: (@Composable () -> Unit)? = …, trailingIcon: (@Composable () -> Unit)? = …, shape: ui.graphics.Shape = …, colors: material3.SelectableChipColors = …, elevation: material3.SelectableChipElevation? = …, border: foundation.BorderStroke? = …, interactionSource: foundation.interaction.MutableInteractionSource? = …): Unit
 material3.ChipKt @Composable fun InputChip(selected: Boolean, onClick: () -> Unit, label: @Composable () -> Unit, modifier: ui.Modifier = …, enabled: Boolean = …, leadingIcon: (@Composable () -> Unit)? = …, avatar: (@Composable () -> Unit)? = …, trailingIcon: (@Composable () -> Unit)? = …, shape: ui.graphics.Shape = …, colors: material3.SelectableChipColors = …, elevation: material3.SelectableChipElevation? = …, border: foundation.BorderStroke? = …, interactionSource: foundation.interaction.MutableInteractionSource? = …): Unit
 material3.ChipKt @Composable fun SuggestionChip(onClick: () -> Unit, label: @Composable () -> Unit, modifier: ui.Modifier = …, enabled: Boolean = …, icon: (@Composable () -> Unit)? = …, shape: ui.graphics.Shape = …, colors: material3.ChipColors = …, elevation: material3.ChipElevation? = …, border: foundation.BorderStroke? = …, interactionSource: foundation.interaction.MutableInteractionSource? = …): Unit
+material3.ColorScheme constructor <init>(primary: ui.graphics.Color, onPrimary: ui.graphics.Color, primaryContainer: ui.graphics.Color, onPrimaryContainer: ui.graphics.Color, inversePrimary: ui.graphics.Color, secondary: ui.graphics.Color, onSecondary: ui.graphics.Color, secondaryContainer: ui.graphics.Color, onSecondaryContainer: ui.graphics.Color, tertiary: ui.graphics.Color, onTertiary: ui.graphics.Color, tertiaryContainer: ui.graphics.Color, onTertiaryContainer: ui.graphics.Color, background: ui.graphics.Color, onBackground: ui.graphics.Color, surface: ui.graphics.Color, onSurface: ui.graphics.Color, surfaceVariant: ui.graphics.Color, onSurfaceVariant: ui.graphics.Color, surfaceTint: ui.graphics.Color, inverseSurface: ui.graphics.Color, inverseOnSurface: ui.graphics.Color, error: ui.graphics.Color, onError: ui.graphics.Color, errorContainer: ui.graphics.Color, onErrorContainer: ui.graphics.Color, outline: ui.graphics.Color, outlineVariant: ui.graphics.Color, scrim: ui.graphics.Color): material3.ColorScheme
+material3.ColorScheme constructor <init>(primary: ui.graphics.Color, onPrimary: ui.graphics.Color, primaryContainer: ui.graphics.Color, onPrimaryContainer: ui.graphics.Color, inversePrimary: ui.graphics.Color, secondary: ui.graphics.Color, onSecondary: ui.graphics.Color, secondaryContainer: ui.graphics.Color, onSecondaryContainer: ui.graphics.Color, tertiary: ui.graphics.Color, onTertiary: ui.graphics.Color, tertiaryContainer: ui.graphics.Color, onTertiaryContainer: ui.graphics.Color, background: ui.graphics.Color, onBackground: ui.graphics.Color, surface: ui.graphics.Color, onSurface: ui.graphics.Color, surfaceVariant: ui.graphics.Color, onSurfaceVariant: ui.graphics.Color, surfaceTint: ui.graphics.Color, inverseSurface: ui.graphics.Color, inverseOnSurface: ui.graphics.Color, error: ui.graphics.Color, onError: ui.graphics.Color, errorContainer: ui.graphics.Color, onErrorContainer: ui.graphics.Color, outline: ui.graphics.Color, outlineVariant: ui.graphics.Color, scrim: ui.graphics.Color, surfaceBright: ui.graphics.Color, surfaceDim: ui.graphics.Color, surfaceContainer: ui.graphics.Color, surfaceContainerHigh: ui.graphics.Color, surfaceContainerHighest: ui.graphics.Color, surfaceContainerLow: ui.graphics.Color, surfaceContainerLowest: ui.graphics.Color): material3.ColorScheme
+material3.ColorScheme constructor <init>(primary: ui.graphics.Color, onPrimary: ui.graphics.Color, primaryContainer: ui.graphics.Color, onPrimaryContainer: ui.graphics.Color, inversePrimary: ui.graphics.Color, secondary: ui.graphics.Color, onSecondary: ui.graphics.Color, secondaryContainer: ui.graphics.Color, onSecondaryContainer: ui.graphics.Color, tertiary: ui.graphics.Color, onTertiary: ui.graphics.Color, tertiaryContainer: ui.graphics.Color, onTertiaryContainer: ui.graphics.Color, background: ui.graphics.Color, onBackground: ui.graphics.Color, surface: ui.graphics.Color, onSurface: ui.graphics.Color, surfaceVariant: ui.graphics.Color, onSurfaceVariant: ui.graphics.Color, surfaceTint: ui.graphics.Color, inverseSurface: ui.graphics.Color, inverseOnSurface: ui.graphics.Color, error: ui.graphics.Color, onError: ui.graphics.Color, errorContainer: ui.graphics.Color, onErrorContainer: ui.graphics.Color, outline: ui.graphics.Color, outlineVariant: ui.graphics.Color, scrim: ui.graphics.Color, surfaceBright: ui.graphics.Color, surfaceDim: ui.graphics.Color, surfaceContainer: ui.graphics.Color, surfaceContainerHigh: ui.graphics.Color, surfaceContainerHighest: ui.graphics.Color, surfaceContainerLow: ui.graphics.Color, surfaceContainerLowest: ui.graphics.Color, primaryFixed: ui.graphics.Color, primaryFixedDim: ui.graphics.Color, onPrimaryFixed: ui.graphics.Color, onPrimaryFixedVariant: ui.graphics.Color, secondaryFixed: ui.graphics.Color, secondaryFixedDim: ui.graphics.Color, onSecondaryFixed: ui.graphics.Color, onSecondaryFixedVariant: ui.graphics.Color, tertiaryFixed: ui.graphics.Color, tertiaryFixedDim: ui.graphics.Color, onTertiaryFixed: ui.graphics.Color, onTertiaryFixedVariant: ui.graphics.Color): material3.ColorScheme
+material3.ColorScheme fun copy(primary: ui.graphics.Color = …, onPrimary: ui.graphics.Color = …, primaryContainer: ui.graphics.Color = …, onPrimaryContainer: ui.graphics.Color = …, inversePrimary: ui.graphics.Color = …, secondary: ui.graphics.Color = …, onSecondary: ui.graphics.Color = …, secondaryContainer: ui.graphics.Color = …, onSecondaryContainer: ui.graphics.Color = …, tertiary: ui.graphics.Color = …, onTertiary: ui.graphics.Color = …, tertiaryContainer: ui.graphics.Color = …, onTertiaryContainer: ui.graphics.Color = …, background: ui.graphics.Color = …, onBackground: ui.graphics.Color = …, surface: ui.graphics.Color = …, onSurface: ui.graphics.Color = …, surfaceVariant: ui.graphics.Color = …, onSurfaceVariant: ui.graphics.Color = …, surfaceTint: ui.graphics.Color = …, inverseSurface: ui.graphics.Color = …, inverseOnSurface: ui.graphics.Color = …, error: ui.graphics.Color = …, onError: ui.graphics.Color = …, errorContainer: ui.graphics.Color = …, onErrorContainer: ui.graphics.Color = …, outline: ui.graphics.Color = …, outlineVariant: ui.graphics.Color = …, scrim: ui.graphics.Color = …, surfaceBright: ui.graphics.Color = …, surfaceDim: ui.graphics.Color = …, surfaceContainer: ui.graphics.Color = …, surfaceContainerHigh: ui.graphics.Color = …, surfaceContainerHighest: ui.graphics.Color = …, surfaceContainerLow: ui.graphics.Color = …, surfaceContainerLowest: ui.graphics.Color = …, primaryFixed: ui.graphics.Color = …, primaryFixedDim: ui.graphics.Color = …, onPrimaryFixed: ui.graphics.Color = …, onPrimaryFixedVariant: ui.graphics.Color = …, secondaryFixed: ui.graphics.Color = …, secondaryFixedDim: ui.graphics.Color = …, onSecondaryFixed: ui.graphics.Color = …, onSecondaryFixedVariant: ui.graphics.Color = …, tertiaryFixed: ui.graphics.Color = …, tertiaryFixedDim: ui.graphics.Color = …, onTertiaryFixed: ui.graphics.Color = …, onTertiaryFixedVariant: ui.graphics.Color = …): material3.ColorScheme
+material3.ColorScheme fun toString(): String
+material3.ColorScheme val background(): ui.graphics.Color
+material3.ColorScheme val error(): ui.graphics.Color
+material3.ColorScheme val errorContainer(): ui.graphics.Color
+material3.ColorScheme val inverseOnSurface(): ui.graphics.Color
+material3.ColorScheme val inversePrimary(): ui.graphics.Color
+material3.ColorScheme val inverseSurface(): ui.graphics.Color
+material3.ColorScheme val onBackground(): ui.graphics.Color
+material3.ColorScheme val onError(): ui.graphics.Color
+material3.ColorScheme val onErrorContainer(): ui.graphics.Color
+material3.ColorScheme val onPrimary(): ui.graphics.Color
+material3.ColorScheme val onPrimaryContainer(): ui.graphics.Color
+material3.ColorScheme val onPrimaryFixed(): ui.graphics.Color
+material3.ColorScheme val onPrimaryFixedVariant(): ui.graphics.Color
+material3.ColorScheme val onSecondary(): ui.graphics.Color
+material3.ColorScheme val onSecondaryContainer(): ui.graphics.Color
+material3.ColorScheme val onSecondaryFixed(): ui.graphics.Color
+material3.ColorScheme val onSecondaryFixedVariant(): ui.graphics.Color
+material3.ColorScheme val onSurface(): ui.graphics.Color
+material3.ColorScheme val onSurfaceVariant(): ui.graphics.Color
+material3.ColorScheme val onTertiary(): ui.graphics.Color
+material3.ColorScheme val onTertiaryContainer(): ui.graphics.Color
+material3.ColorScheme val onTertiaryFixed(): ui.graphics.Color
+material3.ColorScheme val onTertiaryFixedVariant(): ui.graphics.Color
+material3.ColorScheme val outline(): ui.graphics.Color
+material3.ColorScheme val outlineVariant(): ui.graphics.Color
+material3.ColorScheme val primary(): ui.graphics.Color
+material3.ColorScheme val primaryContainer(): ui.graphics.Color
+material3.ColorScheme val primaryFixed(): ui.graphics.Color
+material3.ColorScheme val primaryFixedDim(): ui.graphics.Color
+material3.ColorScheme val scrim(): ui.graphics.Color
+material3.ColorScheme val secondary(): ui.graphics.Color
+material3.ColorScheme val secondaryContainer(): ui.graphics.Color
+material3.ColorScheme val secondaryFixed(): ui.graphics.Color
+material3.ColorScheme val secondaryFixedDim(): ui.graphics.Color
+material3.ColorScheme val surface(): ui.graphics.Color
+material3.ColorScheme val surfaceBright(): ui.graphics.Color
+material3.ColorScheme val surfaceContainer(): ui.graphics.Color
+material3.ColorScheme val surfaceContainerHigh(): ui.graphics.Color
+material3.ColorScheme val surfaceContainerHighest(): ui.graphics.Color
+material3.ColorScheme val surfaceContainerLow(): ui.graphics.Color
+material3.ColorScheme val surfaceContainerLowest(): ui.graphics.Color
+material3.ColorScheme val surfaceDim(): ui.graphics.Color
+material3.ColorScheme val surfaceTint(): ui.graphics.Color
+material3.ColorScheme val surfaceVariant(): ui.graphics.Color
+material3.ColorScheme val tertiary(): ui.graphics.Color
+material3.ColorScheme val tertiaryContainer(): ui.graphics.Color
+material3.ColorScheme val tertiaryFixed(): ui.graphics.Color
+material3.ColorScheme val tertiaryFixedDim(): ui.graphics.Color
 material3.DatePickerColors constructor <init>(containerColor: ui.graphics.Color, titleContentColor: ui.graphics.Color, headlineContentColor: ui.graphics.Color, weekdayContentColor: ui.graphics.Color, subheadContentColor: ui.graphics.Color, navigationContentColor: ui.graphics.Color, yearContentColor: ui.graphics.Color, disabledYearContentColor: ui.graphics.Color, currentYearContentColor: ui.graphics.Color, selectedYearContentColor: ui.graphics.Color, disabledSelectedYearContentColor: ui.graphics.Color, selectedYearContainerColor: ui.graphics.Color, disabledSelectedYearContainerColor: ui.graphics.Color, dayContentColor: ui.graphics.Color, disabledDayContentColor: ui.graphics.Color, selectedDayContentColor: ui.graphics.Color, disabledSelectedDayContentColor: ui.graphics.Color, selectedDayContainerColor: ui.graphics.Color, disabledSelectedDayContainerColor: ui.graphics.Color, todayContentColor: ui.graphics.Color, todayDateBorderColor: ui.graphics.Color, dayInSelectionRangeContainerColor: ui.graphics.Color, dayInSelectionRangeContentColor: ui.graphics.Color, dividerColor: ui.graphics.Color, dateTextFieldColors: material3.TextFieldColors): material3.DatePickerColors
 material3.DatePickerColors fun copy(containerColor: ui.graphics.Color = …, titleContentColor: ui.graphics.Color = …, headlineContentColor: ui.graphics.Color = …, weekdayContentColor: ui.graphics.Color = …, subheadContentColor: ui.graphics.Color = …, navigationContentColor: ui.graphics.Color = …, yearContentColor: ui.graphics.Color = …, disabledYearContentColor: ui.graphics.Color = …, currentYearContentColor: ui.graphics.Color = …, selectedYearContentColor: ui.graphics.Color = …, disabledSelectedYearContentColor: ui.graphics.Color = …, selectedYearContainerColor: ui.graphics.Color = …, disabledSelectedYearContainerColor: ui.graphics.Color = …, dayContentColor: ui.graphics.Color = …, disabledDayContentColor: ui.graphics.Color = …, selectedDayContentColor: ui.graphics.Color = …, disabledSelectedDayContentColor: ui.graphics.Color = …, selectedDayContainerColor: ui.graphics.Color = …, disabledSelectedDayContainerColor: ui.graphics.Color = …, todayContentColor: ui.graphics.Color = …, todayDateBorderColor: ui.graphics.Color = …, dayInSelectionRangeContainerColor: ui.graphics.Color = …, dayInSelectionRangeContentColor: ui.graphics.Color = …, dividerColor: ui.graphics.Color = …, dateTextFieldColors: material3.TextFieldColors? = …): material3.DatePickerColors
 material3.DatePickerColors fun equals(other: Any?): Boolean
@@ -1014,6 +1067,7 @@ material3.ListItemColors val overlineColor(): ui.graphics.Color
 material3.ListItemColors val supportingTextColor(): ui.graphics.Color
 material3.ListItemColors val trailingIconColor(): ui.graphics.Color
 material3.ListItemKt @Composable fun ListItem(headlineContent: @Composable () -> Unit, modifier: ui.Modifier = …, overlineContent: (@Composable () -> Unit)? = …, supportingContent: (@Composable () -> Unit)? = …, leadingContent: (@Composable () -> Unit)? = …, trailingContent: (@Composable () -> Unit)? = …, colors: material3.ListItemColors = …, tonalElevation: ui.unit.Dp = …, shadowElevation: ui.unit.Dp = …): Unit
+material3.MaterialThemeKt @Composable fun MaterialTheme(colorScheme: material3.ColorScheme = …, shapes: material3.Shapes = …, typography: material3.Typography = …, content: @Composable () -> Unit): Unit
 material3.MenuItemColors constructor <init>(textColor: ui.graphics.Color, leadingIconColor: ui.graphics.Color, trailingIconColor: ui.graphics.Color, disabledTextColor: ui.graphics.Color, disabledLeadingIconColor: ui.graphics.Color, disabledTrailingIconColor: ui.graphics.Color): material3.MenuItemColors
 material3.MenuItemColors fun copy(textColor: ui.graphics.Color = …, leadingIconColor: ui.graphics.Color = …, trailingIconColor: ui.graphics.Color = …, disabledTextColor: ui.graphics.Color = …, disabledLeadingIconColor: ui.graphics.Color = …, disabledTrailingIconColor: ui.graphics.Color = …): material3.MenuItemColors
 material3.MenuItemColors fun equals(other: Any?): Boolean
@@ -1230,6 +1284,16 @@ material3.SelectableChipElevation val hoveredElevation(): ui.unit.Dp
 material3.SelectableChipElevation val pressedElevation(): ui.unit.Dp
 material3.SelectableDates fun isSelectableDate(utcTimeMillis: Long): Boolean
 material3.SelectableDates fun isSelectableYear(year: Int): Boolean
+material3.Shapes constructor <init>(extraSmall: foundation.shape.CornerBasedShape = …, small: foundation.shape.CornerBasedShape = …, medium: foundation.shape.CornerBasedShape = …, large: foundation.shape.CornerBasedShape = …, extraLarge: foundation.shape.CornerBasedShape = …): material3.Shapes
+material3.Shapes fun copy(extraSmall: foundation.shape.CornerBasedShape = …, small: foundation.shape.CornerBasedShape = …, medium: foundation.shape.CornerBasedShape = …, large: foundation.shape.CornerBasedShape = …, extraLarge: foundation.shape.CornerBasedShape = …): material3.Shapes
+material3.Shapes fun equals(other: Any?): Boolean
+material3.Shapes fun hashCode(): Int
+material3.Shapes fun toString(): String
+material3.Shapes val extraLarge(): foundation.shape.CornerBasedShape
+material3.Shapes val extraSmall(): foundation.shape.CornerBasedShape
+material3.Shapes val large(): foundation.shape.CornerBasedShape
+material3.Shapes val medium(): foundation.shape.CornerBasedShape
+material3.Shapes val small(): foundation.shape.CornerBasedShape
 material3.SheetState constructor <init>(skipPartiallyExpanded: Boolean, positionalThreshold: () -> Float, velocityThreshold: () -> Float, initialValue: material3.SheetValue = …, confirmValueChange: (material3.SheetValue) -> Boolean = …, skipHiddenState: Boolean = …): material3.SheetState
 material3.SheetState fun requireOffset(): Float
 material3.SheetState suspend fun expand(): Unit
@@ -1445,6 +1509,7 @@ material3.TextFieldKt @Composable fun TextField(state: foundation.text.input.Tex
 material3.TextFieldKt @Composable fun TextField(value: String, onValueChange: (String) -> Unit, modifier: ui.Modifier = …, enabled: Boolean = …, readOnly: Boolean = …, textStyle: ui.text.TextStyle = …, label: (@Composable () -> Unit)? = …, placeholder: (@Composable () -> Unit)? = …, leadingIcon: (@Composable () -> Unit)? = …, trailingIcon: (@Composable () -> Unit)? = …, prefix: (@Composable () -> Unit)? = …, suffix: (@Composable () -> Unit)? = …, supportingText: (@Composable () -> Unit)? = …, isError: Boolean = …, visualTransformation: ui.text.input.VisualTransformation = …, keyboardOptions: foundation.text.KeyboardOptions = …, keyboardActions: foundation.text.KeyboardActions = …, singleLine: Boolean = …, maxLines: Int = …, minLines: Int = …, interactionSource: foundation.interaction.MutableInteractionSource? = …, shape: ui.graphics.Shape = …, colors: material3.TextFieldColors = …): Unit
 material3.TextFieldKt @Composable fun TextField(value: ui.text.input.TextFieldValue, onValueChange: (ui.text.input.TextFieldValue) -> Unit, modifier: ui.Modifier = …, enabled: Boolean = …, readOnly: Boolean = …, textStyle: ui.text.TextStyle = …, label: (@Composable () -> Unit)? = …, placeholder: (@Composable () -> Unit)? = …, leadingIcon: (@Composable () -> Unit)? = …, trailingIcon: (@Composable () -> Unit)? = …, prefix: (@Composable () -> Unit)? = …, suffix: (@Composable () -> Unit)? = …, supportingText: (@Composable () -> Unit)? = …, isError: Boolean = …, visualTransformation: ui.text.input.VisualTransformation = …, keyboardOptions: foundation.text.KeyboardOptions = …, keyboardActions: foundation.text.KeyboardActions = …, singleLine: Boolean = …, maxLines: Int = …, minLines: Int = …, interactionSource: foundation.interaction.MutableInteractionSource? = …, shape: ui.graphics.Shape = …, colors: material3.TextFieldColors = …): Unit
 material3.TextFieldLabelScope val labelMinimizedProgress(): Float
+material3.TextKt @Composable fun ProvideTextStyle(value: ui.text.TextStyle, content: @Composable () -> Unit): Unit
 material3.TextKt @Composable fun Text(text: String, modifier: ui.Modifier = …, color: ui.graphics.Color = …, autoSize: foundation.text.TextAutoSize? = …, fontSize: ui.unit.TextUnit = …, fontStyle: ui.text.font.FontStyle? = …, fontWeight: ui.text.font.FontWeight? = …, fontFamily: ui.text.font.FontFamily? = …, letterSpacing: ui.unit.TextUnit = …, textDecoration: ui.text.style.TextDecoration? = …, textAlign: ui.text.style.TextAlign? = …, lineHeight: ui.unit.TextUnit = …, overflow: ui.text.style.TextOverflow = …, softWrap: Boolean = …, maxLines: Int = …, minLines: Int = …, onTextLayout: ((ui.text.TextLayoutResult) -> Unit)? = …, style: ui.text.TextStyle = …): Unit
 material3.TextKt @Composable fun Text(text: ui.text.AnnotatedString, modifier: ui.Modifier = …, color: ui.graphics.Color = …, autoSize: foundation.text.TextAutoSize? = …, fontSize: ui.unit.TextUnit = …, fontStyle: ui.text.font.FontStyle? = …, fontWeight: ui.text.font.FontWeight? = …, fontFamily: ui.text.font.FontFamily? = …, letterSpacing: ui.unit.TextUnit = …, textDecoration: ui.text.style.TextDecoration? = …, textAlign: ui.text.style.TextAlign? = …, lineHeight: ui.unit.TextUnit = …, overflow: ui.text.style.TextOverflow = …, softWrap: Boolean = …, maxLines: Int = …, minLines: Int = …, inlineContent: kotlin.collections.Map<String, foundation.text.InlineTextContent> = …, onTextLayout: (ui.text.TextLayoutResult) -> Unit = …, style: ui.text.TextStyle = …): Unit
 material3.TimePickerColors constructor <init>(clockDialColor: ui.graphics.Color, selectorColor: ui.graphics.Color, containerColor: ui.graphics.Color, periodSelectorBorderColor: ui.graphics.Color, clockDialSelectedContentColor: ui.graphics.Color, clockDialUnselectedContentColor: ui.graphics.Color, periodSelectorSelectedContainerColor: ui.graphics.Color, periodSelectorUnselectedContainerColor: ui.graphics.Color, periodSelectorSelectedContentColor: ui.graphics.Color, periodSelectorUnselectedContentColor: ui.graphics.Color, timeSelectorSelectedContainerColor: ui.graphics.Color, timeSelectorUnselectedContainerColor: ui.graphics.Color, timeSelectorSelectedContentColor: ui.graphics.Color, timeSelectorUnselectedContentColor: ui.graphics.Color): material3.TimePickerColors
@@ -1520,6 +1585,26 @@ material3.TopAppBarState val contentOffset(): Float
 material3.TopAppBarState val heightOffset(): Float
 material3.TopAppBarState val heightOffsetLimit(): Float
 material3.TopAppBarState val overlappedFraction(): Float
+material3.Typography constructor <init>(displayLarge: ui.text.TextStyle = …, displayMedium: ui.text.TextStyle = …, displaySmall: ui.text.TextStyle = …, headlineLarge: ui.text.TextStyle = …, headlineMedium: ui.text.TextStyle = …, headlineSmall: ui.text.TextStyle = …, titleLarge: ui.text.TextStyle = …, titleMedium: ui.text.TextStyle = …, titleSmall: ui.text.TextStyle = …, bodyLarge: ui.text.TextStyle = …, bodyMedium: ui.text.TextStyle = …, bodySmall: ui.text.TextStyle = …, labelLarge: ui.text.TextStyle = …, labelMedium: ui.text.TextStyle = …, labelSmall: ui.text.TextStyle = …): material3.Typography
+material3.Typography fun copy(displayLarge: ui.text.TextStyle = …, displayMedium: ui.text.TextStyle = …, displaySmall: ui.text.TextStyle = …, headlineLarge: ui.text.TextStyle = …, headlineMedium: ui.text.TextStyle = …, headlineSmall: ui.text.TextStyle = …, titleLarge: ui.text.TextStyle = …, titleMedium: ui.text.TextStyle = …, titleSmall: ui.text.TextStyle = …, bodyLarge: ui.text.TextStyle = …, bodyMedium: ui.text.TextStyle = …, bodySmall: ui.text.TextStyle = …, labelLarge: ui.text.TextStyle = …, labelMedium: ui.text.TextStyle = …, labelSmall: ui.text.TextStyle = …): material3.Typography
+material3.Typography fun equals(other: Any?): Boolean
+material3.Typography fun hashCode(): Int
+material3.Typography fun toString(): String
+material3.Typography val bodyLarge(): ui.text.TextStyle
+material3.Typography val bodyMedium(): ui.text.TextStyle
+material3.Typography val bodySmall(): ui.text.TextStyle
+material3.Typography val displayLarge(): ui.text.TextStyle
+material3.Typography val displayMedium(): ui.text.TextStyle
+material3.Typography val displaySmall(): ui.text.TextStyle
+material3.Typography val headlineLarge(): ui.text.TextStyle
+material3.Typography val headlineMedium(): ui.text.TextStyle
+material3.Typography val headlineSmall(): ui.text.TextStyle
+material3.Typography val labelLarge(): ui.text.TextStyle
+material3.Typography val labelMedium(): ui.text.TextStyle
+material3.Typography val labelSmall(): ui.text.TextStyle
+material3.Typography val titleLarge(): ui.text.TextStyle
+material3.Typography val titleMedium(): ui.text.TextStyle
+material3.Typography val titleSmall(): ui.text.TextStyle
 material3.WideNavigationRailColors constructor <init>(containerColor: ui.graphics.Color, contentColor: ui.graphics.Color, modalContainerColor: ui.graphics.Color, modalScrimColor: ui.graphics.Color, modalContentColor: ui.graphics.Color): material3.WideNavigationRailColors
 material3.WideNavigationRailColors fun copy(containerColor: ui.graphics.Color = …, contentColor: ui.graphics.Color = …, modalContainerColor: ui.graphics.Color = …, modalScrimColor: ui.graphics.Color = …, modalContentColor: ui.graphics.Color = …): material3.WideNavigationRailColors
 material3.WideNavigationRailColors fun equals(other: Any?): Boolean

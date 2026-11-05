@@ -5516,6 +5516,35 @@
       },
       "type": "object"
     },
+    "C_MaterialTheme": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "MaterialTheme"
+        }
+      },
+      "type": "object"
+    },
     "C_MediumTopAppBar": {
       "properties": {
         "children": {
@@ -7740,6 +7769,41 @@
         },
         "type": {
           "const": "PrimaryTabRow"
+        }
+      },
+      "type": "object"
+    },
+    "C_ProvideTextStyle": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "value": {
+              "$ref": "#/definitions/Family_TextStyle"
+            }
+          },
+          "required": [
+            "value"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ProvideTextStyle"
         }
       },
       "type": "object"
@@ -15049,6 +15113,9 @@
               "$ref": "#/definitions/C_LookaheadScope"
             },
             {
+              "$ref": "#/definitions/C_MaterialTheme"
+            },
+            {
               "$ref": "#/definitions/C_MediumTopAppBar"
             },
             {
@@ -15137,6 +15204,9 @@
             },
             {
               "$ref": "#/definitions/C_PrimaryTabRow"
+            },
+            {
+              "$ref": "#/definitions/C_ProvideTextStyle"
             },
             {
               "$ref": "#/definitions/C_PullToRefreshBox"
@@ -37192,6 +37262,35 @@
       },
       "type": "object"
     },
+    "V_1_23_0_MaterialTheme": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "MaterialTheme"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_MediumTopAppBar": {
       "properties": {
         "children": {
@@ -41467,6 +41566,9 @@
               "$ref": "#/definitions/V_1_23_0_LookaheadScope"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_MaterialTheme"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_MediumTopAppBar"
             },
             {
@@ -41555,6 +41657,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_PrimaryTabRow"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_ProvideTextStyle"
             },
             {
               "$ref": "#/definitions/V_1_23_0_PullToRefreshBox"
@@ -42744,6 +42849,41 @@
         },
         "type": {
           "const": "PrimaryTabRow"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_ProvideTextStyle": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "value": {
+              "$ref": "#/definitions/Family_TextStyle"
+            }
+          },
+          "required": [
+            "value"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ProvideTextStyle"
         }
       },
       "type": "object"

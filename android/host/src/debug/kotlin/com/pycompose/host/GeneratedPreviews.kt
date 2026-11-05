@@ -457,6 +457,12 @@ private fun LookaheadScopePreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "LookaheadScope"}, "type": "Text"}], "id": "preview", "props": {}, "type": "LookaheadScope"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "MaterialTheme", showBackground = true)
+@Composable
+private fun MaterialThemePreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "MaterialTheme"}, "type": "Text"}], "id": "preview", "props": {}, "type": "MaterialTheme"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "MediumTopAppBar", showBackground = true)
 @Composable
 private fun MediumTopAppBarPreview() {
@@ -635,6 +641,12 @@ private fun PrimaryScrollableTabRowPreview() {
 @Composable
 private fun PrimaryTabRowPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.tabs", "props": {"text": "tabs"}, "slot": "tabs", "type": "Text"}], "id": "preview", "props": {"selectedTabIndex": 0}, "type": "PrimaryTabRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "ProvideTextStyle", showBackground = true)
+@Composable
+private fun ProvideTextStylePreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ProvideTextStyle"}, "type": "Text"}], "id": "preview", "props": {"value": {"type": "TextStyle"}}, "type": "ProvideTextStyle"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "PullToRefreshBox", showBackground = true)
