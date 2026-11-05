@@ -15,6 +15,7 @@ from typing import Any
 
 from pycompose_codegen.emit.literals import GENERATED_NOTICE, kotlin_string
 from pycompose_codegen.emit.modifier_blocks import block, result
+from pycompose_codegen.emit.modifier_gestures import gesture
 from pycompose_codegen.emit.modifier_values import argument as _argument
 from pycompose_codegen.emit.modifier_values import passed
 from pycompose_codegen.emit.rules import die
@@ -71,6 +72,11 @@ def _imports(registry: dict[str, Any]) -> list[str]:
     """What the direct calls name unqualified: their functions and members."""
     names: set[str] = set()
     for modifier in registry.get("modifiers", {}).values():
+        if "gesture" in modifier:
+            # A detector extends the pointerInput block's scope, so it is imported.
+            names.add(modifier["gesture"]["detector"])
+            names.add("androidx.compose.ui.input.pointer.pointerInput")
+            names.add("com.pycompose.renderer.offsetPayload")
         call = modifier.get("call")
         if call is None:
             continue
@@ -150,6 +156,12 @@ def render_modifiers(registry: dict[str, Any]) -> str:
         if "call" in modifier
         for line in _direct(name, modifier, converters)
     ]
+    direct += [
+        line
+        for name, modifier in sorted(modifiers.items())
+        if "gesture" in modifier
+        for line in gesture(name, modifier)
+    ]
     markers = sorted(
         {
             m
@@ -201,8 +213,9 @@ def render_modifiers(registry: dict[str, Any]) -> str:
             "object GeneratedModifiers {",
             "    /**",
             "     * [type] applied with [op]'s props; null for an operation worn",
-            "     * outside every scope declaring it. [dispatch] sends a click's id;",
-            "     * [streams] reads the holder streams an expression names.",
+            "     * outside every scope declaring it. [dispatch] sends a click's id,",
+            "     * [event] an action with its payload; [streams] holds the streams",
+            "     * an expression names, where a gesture on [node] publishes its own.",
             "     */",
             "    @Composable",
             "    fun apply(",
@@ -210,7 +223,9 @@ def render_modifiers(registry: dict[str, Any]) -> str:
             "        scope: Any?,",
             "        op: JsonObject,",
             "        dispatch: (String) -> Unit,",
-            "        streams: com.pycompose.renderer.Streams,",
+            "        event: (String, JsonObject) -> Unit,",
+            "        streams: MutableMap<String, Map<String, () -> Float>>,",
+            "        node: String,",
             "    ): Modifier? =",
             "        when (type) {",
             *direct,

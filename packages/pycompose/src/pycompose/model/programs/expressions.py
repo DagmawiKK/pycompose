@@ -25,6 +25,8 @@ from typing import Any, Literal, cast
 
 from pycompose.errors import IrValidationError
 from pycompose.model.canonical import JsonValue
+from pycompose.model.catalog.lock import REGISTRY
+from pycompose.model.catalog.modifiers import gesture_streams
 from pycompose.model.catalog.vocabulary import (
     EXPRESSION_LIMITS,
     EXPRESSION_OPS,
@@ -33,7 +35,15 @@ from pycompose.model.catalog.vocabulary import (
 
 Kind = Literal["number", "color"]
 _COLOR = re.compile(r"#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8})")
-_STREAMS = frozenset(name for names in STATE_STREAMS.values() for name in names)
+_STREAMS = frozenset(
+    {name for names in STATE_STREAMS.values() for name in names}
+    | {
+        name
+        for names in gesture_streams(REGISTRY.derived_modifiers).values()
+        for name in names
+    }
+)
+"""Every stream a holder or a gesture exposes."""
 
 EXPRESSION_KINDS: dict[str, Kind] = {
     "color": "color",
@@ -191,11 +201,13 @@ class Expression:
 
 
 def Stream(key: str, name: str) -> Expression:  # noqa: N802 -- reads as a constructor
-    """Read a holder's stream: the node declared with ``key``, each frame.
+    """Read a stream of the node declared with ``key``, each frame.
 
     Args:
-        key: The ``key`` of the component whose state holder exposes the stream.
-        name: The stream, one its state family exposes (``STATE_STREAMS``).
+        key: The ``key`` of the component whose state holder or gesture
+            modifier exposes the stream.
+        name: The stream, one its state family (``STATE_STREAMS``) or a
+            gesture it wears exposes (``dragX`` for ``detect_drag_gestures``).
 
     Returns:
         A number expression.

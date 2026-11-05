@@ -230,6 +230,48 @@
           "type": "object",
           "additionalProperties": { "$ref": "#/$defs/prop" }
         },
+        "gesture": {
+          "type": "object",
+          "description": "Derived from the pin by composegen: the PointerInputScope detector the operation runs in pointerInput, each event callback with its payload, and the continuous callback whose deltas the host adds into streams.",
+          "required": ["detector", "events"],
+          "additionalProperties": false,
+          "properties": {
+            "detector": { "$ref": "#/$defs/dottedName" },
+            "events": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "required": ["payload", "nullable"],
+                "additionalProperties": false,
+                "properties": {
+                  "payload": { "type": "array", "items": { "type": "string" } },
+                  "nullable": { "type": "boolean" }
+                }
+              }
+            },
+            "continuous": {
+              "type": "object",
+              "required": ["callback", "streams"],
+              "additionalProperties": false,
+              "properties": {
+                "callback": { "$ref": "#/$defs/identifier" },
+                "streams": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["name", "argument"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "name": { "$ref": "#/$defs/identifier" },
+                      "argument": { "type": "integer" },
+                      "axis": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "call": {
           "type": "object",
           "description": "The Modifier extension the operation calls, resolved in the pin: each prop's native parameter, the overload a bare dp calls, or the receiver block and members a block-taking call sets.",

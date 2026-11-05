@@ -33,6 +33,7 @@ from pycompose_codegen.derive.core_modifiers import core_modifiers
 from pycompose_codegen.derive.draws import draws
 from pycompose_codegen.derive.entry_candidates import derive, select
 from pycompose_codegen.derive.families import bound_families
+from pycompose_codegen.derive.gestures import gestures
 from pycompose_codegen.derive.holders import derive as derive_holders
 from pycompose_codegen.derive.implementations import implementation_families
 from pycompose_codegen.derive.overloads import extras
@@ -254,6 +255,13 @@ def generate(
             report.errors.append(f"modifier {name}: {why}")
     lock["modifiers"] = {**sections["modifiers"], **core, **modifiers}
     report.refused_modifiers.update(refused_plain)
+    # The pin's gesture detectors, each a modifier the host runs in pointerInput.
+    detected, refused_gestures = gestures(found)
+    for name, modifier in detected.items():
+        lock["modifiers"].setdefault(
+            name, {**modifier, "since": sections["schemaVersion"]}
+        )
+    report.refused_modifiers.update(refused_gestures)
     report.modifiers = sorted([*modifiers, *(name for name in plain if name in core)])
     report.families = sorted(derived)
     holders, refused = derive_holders(found, source_drives(directory), lock)

@@ -2262,6 +2262,31 @@ object IrContract {
                 "minHeight" to PropertyRule("dp", required = false, animation = true),
                 "minWidth" to PropertyRule("dp", required = false, animation = true),
         ),
+        "detectDragGestures" to mapOf(
+                "onDragCancel" to PropertyRule("actionId", required = false),
+                "onDragEnd" to PropertyRule("actionId", required = false),
+                "onDragStart" to PropertyRule("actionId", required = false),
+        ),
+        "detectDragGesturesAfterLongPress" to mapOf(
+                "onDragCancel" to PropertyRule("actionId", required = false),
+                "onDragEnd" to PropertyRule("actionId", required = false),
+                "onDragStart" to PropertyRule("actionId", required = false),
+        ),
+        "detectHorizontalDragGestures" to mapOf(
+                "onDragCancel" to PropertyRule("actionId", required = false),
+                "onDragEnd" to PropertyRule("actionId", required = false),
+                "onDragStart" to PropertyRule("actionId", required = false),
+        ),
+        "detectTapGestures" to mapOf(
+                "onDoubleTap" to PropertyRule("actionId", required = false),
+                "onLongPress" to PropertyRule("actionId", required = false),
+                "onTap" to PropertyRule("actionId", required = false),
+        ),
+        "detectVerticalDragGestures" to mapOf(
+                "onDragCancel" to PropertyRule("actionId", required = false),
+                "onDragEnd" to PropertyRule("actionId", required = false),
+                "onDragStart" to PropertyRule("actionId", required = false),
+        ),
         "displayCutoutPadding" to mapOf(
         ),
         "fillMaxColumnWidth" to mapOf(
@@ -2491,7 +2516,13 @@ object IrContract {
         "ExposedDropdownMenu" to setOf("offset", "progress"),
         "ModalNavigationDrawer" to setOf("progress"),
     )
-    val streamNames: Set<String> = setOf("offset", "progress")
+    val gestureStreams: Map<String, List<String>> = mapOf(
+        "detectDragGestures" to listOf("dragX", "dragY"),
+        "detectDragGesturesAfterLongPress" to listOf("dragX", "dragY"),
+        "detectHorizontalDragGestures" to listOf("horizontalDrag"),
+        "detectVerticalDragGestures" to listOf("verticalDrag"),
+    )
+    val streamNames: Set<String> = setOf("dragX", "dragY", "horizontalDrag", "offset", "progress", "verticalDrag")
     val expressionOps: Set<String> = setOf("times", "plus", "minus", "clamp", "alpha", "mix")
     const val EXPRESSION_DEPTH = 8
     const val EXPRESSION_NODES = 32

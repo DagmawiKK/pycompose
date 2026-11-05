@@ -83,6 +83,16 @@ def _method(name: str, modifier: dict[str, Any]) -> list[str]:
             "",
             f"        Worn inside {scopes}.",
         ]
+    elif "gesture" in modifier:
+        detector = modifier["gesture"]["detector"].rsplit(".", 1)[-1]
+        summary = [f'        """Native ``{detector}`` in ``pointerInput``.']
+        streams = modifier["gesture"].get("continuous", {}).get("streams", [])
+        if streams:
+            names = ", ".join(f"``{s['name']}``" for s in streams)
+            summary += [
+                "",
+                f"        Exposes the streams {names}, added up while it runs.",
+            ]
     else:
         summary = [f'        """Native ``{modifier["call"]["function"]}``.']
     lines = [
@@ -133,7 +143,7 @@ def render_operations(registry: dict[str, Any]) -> str:
     operations = {
         name: modifier
         for name, modifier in sorted(registry.get("modifiers", {}).items())
-        if "scoped" in modifier or "call" in modifier
+        if "scoped" in modifier or "call" in modifier or "gesture" in modifier
     }
     aliases: list[str] = []
     methods: list[str] = []

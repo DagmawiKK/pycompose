@@ -11,6 +11,11 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.aspectRatio
@@ -69,6 +74,7 @@ import androidx.compose.ui.focus.focusTarget
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.colorspace.ColorSpaces
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.keepScreenOn
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.preferredFrameRate
@@ -89,6 +95,7 @@ import androidx.constraintlayout.compose.layoutId
 import com.pycompose.program.Expressions
 import com.pycompose.renderer.dpValue
 import com.pycompose.renderer.numberValue
+import com.pycompose.renderer.offsetPayload
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.booleanOrNull
@@ -100,8 +107,9 @@ import kotlinx.serialization.json.long
 object GeneratedModifiers {
     /**
      * [type] applied with [op]'s props; null for an operation worn
-     * outside every scope declaring it. [dispatch] sends a click's id;
-     * [streams] reads the holder streams an expression names.
+     * outside every scope declaring it. [dispatch] sends a click's id,
+     * [event] an action with its payload; [streams] holds the streams
+     * an expression names, where a gesture on [node] publishes its own.
      */
     @Composable
     fun apply(
@@ -109,7 +117,9 @@ object GeneratedModifiers {
         scope: Any?,
         op: JsonObject,
         dispatch: (String) -> Unit,
-        streams: com.pycompose.renderer.Streams,
+        event: (String, JsonObject) -> Unit,
+        streams: MutableMap<String, Map<String, () -> Float>>,
+        node: String,
     ): Modifier? =
         when (type) {
             "absoluteOffset" -> {
@@ -543,6 +553,59 @@ object GeneratedModifiers {
                     zIndex = op.getValue("zIndex").let { wire -> com.pycompose.renderer.bound(wire, Float.VectorConverter) { value ->
                         numberValue(value, streams).toFloat() } },
                 )
+            "detectDragGestures" -> {
+                val running = com.pycompose.renderer.rememberRunning(node, streams, listOf("dragX", "dragY"))
+                Modifier.pointerInput(op) {
+                    detectDragGestures(
+                        onDragStart = op["onDragStart"]?.let { id -> { offset: androidx.compose.ui.geometry.Offset -> event(id.jsonPrimitive.content, offsetPayload(offset)) } } ?: { _: androidx.compose.ui.geometry.Offset -> },
+                        onDragEnd = op["onDragEnd"]?.let { id -> { event(id.jsonPrimitive.content, JsonObject(emptyMap())) } } ?: {},
+                        onDragCancel = op["onDragCancel"]?.let { id -> { event(id.jsonPrimitive.content, JsonObject(emptyMap())) } } ?: {},
+                        onDrag = { _, delta1 -> running.add(0, delta1.x.toDp().value); running.add(1, delta1.y.toDp().value) },
+                    )
+                }
+            }
+            "detectDragGesturesAfterLongPress" -> {
+                val running = com.pycompose.renderer.rememberRunning(node, streams, listOf("dragX", "dragY"))
+                Modifier.pointerInput(op) {
+                    detectDragGesturesAfterLongPress(
+                        onDragStart = op["onDragStart"]?.let { id -> { offset: androidx.compose.ui.geometry.Offset -> event(id.jsonPrimitive.content, offsetPayload(offset)) } } ?: { _: androidx.compose.ui.geometry.Offset -> },
+                        onDragEnd = op["onDragEnd"]?.let { id -> { event(id.jsonPrimitive.content, JsonObject(emptyMap())) } } ?: {},
+                        onDragCancel = op["onDragCancel"]?.let { id -> { event(id.jsonPrimitive.content, JsonObject(emptyMap())) } } ?: {},
+                        onDrag = { _, delta1 -> running.add(0, delta1.x.toDp().value); running.add(1, delta1.y.toDp().value) },
+                    )
+                }
+            }
+            "detectHorizontalDragGestures" -> {
+                val running = com.pycompose.renderer.rememberRunning(node, streams, listOf("horizontalDrag"))
+                Modifier.pointerInput(op) {
+                    detectHorizontalDragGestures(
+                        onDragStart = op["onDragStart"]?.let { id -> { offset: androidx.compose.ui.geometry.Offset -> event(id.jsonPrimitive.content, offsetPayload(offset)) } } ?: { _: androidx.compose.ui.geometry.Offset -> },
+                        onDragEnd = op["onDragEnd"]?.let { id -> { event(id.jsonPrimitive.content, JsonObject(emptyMap())) } } ?: {},
+                        onDragCancel = op["onDragCancel"]?.let { id -> { event(id.jsonPrimitive.content, JsonObject(emptyMap())) } } ?: {},
+                        onHorizontalDrag = { _, delta1 -> running.add(0, delta1.toDp().value) },
+                    )
+                }
+            }
+            "detectTapGestures" -> {
+                Modifier.pointerInput(op) {
+                    detectTapGestures(
+                        onDoubleTap = op["onDoubleTap"]?.let { id -> { offset: androidx.compose.ui.geometry.Offset -> event(id.jsonPrimitive.content, offsetPayload(offset)) } } ?: null,
+                        onLongPress = op["onLongPress"]?.let { id -> { offset: androidx.compose.ui.geometry.Offset -> event(id.jsonPrimitive.content, offsetPayload(offset)) } } ?: null,
+                        onTap = op["onTap"]?.let { id -> { offset: androidx.compose.ui.geometry.Offset -> event(id.jsonPrimitive.content, offsetPayload(offset)) } } ?: null,
+                    )
+                }
+            }
+            "detectVerticalDragGestures" -> {
+                val running = com.pycompose.renderer.rememberRunning(node, streams, listOf("verticalDrag"))
+                Modifier.pointerInput(op) {
+                    detectVerticalDragGestures(
+                        onDragStart = op["onDragStart"]?.let { id -> { offset: androidx.compose.ui.geometry.Offset -> event(id.jsonPrimitive.content, offsetPayload(offset)) } } ?: { _: androidx.compose.ui.geometry.Offset -> },
+                        onDragEnd = op["onDragEnd"]?.let { id -> { event(id.jsonPrimitive.content, JsonObject(emptyMap())) } } ?: {},
+                        onDragCancel = op["onDragCancel"]?.let { id -> { event(id.jsonPrimitive.content, JsonObject(emptyMap())) } } ?: {},
+                        onVerticalDrag = { _, delta1 -> running.add(0, delta1.toDp().value) },
+                    )
+                }
+            }
             "alignByBaseline" ->
                 when (scope) {
                     is androidx.compose.foundation.layout.RowScope ->

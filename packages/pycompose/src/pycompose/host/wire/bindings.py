@@ -46,9 +46,10 @@ def lower_props(props: Props, declare: Declare) -> Props:
     }
     modifier = props.values.get("modifier")
     operations = modifier.get("operations", ()) if isinstance(modifier, Mapping) else ()
+    # Any operation's action -- a click, a gesture's events -- may bind an intent.
     modifier_bindings = isinstance(operations, tuple | list) and any(
         isinstance(operation, Mapping)
-        and isinstance(operation.get("onClick"), BoundIntent)
+        and any(isinstance(value, BoundIntent) for value in operation.values())
         for operation in operations
     )
     if not bindings and not modifier_bindings:
@@ -69,7 +70,7 @@ def lower_props(props: Props, declare: Declare) -> Props:
             "list[dict[str, JsonValue]]", wire_modifier["operations"]
         )
         for operation in operations_wire:
-            click = operation.get("onClick")
-            if isinstance(click, BoundIntent):
-                operation["onClick"] = wire(click)
+            for key, value in operation.items():
+                if isinstance(value, BoundIntent):
+                    operation[key] = wire(value)
     return Props(wire_props)

@@ -430,6 +430,154 @@ class GeneratedOperations:
         )
 
     @_Operation
+    def detect_drag_gestures(
+        self,
+        *,
+        on_drag_start: str | Intent | type[Intent] | None = None,
+        on_drag_end: str | Intent | type[Intent] | None = None,
+        on_drag_cancel: str | Intent | type[Intent] | None = None,
+    ) -> Modifier:
+        """Native ``detectDragGestures`` in ``pointerInput``.
+
+        Exposes the streams ``dragX``, ``dragY``, added up while it runs.
+
+        Args:
+            on_drag_start: Native onDragStart, omitted for its native default.
+            on_drag_end: Native onDragEnd, omitted for its native default.
+            on_drag_cancel: Native onDragCancel, omitted for its native default.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "onDragStart": lower_action(on_drag_start),
+            "onDragEnd": lower_action(on_drag_end),
+            "onDragCancel": lower_action(on_drag_cancel),
+        }
+        return self._append(
+            "detectDragGestures",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def detect_drag_gestures_after_long_press(
+        self,
+        *,
+        on_drag_start: str | Intent | type[Intent] | None = None,
+        on_drag_end: str | Intent | type[Intent] | None = None,
+        on_drag_cancel: str | Intent | type[Intent] | None = None,
+    ) -> Modifier:
+        """Native ``detectDragGesturesAfterLongPress`` in ``pointerInput``.
+
+        Exposes the streams ``dragX``, ``dragY``, added up while it runs.
+
+        Args:
+            on_drag_start: Native onDragStart, omitted for its native default.
+            on_drag_end: Native onDragEnd, omitted for its native default.
+            on_drag_cancel: Native onDragCancel, omitted for its native default.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "onDragStart": lower_action(on_drag_start),
+            "onDragEnd": lower_action(on_drag_end),
+            "onDragCancel": lower_action(on_drag_cancel),
+        }
+        return self._append(
+            "detectDragGesturesAfterLongPress",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def detect_horizontal_drag_gestures(
+        self,
+        *,
+        on_drag_start: str | Intent | type[Intent] | None = None,
+        on_drag_end: str | Intent | type[Intent] | None = None,
+        on_drag_cancel: str | Intent | type[Intent] | None = None,
+    ) -> Modifier:
+        """Native ``detectHorizontalDragGestures`` in ``pointerInput``.
+
+        Exposes the streams ``horizontalDrag``, added up while it runs.
+
+        Args:
+            on_drag_start: Native onDragStart, omitted for its native default.
+            on_drag_end: Native onDragEnd, omitted for its native default.
+            on_drag_cancel: Native onDragCancel, omitted for its native default.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "onDragStart": lower_action(on_drag_start),
+            "onDragEnd": lower_action(on_drag_end),
+            "onDragCancel": lower_action(on_drag_cancel),
+        }
+        return self._append(
+            "detectHorizontalDragGestures",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def detect_tap_gestures(
+        self,
+        *,
+        on_double_tap: str | Intent | type[Intent] | None = None,
+        on_long_press: str | Intent | type[Intent] | None = None,
+        on_tap: str | Intent | type[Intent] | None = None,
+    ) -> Modifier:
+        """Native ``detectTapGestures`` in ``pointerInput``.
+
+        Args:
+            on_double_tap: Native onDoubleTap, omitted for its native default.
+            on_long_press: Native onLongPress, omitted for its native default.
+            on_tap: Native onTap, omitted for its native default.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "onDoubleTap": lower_action(on_double_tap),
+            "onLongPress": lower_action(on_long_press),
+            "onTap": lower_action(on_tap),
+        }
+        return self._append(
+            "detectTapGestures",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
+    def detect_vertical_drag_gestures(
+        self,
+        *,
+        on_drag_start: str | Intent | type[Intent] | None = None,
+        on_drag_end: str | Intent | type[Intent] | None = None,
+        on_drag_cancel: str | Intent | type[Intent] | None = None,
+    ) -> Modifier:
+        """Native ``detectVerticalDragGestures`` in ``pointerInput``.
+
+        Exposes the streams ``verticalDrag``, added up while it runs.
+
+        Args:
+            on_drag_start: Native onDragStart, omitted for its native default.
+            on_drag_end: Native onDragEnd, omitted for its native default.
+            on_drag_cancel: Native onDragCancel, omitted for its native default.
+
+        Returns:
+            A new modifier.
+        """
+        given: dict[str, JsonValue] = {
+            "onDragStart": lower_action(on_drag_start),
+            "onDragEnd": lower_action(on_drag_end),
+            "onDragCancel": lower_action(on_drag_cancel),
+        }
+        return self._append(
+            "detectVerticalDragGestures",
+            **{k: v for k, v in given.items() if v is not None},
+        )
+
+    @_Operation
     def display_cutout_padding(
         self,
     ) -> Modifier:

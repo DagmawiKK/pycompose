@@ -92,15 +92,15 @@ object Expressions {
         contract: Contract,
         propKind: (type: String, prop: String) -> String?,
         modifierKind: (modifier: String, argument: String) -> String?,
-        published: (String) -> Set<String>,
+        published: (JsonObject) -> Set<String>,
     ) {
-        val types = mutableMapOf<String, String>()
+        val nodes = mutableMapOf<String, JsonObject>()
         val reads = mutableListOf<Pair<String, String>>()
         val pending = ArrayDeque(listOf(root))
         while (pending.isNotEmpty()) {
             val node = pending.removeLast()
             val type = (node.getValue("type") as JsonPrimitive).content
-            types[(node.getValue("id") as JsonPrimitive).content] = type
+            nodes[(node.getValue("id") as JsonPrimitive).content] = node
             (node["props"] as? JsonObject)?.forEach { (name, value) ->
                 reads +=
                     if (name == "modifier") {
@@ -112,7 +112,7 @@ object Expressions {
             (node["children"] as? JsonArray)?.forEach { pending.add(it as JsonObject) }
         }
         reads.forEach { (holder, stream) ->
-            require(stream in types[holder]?.let(published).orEmpty()) {
+            require(stream in nodes[holder]?.let(published).orEmpty()) {
                 "Stream $stream names no holder exposing it"
             }
         }

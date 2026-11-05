@@ -316,7 +316,7 @@ class Renderer(
         node: UiNode,
         scope: Any?,
     ): Modifier? {
-        val result = modifiers.build(node.props.modifier, scope)
+        val result = modifiers.build(node.props.modifier, scope, node.id)
         val modifier = result.getOrNull()
         if (modifier == null) {
             remember(node.id, node.props) {

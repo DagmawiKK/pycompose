@@ -265,6 +265,11 @@ def _kt_streams(registry: dict[str, Any]) -> list[str]:
             "    )",
         ]
 
+    gestures = {
+        name: [s["name"] for s in modifier["gesture"]["continuous"]["streams"]]
+        for name, modifier in sorted(registry.get("modifiers", {}).items())
+        if "continuous" in modifier.get("gesture", {})
+    }
     exposing = {
         name: STATE_STREAMS[spec["state"]["kind"]]
         for name, spec in sorted(registry["components"].items())
@@ -279,10 +284,21 @@ def _kt_streams(registry: dict[str, Any]) -> list[str]:
             for name, streams in exposing.items()
         ),
         "    )",
+        "    val gestureStreams: Map<String, List<String>> = mapOf(",
+        *(
+            f"        {kotlin_string(name)} to listOf("
+            + ", ".join(map(kotlin_string, streams))
+            + "),"
+            for name, streams in gestures.items()
+        ),
+        "    )",
         "    val streamNames: Set<String> = setOf("
         + ", ".join(
             kotlin_string(name)
-            for name in sorted({n for names in STATE_STREAMS.values() for n in names})
+            for name in sorted(
+                {n for names in STATE_STREAMS.values() for n in names}
+                | {n for names in gestures.values() for n in names}
+            )
         )
         + ")",
         "    val expressionOps: Set<String> = setOf("

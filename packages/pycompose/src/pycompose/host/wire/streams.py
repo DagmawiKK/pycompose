@@ -19,6 +19,7 @@ from typing import Any, cast
 from pycompose.errors import IrValidationError
 from pycompose.model.canonical import freeze_json, thaw_json
 from pycompose.model.catalog.lock import REGISTRY
+from pycompose.model.catalog.modifiers import gesture_streams
 from pycompose.model.catalog.vocabulary import STATE_STREAMS
 from pycompose.model.nodes.node import Node, Props
 from pycompose.model.programs.bindings import is_binding
@@ -124,9 +125,7 @@ def stream_problems(root: Node) -> list[tuple[Node, str, str]]:
         for label, expression, kind in _sites(node):
             for holder, stream in validate_expression(expression, kind):
                 target = nodes.get(holder)
-                spec = REGISTRY.components.get(target.type) if target else None
-                family = spec.state.kind if spec is not None and spec.state else None
-                if stream not in STATE_STREAMS.get(family or "", ()):
+                if target is None or stream not in exposed(target):
                     problems.append(
                         (
                             node,
@@ -135,6 +134,27 @@ def stream_problems(root: Node) -> list[tuple[Node, str, str]]:
                         )
                     )
     return problems
+
+
+def exposed(node: Node) -> set[str]:
+    """The streams a node exposes: its holder's, and those of each gesture it wears.
+
+    Args:
+        node: A snapshot node.
+
+    Returns:
+        The stream names expressions may read from it.
+    """
+    spec = REGISTRY.components.get(node.type)
+    family = spec.state.kind if spec is not None and spec.state else None
+    names = set(STATE_STREAMS.get(family or "", ()))
+    modifier = node.props.values.get("modifier")
+    operations = modifier.get("operations") if isinstance(modifier, Mapping) else None
+    gestures = gesture_streams(REGISTRY.derived_modifiers)
+    for operation in operations if isinstance(operations, list | tuple) else ():
+        if isinstance(operation, Mapping):
+            names.update(gestures.get(str(operation.get("type")), ()))
+    return names
 
 
 def _sites(node: Node) -> Iterator[tuple[str, Mapping[str, Any], Kind]]:

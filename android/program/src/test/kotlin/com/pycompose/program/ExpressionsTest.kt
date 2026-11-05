@@ -2,6 +2,7 @@ package com.pycompose.program
 
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -118,7 +119,8 @@ class ExpressionsTest {
                     },
                 )
             },
-        ) { type ->
+        ) { node ->
+            val type = (node.getValue("type") as JsonPrimitive).content
             reads += type
             if (type == "Column") setOf("progress") else emptySet()
         }

@@ -71,7 +71,7 @@ internal object WireValidator {
             EXPRESSIONS,
             ::propExpressionKind,
             ::modifierExpressionKind,
-        ) { type -> IrContract.streams[type].orEmpty() }
+        ) { node -> exposed(node) }
     }
 
     /**
@@ -350,4 +350,21 @@ private class NodeWalk(
         memo?.set(node, own)
         claimed.lastOrNull()?.addAll(own)
     }
+}
+
+/** The streams a node exposes: its holder's, and those of each gesture it wears. */
+private fun exposed(node: JsonObject): Set<String> {
+    val type = (node.getValue("type") as JsonPrimitive).content
+    val operations =
+        (
+            (node["props"] as? JsonObject)?.get(
+                "modifier",
+            ) as? JsonObject
+        )?.get("operations")
+    val gestures =
+        (operations as? JsonArray).orEmpty().flatMap { operation ->
+            val name = ((operation as? JsonObject)?.get("type") as? JsonPrimitive)?.content
+            IrContract.gestureStreams[name].orEmpty()
+        }
+    return IrContract.streams[type].orEmpty() + gestures
 }

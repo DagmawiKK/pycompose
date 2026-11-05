@@ -9,6 +9,7 @@ can wear it, which the host checks when it applies the operation.
 from __future__ import annotations
 
 from collections.abc import Mapping
+from typing import cast
 
 from pycompose.errors import ComponentRegistryError
 from pycompose.model.catalog.props import PropDef
@@ -53,15 +54,17 @@ def derived_modifiers(raw: object) -> dict[str, Mapping[str, object]]:
         raw: The catalog's ``modifiers`` section, already parsed once.
 
     Returns:
-        Each operation's ``since`` and its ``scoped`` declarations or ``call``,
-        by wire name.
+        Each operation's ``since`` and its ``scoped`` declarations, ``call`` or
+        ``gesture``, by wire name.
 
     Raises:
         ComponentRegistryError: If a declaration does not name its scope.
     """
     derived: dict[str, Mapping[str, object]] = {}
     for name, body in (raw if isinstance(raw, Mapping) else {}).items():
-        if not isinstance(body, Mapping) or not {"scoped", "call"} & set(body):
+        if not isinstance(body, Mapping) or not {"scoped", "call", "gesture"} & set(
+            body
+        ):
             continue
         scoped = body.get("scoped", [])
         if not isinstance(scoped, list) or not all(
@@ -98,3 +101,27 @@ def modifiers_mapping(
         }
         for name, props in modifiers.items()
     }
+
+
+def gesture_streams(
+    derived: Mapping[str, Mapping[str, object]],
+) -> dict[str, tuple[str, ...]]:
+    """The streams each gesture modifier exposes, by its wire name.
+
+    Args:
+        derived: Each derived operation's declarations.
+
+    Returns:
+        Each gesture's stream names; a gesture without a continuous callback
+        exposes none and is left out.
+    """
+    streams: dict[str, tuple[str, ...]] = {}
+    for name, body in derived.items():
+        gesture = body.get("gesture")
+        continuous = gesture.get("continuous") if isinstance(gesture, Mapping) else None
+        if isinstance(continuous, Mapping):
+            streams[name] = tuple(
+                str(s["name"])
+                for s in cast("list[Mapping[str, object]]", continuous["streams"])
+            )
+    return streams

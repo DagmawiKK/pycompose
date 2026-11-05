@@ -17,7 +17,7 @@ import kotlinx.serialization.json.jsonPrimitive
  */
 class ModifierBuilder(
     private val actions: ActionDispatcher,
-    private val streams: () -> Streams,
+    private val streams: () -> MutableMap<String, Map<String, () -> Float>>,
 ) {
     /**
      * The modifier [program] describes, or why it cannot apply.
@@ -25,11 +25,13 @@ class ModifierBuilder(
      * @param program The node's wire modifier, or null for none.
      * @param scope The receiver the node's parent lambda carries, which the
      *   operations a scope declares (`weight`, `menuAnchor`) apply on.
+     * @param node The node's wire id, under which a gesture publishes its streams.
      */
     @Composable
     fun build(
         program: JsonObject?,
         scope: Any? = null,
+        node: String = "",
     ): Result<Modifier> {
         if (program == null) return Result.success(Modifier)
         val prepared =
@@ -37,11 +39,12 @@ class ModifierBuilder(
                 val sequence =
                     program["operations"] as? JsonArray
                         ?: error("Expected modifier operations")
+                // Each operation's actions -- a click, a gesture's events -- by handle.
                 val ids =
                     sequence
-                        .mapNotNull {
-                            (it as? JsonObject)?.get("onClick") as? JsonPrimitive
-                        }.map { it.content }
+                        .flatMap { (it as? JsonObject)?.values.orEmpty() }
+                        .mapNotNull { (it as? JsonPrimitive)?.takeIf { value -> value.isString } }
+                        .map { it.content }
                         .toSet()
                 IrParser.validateModifier(program, ids).getOrThrow()
                 sequence.map { it as JsonObject }
@@ -56,8 +59,10 @@ class ModifierBuilder(
                             type,
                             scope,
                             operation,
-                            actions::dispatch,
+                            { id -> actions.dispatch(id) },
+                            { id, payload -> actions.dispatch(id, payload) },
                             streams(),
+                            node,
                         )
                     if (applied == null) {
                         Result.failure(IllegalStateException("$type needs a parent declaring it"))

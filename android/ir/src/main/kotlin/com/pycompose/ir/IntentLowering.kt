@@ -137,21 +137,32 @@ internal object IntentLowering {
         intents: MutableMap<String, JsonObject>,
     ): JsonObject {
         val operations = value["operations"] as? JsonArray
+        // Any operation's action -- a click, a gesture's events -- may be an intent.
         if (operations == null ||
-            operations.none { Intents.isIntent((it as? JsonObject)?.get("onClick")) }
+            operations.none { operation ->
+                (operation as? JsonObject)?.values?.any(Intents::isIntent) ==
+                    true
+            }
         ) {
             return value
         }
         val lowered =
             operations.map { operation ->
-                val click = (operation as? JsonObject)?.get("onClick")
-                if (Intents.isIntent(click)) {
-                    JsonObject(
-                        operation as JsonObject +
-                            ("onClick" to lowerIntent(click as JsonObject, intents)),
-                    )
-                } else {
+                if (operation !is JsonObject || operation.values.none(Intents::isIntent)) {
                     operation
+                } else {
+                    JsonObject(
+                        operation.mapValues { (_, entry) ->
+                            if (Intents.isIntent(
+                                    entry,
+                                )
+                            ) {
+                                lowerIntent(entry as JsonObject, intents)
+                            } else {
+                                entry
+                            }
+                        },
+                    )
                 }
             }
         return JsonObject(value + ("operations" to JsonArray(lowered)))

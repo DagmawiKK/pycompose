@@ -12519,6 +12519,111 @@
         {
           "additionalProperties": false,
           "properties": {
+            "onDragCancel": {
+              "$ref": "#/definitions/Action"
+            },
+            "onDragEnd": {
+              "$ref": "#/definitions/Action"
+            },
+            "onDragStart": {
+              "$ref": "#/definitions/Action"
+            },
+            "type": {
+              "const": "detectDragGestures"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "onDragCancel": {
+              "$ref": "#/definitions/Action"
+            },
+            "onDragEnd": {
+              "$ref": "#/definitions/Action"
+            },
+            "onDragStart": {
+              "$ref": "#/definitions/Action"
+            },
+            "type": {
+              "const": "detectDragGesturesAfterLongPress"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "onDragCancel": {
+              "$ref": "#/definitions/Action"
+            },
+            "onDragEnd": {
+              "$ref": "#/definitions/Action"
+            },
+            "onDragStart": {
+              "$ref": "#/definitions/Action"
+            },
+            "type": {
+              "const": "detectHorizontalDragGestures"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "onDoubleTap": {
+              "$ref": "#/definitions/Action"
+            },
+            "onLongPress": {
+              "$ref": "#/definitions/Action"
+            },
+            "onTap": {
+              "$ref": "#/definitions/Action"
+            },
+            "type": {
+              "const": "detectTapGestures"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "onDragCancel": {
+              "$ref": "#/definitions/Action"
+            },
+            "onDragEnd": {
+              "$ref": "#/definitions/Action"
+            },
+            "onDragStart": {
+              "$ref": "#/definitions/Action"
+            },
+            "type": {
+              "const": "detectVerticalDragGestures"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "type": {
               "const": "displayCutoutPadding"
             }
@@ -38093,6 +38198,111 @@
             },
             "type": {
               "const": "defaultMinSize"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "onDragCancel": {
+              "$ref": "#/definitions/Action"
+            },
+            "onDragEnd": {
+              "$ref": "#/definitions/Action"
+            },
+            "onDragStart": {
+              "$ref": "#/definitions/Action"
+            },
+            "type": {
+              "const": "detectDragGestures"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "onDragCancel": {
+              "$ref": "#/definitions/Action"
+            },
+            "onDragEnd": {
+              "$ref": "#/definitions/Action"
+            },
+            "onDragStart": {
+              "$ref": "#/definitions/Action"
+            },
+            "type": {
+              "const": "detectDragGesturesAfterLongPress"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "onDragCancel": {
+              "$ref": "#/definitions/Action"
+            },
+            "onDragEnd": {
+              "$ref": "#/definitions/Action"
+            },
+            "onDragStart": {
+              "$ref": "#/definitions/Action"
+            },
+            "type": {
+              "const": "detectHorizontalDragGestures"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "onDoubleTap": {
+              "$ref": "#/definitions/Action"
+            },
+            "onLongPress": {
+              "$ref": "#/definitions/Action"
+            },
+            "onTap": {
+              "$ref": "#/definitions/Action"
+            },
+            "type": {
+              "const": "detectTapGestures"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "onDragCancel": {
+              "$ref": "#/definitions/Action"
+            },
+            "onDragEnd": {
+              "$ref": "#/definitions/Action"
+            },
+            "onDragStart": {
+              "$ref": "#/definitions/Action"
+            },
+            "type": {
+              "const": "detectVerticalDragGestures"
             }
           },
           "required": [

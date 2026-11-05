@@ -215,8 +215,9 @@ class Registry(AbstractComponentRegistry):
             component can never bind one to a tap.
         modifiers: Ordered modifier operation definitions by wire name.
         derived_modifiers: Per modifier derived from the pin, the version it
-            entered at and the scopes declaring it (``weight`` on rows and
-            columns). Codegen-only.
+            entered at, the scopes declaring it (``weight`` on rows and
+            columns), what it calls, or the gesture it runs, whose streams
+            validation reads.
         supported_schema_versions: Explicit compatible wire versions, when declared.
         sections: The sections the runtime carries and never reads: each
             value family's JSON encoding, each animation converter the pin

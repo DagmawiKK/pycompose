@@ -13427,6 +13427,300 @@
           }
         }
       ]
+    },
+    "detectDragGestures": {
+      "props": {
+        "onDragStart": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "x",
+              "type": "number"
+            },
+            {
+              "name": "y",
+              "type": "number"
+            }
+          ]
+        },
+        "onDragEnd": {
+          "type": "actionId"
+        },
+        "onDragCancel": {
+          "type": "actionId"
+        }
+      },
+      "gesture": {
+        "detector": "androidx.compose.foundation.gestures.detectDragGestures",
+        "events": {
+          "onDragStart": {
+            "payload": [
+              "x",
+              "y"
+            ],
+            "nullable": false
+          },
+          "onDragEnd": {
+            "payload": [],
+            "nullable": false
+          },
+          "onDragCancel": {
+            "payload": [],
+            "nullable": false
+          }
+        },
+        "continuous": {
+          "callback": "onDrag",
+          "streams": [
+            {
+              "name": "dragX",
+              "argument": 1,
+              "axis": "x"
+            },
+            {
+              "name": "dragY",
+              "argument": 1,
+              "axis": "y"
+            }
+          ]
+        }
+      },
+      "since": "1.23.0"
+    },
+    "detectDragGesturesAfterLongPress": {
+      "props": {
+        "onDragStart": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "x",
+              "type": "number"
+            },
+            {
+              "name": "y",
+              "type": "number"
+            }
+          ]
+        },
+        "onDragEnd": {
+          "type": "actionId"
+        },
+        "onDragCancel": {
+          "type": "actionId"
+        }
+      },
+      "gesture": {
+        "detector": "androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress",
+        "events": {
+          "onDragStart": {
+            "payload": [
+              "x",
+              "y"
+            ],
+            "nullable": false
+          },
+          "onDragEnd": {
+            "payload": [],
+            "nullable": false
+          },
+          "onDragCancel": {
+            "payload": [],
+            "nullable": false
+          }
+        },
+        "continuous": {
+          "callback": "onDrag",
+          "streams": [
+            {
+              "name": "dragX",
+              "argument": 1,
+              "axis": "x"
+            },
+            {
+              "name": "dragY",
+              "argument": 1,
+              "axis": "y"
+            }
+          ]
+        }
+      },
+      "since": "1.23.0"
+    },
+    "detectHorizontalDragGestures": {
+      "props": {
+        "onDragStart": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "x",
+              "type": "number"
+            },
+            {
+              "name": "y",
+              "type": "number"
+            }
+          ]
+        },
+        "onDragEnd": {
+          "type": "actionId"
+        },
+        "onDragCancel": {
+          "type": "actionId"
+        }
+      },
+      "gesture": {
+        "detector": "androidx.compose.foundation.gestures.detectHorizontalDragGestures",
+        "events": {
+          "onDragStart": {
+            "payload": [
+              "x",
+              "y"
+            ],
+            "nullable": false
+          },
+          "onDragEnd": {
+            "payload": [],
+            "nullable": false
+          },
+          "onDragCancel": {
+            "payload": [],
+            "nullable": false
+          }
+        },
+        "continuous": {
+          "callback": "onHorizontalDrag",
+          "streams": [
+            {
+              "name": "horizontalDrag",
+              "argument": 1
+            }
+          ]
+        }
+      },
+      "since": "1.23.0"
+    },
+    "detectTapGestures": {
+      "props": {
+        "onDoubleTap": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "x",
+              "type": "number"
+            },
+            {
+              "name": "y",
+              "type": "number"
+            }
+          ]
+        },
+        "onLongPress": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "x",
+              "type": "number"
+            },
+            {
+              "name": "y",
+              "type": "number"
+            }
+          ]
+        },
+        "onTap": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "x",
+              "type": "number"
+            },
+            {
+              "name": "y",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "gesture": {
+        "detector": "androidx.compose.foundation.gestures.detectTapGestures",
+        "events": {
+          "onDoubleTap": {
+            "payload": [
+              "x",
+              "y"
+            ],
+            "nullable": true
+          },
+          "onLongPress": {
+            "payload": [
+              "x",
+              "y"
+            ],
+            "nullable": true
+          },
+          "onTap": {
+            "payload": [
+              "x",
+              "y"
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "since": "1.23.0"
+    },
+    "detectVerticalDragGestures": {
+      "props": {
+        "onDragStart": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "x",
+              "type": "number"
+            },
+            {
+              "name": "y",
+              "type": "number"
+            }
+          ]
+        },
+        "onDragEnd": {
+          "type": "actionId"
+        },
+        "onDragCancel": {
+          "type": "actionId"
+        }
+      },
+      "gesture": {
+        "detector": "androidx.compose.foundation.gestures.detectVerticalDragGestures",
+        "events": {
+          "onDragStart": {
+            "payload": [
+              "x",
+              "y"
+            ],
+            "nullable": false
+          },
+          "onDragEnd": {
+            "payload": [],
+            "nullable": false
+          },
+          "onDragCancel": {
+            "payload": [],
+            "nullable": false
+          }
+        },
+        "continuous": {
+          "callback": "onVerticalDrag",
+          "streams": [
+            {
+              "name": "verticalDrag",
+              "argument": 1
+            }
+          ]
+        }
+      },
+      "since": "1.23.0"
     }
   },
   "actions": {
