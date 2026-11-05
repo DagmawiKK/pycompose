@@ -1,15 +1,21 @@
 package com.pycompose.renderer
 
+import androidx.compose.animation.VectorConverter
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.colorspace.ColorSpaces
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.Dp
@@ -30,6 +36,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicReference
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], application = android.app.Application::class)
@@ -237,6 +244,32 @@ class BindingsTest {
                 )
             }
         assertEquals("the stream moved the node", 50, placed.get())
+        assertEquals("and the node was never recomposed", 1, compositions)
+    }
+
+    @Test
+    fun `a colour followed while drawing reads its stream and theme without recomposing`() {
+        val follow =
+            Json.parseToJsonElement(
+                """{"type":"binding","travel":{"kind":"none"},"phase":"draw","target":
+                   {"type":"expression","node":{"op":"alpha","color":"#FF0000FF","args":[
+                     {"stream":"list","name":"progress"}]}}}""",
+            )
+        val held = AtomicReference<State<Color>?>()
+        val compositions =
+            compositionsWhileStreaming { progress ->
+                val streams: Streams = mapOf("list" to mapOf("progress" to progress))
+                val scheme = MaterialTheme.colorScheme
+                val colour =
+                    deferredState(follow, Color.VectorConverter(ColorSpaces.Srgb), Phase.Draw) {
+                        colorValue(it, streams, scheme)
+                    }
+                held.set(colour)
+                Box(Modifier.size(10.dp).drawBehind { drawRect(colour?.value ?: Color.Black) })
+            }
+        // Read as the draw block reads it: the stream's last value, the theme's colour.
+        val colour = checkNotNull(held.get()).value
+        assertEquals("the stream faded the colour", 0.5f, colour.alpha, 0.01f)
         assertEquals("and the node was never recomposed", 1, compositions)
     }
 }

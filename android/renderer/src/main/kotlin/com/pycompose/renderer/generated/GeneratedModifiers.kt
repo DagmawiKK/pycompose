@@ -261,14 +261,15 @@ object GeneratedModifiers {
                     ) { value -> numberValue(value, streams).toFloat() }
                 val shapeValue = op["shape"]?.let { value -> com.pycompose.renderer.generated.ValueResolver.shape(value).getOrThrow() }
                 val clipValue = op["clip"]?.let { value -> value.jsonPrimitive.boolean }
+                val colorScheme = androidx.compose.material3.MaterialTheme.colorScheme
                 val ambientShadowColorState =
-                    com.pycompose.renderer.optionalBindingState(
+                    com.pycompose.renderer.deferredState(
                         op["ambientShadowColor"], Color.colorVectorConverter(ColorSpaces.Srgb), com.pycompose.program.Phase.Draw,
-                    ) { value -> com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() }
+                    ) { value -> com.pycompose.renderer.colorValue(value, streams, colorScheme) }
                 val spotShadowColorState =
-                    com.pycompose.renderer.optionalBindingState(
+                    com.pycompose.renderer.deferredState(
                         op["spotShadowColor"], Color.colorVectorConverter(ColorSpaces.Srgb), com.pycompose.program.Phase.Draw,
-                    ) { value -> com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() }
+                    ) { value -> com.pycompose.renderer.colorValue(value, streams, colorScheme) }
                 Modifier.graphicsLayer(block = {
                     scaleX = scaleXState?.value ?: 1.0f
                     scaleY = scaleYState?.value ?: 1.0f
@@ -456,9 +457,9 @@ object GeneratedModifiers {
                         if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } },
                     shape = if ("shape" in op) op.getValue("shape").let { value -> com.pycompose.renderer.generated.ValueResolver.shape(value).getOrThrow() } else androidx.compose.ui.graphics.RectangleShape,
                     ambientColor = if ("ambientColor" in op) op.getValue("ambientColor").let { wire -> com.pycompose.renderer.bound(wire, Color.colorVectorConverter(ColorSpaces.Srgb)) { value ->
-                        com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() } } else androidx.compose.ui.graphics.DefaultShadowColor,
+                        com.pycompose.renderer.colorValue(value, streams, androidx.compose.material3.MaterialTheme.colorScheme) } } else androidx.compose.ui.graphics.DefaultShadowColor,
                     spotColor = if ("spotColor" in op) op.getValue("spotColor").let { wire -> com.pycompose.renderer.bound(wire, Color.colorVectorConverter(ColorSpaces.Srgb)) { value ->
-                        com.pycompose.renderer.generated.ValueResolver.color(value).getOrThrow() } } else androidx.compose.ui.graphics.DefaultShadowColor,
+                        com.pycompose.renderer.colorValue(value, streams, androidx.compose.material3.MaterialTheme.colorScheme) } } else androidx.compose.ui.graphics.DefaultShadowColor,
                 )
             "size" ->
                 Modifier.size(

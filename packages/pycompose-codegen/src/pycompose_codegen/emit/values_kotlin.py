@@ -6,6 +6,7 @@ from typing import Any
 
 from pycompose_codegen.emit.defaults import render_default
 from pycompose_codegen.emit.implementations_kotlin import implementation
+from pycompose_codegen.emit.themed import THEME, themed
 from pycompose_codegen.emit.values import (
     _runtime_contract,
     definitions,
@@ -244,28 +245,42 @@ def render_native(registry: dict[str, Any]) -> str:
             if markers
             else []
         )
+        branches = [
+            line
+            for name, spec in specs.items()
+            if spec["family"] == family
+            for line in _constructor(name, spec, defaults)
+        ]
+        parse = (
+            "        val parsed = runCatching { "
+            f"ValueContract.read{family}(value) }}"
+            ".getOrElse { return Result.failure(it) }"
+        )
         lines.extend(
             [
                 "    @Composable",
                 *opt_in,
                 f"    fun {method}(value: JsonElement): Result<{native_type}> {{",
-                "        val parsed = runCatching { "
-                f"ValueContract.read{family}(value) }}"
-                ".getOrElse { return Result.failure(it) }",
+                parse,
                 f"        return Result.success({method}(parsed))",
                 "    }",
                 "",
+            ]
+        )
+        if any(THEME in line for line in branches):
+            lines.extend(themed(method, family, native_type, opt_in, parse, branches))
+            continue
+        lines.extend(
+            [
                 "    @Composable",
                 *opt_in,
                 f"    fun {method}(value: {family}Value): {native_type} =",
                 "        when (value) {",
+                *branches,
+                "        }",
+                "",
             ]
         )
-        for name, spec in specs.items():
-            if spec["family"] != family:
-                continue
-            lines.extend(_constructor(name, spec, defaults))
-        lines.extend(["        }", ""])
     return "\n".join([*lines, "}", ""])
 
 

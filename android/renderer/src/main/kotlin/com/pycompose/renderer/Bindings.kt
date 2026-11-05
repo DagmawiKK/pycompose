@@ -13,6 +13,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -166,7 +167,10 @@ fun <T, V : AnimationVector> deferredState(
     val binding = bound(wire)?.at(phase)
     return if (binding == null || binding.travel == Travel.None) {
         val current = rememberUpdatedState(binding?.target ?: wire)
-        remember { derivedStateOf { read(current.value) } }
+        // The latest reader, so what it captured in composition (a colour scheme) stays
+        // current; a new reader giving the same value invalidates nothing.
+        val reader = rememberUpdatedState(read)
+        remember { derivedStateOf(structuralEqualityPolicy()) { reader.value(current.value) } }
     } else {
         animateValueAsState(
             read(binding.target),

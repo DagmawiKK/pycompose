@@ -102,7 +102,9 @@ def test_app_values_include_transitive_dependencies_not_unrelated_factories() ->
     native = render_native(sliced)
     assert "def TextStyle(" in python
     assert "WireTextStyle" in models
-    assert "MaterialTheme.colorScheme.primary" in native
+    # A theme role reads the scheme passed in; the composable reader passes the theme's.
+    assert '"primary" -> scheme.primary' in native
+    assert "MaterialTheme.colorScheme" in native
     assert "ButtonColors" not in models + native
 
 

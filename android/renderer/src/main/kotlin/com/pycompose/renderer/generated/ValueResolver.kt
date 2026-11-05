@@ -607,6 +607,14 @@ object ValueResolver {
 
     @Composable
     fun color(value: ColorValue): androidx.compose.ui.graphics.Color =
+        color(value, androidx.compose.material3.MaterialTheme.colorScheme)
+
+    fun color(value: JsonElement, scheme: androidx.compose.material3.ColorScheme): Result<androidx.compose.ui.graphics.Color> {
+        val parsed = runCatching { ValueContract.readColor(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(color(parsed, scheme))
+    }
+
+    fun color(value: ColorValue, scheme: androidx.compose.material3.ColorScheme): androidx.compose.ui.graphics.Color =
         when (value) {
             is WireColor -> {
                 androidx.compose.ui.graphics.Color(
@@ -615,54 +623,54 @@ object ValueResolver {
             }
             is WireThemeColor -> {
                 when (value.name) {
-                    "background" -> androidx.compose.material3.MaterialTheme.colorScheme.background
-                    "error" -> androidx.compose.material3.MaterialTheme.colorScheme.error
-                    "errorContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.errorContainer
-                    "inverseOnSurface" -> androidx.compose.material3.MaterialTheme.colorScheme.inverseOnSurface
-                    "inversePrimary" -> androidx.compose.material3.MaterialTheme.colorScheme.inversePrimary
-                    "inverseSurface" -> androidx.compose.material3.MaterialTheme.colorScheme.inverseSurface
-                    "onBackground" -> androidx.compose.material3.MaterialTheme.colorScheme.onBackground
-                    "onError" -> androidx.compose.material3.MaterialTheme.colorScheme.onError
-                    "onErrorContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onErrorContainer
-                    "onPrimary" -> androidx.compose.material3.MaterialTheme.colorScheme.onPrimary
-                    "onPrimaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onPrimaryContainer
-                    "onPrimaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.onPrimaryFixed
-                    "onPrimaryFixedVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.onPrimaryFixedVariant
-                    "onSecondary" -> androidx.compose.material3.MaterialTheme.colorScheme.onSecondary
-                    "onSecondaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onSecondaryContainer
-                    "onSecondaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.onSecondaryFixed
-                    "onSecondaryFixedVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.onSecondaryFixedVariant
-                    "onSurface" -> androidx.compose.material3.MaterialTheme.colorScheme.onSurface
-                    "onSurfaceVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
-                    "onTertiary" -> androidx.compose.material3.MaterialTheme.colorScheme.onTertiary
-                    "onTertiaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.onTertiaryContainer
-                    "onTertiaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.onTertiaryFixed
-                    "onTertiaryFixedVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.onTertiaryFixedVariant
-                    "outline" -> androidx.compose.material3.MaterialTheme.colorScheme.outline
-                    "outlineVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.outlineVariant
-                    "primary" -> androidx.compose.material3.MaterialTheme.colorScheme.primary
-                    "primaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.primaryContainer
-                    "primaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.primaryFixed
-                    "primaryFixedDim" -> androidx.compose.material3.MaterialTheme.colorScheme.primaryFixedDim
-                    "scrim" -> androidx.compose.material3.MaterialTheme.colorScheme.scrim
-                    "secondary" -> androidx.compose.material3.MaterialTheme.colorScheme.secondary
-                    "secondaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.secondaryContainer
-                    "secondaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.secondaryFixed
-                    "secondaryFixedDim" -> androidx.compose.material3.MaterialTheme.colorScheme.secondaryFixedDim
-                    "surface" -> androidx.compose.material3.MaterialTheme.colorScheme.surface
-                    "surfaceBright" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceBright
-                    "surfaceContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainer
-                    "surfaceContainerHigh" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainerHigh
-                    "surfaceContainerHighest" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainerHighest
-                    "surfaceContainerLow" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainerLow
-                    "surfaceContainerLowest" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainerLowest
-                    "surfaceDim" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceDim
-                    "surfaceTint" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceTint
-                    "surfaceVariant" -> androidx.compose.material3.MaterialTheme.colorScheme.surfaceVariant
-                    "tertiary" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiary
-                    "tertiaryContainer" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiaryContainer
-                    "tertiaryFixed" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiaryFixed
-                    "tertiaryFixedDim" -> androidx.compose.material3.MaterialTheme.colorScheme.tertiaryFixedDim
+                    "background" -> scheme.background
+                    "error" -> scheme.error
+                    "errorContainer" -> scheme.errorContainer
+                    "inverseOnSurface" -> scheme.inverseOnSurface
+                    "inversePrimary" -> scheme.inversePrimary
+                    "inverseSurface" -> scheme.inverseSurface
+                    "onBackground" -> scheme.onBackground
+                    "onError" -> scheme.onError
+                    "onErrorContainer" -> scheme.onErrorContainer
+                    "onPrimary" -> scheme.onPrimary
+                    "onPrimaryContainer" -> scheme.onPrimaryContainer
+                    "onPrimaryFixed" -> scheme.onPrimaryFixed
+                    "onPrimaryFixedVariant" -> scheme.onPrimaryFixedVariant
+                    "onSecondary" -> scheme.onSecondary
+                    "onSecondaryContainer" -> scheme.onSecondaryContainer
+                    "onSecondaryFixed" -> scheme.onSecondaryFixed
+                    "onSecondaryFixedVariant" -> scheme.onSecondaryFixedVariant
+                    "onSurface" -> scheme.onSurface
+                    "onSurfaceVariant" -> scheme.onSurfaceVariant
+                    "onTertiary" -> scheme.onTertiary
+                    "onTertiaryContainer" -> scheme.onTertiaryContainer
+                    "onTertiaryFixed" -> scheme.onTertiaryFixed
+                    "onTertiaryFixedVariant" -> scheme.onTertiaryFixedVariant
+                    "outline" -> scheme.outline
+                    "outlineVariant" -> scheme.outlineVariant
+                    "primary" -> scheme.primary
+                    "primaryContainer" -> scheme.primaryContainer
+                    "primaryFixed" -> scheme.primaryFixed
+                    "primaryFixedDim" -> scheme.primaryFixedDim
+                    "scrim" -> scheme.scrim
+                    "secondary" -> scheme.secondary
+                    "secondaryContainer" -> scheme.secondaryContainer
+                    "secondaryFixed" -> scheme.secondaryFixed
+                    "secondaryFixedDim" -> scheme.secondaryFixedDim
+                    "surface" -> scheme.surface
+                    "surfaceBright" -> scheme.surfaceBright
+                    "surfaceContainer" -> scheme.surfaceContainer
+                    "surfaceContainerHigh" -> scheme.surfaceContainerHigh
+                    "surfaceContainerHighest" -> scheme.surfaceContainerHighest
+                    "surfaceContainerLow" -> scheme.surfaceContainerLow
+                    "surfaceContainerLowest" -> scheme.surfaceContainerLowest
+                    "surfaceDim" -> scheme.surfaceDim
+                    "surfaceTint" -> scheme.surfaceTint
+                    "surfaceVariant" -> scheme.surfaceVariant
+                    "tertiary" -> scheme.tertiary
+                    "tertiaryContainer" -> scheme.tertiaryContainer
+                    "tertiaryFixed" -> scheme.tertiaryFixed
+                    "tertiaryFixedDim" -> scheme.tertiaryFixedDim
                     else -> error("Unknown native constant")
                 }
             }

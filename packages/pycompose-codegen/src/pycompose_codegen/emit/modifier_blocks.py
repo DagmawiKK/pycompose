@@ -15,6 +15,7 @@ from pycompose.model.programs.bindings import animatable
 from pycompose_codegen.emit.literals import kotlin_string
 from pycompose_codegen.emit.modifier_bindings import animated, deferred
 from pycompose_codegen.emit.modifier_values import converter, fallback, prop_value
+from pycompose_codegen.emit.themed import THEME
 
 
 def _values(
@@ -37,13 +38,20 @@ def _values(
         if argument.get("member") == "function" or "constants" in argument:
             continue
         if animatable(spec) and call["phase"] != "composition":
+            decode = prop_value(spec, cast("str", spec["animation"]))
+            themed = spec.get("valueType") == "Color"
+            if themed and not any("colorScheme" in line for line in lines):
+                # Captured once here, so the colour's theme role reads purely.
+                lines.append(f"                val colorScheme = {THEME}")
+            if themed:
+                decode = decode.replace(THEME, "colorScheme")
             lines += deferred(
                 prop,
                 converter(spec, converters),
                 f'op["{prop}"]',
-                prop_value(spec, cast("str", spec["animation"])),
+                decode,
                 call["phase"],
-                pure="valueType" not in spec,
+                pure=themed or "valueType" not in spec,
             )
             continue
         if animatable(spec):

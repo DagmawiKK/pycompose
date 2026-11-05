@@ -16,6 +16,7 @@ from pycompose.model.programs.bindings import animatable
 from pycompose_codegen.emit.literals import kotlin_string
 from pycompose_codegen.emit.modifier_bindings import animated
 from pycompose_codegen.emit.rules import die
+from pycompose_codegen.emit.themed import THEME
 from pycompose_codegen.emit.values import resolver_call
 
 READS = {
@@ -68,6 +69,9 @@ def prop_value(spec: dict[str, Any], native: str) -> str:
     Returns:
         Kotlin source over a plain wire value named ``value``.
     """
+    if spec.get("valueType") == "Color":
+        # An expression over streams, or a colour whose theme role reads the scheme.
+        return f"com.pycompose.renderer.colorValue(value, streams, {THEME})"
     if "valueType" in spec:
         return resolved(spec["valueType"], "value")
     if spec["type"] == "actionId":
