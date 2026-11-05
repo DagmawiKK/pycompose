@@ -6643,6 +6643,13 @@
         "androidx.compose.material3.ExperimentalMaterial3Api"
       ],
       "props": {
+        "caretShape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "null",
+          "nullable": true,
+          "since": "1.23.0"
+        },
         "containerColor": {
           "type": "color",
           "valueType": "Color",
@@ -6663,23 +6670,35 @@
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
+        "shadowElevation": {
+          "type": "dp",
+          "nativeDefault": "(0).dp",
+          "since": "1.23.0",
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.TooltipDefaults.plainTooltipContainerShape",
+          "since": "1.23.0"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "(0).dp",
+          "since": "1.23.0",
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
         "modifier": {
           "type": "modifier"
-        },
-        "showCaret": {
-          "type": "boolean",
-          "default": false
         }
       },
       "children": {
         "allowed": true,
         "kind": "content"
       },
-      "scope": "androidx.compose.material3.TooltipScope",
-      "adapter": "manual",
-      "reshaped": [
-        "showCaret"
-      ]
+      "scope": "androidx.compose.material3.TooltipScope"
     },
     "PrimaryScrollableTabRow": {
       "package": "androidx.compose.material3",
@@ -6941,71 +6960,66 @@
         "androidx.compose.material3.ExperimentalMaterial3Api"
       ],
       "props": {
+        "caretShape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "null",
+          "nullable": true,
+          "since": "1.23.0"
+        },
+        "colors": {
+          "type": "value",
+          "valueType": "RichTooltipColors",
+          "nativeDefault": "androidx.compose.material3.TooltipDefaults.richTooltipColors()",
+          "since": "1.23.0"
+        },
         "maxWidth": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.TooltipDefaults.richTooltipMaxWidth",
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
+        "shadowElevation": {
+          "type": "dp",
+          "nativeDefault": "(3.0).dp",
+          "since": "1.23.0",
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.TooltipDefaults.richTooltipContainerShape",
+          "since": "1.23.0"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "(0.0).dp",
+          "since": "1.23.0",
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
         "modifier": {
           "type": "modifier"
-        },
-        "showCaret": {
-          "type": "boolean",
-          "default": false
-        },
-        "containerColor": {
-          "type": "color",
-          "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
-          "valueType": "Color",
-          "animation": "androidx.compose.ui.graphics.Color",
-          "phase": "composition"
-        },
-        "contentColor": {
-          "type": "color",
-          "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
-          "valueType": "Color",
-          "animation": "androidx.compose.ui.graphics.Color",
-          "phase": "composition"
-        },
-        "titleContentColor": {
-          "type": "color",
-          "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
-          "valueType": "Color",
-          "animation": "androidx.compose.ui.graphics.Color",
-          "phase": "composition"
-        },
-        "actionContentColor": {
-          "type": "color",
-          "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
-          "valueType": "Color",
-          "animation": "androidx.compose.ui.graphics.Color",
-          "phase": "composition"
         }
       },
       "children": {
-        "allowed": true,
-        "kind": "content"
+        "allowed": false
       },
       "slots": {
         "action": {
           "native": "action",
           "nullable": true
         },
+        "text": {
+          "native": "text"
+        },
         "title": {
           "native": "title",
           "nullable": true
         }
       },
-      "scope": "androidx.compose.material3.TooltipScope",
-      "adapter": "manual",
-      "reshaped": [
-        "showCaret",
-        "containerColor",
-        "contentColor",
-        "titleContentColor",
-        "actionContentColor"
-      ]
+      "scope": "androidx.compose.material3.TooltipScope"
     },
     "Row": {
       "package": "androidx.compose.foundation.layout",
@@ -19512,6 +19526,35 @@
       "native": {
         "constantParameter": "name",
         "propertyOwner": "androidx.compose.material3.TooltipAnchorPosition"
+      }
+    },
+    "caretShape": {
+      "family": "Shape",
+      "kind": "factory",
+      "kotlinType": "androidx.compose.ui.graphics.Shape",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "owner": "androidx.compose.material3.TooltipDefaults",
+        "name": "caretShape",
+        "jvmName": "caretShape-EaSLcWc",
+        "descriptor": "(J)Landroidx/compose/ui/graphics/Shape;"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "parameters": {
+        "caretSize": {
+          "type": "value",
+          "valueType": "DpSize",
+          "default": {
+            "kind": "property",
+            "symbol": "androidx.compose.material3.TooltipDefaults.caretSize"
+          }
+        }
+      },
+      "native": {
+        "call": "androidx.compose.material3.TooltipDefaults.caretShape"
       }
     },
     "NamedShape": {

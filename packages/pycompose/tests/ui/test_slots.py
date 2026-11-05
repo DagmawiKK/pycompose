@@ -17,7 +17,15 @@ from pycompose.errors import IrError, IrValidationError
 from pycompose.host.wire import emit_ir, to_dict, validate_ir
 from pycompose.model.nodes.node import Node, Props
 from pycompose.model.snapshot import Snapshot
-from pycompose.ui import Column, PlainTooltip, RichTooltip, Scaffold, Text, TooltipBox
+from pycompose.ui import (
+    Column,
+    PlainTooltip,
+    RichTooltip,
+    Scaffold,
+    Text,
+    TooltipBox,
+    caretShape,
+)
 from pycompose.ui.composition import slot_nodes
 
 
@@ -142,7 +150,7 @@ def test_tooltip_content_fills_the_box_slot_and_reaches_the_wire() -> None:
             is_persistent=True,
             tooltip=PlainTooltip(
                 id="tip.tooltip",
-                show_caret=True,
+                caret_shape=caretShape(),
                 children=(Text(id="tip.text", text="hint"),),
             ),
             children=(Text(id="tip.anchor", text="anchor"),),
@@ -153,14 +161,14 @@ def test_tooltip_content_fills_the_box_slot_and_reaches_the_wire() -> None:
     assert root["props"]["isPersistent"] is True
     assert [child.get("slot") for child in root["children"]] == [None, "tooltip"]
     tooltip = root["children"][1]
-    assert tooltip["props"]["showCaret"] is True
+    assert tooltip["props"]["caretShape"] == {"type": "caretShape"}
     assert [child["id"] for child in tooltip["children"]] == [
         "root.tip.tooltip.tip.text"
     ]
 
 
 def test_a_rich_tooltip_keeps_title_action_and_body_distinct() -> None:
-    """A title is not an action, and neither is the primary body text."""
+    """A title is not an action, and neither is the body text: three slots."""
     root = snapshot(
         TooltipBox(
             id="tip",
@@ -168,7 +176,7 @@ def test_a_rich_tooltip_keeps_title_action_and_body_distinct() -> None:
                 id="tip.tooltip",
                 title=Text(id="tip.title", text="title"),
                 action=Text(id="tip.action", text="action"),
-                children=(Text(id="tip.text", text="body"),),
+                text=Text(id="tip.text", text="body"),
             ),
             children=(Text(id="tip.anchor", text="anchor"),),
         ),
@@ -179,7 +187,7 @@ def test_a_rich_tooltip_keeps_title_action_and_body_distinct() -> None:
     )
     assert {child["id"]: child.get("slot") for child in tooltip["children"]} == {
         "root.tip.tooltip.tip.action": "action",
-        "root.tip.tooltip.tip.text": None,
+        "root.tip.tooltip.tip.text": "text",
         "root.tip.tooltip.tip.title": "title",
     }
 

@@ -2156,11 +2156,14 @@ data class PermanentNavigationDrawer(
 
 @Serializable
 data class PlainTooltipProps(
+    val `caretShape`: OptionalValue = OptionalValue.Absent,
     val `containerColor`: JsonElement? = null,
     val `contentColor`: JsonElement? = null,
     val `maxWidth`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `showCaret`: Boolean = false,
+    val `shadowElevation`: JsonElement? = null,
+    val `shape`: JsonElement? = null,
+    val `tonalElevation`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -2263,13 +2266,13 @@ data class RadioButton(
 
 @Serializable
 data class RichTooltipProps(
-    val `actionContentColor`: JsonElement? = null,
-    val `containerColor`: JsonElement? = null,
-    val `contentColor`: JsonElement? = null,
+    val `caretShape`: OptionalValue = OptionalValue.Absent,
+    val `colors`: JsonElement? = null,
     val `maxWidth`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `showCaret`: Boolean = false,
-    val `titleContentColor`: JsonElement? = null,
+    val `shadowElevation`: JsonElement? = null,
+    val `shape`: JsonElement? = null,
+    val `tonalElevation`: JsonElement? = null,
 ) : UiProps
 
 @Serializable

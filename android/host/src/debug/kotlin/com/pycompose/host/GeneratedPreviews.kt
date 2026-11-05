@@ -460,7 +460,7 @@ private fun ModalWideNavigationRailPreview() {
 @Preview(name = "MultiChoiceSegmentedButton", showBackground = true)
 @Composable
 private fun MultiChoiceSegmentedButtonPreview() {
-    Sample("""{"metadata": {"intents": {"preview.onCheckedChange": {"payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"checked": true, "onCheckedChange": {"fields": {}, "intent": "preview.onCheckedChange"}, "shape": {"size": {"type": "Dp", "value": 0}, "type": "CutCornerShape"}}, "type": "MultiChoiceSegmentedButton"}], "id": "provider", "props": {}, "type": "MultiChoiceSegmentedButtonRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onCheckedChange": {"payload": {"value": {"required": true, "type": "boolean"}}}}}, "root": {"children": [{"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"checked": true, "onCheckedChange": {"fields": {}, "intent": "preview.onCheckedChange"}, "shape": {"type": "caretShape"}}, "type": "MultiChoiceSegmentedButton"}], "id": "provider", "props": {}, "type": "MultiChoiceSegmentedButtonRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "MultiChoiceSegmentedButtonRow", showBackground = true)
@@ -616,7 +616,7 @@ private fun RadioButtonPreview() {
 @Preview(name = "RichTooltip", showBackground = true)
 @Composable
 private fun RichTooltipPreview() {
-    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "provider.child", "props": {"text": "Label"}, "type": "Text"}, {"children": [{"id": "preview.child", "props": {"text": "RichTooltip"}, "type": "Text"}], "id": "preview", "props": {}, "slot": "label", "type": "RichTooltip"}], "id": "provider", "props": {}, "type": "Label"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "provider.child", "props": {"text": "Label"}, "type": "Text"}, {"children": [{"id": "preview.text", "props": {"text": "text"}, "slot": "text", "type": "Text"}], "id": "preview", "props": {}, "slot": "label", "type": "RichTooltip"}], "id": "provider", "props": {}, "type": "Label"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Row", showBackground = true)
@@ -670,7 +670,7 @@ private fun SecureTextFieldPreview() {
 @Preview(name = "SegmentedButton", showBackground = true)
 @Composable
 private fun SegmentedButtonPreview() {
-    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}, "selected": true, "shape": {"size": {"type": "Dp", "value": 0}, "type": "CutCornerShape"}}, "type": "SegmentedButton"}], "id": "provider", "props": {}, "type": "SingleChoiceSegmentedButtonRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"children": [{"id": "preview.label", "props": {"text": "label"}, "slot": "label", "type": "Text"}], "id": "preview", "props": {"onClick": {"fields": {}, "intent": "preview.onClick"}, "selected": true, "shape": {"type": "caretShape"}}, "type": "SegmentedButton"}], "id": "provider", "props": {}, "type": "SingleChoiceSegmentedButtonRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SelectionContainer", showBackground = true)

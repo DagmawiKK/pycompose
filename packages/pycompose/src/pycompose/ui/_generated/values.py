@@ -68,6 +68,7 @@ __all__ = [
     "buttonElevation",
     "cardColors",
     "cardElevation",
+    "caretShape",
     "centerAlignedTopAppBarColors",
     "checkboxColors",
     "datePickerColors",
@@ -340,10 +341,12 @@ DEFINITIONS: dict[str, dict[str, object]] = json.loads(
     '"valueType":"Dp"},"focusedElevation":{"type":"value",'
     '"valueType":"Dp"},"hoveredElevation":{"type":"value",'
     '"valueType":"Dp"},"pressedElevation":{"type":"value",'
-    '"valueType":"Dp"}},"since":"1.13.0"},"centerAlignedTopAppBarColo'
-    'rs":{"family":"TopAppBarColors","parameters":{"actionIconContent'
-    'Color":{"type":"value","valueType":"Color"},'
-    '"containerColor":{"type":"value",'
+    '"valueType":"Dp"}},"since":"1.13.0"},"caretShape":{"family":"Sha'
+    'pe","parameters":{"caretSize":{"type":"value",'
+    '"valueType":"DpSize"}},"since":"1.23.0"},'
+    '"centerAlignedTopAppBarColors":{"family":"TopAppBarColors","para'
+    'meters":{"actionIconContentColor":{"type":"value",'
+    '"valueType":"Color"},"containerColor":{"type":"value",'
     '"valueType":"Color"},"navigationIconContentColor":{"type":"value'
     '","valueType":"Color"},"scrolledContainerColor":{"type":"value",'
     '"valueType":"Color"},"titleContentColor":{"type":"value",'
@@ -2654,6 +2657,26 @@ def cardElevation(
             "hoveredElevation": hovered_elevation,
             "draggedElevation": dragged_elevation,
             "disabledElevation": disabled_elevation,
+        },
+        DEFINITIONS,
+    )
+
+
+def caretShape(
+    caret_size: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct Shape data for native evaluation.
+
+    Args:
+        caret_size: Native caretSize argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "caretShape",
+        {
+            "caretSize": caret_size,
         },
         DEFINITIONS,
     )

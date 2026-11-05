@@ -6116,11 +6116,14 @@ class PlainTooltip(Component):
         self,
         *contents: Node,
         id: str | None = None,
+        caret_shape: JsonValue | None | _Unset = UNSET,
         container_color: JsonValue | Expression | Binding | None = None,
         content_color: JsonValue | Expression | Binding | None = None,
         max_width: int | float | Expression | Binding | None = None,
         modifier: Modifier | None = None,
-        show_caret: bool | None = None,
+        shadow_elevation: int | float | Expression | Binding | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | Expression | Binding | None = None,
         children: Content = (),
         content: Content | None = None,
     ) -> None:
@@ -6129,11 +6132,14 @@ class PlainTooltip(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            caret_shape: Native caretShape; omitted uses its default; None is null.
             container_color: Native containerColor; None uses its default.
             content_color: Native contentColor; None uses its default.
             max_width: Native maxWidth; None uses its default.
             modifier: Native modifier; None uses its default.
-            show_caret: Native showCaret; None uses its default.
+            shadow_elevation: Native shadowElevation; None uses its default.
+            shape: Native shape; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
 
@@ -6141,14 +6147,20 @@ class PlainTooltip(Component):
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        if not isinstance(caret_shape, _Unset):
+            props["caret_shape"] = caret_shape
         if container_color is not None:
             props["container_color"] = lower_binding(container_color, "composition")
         if content_color is not None:
             props["content_color"] = lower_binding(content_color, "composition")
         if max_width is not None:
             props["max_width"] = lower_binding(max_width, "composition")
-        if show_caret is not None:
-            props["show_caret"] = show_caret
+        if shadow_elevation is not None:
+            props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
+        if shape is not None:
+            props["shape"] = shape
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -6355,76 +6367,55 @@ class RichTooltip(Component):
 
     def __init__(
         self,
-        *contents: Node,
+        *,
         id: str | None = None,
-        action_content_color: JsonValue | Expression | Binding | None = None,
-        container_color: JsonValue | Expression | Binding | None = None,
-        content_color: JsonValue | Expression | Binding | None = None,
+        caret_shape: JsonValue | None | _Unset = UNSET,
+        colors: JsonValue | None = None,
         max_width: int | float | Expression | Binding | None = None,
         modifier: Modifier | None = None,
-        show_caret: bool | None = None,
-        title_content_color: JsonValue | Expression | Binding | None = None,
-        children: Content = (),
-        content: Content | None = None,
+        shadow_elevation: int | float | Expression | Binding | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | Expression | Binding | None = None,
         action: Content | None = None,
+        text: Content | None = None,
         title: Content | None = None,
     ) -> None:
         """Construct a registered RichTooltip.
 
         Args:
-            *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
-            action_content_color: Native actionContentColor; None uses its default.
-            container_color: Native containerColor; None uses its default.
-            content_color: Native contentColor; None uses its default.
+            caret_shape: Native caretShape; omitted uses its default; None is null.
+            colors: Native colors; None uses its default.
             max_width: Native maxWidth; None uses its default.
             modifier: Native modifier; None uses its default.
-            show_caret: Native showCaret; None uses its default.
-            title_content_color: Native titleContentColor; None uses its default.
-            children: Ordered child nodes with stable keys.
-            content: Alternative spelling for content children.
+            shadow_elevation: Native shadowElevation; None uses its default.
+            shape: Native shape; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
             action: Nodes for the native action slot.
+            text: Nodes for the native text slot.
             title: Nodes for the native title slot.
-
-        Raises:
-            IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
-        if action_content_color is not None:
-            props["action_content_color"] = lower_binding(
-                action_content_color, "composition"
-            )
-        if container_color is not None:
-            props["container_color"] = lower_binding(container_color, "composition")
-        if content_color is not None:
-            props["content_color"] = lower_binding(content_color, "composition")
+        if not isinstance(caret_shape, _Unset):
+            props["caret_shape"] = caret_shape
+        if colors is not None:
+            props["colors"] = colors
         if max_width is not None:
             props["max_width"] = lower_binding(max_width, "composition")
-        if show_caret is not None:
-            props["show_caret"] = show_caret
-        if title_content_color is not None:
-            props["title_content_color"] = lower_binding(
-                title_content_color, "composition"
-            )
-        if content is not None:
-            if children:
-                raise IrValidationError(
-                    "cannot supply both slot and children", node_id=id
-                )
-            children = content_nodes(content, key="content")
-        if contents and children:
-            raise IrValidationError(
-                "children given positionally and by name", node_id=id
-            )
-        normalized = content_nodes(contents or children, key="children")
+        if shadow_elevation is not None:
+            props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
+        if shape is not None:
+            props["shape"] = shape
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         slotted: tuple[Node, ...] = ()
         if action is not None:
             slotted += slot_nodes(action, key="action", slot="action")
+        if text is not None:
+            slotted += slot_nodes(text, key="text", slot="text")
         if title is not None:
             slotted += slot_nodes(title, key="title", slot="title")
-        super().__init__(
-            id=id, children=normalized + slotted, modifier=modifier, **props
-        )
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 
 class Row(Component):

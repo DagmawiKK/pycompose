@@ -470,6 +470,11 @@ data class WirecardElevation(
     val disabledElevation: DpValue? = null,
 ) : CardElevationValue
 
+data class WirecaretShape(
+    val supplied: Set<String>,
+    val caretSize: DpSizeValue? = null,
+) : ShapeValue
+
 data class WirecenterAlignedTopAppBarColors(
     val supplied: Set<String>,
     val containerColor: ColorValue? = null,
@@ -1231,10 +1236,12 @@ object ValueContract {
             "\"valueType\":\"Dp\"},\"focusedElevation\":{\"type\":\"value\",",
             "\"valueType\":\"Dp\"},\"hoveredElevation\":{\"type\":\"value\",",
             "\"valueType\":\"Dp\"},\"pressedElevation\":{\"type\":\"value\",",
-            "\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"centerAlignedTopAppBarColo",
-            "rs\":{\"family\":\"TopAppBarColors\",\"parameters\":{\"actionIconContent",
-            "Color\":{\"type\":\"value\",\"valueType\":\"Color\"},",
-            "\"containerColor\":{\"type\":\"value\",",
+            "\"valueType\":\"Dp\"}},\"since\":\"1.13.0\"},\"caretShape\":{\"family\":\"Sha",
+            "pe\",\"parameters\":{\"caretSize\":{\"type\":\"value\",",
+            "\"valueType\":\"DpSize\"}},\"since\":\"1.23.0\"},",
+            "\"centerAlignedTopAppBarColors\":{\"family\":\"TopAppBarColors\",\"para",
+            "meters\":{\"actionIconContentColor\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"containerColor\":{\"type\":\"value\",",
             "\"valueType\":\"Color\"},\"navigationIconContentColor\":{\"type\":\"value",
             "\",\"valueType\":\"Color\"},\"scrolledContainerColor\":{\"type\":\"value\",",
             "\"valueType\":\"Color\"},\"titleContentColor\":{\"type\":\"value\",",
@@ -2633,6 +2640,10 @@ object ValueContract {
             "ThemeShape" -> WireThemeShape(
                 supplied = data.keys,
                 name = data.getValue("name").jsonPrimitive.content,
+            )
+            "caretShape" -> WirecaretShape(
+                supplied = data.keys,
+                caretSize = data["caretSize"]?.takeUnless { it == JsonNull }?.let { item -> readDpSize(item) },
             )
             else -> error("Unknown value constructor")
         }

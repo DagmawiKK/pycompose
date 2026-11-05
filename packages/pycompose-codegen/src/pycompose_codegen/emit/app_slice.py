@@ -68,8 +68,6 @@ _ADAPTERS_RELATIVE = (
 
 FLOOR_COMPONENTS = frozenset(
     {
-        "PlainTooltip",
-        "RichTooltip",
         "SearchBarInputField",
         "StatefulSearchBarInputField",
         "StatefulSearchBar",

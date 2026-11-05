@@ -1388,6 +1388,18 @@
       "family": "TooltipAnchorPosition",
       "kotlinType": "androidx.compose.material3.TooltipAnchorPosition"
     },
+    "caretShape": {
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android",
+        "owner": "androidx.compose.material3.TooltipDefaults",
+        "name": "caretShape",
+        "jvmName": "caretShape-EaSLcWc",
+        "descriptor": "(J)Landroidx/compose/ui/graphics/Shape;"
+      },
+      "kind": "factory",
+      "family": "Shape",
+      "kotlinType": "androidx.compose.ui.graphics.Shape"
+    },
     "NamedShape": {
       "source": {
         "owner": "androidx/compose/ui/graphics/RectangleShapeKt",

@@ -60,12 +60,12 @@ class TooltipComponentsTest {
                   "visible":true,"isPersistent":true,"hasAction":true,"position":{"type":"TooltipAnchorPosition","name":"Below"}},
                     "children":[
                   {"id":"rich.anchor","type":"Text","props":{"text":"Rich anchor"}},
-                  {"id":"rich.tooltip","type":"RichTooltip","props":{"showCaret":true,
-                    "maxWidth":280},"slot":"tooltip","children":[
+                  {"id":"rich.tooltip","type":"RichTooltip","props":{
+                    "caretShape":{"type":"caretShape"},"maxWidth":280},"slot":"tooltip","children":[
                     {"id":"rich.title","type":"Text","props":{"text":"Rich title"},"slot":"title"},
                     {"id":"rich.action","type":"Text","props":{"text":"Rich action"},
                       "slot":"action"},
-                    {"id":"rich.text","type":"Text","props":{"text":"Rich body"}}]}]}]}}
+                    {"id":"rich.text","type":"Text","props":{"text":"Rich body"},"slot":"text"}]}]}]}}
             """.trimIndent()
         val actions = mutableListOf<Action>()
         compose.setContent { PyComposeTheme { renderer(actions).Render(parse(source)) } }

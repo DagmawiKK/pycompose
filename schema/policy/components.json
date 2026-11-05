@@ -650,31 +650,9 @@
       "category": "overlays"
     },
     "patch": {
-      "props": {
-        "showCaret": {
-          "type": "boolean",
-          "default": false
-        },
-        "caretShape": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "shadowElevation": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "shape": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "tonalElevation": {
-          "refuse": "its hand-written adapter does not read it yet"
-        }
-      },
       "children": {
         "kind": "content"
-      },
-      "adapter": "manual",
-      "reshaped": [
-        "showCaret"
-      ]
+      }
     }
   },
   "PrimaryScrollableTabRow": {
@@ -715,64 +693,6 @@
   "RichTooltip": {
     "decision": {
       "category": "overlays"
-    },
-    "patch": {
-      "props": {
-        "showCaret": {
-          "type": "boolean",
-          "default": false
-        },
-        "containerColor": {
-          "type": "color",
-          "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
-          "valueType": "Color"
-        },
-        "contentColor": {
-          "type": "color",
-          "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
-          "valueType": "Color"
-        },
-        "titleContentColor": {
-          "type": "color",
-          "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
-          "valueType": "Color"
-        },
-        "actionContentColor": {
-          "type": "color",
-          "fallback": "androidx.compose.ui.graphics.Color.Unspecified",
-          "valueType": "Color"
-        },
-        "caretShape": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "colors": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "shadowElevation": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "shape": {
-          "refuse": "its hand-written adapter does not read it yet"
-        },
-        "tonalElevation": {
-          "refuse": "its hand-written adapter does not read it yet"
-        }
-      },
-      "children": {
-        "allowed": true,
-        "kind": "content"
-      },
-      "slots": {
-        "text": null
-      },
-      "adapter": "manual",
-      "reshaped": [
-        "showCaret",
-        "containerColor",
-        "contentColor",
-        "titleContentColor",
-        "actionContentColor"
-      ]
     }
   },
   "Row": {
@@ -1047,7 +967,9 @@
           ],
           "decode": "resourceText",
           "fills": "text",
-          "reads": ["locale"],
+          "reads": [
+            "locale"
+          ],
           "since": "1.1.0"
         },
         "fontResource": {

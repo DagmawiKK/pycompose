@@ -140,6 +140,7 @@ import com.pycompose.ir.generated.WirebuttonColors
 import com.pycompose.ir.generated.WirebuttonElevation
 import com.pycompose.ir.generated.WirecardColors
 import com.pycompose.ir.generated.WirecardElevation
+import com.pycompose.ir.generated.WirecaretShape
 import com.pycompose.ir.generated.WirecenterAlignedTopAppBarColors
 import com.pycompose.ir.generated.WirecheckboxColors
 import com.pycompose.ir.generated.WiredatePickerColors
@@ -1610,12 +1611,14 @@ object ValueResolver {
         }
 
     @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
     fun shape(value: JsonElement): Result<androidx.compose.ui.graphics.Shape> {
         val parsed = runCatching { ValueContract.readShape(value) }.getOrElse { return Result.failure(it) }
         return Result.success(shape(parsed))
     }
 
     @Composable
+    @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
     fun shape(value: ShapeValue): androidx.compose.ui.graphics.Shape =
         when (value) {
             is WireCutCornerShape -> {
@@ -1644,6 +1647,11 @@ object ValueResolver {
                     "small" -> androidx.compose.material3.MaterialTheme.shapes.small
                     else -> error("Unknown native constant")
                 }
+            }
+            is WirecaretShape -> {
+                androidx.compose.material3.TooltipDefaults.caretShape(
+                    caretSize = if ("caretSize" in value.supplied) value.caretSize?.let { item -> dpSize(item) }!! else androidx.compose.material3.TooltipDefaults.caretSize,
+                )
             }
         }
 

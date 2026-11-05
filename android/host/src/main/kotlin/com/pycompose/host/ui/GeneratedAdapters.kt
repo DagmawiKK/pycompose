@@ -95,9 +95,11 @@ import androidx.compose.material3.OutlinedSecureTextField
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.PermanentNavigationDrawer
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SecondaryScrollableTabRow
@@ -236,10 +238,12 @@ import com.pycompose.ir.generated.OutlinedSecureTextField as OutlinedSecureTextF
 import com.pycompose.ir.generated.OutlinedTextField as OutlinedTextFieldNode
 import com.pycompose.ir.generated.PermanentDrawerSheet as PermanentDrawerSheetNode
 import com.pycompose.ir.generated.PermanentNavigationDrawer as PermanentNavigationDrawerNode
+import com.pycompose.ir.generated.PlainTooltip as PlainTooltipNode
 import com.pycompose.ir.generated.PrimaryScrollableTabRow as PrimaryScrollableTabRowNode
 import com.pycompose.ir.generated.PrimaryTabRow as PrimaryTabRowNode
 import com.pycompose.ir.generated.PullToRefreshBox as PullToRefreshBoxNode
 import com.pycompose.ir.generated.RadioButton as RadioButtonNode
+import com.pycompose.ir.generated.RichTooltip as RichTooltipNode
 import com.pycompose.ir.generated.Row as RowNode
 import com.pycompose.ir.generated.Scaffold as ScaffoldNode
 import com.pycompose.ir.generated.SearchBar as SearchBarNode
@@ -2009,6 +2013,33 @@ object GeneratedAdapters {
                     content = { context.children(model.children) },
                 )
             }
+            .registerScoped<TooltipScope>("PlainTooltip") { node, modifier, context ->
+                val model = node as PlainTooltipNode
+                val caretShapeWire = model.props.caretShape
+                val caretShapeValue = when (caretShapeWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> null
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.shape(caretShapeWire.value).getOrThrow()
+                }
+                val containerColorValue = context.boundColor(model.props.containerColor, Color.colorVectorConverter(ColorSpaces.Srgb), androidx.compose.material3.TooltipDefaults.plainTooltipContainerColor)
+                val contentColorValue = context.boundColor(model.props.contentColor, Color.colorVectorConverter(ColorSpaces.Srgb), androidx.compose.material3.TooltipDefaults.plainTooltipContentColor)
+                val maxWidthValue = context.boundDp(model.props.maxWidth, Dp.VectorConverter, androidx.compose.material3.TooltipDefaults.plainTooltipMaxWidth)
+                val shadowElevationValue = context.boundDp(model.props.shadowElevation, Dp.VectorConverter, (0).dp)
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.TooltipDefaults.plainTooltipContainerShape
+                val tonalElevationValue = context.boundDp(model.props.tonalElevation, Dp.VectorConverter, (0).dp)
+                PlainTooltip(
+                    modifier = modifier,
+                    caretShape = caretShapeValue,
+                    containerColor = containerColorValue,
+                    contentColor = contentColorValue,
+                    maxWidth = maxWidthValue,
+                    shadowElevation = shadowElevationValue,
+                    shape = shapeValue,
+                    tonalElevation = tonalElevationValue,
+                    content = { context.children(model.children) },
+                )
+            }
             .register("PrimaryScrollableTabRow") { node, modifier, context ->
                 val model = node as PrimaryScrollableTabRowNode
                 val containerColorValue = context.boundColor(model.props.containerColor, Color.colorVectorConverter(ColorSpaces.Srgb), androidx.compose.material3.TabRowDefaults.primaryContainerColor)
@@ -2081,6 +2112,34 @@ object GeneratedAdapters {
                     onClick = { context.actions.dispatch(model.props.onClick) },
                     selected = model.props.selected,
                     interactionSource = interactionSourceValue,
+                )
+            }
+            .registerScoped<TooltipScope>("RichTooltip") { node, modifier, context ->
+                val model = node as RichTooltipNode
+                val caretShapeWire = model.props.caretShape
+                val caretShapeValue = when (caretShapeWire) {
+                    com.pycompose.ir.OptionalValue.Absent -> null
+                    com.pycompose.ir.OptionalValue.Null -> null
+                    is com.pycompose.ir.OptionalValue.Present -> com.pycompose.renderer.generated.ValueResolver.shape(caretShapeWire.value).getOrThrow()
+                }
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.richTooltipColors(colorsWire).getOrThrow() else androidx.compose.material3.TooltipDefaults.richTooltipColors()
+                val maxWidthValue = context.boundDp(model.props.maxWidth, Dp.VectorConverter, androidx.compose.material3.TooltipDefaults.richTooltipMaxWidth)
+                val shadowElevationValue = context.boundDp(model.props.shadowElevation, Dp.VectorConverter, (3.0).dp)
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.TooltipDefaults.richTooltipContainerShape
+                val tonalElevationValue = context.boundDp(model.props.tonalElevation, Dp.VectorConverter, (0.0).dp)
+                RichTooltip(
+                    modifier = modifier,
+                    caretShape = caretShapeValue,
+                    colors = colorsValue,
+                    maxWidth = maxWidthValue,
+                    shadowElevation = shadowElevationValue,
+                    shape = shapeValue,
+                    tonalElevation = tonalElevationValue,
+                    action = context.slot(model.children, "action"),
+                    text = { context.slot(model.children, "text")?.invoke() },
+                    title = context.slot(model.children, "title"),
                 )
             }
             .register("Row") { node, modifier, context ->

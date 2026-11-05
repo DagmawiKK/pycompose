@@ -7167,6 +7167,16 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "caretShape": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_Shape"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "containerColor": {
               "anyOf": [
                 {
@@ -7236,9 +7246,72 @@
               },
               "type": "object"
             },
-            "showCaret": {
-              "default": false,
-              "type": "boolean"
+            "shadowElevation": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             }
           },
           "type": "object"
@@ -7577,54 +7650,32 @@
               "slot": {
                 "enum": [
                   "action",
+                  "text",
                   "title"
                 ]
               }
-            }
+            },
+            "required": [
+              "slot"
+            ]
           },
           "type": "array"
         },
         "props": {
           "additionalProperties": false,
           "properties": {
-            "actionContentColor": {
+            "caretShape": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/Family_Color"
+                  "$ref": "#/definitions/Family_Shape"
                 },
                 {
-                  "$ref": "#/definitions/Expression"
-                },
-                {
-                  "$ref": "#/definitions/Binding"
+                  "type": "null"
                 }
               ]
             },
-            "containerColor": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_Color"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                },
-                {
-                  "$ref": "#/definitions/Binding"
-                }
-              ]
-            },
-            "contentColor": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_Color"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                },
-                {
-                  "$ref": "#/definitions/Binding"
-                }
-              ]
+            "colors": {
+              "$ref": "#/definitions/Family_RichTooltipColors"
             },
             "maxWidth": {
               "anyOf": [
@@ -7669,14 +7720,64 @@
               },
               "type": "object"
             },
-            "showCaret": {
-              "default": false,
-              "type": "boolean"
-            },
-            "titleContentColor": {
+            "shadowElevation": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/Family_Color"
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
                 },
                 {
                   "$ref": "#/definitions/Expression"
@@ -11446,6 +11547,9 @@
         },
         {
           "$ref": "#/definitions/Value_ThemeShape"
+        },
+        {
+          "$ref": "#/definitions/Value_caretShape"
         }
       ]
     },
@@ -41534,6 +41638,16 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "caretShape": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_Shape"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "containerColor": {
               "anyOf": [
                 {
@@ -41603,9 +41717,72 @@
               },
               "type": "object"
             },
-            "showCaret": {
-              "default": false,
-              "type": "boolean"
+            "shadowElevation": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             }
           },
           "type": "object"
@@ -41944,54 +42121,32 @@
               "slot": {
                 "enum": [
                   "action",
+                  "text",
                   "title"
                 ]
               }
-            }
+            },
+            "required": [
+              "slot"
+            ]
           },
           "type": "array"
         },
         "props": {
           "additionalProperties": false,
           "properties": {
-            "actionContentColor": {
+            "caretShape": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/Family_Color"
+                  "$ref": "#/definitions/Family_Shape"
                 },
                 {
-                  "$ref": "#/definitions/Expression"
-                },
-                {
-                  "$ref": "#/definitions/Binding"
+                  "type": "null"
                 }
               ]
             },
-            "containerColor": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_Color"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                },
-                {
-                  "$ref": "#/definitions/Binding"
-                }
-              ]
-            },
-            "contentColor": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/Family_Color"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                },
-                {
-                  "$ref": "#/definitions/Binding"
-                }
-              ]
+            "colors": {
+              "$ref": "#/definitions/Family_RichTooltipColors"
             },
             "maxWidth": {
               "anyOf": [
@@ -42036,14 +42191,64 @@
               },
               "type": "object"
             },
-            "showCaret": {
-              "default": false,
-              "type": "boolean"
-            },
-            "titleContentColor": {
+            "shadowElevation": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/Family_Color"
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
                 },
                 {
                   "$ref": "#/definitions/Expression"
@@ -54644,6 +54849,21 @@
         },
         "type": {
           "const": "cardElevation"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_caretShape": {
+      "additionalProperties": false,
+      "properties": {
+        "caretSize": {
+          "$ref": "#/definitions/Family_DpSize"
+        },
+        "type": {
+          "const": "caretShape"
         }
       },
       "required": [
