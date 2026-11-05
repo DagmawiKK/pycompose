@@ -30,6 +30,7 @@ from pycompose_codegen.derive.components import propose_components
 from pycompose_codegen.derive.constant_families import constant_families
 from pycompose_codegen.derive.converters import annotate, converters
 from pycompose_codegen.derive.core_modifiers import core_modifiers
+from pycompose_codegen.derive.draws import draws
 from pycompose_codegen.derive.entry_candidates import derive, select
 from pycompose_codegen.derive.families import bound_families
 from pycompose_codegen.derive.holders import derive as derive_holders
@@ -65,6 +66,7 @@ ORDER = (
     "lifecycle",
     "valueTypes",
     "converters",
+    "draws",
     "holders",
 )
 """Section order in the lock, so a diff reads the same way every time."""
@@ -262,6 +264,8 @@ def generate(
     # Which types Compose can animate is a pin fact, and every prop records the
     # one it would be animated as; a prop the pin gives no converter keeps none.
     lock["converters"] = converters(found)
+    # What a draw program may ask a DrawScope to paint, read off the pin.
+    lock["draws"] = draws(found, source_defaults(directory))
     annotate(lock)
     # What policy keeps -- held entries, value families -- still answers to the pin.
     report.errors.extend(compare(lock, found))

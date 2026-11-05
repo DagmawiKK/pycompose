@@ -363,6 +363,11 @@ tasks.register("dumpComposeDefaults") {
                 val modifier = extended == "androidx/compose/ui/Modifier"
                 // A holder's remember... factory: the defaults a seeded holder falls back on.
                 val factory = record["category"] == "composable-factory"
+                // A DrawScope draw call: the defaults a draw program keeps when it leaves
+                // an argument out.
+                val draw =
+                    receiver == "androidx/compose/ui/graphics/drawscope/DrawScope" &&
+                        record["name"].toString().startsWith("draw")
                 record["disposition"] == "ui" ||
                     supported &&
                     (
@@ -371,6 +376,7 @@ tasks.register("dumpComposeDefaults") {
                             drive ||
                             modifier ||
                             factory ||
+                            draw ||
                             identities.contains(identity)
                     )
             }

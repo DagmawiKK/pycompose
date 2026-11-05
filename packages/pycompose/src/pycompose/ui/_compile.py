@@ -6,8 +6,8 @@ is a small, total part of Python over ``int``, ``float`` and ``bool``:
 - arguments, locals assigned once, and ``int``/``float``/``bool`` constants
   the module or enclosing function defines (read as the function is defined);
 - arithmetic (``+ - * / // %``), comparisons (chained too), ``and``, ``or``,
-  ``not``, ``x if c else y``, and ``abs``, ``min``, ``max`` (two arguments) and
-  ``float``;
+  ``not``, ``x if c else y``, and ``abs``, ``min``, ``max`` (two arguments),
+  ``float``, and ``sin`` and ``cos`` (from ``math``);
 - ``if`` blocks that return, and a final ``return``.
 
 Integers mix with floats as Python mixes them. Two things differ on the host:
@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import ast
 import inspect
+import math
 import textwrap
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
@@ -53,7 +54,7 @@ COMPARE = {
     ast.NotEq: "ne",
 }
 
-CALLS = {"float", "abs", "min", "max"}
+CALLS = {"float", "abs", "min", "max", "sin", "cos"}
 
 Node = dict[str, Any]
 
@@ -91,6 +92,17 @@ class _Compiler:
         }
 
     def run(self) -> HostFunction:
+        definition, params = self.signature()
+        result = self.annotation(definition.returns, definition)
+        body = self.docless(definition.body)
+        term = self.block(body, params, definition, result)
+        signature = Signature(tuple(t.type for t in params.values()), result)
+        return host_function(
+            self.function.__name__, signature, term.node, self.function
+        )
+
+    def signature(self) -> tuple[ast.FunctionDef, Scope]:
+        """The definition, checked against the code it compiled to, and its params."""
         try:
             source = inspect.getsource(self.function)
         except OSError:
@@ -117,19 +129,18 @@ class _Compiler:
             argument.arg: _Term({"arg": index}, self.annotation(argument.annotation))
             for index, argument in enumerate(arguments.args)
         }
-        result = self.annotation(definition.returns, definition)
-        body = definition.body
+        return definition, params
+
+    @staticmethod
+    def docless(body: list[ast.stmt]) -> list[ast.stmt]:
+        """A body without its docstring."""
         if (
             body
             and isinstance(body[0], ast.Expr)
             and isinstance(body[0].value, ast.Constant)
         ):
-            body = body[1:]
-        term = self.block(body, params, definition, result)
-        signature = Signature(tuple(t.type for t in params.values()), result)
-        return host_function(
-            self.function.__name__, signature, term.node, self.function
-        )
+            return body[1:]
+        return body
 
     def annotation(self, node: ast.expr | None, where: ast.AST | None = None) -> Type:
         name = node.id if isinstance(node, ast.Name) else None
@@ -265,6 +276,12 @@ class _Compiler:
         if name not in CALLS or node.keywords:
             self.refuse(node, f"host functions cannot call {name or 'that'}")
         terms = [self.expression(a, scope) for a in node.args]
+        if name in {"sin", "cos"} and self.constants.get(name) is not getattr(
+            math, name
+        ):
+            self.refuse(node, f"{name} must be math.{name}")
+        if name in {"sin", "cos"} and len(terms) == 1:
+            return self.apply(name, [self.coerce(terms[0], "number", node)], node)
         if name == "float" and len(terms) == 1:
             return self.coerce(terms[0], "number", node)
         if name == "abs" and len(terms) == 1:

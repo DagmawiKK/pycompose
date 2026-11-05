@@ -20234,6 +20234,325 @@
       ]
     }
   },
+  "draws": {
+    "arc": {
+      "call": "drawArc",
+      "arguments": [
+        {
+          "name": "color",
+          "type": "integer",
+          "native": "color"
+        },
+        {
+          "name": "startAngle",
+          "type": "number",
+          "native": "startAngle"
+        },
+        {
+          "name": "sweepAngle",
+          "type": "number",
+          "native": "sweepAngle"
+        },
+        {
+          "name": "useCenter",
+          "type": "boolean",
+          "native": "useCenter"
+        },
+        {
+          "name": "topLeftX",
+          "type": "number",
+          "native": "topLeft"
+        },
+        {
+          "name": "topLeftY",
+          "type": "number",
+          "native": "topLeft"
+        },
+        {
+          "name": "sizeWidth",
+          "type": "number",
+          "native": "size"
+        },
+        {
+          "name": "sizeHeight",
+          "type": "number",
+          "native": "size"
+        },
+        {
+          "name": "alpha",
+          "type": "number",
+          "native": "alpha",
+          "default": 1.0
+        },
+        {
+          "name": "stroke",
+          "type": "number",
+          "native": "style",
+          "default": 0
+        }
+      ],
+      "native": {
+        "color": "androidx.compose.ui.graphics.Color",
+        "startAngle": "kotlin.Float",
+        "sweepAngle": "kotlin.Float",
+        "useCenter": "kotlin.Boolean",
+        "topLeft": "androidx.compose.ui.geometry.Offset",
+        "size": "androidx.compose.ui.geometry.Size",
+        "alpha": "kotlin.Float",
+        "style": "androidx.compose.ui.graphics.drawscope.DrawStyle"
+      }
+    },
+    "circle": {
+      "call": "drawCircle",
+      "arguments": [
+        {
+          "name": "color",
+          "type": "integer",
+          "native": "color"
+        },
+        {
+          "name": "radius",
+          "type": "number",
+          "native": "radius"
+        },
+        {
+          "name": "centerX",
+          "type": "number",
+          "native": "center"
+        },
+        {
+          "name": "centerY",
+          "type": "number",
+          "native": "center"
+        },
+        {
+          "name": "alpha",
+          "type": "number",
+          "native": "alpha",
+          "default": 1.0
+        },
+        {
+          "name": "stroke",
+          "type": "number",
+          "native": "style",
+          "default": 0
+        }
+      ],
+      "native": {
+        "color": "androidx.compose.ui.graphics.Color",
+        "radius": "kotlin.Float",
+        "center": "androidx.compose.ui.geometry.Offset",
+        "alpha": "kotlin.Float",
+        "style": "androidx.compose.ui.graphics.drawscope.DrawStyle"
+      }
+    },
+    "line": {
+      "call": "drawLine",
+      "arguments": [
+        {
+          "name": "color",
+          "type": "integer",
+          "native": "color"
+        },
+        {
+          "name": "startX",
+          "type": "number",
+          "native": "start"
+        },
+        {
+          "name": "startY",
+          "type": "number",
+          "native": "start"
+        },
+        {
+          "name": "endX",
+          "type": "number",
+          "native": "end"
+        },
+        {
+          "name": "endY",
+          "type": "number",
+          "native": "end"
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "native": "strokeWidth"
+        },
+        {
+          "name": "alpha",
+          "type": "number",
+          "native": "alpha",
+          "default": 1.0
+        }
+      ],
+      "native": {
+        "color": "androidx.compose.ui.graphics.Color",
+        "start": "androidx.compose.ui.geometry.Offset",
+        "end": "androidx.compose.ui.geometry.Offset",
+        "strokeWidth": "kotlin.Float",
+        "alpha": "kotlin.Float"
+      }
+    },
+    "oval": {
+      "call": "drawOval",
+      "arguments": [
+        {
+          "name": "color",
+          "type": "integer",
+          "native": "color"
+        },
+        {
+          "name": "topLeftX",
+          "type": "number",
+          "native": "topLeft"
+        },
+        {
+          "name": "topLeftY",
+          "type": "number",
+          "native": "topLeft"
+        },
+        {
+          "name": "sizeWidth",
+          "type": "number",
+          "native": "size"
+        },
+        {
+          "name": "sizeHeight",
+          "type": "number",
+          "native": "size"
+        },
+        {
+          "name": "alpha",
+          "type": "number",
+          "native": "alpha",
+          "default": 1.0
+        },
+        {
+          "name": "stroke",
+          "type": "number",
+          "native": "style",
+          "default": 0
+        }
+      ],
+      "native": {
+        "color": "androidx.compose.ui.graphics.Color",
+        "topLeft": "androidx.compose.ui.geometry.Offset",
+        "size": "androidx.compose.ui.geometry.Size",
+        "alpha": "kotlin.Float",
+        "style": "androidx.compose.ui.graphics.drawscope.DrawStyle"
+      }
+    },
+    "rect": {
+      "call": "drawRect",
+      "arguments": [
+        {
+          "name": "color",
+          "type": "integer",
+          "native": "color"
+        },
+        {
+          "name": "topLeftX",
+          "type": "number",
+          "native": "topLeft"
+        },
+        {
+          "name": "topLeftY",
+          "type": "number",
+          "native": "topLeft"
+        },
+        {
+          "name": "sizeWidth",
+          "type": "number",
+          "native": "size"
+        },
+        {
+          "name": "sizeHeight",
+          "type": "number",
+          "native": "size"
+        },
+        {
+          "name": "alpha",
+          "type": "number",
+          "native": "alpha",
+          "default": 1.0
+        },
+        {
+          "name": "stroke",
+          "type": "number",
+          "native": "style",
+          "default": 0
+        }
+      ],
+      "native": {
+        "color": "androidx.compose.ui.graphics.Color",
+        "topLeft": "androidx.compose.ui.geometry.Offset",
+        "size": "androidx.compose.ui.geometry.Size",
+        "alpha": "kotlin.Float",
+        "style": "androidx.compose.ui.graphics.drawscope.DrawStyle"
+      }
+    },
+    "roundRect": {
+      "call": "drawRoundRect",
+      "arguments": [
+        {
+          "name": "color",
+          "type": "integer",
+          "native": "color"
+        },
+        {
+          "name": "topLeftX",
+          "type": "number",
+          "native": "topLeft"
+        },
+        {
+          "name": "topLeftY",
+          "type": "number",
+          "native": "topLeft"
+        },
+        {
+          "name": "sizeWidth",
+          "type": "number",
+          "native": "size"
+        },
+        {
+          "name": "sizeHeight",
+          "type": "number",
+          "native": "size"
+        },
+        {
+          "name": "cornerRadiusX",
+          "type": "number",
+          "native": "cornerRadius"
+        },
+        {
+          "name": "cornerRadiusY",
+          "type": "number",
+          "native": "cornerRadius"
+        },
+        {
+          "name": "stroke",
+          "type": "number",
+          "native": "style",
+          "default": 0
+        },
+        {
+          "name": "alpha",
+          "type": "number",
+          "native": "alpha",
+          "default": 1.0
+        }
+      ],
+      "native": {
+        "color": "androidx.compose.ui.graphics.Color",
+        "topLeft": "androidx.compose.ui.geometry.Offset",
+        "size": "androidx.compose.ui.geometry.Size",
+        "cornerRadius": "androidx.compose.ui.geometry.CornerRadius",
+        "style": "androidx.compose.ui.graphics.drawscope.DrawStyle",
+        "alpha": "kotlin.Float"
+      }
+    }
+  },
   "holders": {
     "androidx.compose.material3.DrawerState": {
       "value": "androidx.compose.material3.DrawerValue",

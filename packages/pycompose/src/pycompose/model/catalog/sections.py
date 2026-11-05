@@ -1,4 +1,4 @@
-"""Sections the runtime carries and never reads: values, converters, holders.
+"""Sections the runtime carries: values, converters, draw calls, holders.
 
 Each is a flat map of named objects. The codegen reads them off the lock; the
 runtime only round-trips them, so the catalog the tests compare is the catalog
@@ -18,7 +18,7 @@ __all__ = ["CARRIED", "Sections", "parse_sections", "render_sections"]
 Sections = Mapping[str, Mapping[str, Mapping[str, object]]]
 """Each carried section's entries, by section name and then by entry name."""
 
-CARRIED = ("valueTypes", "converters", "holders")
+CARRIED = ("valueTypes", "converters", "draws", "holders")
 """Every section the runtime carries but does not interpret."""
 
 

@@ -99,18 +99,29 @@ object Functions {
         return Function(signature, body)
     }
 
-    private class Walk(
+    /**
+     * Types one program's expressions and builds their terms, counting nodes against a limit.
+     *
+     * @property params The program's argument types; a term reads argument i at index i.
+     * @property contract The catalog's operations and depth limit.
+     * @property nodes How many nodes the whole program may hold.
+     */
+    internal class Walk(
         val params: List<String>,
         val contract: FunctionContract,
+        private val nodes: Int = contract.nodes,
     ) {
         var count = 0
+
+        /** How many loops enclose the expression; loop k's index is read at params + k. */
+        var loops = 0
 
         fun node(
             node: JsonElement,
             depth: Int,
         ): Pair<String, Term> {
             count += 1
-            require(depth <= contract.depth && count <= contract.nodes) {
+            require(depth <= contract.depth && count <= nodes) {
                 "Program exceeds its limits"
             }
             require(node is JsonObject && node.isNotEmpty()) { "A program node is an object" }
@@ -149,13 +160,23 @@ object Functions {
                         literal.doubleOrNull
                             ?.takeIf { it.isFinite() }
                             ?.let { value -> NUMBER to Term { value } }
-                    "arg" ->
-                        integer?.takeIf { it in 0L until params.size }?.toInt()?.let { index ->
-                            params[index] to Term { it[index] }
-                        }
+                    "arg" -> integer?.let(::arg)
+                    "loop" -> integer?.let(::loop)
                     else -> null
                 }
             return leaf ?: error("Unknown program leaf $key")
+        }
+
+        /** An argument, read from the frame. */
+        private fun arg(arg: Long): Pair<String, Term>? {
+            val index = arg.toInt()
+            return if (arg in params.indices) params[index] to Term { it[index] } else null
+        }
+
+        /** A loop's index, kept in the frame after the arguments. */
+        private fun loop(loop: Long): Pair<String, Term>? {
+            val index = params.size + loop.toInt()
+            return if (loop in 0L until loops) INTEGER to Term { it[index] } else null
         }
     }
 
@@ -173,6 +194,8 @@ object Functions {
             "div" -> Term { (a.eval(it) as Double) / (b.eval(it) as Double) }
             "floorDiv", "mod" -> divide(op, a, b)
             "toNumber" -> Term { (a.eval(it) as Long).toDouble() }
+            "sin" -> Term { kotlin.math.sin(a.eval(it) as Double) }
+            "cos" -> Term { kotlin.math.cos(a.eval(it) as Double) }
             "lt", "le", "gt", "ge" -> compare(op, type == INTEGER, a, b)
             "eq", "ne" -> equal(op == "eq", type, a, b)
             "and", "or", "not" -> logic(op, a, b)

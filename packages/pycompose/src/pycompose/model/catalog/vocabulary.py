@@ -135,6 +135,7 @@ FUNCTION_SIGNATURES: dict[str, dict[tuple[str, ...], str]] = {
     **{op: {("boolean", "boolean"): "boolean"} for op in ("and", "or")},
     "not": {("boolean",): "boolean"},
     "if": {("boolean", t, t): t for t in _TYPES},
+    **{op: {("number",): "number"} for op in ("sin", "cos")},
 }
 """The closed vocabulary of a value function the host calls: each operation's
 argument types and the type it gives. Arithmetic, comparison, logic and a
@@ -144,6 +145,12 @@ type a program from this one table."""
 
 FUNCTION_LIMITS = {"depth": 32, "nodes": 256, "arguments": 8}
 """The largest value function a snapshot may carry, checked by both validators."""
+
+DRAW_LIMITS = {"nodes": 4096, "draws": 4096, "repeat": 1024, "loops": 3}
+"""The largest draw program a snapshot may carry: its nodes in all, the draw
+calls it can make in one frame (counted through its loops), the count one loop
+may run, and how deeply loops nest. Checked by both validators, so a frame's
+work is bounded before the program first runs."""
 
 TRANSIENT_HOLDERS = {"snackbar": "androidx.compose.material3.SnackbarHostState"}
 """The native holder each transient family remembers and fulfils requests on."""

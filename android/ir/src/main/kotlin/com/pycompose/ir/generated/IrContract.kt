@@ -2445,10 +2445,24 @@ object IrContract {
         "or" to mapOf(listOf("boolean", "boolean") to "boolean"),
         "not" to mapOf(listOf("boolean") to "boolean"),
         "if" to mapOf(listOf("boolean", "integer", "integer") to "integer", listOf("boolean", "number", "number") to "number", listOf("boolean", "boolean", "boolean") to "boolean"),
+        "sin" to mapOf(listOf("number") to "number"),
+        "cos" to mapOf(listOf("number") to "number"),
     )
     const val FUNCTION_DEPTH = 32
     const val FUNCTION_NODES = 256
     const val FUNCTION_ARGUMENTS = 8
+    val drawCalls: Map<String, List<String>> = mapOf(
+        "arc" to listOf("integer", "number", "number", "boolean", "number", "number", "number", "number", "number", "number"),
+        "circle" to listOf("integer", "number", "number", "number", "number", "number"),
+        "line" to listOf("integer", "number", "number", "number", "number", "number", "number"),
+        "oval" to listOf("integer", "number", "number", "number", "number", "number", "number"),
+        "rect" to listOf("integer", "number", "number", "number", "number", "number", "number"),
+        "roundRect" to listOf("integer", "number", "number", "number", "number", "number", "number", "number", "number"),
+    )
+    const val DRAW_NODES = 4096
+    const val DRAW_DRAWS = 4096
+    const val DRAW_REPEAT = 1024
+    const val DRAW_LOOPS = 3
     val actionPayloads: Map<String, Map<String, PropertyRule>> = mapOf(
         "increment" to mapOf(
                 "by" to PropertyRule("integer", required = false),

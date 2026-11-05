@@ -220,6 +220,7 @@ def _kt_streams(registry: dict[str, Any]) -> list[str]:
         Kotlin source lines.
     """
     from pycompose.model.catalog.vocabulary import (
+        DRAW_LIMITS,
         EXPRESSION_LIMITS,
         EXPRESSION_OPS,
         FUNCTION_LIMITS,
@@ -268,6 +269,18 @@ def _kt_streams(registry: dict[str, Any]) -> list[str]:
         f"    const val FUNCTION_DEPTH = {FUNCTION_LIMITS['depth']}",
         f"    const val FUNCTION_NODES = {FUNCTION_LIMITS['nodes']}",
         f"    const val FUNCTION_ARGUMENTS = {FUNCTION_LIMITS['arguments']}",
+        "    val drawCalls: Map<String, List<String>> = mapOf(",
+        *(
+            f"        {kotlin_string(name)} to listOf("
+            + ", ".join(kotlin_string(a["type"]) for a in spec["arguments"])
+            + "),"
+            for name, spec in registry.get("draws", {}).items()
+        ),
+        "    )",
+        *(
+            f"    const val DRAW_{key.upper()} = {value}"
+            for key, value in DRAW_LIMITS.items()
+        ),
     ]
 
 

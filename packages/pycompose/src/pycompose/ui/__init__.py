@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING, Any
 
 # The redundant aliases re-export: the star imports leave no room for __all__.
 from pycompose.model.nodes.node import Node as Node  # noqa: PLC0414
+from pycompose.ui._generated.draws import *  # noqa: F403 -- the pin's draw calls
 from pycompose.ui._generated.values import *  # noqa: F403 -- the catalog's values
 from pycompose.ui.fallback import Fallback as Fallback  # noqa: PLC0414
 from pycompose.ui.host import Binding as Binding  # noqa: PLC0414

@@ -28,6 +28,8 @@ from pycompose.model.catalog.vocabulary import FUNCTION_LIMITS, FUNCTION_SIGNATU
 from pycompose.model.nodes.props import JsonValue
 
 Type = Literal["integer", "number", "boolean"]
+Result = Literal["integer", "number", "boolean", "draw"]
+"""What a program gives: a value of a type, or (``draw``) the paint it makes."""
 TYPES: tuple[Type, ...] = ("integer", "number", "boolean")
 LONG = 2**63
 
@@ -42,7 +44,7 @@ class Signature:
     """
 
     params: tuple[Type, ...]
-    result: Type
+    result: Result
 
     def __str__(self) -> str:
         """Spell the signature as a reader would.
@@ -69,7 +71,7 @@ class HostFunction:
 
     name: str
     signature: Signature
-    body: Mapping[str, FrozenJsonValue]
+    body: FrozenJsonValue
     function: Callable[..., object] = field(compare=False, repr=False)
 
     def __call__(self, *args: object) -> object:
@@ -93,15 +95,16 @@ class HostFunction:
             "type": "program",
             "params": list(self.signature.params),
             "result": self.signature.result,
-            "body": cast("JsonValue", thaw_json(dict(self.body))),
+            "body": cast("JsonValue", thaw_json(self.body)),
         }
 
 
 def host_function(
     name: str,
     signature: Signature,
-    body: Mapping[str, JsonValue],
+    body: JsonValue,
     function: Callable[..., object],
+    check: Callable[[object], Signature] | None = None,
 ) -> HostFunction:
     """Check a compiled body against its signature and wrap it.
 
@@ -110,6 +113,7 @@ def host_function(
         signature: Its argument and result types.
         body: The compiled program body.
         function: The Python function.
+        check: The checker for its kind; a value function's by default.
 
     Returns:
         The host function.
@@ -118,11 +122,10 @@ def host_function(
         "type": "program",
         "params": list(signature.params),
         "result": signature.result,
-        "body": dict(body),
+        "body": body,
     }
-    validate_function(wire)
-    frozen = cast("Mapping[str, FrozenJsonValue]", freeze_json(dict(body)))
-    return HostFunction(name, signature, frozen, function)
+    (check or validate_function)(wire)
+    return HostFunction(name, signature, freeze_json(body), function)
 
 
 def lower_function(value: object) -> object:
@@ -166,7 +169,7 @@ def validate_function(value: object) -> Signature:
     ):
         raise IrValidationError("a program's params and result are types")
     signature = Signature(tuple(params), cast("Type", result))
-    if _Walk(signature.params).type(value["body"], 1) != result:
+    if Walk(signature.params).type(value["body"], 1) != result:
         raise IrValidationError(f"a program's body does not give a {result}")
     return signature
 
@@ -184,16 +187,42 @@ def result_type(op: str, args: list[Type]) -> Type | None:
     return cast("Type | None", FUNCTION_SIGNATURES[op].get(tuple(args)))
 
 
-class _Walk:
-    """Types one body, counting its nodes against the limits."""
+class Walk:
+    """Types one program's expressions, counting their nodes against a limit.
 
-    def __init__(self, params: tuple[Type, ...]) -> None:
+    ``loops`` is how many loops enclose the expression being typed; a loop's
+    index is an integer leaf, ``{"loop": k}`` for the k-th outermost.
+    """
+
+    def __init__(
+        self, params: tuple[Type, ...], nodes: int = FUNCTION_LIMITS["nodes"]
+    ) -> None:
+        """Start a walk.
+
+        Args:
+            params: The program's argument types.
+            nodes: How many nodes the whole program may hold.
+        """
         self.params = params
+        self.nodes = nodes
+        self.loops = 0
         self.count = 0
 
     def type(self, node: object, depth: int) -> Type:
+        """The type one expression node gives.
+
+        Args:
+            node: The node.
+            depth: How deeply it nests.
+
+        Returns:
+            Its type.
+
+        Raises:
+            IrValidationError: If it is outside the vocabulary or the limits.
+        """
         self.count += 1
-        if depth > FUNCTION_LIMITS["depth"] or self.count > FUNCTION_LIMITS["nodes"]:
+        if depth > FUNCTION_LIMITS["depth"] or self.count > self.nodes:
             raise IrValidationError(f"program exceeds {FUNCTION_LIMITS}")
         if not isinstance(node, Mapping) or not node:
             raise IrValidationError("a program node is an object")
@@ -216,6 +245,18 @@ class _Walk:
         return typed
 
     def leaf(self, key: str, literal: object) -> Type:
+        """The type one leaf gives: a literal, an argument or a loop's index.
+
+        Args:
+            key: The leaf's kind.
+            literal: Its value.
+
+        Returns:
+            Its type.
+
+        Raises:
+            IrValidationError: If the leaf is no known kind or out of range.
+        """
         if isinstance(literal, bool):
             if key == "boolean":
                 return "boolean"
@@ -224,6 +265,8 @@ class _Walk:
                 return "integer"
             if key == "arg" and 0 <= literal < len(self.params):
                 return self.params[literal]
+            if key == "loop" and 0 <= literal < self.loops:
+                return "integer"
             if key == "number":
                 return "number"
         elif isinstance(literal, float) and key == "number" and math.isfinite(literal):

@@ -291,6 +291,7 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         Artifact paths keyed to their full rendered content; the template
         mirror is added by :func:`_mirror_template` on top of this mapping.
     """
+    from pycompose_codegen.emit.draws import render_draws_kotlin, render_draws_python
     from pycompose_codegen.emit.effects import (
         render_kotlin_effects,
         render_python_effects,
@@ -322,6 +323,7 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
         GENERATED / "components.py": render_python_components(registry),
         GENERATED / "values.py": render_values(registry),
         GENERATED / "modifiers.py": render_operations(registry),
+        GENERATED / "draws.py": render_draws_python(registry),
         PACKAGE / "app/_generated/__init__.py": EFFECTS_PACKAGE,
         PACKAGE / "app/_generated/effects.py": render_python_effects(registry),
         KOTLIN_MODELS_PATH.with_name("ValueModels.kt"): render_models(registry),
@@ -332,6 +334,9 @@ def framework_artifacts(registry: dict[str, Any]) -> dict[Path, str]:
     }
     artifacts[KOTLIN_ADAPTERS_PATH] = render_generated_adapters(registry)
     artifacts[ROOT / KOTLIN_DRIVES_RELATIVE] = render_holder_drives(registry)
+    artifacts[ROOT / KOTLIN_VALUES_RELATIVE.with_name("DrawCalls.kt")] = (
+        render_draws_kotlin(registry)
+    )
     artifacts[ROOT / KOTLIN_VALUES_RELATIVE.with_name("GeneratedModifiers.kt")] = (
         render_modifiers(registry)
     )

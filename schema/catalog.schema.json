@@ -52,9 +52,40 @@
       "description": "Derived from pinned sources by tools/schema/holders.py when composegen generates the lock; never hand-edited.",
       "propertyNames": { "$ref": "#/$defs/dottedName" },
       "additionalProperties": { "$ref": "#/$defs/holder" }
+    },
+    "draws": {
+      "type": "object",
+      "description": "Derived from the pin by composegen: each DrawScope call a draw program may make, with the program arguments it takes and the native parameter each fills.",
+      "additionalProperties": { "$ref": "#/$defs/draw" }
     }
   },
   "$defs": {
+    "draw": {
+      "type": "object",
+      "required": ["call", "arguments", "native"],
+      "additionalProperties": false,
+      "properties": {
+        "call": { "$ref": "#/$defs/identifier" },
+        "arguments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "type", "native"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "$ref": "#/$defs/identifier" },
+              "type": { "$ref": "#/$defs/identifier" },
+              "native": { "$ref": "#/$defs/identifier" },
+              "default": {}
+            }
+          }
+        },
+        "native": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/dottedName" }
+        }
+      }
+    },
     "converter": {
       "type": "object",
       "description": "One animation converter the pin declares: how generated Kotlin names it, and what it imports.",

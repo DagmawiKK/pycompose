@@ -27,6 +27,7 @@ from pycompose.model.programs.bindings import Binding, Spring, Tween
 from pycompose.model.programs.expressions import Expression
 from pycompose.model.programs.functions import HostFunction
 from pycompose.ui._compile import compile_function
+from pycompose.ui._drawing import DrawCompiler
 
 __all__ = [
     "Binding",
@@ -51,6 +52,9 @@ def host(function: Callable[..., object]) -> HostFunction:
     Returns:
         The host function; it still calls as the Python it was written as.
     """
+    # A function annotated to return None draws; any other gives a value.
+    if function.__annotations__.get("return", ...) in (None, "None"):
+        return DrawCompiler(function).run()
     return compile_function(function)
 
 
