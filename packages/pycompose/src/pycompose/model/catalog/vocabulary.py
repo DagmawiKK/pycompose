@@ -46,19 +46,33 @@ STATE_KINDS = (
 )
 """State families the host creates, drives and reports for a component.
 
-A family is one host-side implementation: a sheet reconciles a desired
-open/closed value for a modal surface that has to be composed to be shown at
-all; a tooltip reconciles a
-desired visible value through hover, focus and long-press gestures; textInput
-reconciles text and selection with an atomic, numbered edit report; search
-shares one editing projection and one expansion state across a collapsed bar
-and every expanded surface. A holder with one scrollable position (a pager's
-page, a list's first visible item, a scroll's offset) or one anchor of an enum
-(a drawer open or closed, a swipe settled or dismissed) is derived from the pin
-instead (``positional``, ``anchored``). The
-vocabulary is closed for the same reason the interaction kinds are: the host
-must not be asked to drive a state object whose transitions it does not
-understand.
+A family is one host-side implementation, kept by hand only where the pin lacks
+what a derived family needs; each names that member or protocol:
+
+* ``sheet`` -- ``ModalBottomSheet`` shows its own window as soon as it is
+  composed and keeps it while hidden, so presence is composition: the host
+  composes it to show it and removes it once hidden, which no holder member
+  states.
+* ``tooltip`` -- ``TooltipState.isVisible`` is read-only, seeded by
+  ``initialIsVisible``; ``show()`` and ``dismiss()`` are an interface's members
+  whose implementation flips a transition's target, so the pin gives no
+  evidence of the value each sets. Its one user, ``TooltipBox``, builds its
+  ``PopupPositionProvider`` from the position the app names.
+* ``textInput`` -- ``TextFieldState.text`` and ``selection`` are read-only and
+  change only inside ``edit { }``, a ``TextFieldBuffer`` block no type rule
+  drives; its reports are numbered, atomic text-and-selection edits, so an
+  input method's composition survives the app's answers (ADR-0023).
+* ``search`` -- ``SearchBarState`` expands and collapses through members that
+  animate a progress fraction, not an anchor, and one owner shares the editing
+  and expansion holders across the collapsed bar and every expanded surface.
+
+A holder with one scrollable position (a pager's page, a list's first visible
+item, a scroll's offset), one anchor of an enum (a drawer open or closed, a
+swipe settled or dismissed) or settable properties (a slider's value, a time
+picker's hour) is derived from the pin instead (``positional``, ``anchored``,
+``properties``). The vocabulary is closed for the same reason the interaction
+kinds are: the host must not be asked to drive a state object whose
+transitions it does not understand.
 """
 
 STATE_HOLDERS = {
