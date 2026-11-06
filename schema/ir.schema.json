@@ -2426,6 +2426,9 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "confirmStateChange": {
+              "$ref": "#/definitions/HostCall"
+            },
             "gesturesEnabled": {
               "default": true,
               "type": "boolean"
@@ -6436,6 +6439,9 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "confirmStateChange": {
+              "$ref": "#/definitions/HostCall"
+            },
             "gesturesEnabled": {
               "default": true,
               "type": "boolean"
@@ -10874,6 +10880,9 @@
             },
             "onValueChange": {
               "$ref": "#/definitions/Action"
+            },
+            "positionalThreshold": {
+              "$ref": "#/definitions/HostCall"
             },
             "value": {
               "enum": [
@@ -16025,7 +16034,8 @@
             "enum": [
               "integer",
               "number",
-              "boolean"
+              "boolean",
+              "string"
             ]
           },
           "type": "array"
@@ -16035,6 +16045,7 @@
             "integer",
             "number",
             "boolean",
+            "string",
             "draw"
           ]
         },
@@ -34429,6 +34440,9 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "confirmStateChange": {
+              "$ref": "#/definitions/HostCall"
+            },
             "gesturesEnabled": {
               "default": true,
               "type": "boolean"
@@ -38439,6 +38453,9 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "confirmStateChange": {
+              "$ref": "#/definitions/HostCall"
+            },
             "gesturesEnabled": {
               "default": true,
               "type": "boolean"
@@ -46226,6 +46243,9 @@
             },
             "onValueChange": {
               "$ref": "#/definitions/Action"
+            },
+            "positionalThreshold": {
+              "$ref": "#/definitions/HostCall"
             },
             "value": {
               "enum": [

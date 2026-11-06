@@ -267,7 +267,9 @@ def anchored_props(state: dict[str, Any]) -> dict[str, dict[str, Any]]:
     An ``anchored`` state names its holder's value enum
     (``pycompose_codegen.derive.holders``); each anchor crosses as its entry in
     lowerCamel. The app may leave the value unstated only where the factory has
-    its own start.
+    its own start. Each function argument of the factory is a ``function`` prop
+    the app may fill with a host function; left unset, the factory's default
+    answers.
 
     Args:
         state: A component's ``state`` block of kind ``anchored``.
@@ -277,6 +279,16 @@ def anchored_props(state: dict[str, Any]) -> dict[str, dict[str, Any]]:
     """
     required = {} if state.get("started") else {"required": True}
     return {
+        **{
+            name: {
+                "type": "function",
+                "payload": [
+                    {"name": a["name"], "type": a["type"]} for a in function["payload"]
+                ],
+                "result": function["result"],
+            }
+            for name, function in state.get("functions", {}).items()
+        },
         "value": {"type": "enum", "values": list(state["anchors"]), **required},
         "onValueChange": {
             "type": "actionId",

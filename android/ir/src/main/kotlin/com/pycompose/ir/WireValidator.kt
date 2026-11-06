@@ -3,6 +3,7 @@ package com.pycompose.ir
 import com.pycompose.ir.generated.IrContract
 import com.pycompose.program.Bindings
 import com.pycompose.program.BoundDrawing
+import com.pycompose.program.BoundFunction
 import com.pycompose.program.BoundLayout
 import com.pycompose.program.Expressions
 import kotlinx.serialization.json.JsonArray
@@ -149,19 +150,7 @@ internal object WireValidator {
             // always its family's tagged object.
             rule.type == "value" || (rule.type in TAGGED && rule.valueType != null) ->
                 error("$path must be its family's tagged value object")
-            // Checked whole before its first frame, so a frame never meets a bad program.
-            rule.type == "layout" ->
-                BoundLayout.read(
-                    checked as? JsonObject ?: error("$path must be a layout"),
-                    FUNCTIONS,
-                    LAYOUTS,
-                )
-            rule.type == "draw" ->
-                BoundDrawing.read(
-                    checked as? JsonObject ?: error("$path must be a drawing"),
-                    FUNCTIONS,
-                    DRAWINGS,
-                )
+            rule.type in PROGRAMS -> program(checked, rule, path)
             else -> legacyProperty(checked, rule, path, actionIds)
         }
     }
@@ -367,4 +356,21 @@ private fun exposed(node: JsonObject): Set<String> {
             IrContract.gestureStreams[name].orEmpty()
         }
     return IrContract.streams[type].orEmpty() + gestures
+}
+
+/** Prop types holding a program, by what one is called in a refusal. */
+private val PROGRAMS = mapOf("layout" to "layout", "draw" to "drawing", "function" to "function")
+
+/** A program prop, checked whole before its first frame, so a frame never meets a bad one. */
+private fun program(
+    value: JsonElement,
+    rule: PropertyRule,
+    path: String,
+) {
+    val wire = value as? JsonObject ?: error("$path must be a ${PROGRAMS.getValue(rule.type)}")
+    when (rule.type) {
+        "layout" -> BoundLayout.read(wire, FUNCTIONS, LAYOUTS)
+        "draw" -> BoundDrawing.read(wire, FUNCTIONS, DRAWINGS)
+        else -> BoundFunction.read(wire, rule.params, checkNotNull(rule.result), FUNCTIONS)
+    }
 }

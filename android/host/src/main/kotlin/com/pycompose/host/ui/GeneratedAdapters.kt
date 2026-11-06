@@ -331,6 +331,7 @@ import com.pycompose.renderer.positional
 import com.pycompose.renderer.publish
 import com.pycompose.renderer.reconcileProperty
 import com.pycompose.renderer.rememberDrawing
+import com.pycompose.renderer.rememberFunction
 import com.pycompose.renderer.rememberMeasurePolicy
 import com.pycompose.renderer.sheetState
 import com.pycompose.renderer.sliderState
@@ -339,6 +340,7 @@ import com.pycompose.renderer.textInputState
 import com.pycompose.renderer.unslotted
 import com.pycompose.renderer.wanted
 import com.pycompose.renderer.windowedItems
+import com.pycompose.renderer.wire
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.long
@@ -848,11 +850,18 @@ object GeneratedAdapters {
             }
             .register("DismissibleNavigationDrawer") { node, modifier, context ->
                 val model = node as DismissibleNavigationDrawerNode
+                val confirmStateChangeAnswer = rememberFunction(
+                    model.props.confirmStateChange, listOf("string"), "boolean",
+                )
+                val confirmStateChangeDefault: (androidx.compose.material3.DrawerValue) -> kotlin.Boolean = { true }
+                val confirmStateChangeValue: (androidx.compose.material3.DrawerValue) -> kotlin.Boolean = { a0 ->
+                    confirmStateChangeAnswer.value?.call(a0.wire)?.let { it as kotlin.Boolean } ?: confirmStateChangeDefault(a0)
+                }
                 val drawerStateValue = context.anchoredState(
                     model.props.value, model.props.onValueChange,
                     com.pycompose.renderer.Anchors(
                         mapOf("closed" to androidx.compose.material3.DrawerValue.Closed, "open" to androidx.compose.material3.DrawerValue.Open),
-                        { initial -> androidx.compose.material3.rememberDrawerState(initialValue = checkNotNull(initial)) },
+                        { initial -> androidx.compose.material3.rememberDrawerState(initialValue = checkNotNull(initial), confirmStateChange = confirmStateChangeValue) },
                         { it.currentValue },
                     ) { holder, anchor -> holder.driveTo(anchor) },
                 )
@@ -1828,11 +1837,18 @@ object GeneratedAdapters {
             .register("ModalNavigationDrawer") { node, modifier, context ->
                 val model = node as ModalNavigationDrawerNode
                 val scrimColorValue = context.boundColor(model.props.scrimColor, Color.colorVectorConverter(ColorSpaces.Srgb), androidx.compose.material3.DrawerDefaults.scrimColor)
+                val confirmStateChangeAnswer = rememberFunction(
+                    model.props.confirmStateChange, listOf("string"), "boolean",
+                )
+                val confirmStateChangeDefault: (androidx.compose.material3.DrawerValue) -> kotlin.Boolean = { true }
+                val confirmStateChangeValue: (androidx.compose.material3.DrawerValue) -> kotlin.Boolean = { a0 ->
+                    confirmStateChangeAnswer.value?.call(a0.wire)?.let { it as kotlin.Boolean } ?: confirmStateChangeDefault(a0)
+                }
                 val drawerStateValue = context.anchoredState(
                     model.props.value, model.props.onValueChange,
                     com.pycompose.renderer.Anchors(
                         mapOf("closed" to androidx.compose.material3.DrawerValue.Closed, "open" to androidx.compose.material3.DrawerValue.Open),
-                        { initial -> androidx.compose.material3.rememberDrawerState(initialValue = checkNotNull(initial)) },
+                        { initial -> androidx.compose.material3.rememberDrawerState(initialValue = checkNotNull(initial), confirmStateChange = confirmStateChangeValue) },
                         { it.currentValue },
                     ) { holder, anchor -> holder.driveTo(anchor) },
                 )
@@ -2810,11 +2826,18 @@ object GeneratedAdapters {
             }
             .register("SwipeToDismissBox") { node, modifier, context ->
                 val model = node as SwipeToDismissBoxNode
+                val positionalThresholdAnswer = rememberFunction(
+                    model.props.positionalThreshold, listOf("number"), "number",
+                )
+                val positionalThresholdDefault: (kotlin.Float) -> kotlin.Float = androidx.compose.material3.SwipeToDismissBoxDefaults.positionalThreshold
+                val positionalThresholdValue: (kotlin.Float) -> kotlin.Float = { a0 ->
+                    positionalThresholdAnswer.value?.call(a0.toDouble())?.let { (it as Double).toFloat() } ?: positionalThresholdDefault(a0)
+                }
                 val stateValue = context.anchoredState(
                     model.props.value, model.props.onValueChange,
                     com.pycompose.renderer.Anchors(
                         mapOf("startToEnd" to androidx.compose.material3.SwipeToDismissBoxValue.StartToEnd, "endToStart" to androidx.compose.material3.SwipeToDismissBoxValue.EndToStart, "settled" to androidx.compose.material3.SwipeToDismissBoxValue.Settled),
-                        { initial -> initial?.let { androidx.compose.material3.rememberSwipeToDismissBoxState(initialValue = it) } ?: androidx.compose.material3.rememberSwipeToDismissBoxState() },
+                        { initial -> initial?.let { androidx.compose.material3.rememberSwipeToDismissBoxState(initialValue = it, positionalThreshold = positionalThresholdValue) } ?: androidx.compose.material3.rememberSwipeToDismissBoxState(positionalThreshold = positionalThresholdValue) },
                         { it.settledValue },
                     ) { holder, anchor -> holder.driveTo(anchor) },
                 )

@@ -656,6 +656,7 @@ data class DismissibleDrawerSheet(
 
 @Serializable
 data class DismissibleNavigationDrawerProps(
+    val `confirmStateChange`: JsonObject? = null,
     val `gesturesEnabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onValueChange`: String? = null,
@@ -1840,6 +1841,7 @@ data class ModalDrawerSheet(
 
 @Serializable
 data class ModalNavigationDrawerProps(
+    val `confirmStateChange`: JsonObject? = null,
     val `gesturesEnabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onValueChange`: String? = null,
@@ -3172,6 +3174,7 @@ data class SwipeToDismissBoxProps(
     val `gesturesEnabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
     val `onValueChange`: String? = null,
+    val `positionalThreshold`: JsonObject? = null,
     val `value`: String? = null,
 ) : UiProps
 

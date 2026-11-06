@@ -40,6 +40,7 @@ def _kt_type(prop: dict[str, Any]) -> str:
         "modifier": "JsonObject",
         "draw": "JsonObject",
         "layout": "JsonObject",
+        "function": "JsonObject",
     }[prop["type"]] + suffix
 
 
@@ -354,6 +355,11 @@ def _kt_rules(props: dict[str, Any]) -> list[str]:
             args.append("nullable = true")
         if prop.get("animation"):
             args.append("animation = true")
+        if prop["type"] == "function":
+            # The arguments the host calls its program with, and what it needs back.
+            head = ", ".join(kotlin_string(p["type"]) for p in prop.get("payload", []))
+            args.append(f"params = listOf({head})")
+            args.append(f"result = {kotlin_string(prop['result'])}")
         args.extend(
             f"{field} = {float(prop[field])}"
             for field in ("minimum", "maximum")

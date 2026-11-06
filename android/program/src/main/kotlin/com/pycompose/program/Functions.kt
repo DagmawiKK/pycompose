@@ -24,7 +24,8 @@ data class FunctionContract(
 )
 
 /**
- * A value function's argument types and result type, each `integer`, `number` or `boolean`.
+ * A value function's argument types and result type, each `integer`, `number`, `boolean` or
+ * `string`.
  *
  * @property params Each argument's type, in order.
  * @property result What it returns.
@@ -37,7 +38,8 @@ data class Signature(
 /**
  * A checked value function, ready to call: Python a parameter calls within a frame.
  *
- * Integers are Long, numbers Double and booleans Boolean, in and out. A call is total and
+ * Integers are Long, numbers Double, booleans Boolean and strings String, in and out; an enum
+ * argument is its wire spelling. A call is total and
  * costs at most the body's size: there are no loops, and `floorDiv` and `mod` by zero give 0.
  *
  * @property signature Its argument and result types.
@@ -56,6 +58,12 @@ class Function internal constructor(
         require(args.size == signature.params.size) { "Function takes ${signature.params.size}" }
         return body.eval(args)
     }
+
+    /** Call it with its arguments in a list, as a bound function gathers them. */
+    internal fun call(args: List<Any>): Any {
+        require(args.size == signature.params.size) { "Function takes ${signature.params.size}" }
+        return body.eval(args.toTypedArray())
+    }
 }
 
 /** One node of a checked body. */
@@ -68,7 +76,7 @@ internal fun interface Term {
  * into a [Function] in the same walk.
  */
 object Functions {
-    private val types = setOf(INTEGER, NUMBER, BOOLEAN)
+    private val types = setOf(INTEGER, NUMBER, BOOLEAN, STRING)
 
     /**
      * Check one program and build it.
@@ -165,7 +173,12 @@ object Functions {
             key: String,
             literal: JsonPrimitive?,
         ): Pair<String, Term> {
-            require(literal != null && !literal.isString) { "Unknown program leaf $key" }
+            require(literal != null) { "Unknown program leaf $key" }
+            if (literal.isString) {
+                require(key == STRING) { "Unknown program leaf $key" }
+                val value = literal.content
+                return STRING to Term { value }
+            }
             // Python's int and float stay apart on the wire: 2 is an integer, 2.0 a number.
             val whole = literal.content.none { it == '.' || it == 'e' || it == 'E' }
             val integer = literal.longOrNull?.takeIf { whole }
@@ -327,3 +340,4 @@ object Functions {
 private const val INTEGER = "integer"
 private const val NUMBER = "number"
 private const val BOOLEAN = "boolean"
+private const val STRING = "string"

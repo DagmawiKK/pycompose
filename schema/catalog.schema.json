@@ -173,6 +173,10 @@
           "type": "array",
           "items": { "$ref": "#/$defs/payloadItem" }
         },
+        "result": {
+          "type": "string",
+          "description": "What a function prop's program answers; its payload is what the host gives it."
+        },
         "fallback": { "type": "string" },
         "provider": { "$ref": "#/$defs/provider" },
         "minimum": { "type": "number" },
@@ -436,7 +440,7 @@
     },
     "anchoredState": {
       "type": "object",
-      "description": "A holder of one enum's anchors the pin implies: its factory, value enum, each anchor by its wire spelling, the member it settles on, and whether its factory has its own start.",
+      "description": "A holder of one enum's anchors the pin implies: its factory, value enum, each anchor by its wire spelling, the member it settles on, whether its factory has its own start, and the function arguments the app may answer.",
       "required": ["native", "kind", "holder", "factory", "valueClass", "anchors", "settled"],
       "additionalProperties": false,
       "properties": {
@@ -447,7 +451,34 @@
         "valueClass": { "$ref": "#/$defs/dottedName" },
         "anchors": { "type": "object", "minProperties": 1, "additionalProperties": { "type": "string" } },
         "settled": { "$ref": "#/$defs/identifier" },
-        "started": { "const": true }
+        "started": { "const": true },
+        "functions": {
+          "type": "object",
+          "description": "The factory's function arguments the app may answer with a host function: each argument's name, program type and native type, the answer's, and the default that answers when the app does not.",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["payload", "result", "native", "default"],
+            "additionalProperties": false,
+            "properties": {
+              "payload": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["name", "type", "native"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "name": { "$ref": "#/$defs/identifier" },
+                    "type": { "type": "string" },
+                    "native": { "$ref": "#/$defs/dottedName" }
+                  }
+                }
+              },
+              "result": { "type": "string" },
+              "native": { "$ref": "#/$defs/dottedName" },
+              "default": { "type": "object" }
+            }
+          }
+        }
       }
     },
     "positionalState": {

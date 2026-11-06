@@ -10,7 +10,9 @@ function in Python and it crosses as a program the host evaluates::
         return (utc_time_millis // 86_400_000 + 3) % 7 < 5
 
 A program is an expression over its arguments in a closed, total vocabulary
-(``FUNCTION_SIGNATURES``) of integers, numbers and booleans. Both validators check its
+(``FUNCTION_SIGNATURES``) of integers, numbers, booleans and strings; an enum
+argument arrives as its wire spelling (``"open"``), compared by equality. Both
+validators check its
 types and size (``FUNCTION_LIMITS``), so it always answers, in bounded time,
 with the type its parameter needs. Integers are 64-bit, as Kotlin's ``Long``.
 """
@@ -30,10 +32,10 @@ from pycompose.model.nodes.props import JsonValue
 if TYPE_CHECKING:
     from pycompose.model.programs.bound import BoundFunction
 
-Type = Literal["integer", "number", "boolean"]
-Result = Literal["integer", "number", "boolean", "draw", "layout"]
+Type = Literal["integer", "number", "boolean", "string"]
+Result = Literal["integer", "number", "boolean", "string", "draw", "layout"]
 """What a program gives: a value of a type, or the paint or placement it makes."""
-TYPES: tuple[Type, ...] = ("integer", "number", "boolean")
+TYPES: tuple[Type, ...] = ("integer", "number", "boolean", "string")
 LONG = 2**63
 
 
@@ -300,4 +302,6 @@ class Walk:
                 return "number"
         elif isinstance(literal, float) and key == "number" and math.isfinite(literal):
             return "number"
+        elif isinstance(literal, str) and key == "string":
+            return "string"
         raise IrValidationError(f"unknown program leaf {key!r}")

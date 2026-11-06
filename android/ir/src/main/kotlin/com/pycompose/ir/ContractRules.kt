@@ -11,6 +11,8 @@ data class PropertyRule(
     val valueType: String? = null,
     val nullable: Boolean = false,
     val animation: Boolean = false,
+    val params: List<String> = emptyList(),
+    val result: String? = null,
 )
 
 /** Registered component structure and property constraints. */

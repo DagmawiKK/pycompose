@@ -1,7 +1,9 @@
 package com.pycompose.renderer
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.constrainHeight
@@ -10,6 +12,7 @@ import com.pycompose.ir.DRAWINGS
 import com.pycompose.ir.FUNCTIONS
 import com.pycompose.ir.LAYOUTS
 import com.pycompose.program.BoundDrawing
+import com.pycompose.program.BoundFunction
 import com.pycompose.program.BoundLayout
 import kotlinx.serialization.json.JsonObject
 import kotlin.math.roundToInt
@@ -22,6 +25,26 @@ import kotlin.math.roundToInt
 @Composable
 fun rememberDrawing(wire: JsonObject): BoundDrawing =
     remember(wire) { BoundDrawing.read(wire, FUNCTIONS, DRAWINGS) }
+
+/**
+ * A function prop's program, read once for each value the snapshot carries, as the latest the
+ * app stated: a holder keeps the lambda it was created with, which reads this each call.
+ *
+ * @param wire The prop's wire value; null leaves the native default to answer.
+ * @param head The types of the arguments the host gives.
+ * @param result The type the host needs back.
+ */
+@Composable
+fun rememberFunction(
+    wire: JsonObject?,
+    head: List<String>,
+    result: String,
+): State<BoundFunction?> =
+    rememberUpdatedState(
+        remember(wire) {
+            wire?.let { BoundFunction.read(it, head, result, FUNCTIONS) }
+        },
+    )
 
 /**
  * A layout prop's program as the native measure policy, read once for each value the snapshot

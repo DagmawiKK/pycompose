@@ -19,6 +19,7 @@ class FunctionsTest {
                     "mod" to mapOf(listOf("integer", "integer") to "integer"),
                     "lt" to mapOf(listOf("integer", "integer") to "boolean"),
                     "neg" to mapOf(listOf("integer") to "integer"),
+                    "ne" to mapOf(listOf("string", "string") to "boolean"),
                 ),
         )
 
@@ -31,6 +32,44 @@ class FunctionsTest {
             .parseToJsonElement(
                 """{"type":"program","params":$params,"result":"$result","body":$body}""",
             ).jsonObject
+
+    @Test
+    fun `an enum argument is its spelling, compared by equality`() {
+        // A drawer asks whether it may settle at an anchor; this one may not close.
+        val keep =
+            Functions.read(
+                program(
+                    """["string"]""",
+                    "boolean",
+                    """{"op":"ne","args":[{"arg":0},{"string":"closed"}]}""",
+                ),
+                contract,
+            )
+
+        assertEquals(true, keep.call("open"))
+        assertEquals(false, keep.call("closed"))
+    }
+
+    @Test
+    fun `a function prop's program takes the host's arguments, then its bound ones`() {
+        val bound =
+            Json
+                .parseToJsonElement(
+                    """{"type":"bound","args":["open"],"program":""" +
+                        program(
+                            """["string","string"]""",
+                            "boolean",
+                            """{"op":"ne","args":[{"arg":0},{"arg":1}]}""",
+                        ) + "}",
+                ).jsonObject
+        val call = BoundFunction.read(bound, listOf("string"), "boolean", contract)
+
+        assertEquals(false, call.call("open"))
+        assertEquals(true, call.call("closed"))
+        assertThrows<IllegalArgumentException> {
+            BoundFunction.read(bound, listOf("integer"), "boolean", contract)
+        }
+    }
 
     @Test
     fun `a zero divisor gives zero rather than throwing in the frame`() {

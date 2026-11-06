@@ -128,6 +128,27 @@ class DrawerStateTest {
         assertTrue(panelLeft() < 0.dp)
     }
 
+    @Test
+    fun theAppsFunctionDecidesWhetherTheDrawerMaySettle() {
+        // The app's host function answers the drawer's own question: it may not close, so a
+        // dismissal leaves it open and reports nothing.
+        val stayOpen =
+            """{"type":"program","params":["string"],"result":"boolean",
+              "body":{"op":"ne","args":[{"arg":0},{"string":"closed"}]}}"""
+        val ir = mutableStateOf(parse(drawer("open", confirm = stayOpen)))
+        val actions = mutableListOf<Action>()
+        compose.setContent { PyComposeTheme { renderer(actions).Render(ir.value) } }
+        compose.waitForIdle()
+
+        compose
+            .onNode(SemanticsMatcher.keyIsDefined(SemanticsActions.Dismiss))
+            .performSemanticsAction(SemanticsActions.Dismiss)
+        compose.waitForIdle()
+
+        assertEquals(0.dp, panelLeft())
+        assertTrue(actions.isEmpty())
+    }
+
     /** Content whose renderer is recreated on restore, as MainActivity remembers it. */
     private fun restored(
         ir: androidx.compose.runtime.State<ValidatedIr>,
@@ -152,11 +173,15 @@ class DrawerStateTest {
         actions: List<Action> = emptyList(),
     ): ValidatedIr = IrParser().parse(echoing(source, actions)).getOrThrow()
 
-    private fun drawer(value: String): String {
+    private fun drawer(
+        value: String,
+        confirm: String? = null,
+    ): String {
         val props =
-            listOf(
+            listOfNotNull(
                 "\"value\":\"$value\"",
                 "\"onValueChange\":{\"fields\":{},\"intent\":\"demo.drawer\"}",
+                confirm?.let { "\"confirmStateChange\":$it" },
             )
         return """
             {"version":"0.1.0","schemaVersion":"1.23.0",

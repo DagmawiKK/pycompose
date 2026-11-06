@@ -12,6 +12,7 @@ from __future__ import annotations
 from typing import Any
 
 from pycompose_codegen.emit.adapters.policy import camel
+from pycompose_codegen.emit.defaults import render_default
 from pycompose_codegen.emit.rules import die
 from pycompose_codegen.emit.state_families import (
     anchored_props,
@@ -58,6 +59,7 @@ ANCHORED_KEYS = frozenset(
         "anchors",
         "settled",
         "started",
+        "functions",
     }
 )
 
@@ -73,7 +75,7 @@ def validate_anchored(where: str, props: dict[str, Any], state: dict[str, Any]) 
     unknown = sorted(set(state) - ANCHORED_KEYS)
     if unknown:
         die(f"{where} has unknown keys: {', '.join(unknown)}")
-    for key in ANCHORED_KEYS - {"anchors", "started"}:
+    for key in ANCHORED_KEYS - {"anchors", "started", "functions"}:
         if not isinstance(state.get(key), str) or not state[key]:
             die(f"{where}: anchored needs {key!r}")
     if not isinstance(state.get("anchors"), dict) or not state["anchors"]:
@@ -125,13 +127,17 @@ def anchored_locals(state: dict[str, Any]) -> list[str]:
     values = ", ".join(
         f'"{wire}" to {enum}.{entry}' for wire, entry in state["anchors"].items()
     )
-    at = f"{factory}(initialValue = it)"
+    functions = state.get("functions", {})
+    locals_ = [line for n, f in functions.items() for line in _function_locals(n, f)]
+    passed = "".join(f", {name} = {name}Value" for name in functions)
+    at = f"{factory}(initialValue = it{passed})"
     create = (
-        f"{{ initial -> initial?.let {{ {at} }} ?: {factory}() }}"
+        f"{{ initial -> initial?.let {{ {at} }} ?: {factory}({passed[2:]}) }}"
         if state.get("started")
-        else f"{{ initial -> {factory}(initialValue = checkNotNull(initial)) }}"
+        else f"{{ initial -> {factory}(initialValue = checkNotNull(initial){passed}) }}"
     )
     return [
+        *locals_,
         f"val {native}Value = context.anchoredState(",
         "    model.props.value, model.props.onValueChange,",
         "    com.pycompose.renderer.Anchors(",
@@ -140,4 +146,58 @@ def anchored_locals(state: dict[str, Any]) -> list[str]:
         f"        {{ it.{state['settled']} }},",
         "    ) { holder, anchor -> holder.driveTo(anchor) },",
         ")",
+    ]
+
+
+GIVEN = {
+    "string": "{}.wire",
+    "kotlin.Float": "{}.toDouble()",
+    "kotlin.Int": "{}.toLong()",
+}
+"""How the host hands an argument to a program: an anchor as its wire spelling,
+a Float as a number, an Int as an integer; the rest as they are."""
+
+ANSWERED = {
+    "kotlin.Float": "(it as Double).toFloat()",
+    "kotlin.Int": "(it as Long).toInt()",
+}
+"""How a program's answer becomes the native one; the rest are cast as they are."""
+
+
+def _function_locals(name: str, function: dict[str, Any]) -> list[str]:
+    """One factory function argument: the app's host function, else the default.
+
+    The factory keeps the lambda it is created with, so the lambda reads the
+    app's latest function each call rather than the one it was created with.
+
+    Args:
+        name: The factory parameter, which is also the prop.
+        function: Its derived arguments, answer and default.
+
+    Returns:
+        The Kotlin locals ending in ``<name>Value``, the lambda to pass.
+    """
+    imports: set[str] = set()
+    default = render_default(function["default"], imports)
+    if imports:
+        die(f"{name}: a factory function's default needs no import")
+    arguments = function["payload"]
+    names = [f"a{i}" for i in range(len(arguments))]
+    natives = ", ".join(a["native"] for a in arguments)
+    kind = f"({natives}) -> {function['native']}"
+    given = ", ".join(
+        GIVEN.get(a["type"] if a["type"] == "string" else a["native"], "{}").format(n)
+        for n, a in zip(names, arguments, strict=True)
+    )
+    answered = ANSWERED.get(function["native"], f"it as {function['native']}")
+    head = ", ".join(f'"{a["type"]}"' for a in arguments)
+    return [
+        f"val {name}Answer = rememberFunction(",
+        f'    model.props.{name}, listOf({head}), "{function["result"]}",',
+        ")",
+        f"val {name}Default: {kind} = {default}",
+        f"val {name}Value: {kind} = {{ {', '.join(names)} ->",
+        f"    {name}Answer.value?.call({given})?.let {{ {answered} }}"
+        f" ?: {name}Default({', '.join(names)})",
+        "}",
     ]

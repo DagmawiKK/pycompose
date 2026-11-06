@@ -21,6 +21,7 @@ from pycompose.model.nodes.values import (
     validate_value,
 )
 from pycompose.model.programs.bindings import check_binding, is_binding
+from pycompose.model.programs.bound import validate_function_call
 from pycompose.model.programs.drawing import validate_canvas
 from pycompose.model.programs.expressions import (
     EXPRESSION_KINDS,
@@ -62,6 +63,12 @@ _TYPE_CHECKS: dict[str, Callable[[object, PropDef], bool]] = {
     "modifier": lambda value, _: isinstance(value, Mapping),
     "draw": lambda value, _: _runs(validate_canvas, value),
     "layout": lambda value, _: _runs(validate_placement, value),
+    "function": lambda value, prop: _runs(
+        lambda wire: validate_function_call(
+            wire, tuple(kind for _, kind in prop.payload), str(prop.result)
+        ),
+        value,
+    ),
     # A named constant of a value family crosses the wire only tagged.
     "enum": lambda value, prop: isinstance(value, str)
     and prop.value_type is None

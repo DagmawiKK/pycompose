@@ -1964,6 +1964,7 @@ class DismissibleNavigationDrawer(Component):
         self,
         *contents: Node,
         id: str | None = None,
+        confirm_state_change: HostFunction | BoundFunction | None = None,
         gestures_enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_value_change: ActionTarget | None = None,
@@ -1977,6 +1978,7 @@ class DismissibleNavigationDrawer(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            confirm_state_change: Native confirmStateChange; None uses its default.
             gestures_enabled: Native gesturesEnabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_value_change: Native onValueChange; None uses its default.
@@ -1989,6 +1991,8 @@ class DismissibleNavigationDrawer(Component):
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        if confirm_state_change is not None:
+            props["confirm_state_change"] = confirm_state_change.to_wire()
         if gestures_enabled is not None:
             props["gestures_enabled"] = gestures_enabled
         if on_value_change is not None:
@@ -5143,6 +5147,7 @@ class ModalNavigationDrawer(Component):
         self,
         *contents: Node,
         id: str | None = None,
+        confirm_state_change: HostFunction | BoundFunction | None = None,
         gestures_enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_value_change: ActionTarget | None = None,
@@ -5157,6 +5162,7 @@ class ModalNavigationDrawer(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            confirm_state_change: Native confirmStateChange; None uses its default.
             gestures_enabled: Native gesturesEnabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_value_change: Native onValueChange; None uses its default.
@@ -5170,6 +5176,8 @@ class ModalNavigationDrawer(Component):
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        if confirm_state_change is not None:
+            props["confirm_state_change"] = confirm_state_change.to_wire()
         if gestures_enabled is not None:
             props["gestures_enabled"] = gestures_enabled
         if on_value_change is not None:
@@ -8527,6 +8535,7 @@ class SwipeToDismissBox(Component):
         gestures_enabled: bool | None = None,
         modifier: Modifier | None = None,
         on_value_change: ActionTarget | None = None,
+        positional_threshold: HostFunction | BoundFunction | None = None,
         value: _SwipeToDismissBoxValue | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -8544,6 +8553,7 @@ class SwipeToDismissBox(Component):
             gestures_enabled: Native gesturesEnabled; None uses its default.
             modifier: Native modifier; None uses its default.
             on_value_change: Native onValueChange; None uses its default.
+            positional_threshold: Native positionalThreshold; None uses its default.
             value: Native value; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
@@ -8561,6 +8571,8 @@ class SwipeToDismissBox(Component):
             props["gestures_enabled"] = gestures_enabled
         if on_value_change is not None:
             props["on_value_change"] = on_value_change
+        if positional_threshold is not None:
+            props["positional_threshold"] = positional_threshold.to_wire()
         if value is not None:
             props["value"] = value
         if content is not None:

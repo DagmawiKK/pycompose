@@ -46,6 +46,7 @@ def python_type(
             "modifier": "Modifier",
             "draw": "HostFunction | BoundFunction",
             "layout": "HostFunction | BoundFunction",
+            "function": "HostFunction | BoundFunction",
         }[prop["type"]]
     if animatable(prop):
         # The host animates to the target the app states with animate().
@@ -63,7 +64,7 @@ def stored_value(field: str, prop: dict[str, Any]) -> str | None:
     Returns:
         The expression to store, or None to store the argument unchanged.
     """
-    if prop["type"] in {"draw", "layout"}:
+    if prop["type"] in {"draw", "layout", "function"}:
         return f"{python_name(field)}.to_wire()"
     if not animatable(prop):
         return None

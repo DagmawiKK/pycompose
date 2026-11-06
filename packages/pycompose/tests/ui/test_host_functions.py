@@ -96,7 +96,7 @@ def test_a_program_checks_on_both_sides_as_it_was_compiled() -> None:
 
 
 def _refusal(source: str) -> SyntaxError:
-    scope: dict[str, object] = {"host": host, "TEXT": "no"}
+    scope: dict[str, object] = {"host": host, "ITEMS": [1]}
     # The compiler reads a function's source; give the case one to read.
     linecache.cache["<case>"] = (len(source), None, source.splitlines(True), "<case>")
     with pytest.raises(SyntaxError) as raised:
@@ -110,7 +110,8 @@ def _refusal(source: str) -> SyntaxError:
         ("    for _ in range(3):\n        pass\n    return True", "cannot use For"),
         ("    return len([]) > 0", "cannot call len"),
         ("    return x.real > 0", "cannot use Attribute"),
-        ("    return TEXT == 'no'", "not an argument, a local or a number"),
+        ("    return ITEMS == 'no'", "not an argument, a local or a constant"),
+        ("    return x == 'no'", "eq does not take (integer, string)"),
         ("    y = 1\n    y = 2\n    return x > y", "assigned once"),
         ("    if x > 0:\n        return True", "returns on every path"),
         ("    return x", "gives an integer where a boolean is needed"),
@@ -129,7 +130,7 @@ def test_a_host_function_needs_annotations() -> None:
     assert "annotate with int" in _refusal("@host\ndef f(x):\n    return x\n").msg
     assert (
         "annotate with int"
-        in _refusal("@host\ndef f(x: str) -> int:\n    return 1\n").msg
+        in _refusal("@host\ndef f(x: list) -> int:\n    return 1\n").msg
     )
 
 

@@ -196,7 +196,14 @@ def test_a_swipe_holder_reports_the_settled_anchor_and_fills_row_slots() -> None
     assert "val stateValue = context.anchoredState(" in adapter
     assert (
         "{ initial -> initial?.let { androidx.compose.material3."
-        "rememberSwipeToDismissBoxState(initialValue = it) }" in adapter
+        "rememberSwipeToDismissBoxState(initialValue = it, "
+        "positionalThreshold = positionalThresholdValue) }" in adapter
+    )
+    # Its factory asks the app's host function how far is far enough, else
+    # the pinned default answers.
+    assert (
+        "positionalThresholdAnswer.value?.call(a0.toDouble())?.let "
+        "{ (it as Double).toFloat() } ?: positionalThresholdDefault(a0)" in adapter
     )
     assert "state = stateValue" in adapter
     # The holder consumes the desired anchor and its report.

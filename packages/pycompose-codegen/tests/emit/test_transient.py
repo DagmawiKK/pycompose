@@ -163,7 +163,7 @@ def test_the_shape_and_the_validator_agree_on_the_transient_keys() -> None:
                     type="boolean"
                 ),
             ),
-            "only an actionId prop can declare a callback payload",
+            "only an actionId or function prop can declare a payload",
         ),
         (
             lambda registry: (

@@ -26,6 +26,7 @@ from pycompose.model.catalog.elements import ContentSlot, ProviderDef
 from pycompose.model.catalog.vocabulary import (
     DECODED_TYPES,
     DECODERS,
+    FUNCTION_TYPES,
     INTERACTION_KINDS,
     OWNERS,
 )
@@ -53,7 +54,8 @@ class PropDef:
             recording which composable wraps it and under what parameter name.
         payload: The arguments a callback prop receives, as ``(name, type)``
             pairs. Compose's ``onClick`` takes none; ``onCheckedChange`` takes
-            the new ``value``; ``onValueChange`` takes ``text``. Declared here
+            the new ``value``; ``onValueChange`` takes ``text``. A ``function``
+            prop's are what the host calls its program with. Declared here
             because a component entry cannot otherwise see what its own callback
             is handed, and a generated adapter that omits the argument does not
             compile.
@@ -92,6 +94,9 @@ class PropDef:
             in the call itself.
         description: What the prop means, for the generated code's
             documentation; the runtime only carries it.
+        result: What a ``function`` prop's program answers, the host calling
+            it with its payload: ``(string) -> boolean`` for a drawer asked
+            whether it may settle at an anchor.
     """
 
     type: str
@@ -121,6 +126,7 @@ class PropDef:
     animation: str | None = None
     phase: str | None = None
     description: str | None = None
+    result: str | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "values", tuple(self.values))
@@ -129,11 +135,12 @@ class PropDef:
             raise ComponentRegistryError(
                 "a content slot must flatten a string prop, " f"not a {self.type} one"
             )
-        if self.payload and self.type != "actionId":
+        if self.payload and self.type not in {"actionId", "function"}:
             raise ComponentRegistryError(
-                "only an actionId prop can declare a callback payload, "
+                "only an actionId or function prop can declare a payload, "
                 f"not a {self.type} one"
             )
+        self._check_function()
         for name, kind in self.payload:
             if not name or not kind:
                 raise ComponentRegistryError("payload fields need a name and a type")
@@ -159,6 +166,17 @@ class PropDef:
             # The lambda always returns a value; a prop that may be absent has
             # no value for it to return.
             raise ComponentRegistryError("a provider prop cannot be nullable")
+
+    def _check_function(self) -> None:
+        """Function props alone answer, in program types, given program types."""
+        if (self.type == "function") != (self.result in FUNCTION_TYPES):
+            raise ComponentRegistryError(
+                f"a function prop states its result, one of {FUNCTION_TYPES}"
+            )
+        if self.type == "function" and any(
+            kind not in FUNCTION_TYPES for _, kind in self.payload
+        ):
+            raise ComponentRegistryError("a function's arguments are program types")
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object], *, where: str) -> PropDef:
@@ -234,6 +252,7 @@ class PropDef:
             protocol=cast("str | None", data.get("protocol")),
             index_of=cast("str | None", data.get("indexOf")),
             description=cast("str | None", data.get("description")),
+            result=cast("str | None", data.get("result")),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -281,6 +300,7 @@ class PropDef:
             "fills": self.fills,
             "reads": list(self.reads) or None,
             "provider": None if self.provider is None else self.provider.to_mapping(),
+            "result": self.result,
         }
         out.update({key: value for key, value in later.items() if value is not None})
         return out

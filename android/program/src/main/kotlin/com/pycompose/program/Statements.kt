@@ -151,7 +151,7 @@ internal sealed interface Step {
 
 /** Statement programs' wire form, judged exactly as Python's validator judges it. */
 object Statements {
-    private val types = setOf("integer", "number", "boolean")
+    private val types = setOf("integer", "number", "boolean", "string")
 
     /**
      * Check one statement program and build it.
@@ -212,7 +212,7 @@ object Statements {
     }
 
     /** One bound argument, as its parameter's type holds it in the frame. */
-    private fun argument(
+    internal fun argument(
         arg: JsonElement,
         type: String,
     ): Any {
@@ -220,6 +220,7 @@ object Statements {
         val whole = primitive?.content?.none { it == '.' || it == 'e' || it == 'E' } == true
         val value: Any? =
             when (type) {
+                "string" -> (arg as? JsonPrimitive)?.takeIf { it.isString }?.content
                 "boolean" -> primitive?.booleanOrNull
                 "integer" -> primitive?.longOrNull?.takeIf { whole }
                 else ->

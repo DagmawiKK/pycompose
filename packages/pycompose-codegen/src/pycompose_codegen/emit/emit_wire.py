@@ -90,9 +90,11 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
                     "type": {"const": "program"},
                     "params": {
                         "type": "array",
-                        "items": {"enum": ["integer", "number", "boolean"]},
+                        "items": {"enum": ["integer", "number", "boolean", "string"]},
                     },
-                    "result": {"enum": ["integer", "number", "boolean", "draw"]},
+                    "result": {
+                        "enum": ["integer", "number", "boolean", "string", "draw"]
+                    },
                     "body": {},
                 },
                 "additionalProperties": False,
@@ -349,7 +351,12 @@ def _resource_schema(kinds: list[str]) -> dict[str, Any]:
     return {"type": "string", "pattern": "^(" + "|".join(patterns) + r")(?![\s\S])"}
 
 
-SHARED = {"actionId": "Action", "draw": "HostCall", "layout": "HostCall"}
+SHARED = {
+    "actionId": "Action",
+    "draw": "HostCall",
+    "layout": "HostCall",
+    "function": "HostCall",
+}
 """Prop types whose one shape is stated once under definitions."""
 
 

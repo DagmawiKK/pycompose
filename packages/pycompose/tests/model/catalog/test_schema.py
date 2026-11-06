@@ -20,6 +20,7 @@ PROP_TYPE_VOCABULARY = {
     "resource",
     "draw",
     "layout",
+    "function",
     "actionId",
     "boolean",
     "color",

@@ -137,7 +137,10 @@ EXPRESSION_LIMITS = {"depth": 8, "nodes": 32}
 """The largest expression a snapshot may carry, checked by both validators."""
 
 _NUMERIC = ("integer", "number")
-_TYPES = ("integer", "number", "boolean")
+_TYPES = ("integer", "number", "boolean", "string")
+
+FUNCTION_TYPES = _TYPES
+"""The types a value function takes and answers: an enum argument is a string."""
 
 FUNCTION_SIGNATURES: dict[str, dict[tuple[str, ...], str]] = {
     **{op: {(t, t): t for t in _NUMERIC} for op in ("plus", "minus", "times")},
@@ -154,7 +157,9 @@ FUNCTION_SIGNATURES: dict[str, dict[tuple[str, ...], str]] = {
 }
 """The closed vocabulary of a value function the host calls: each operation's
 argument types and the type it gives. Arithmetic, comparison, logic and a
-conditional over integers, numbers and booleans; every operation is total and
+conditional over integers, numbers and booleans, and equality and the
+conditional over strings (an enum argument is its wire spelling); every
+operation is total and
 there are no loops or calls, so a call costs at most its size. Both checkers
 type a program from this one table."""
 

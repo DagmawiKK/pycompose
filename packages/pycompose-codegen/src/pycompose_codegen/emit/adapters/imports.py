@@ -39,6 +39,14 @@ def _state_imports(entry: dict[str, Any]) -> set[str]:
         }
         if holder_streams(state["kind"], state.get("holder")):
             qualified.add("com.pycompose.renderer.publish")
+        if state.get("functions"):
+            # Its factory asks the app's host functions, an anchor by its spelling.
+            qualified.update(
+                {
+                    "com.pycompose.renderer.rememberFunction",
+                    "com.pycompose.renderer.wire",
+                }
+            )
         return qualified
     if state["kind"] == "positional":
         # One runtime for every positional holder; its count is the children.

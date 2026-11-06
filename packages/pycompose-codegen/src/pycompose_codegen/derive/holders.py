@@ -14,6 +14,7 @@ from typing import Any
 
 from pycompose_codegen.derive.classpath_dump import Inventory
 from pycompose_codegen.derive.classpath_types import Declaration
+from pycompose_codegen.derive.holder_functions import factory_functions
 from pycompose_codegen.derive.opt_ins import opt_in_index, required_opt_ins
 
 ANIMATING = frozenset({"androidx.compose.foundation.gestures.animateTo"})
@@ -70,7 +71,9 @@ def derive(
 
 
 def anchored_holders(
-    found: Inventory, drives: dict[Key, dict[str, Any]]
+    found: Inventory,
+    drives: dict[Key, dict[str, Any]],
+    defaults: dict[Any, dict[str, Any]],
 ) -> dict[str, dict[str, Any]]:
     """Every holder the pin lets the host's anchored runtime create and drive.
 
@@ -81,11 +84,13 @@ def anchored_holders(
     Args:
         found: The validated inventory of the current pin.
         drives: Drive evidence keyed by JVM identity (``source_drives``).
+        defaults: Compiler-resolved defaults, keyed by JVM identity.
 
     Returns:
         Per holder, by slash classifier: its class, value enum and anchors (as
-        the wire spells them), factory, settled member, and whether the factory
-        has its own start, so the app may leave the value unstated.
+        the wire spells them), factory, settled member, whether the factory
+        has its own start, so the app may leave the value unstated, and the
+        factory's function arguments the app may answer with a host function.
     """
     members = {
         (d.owner, d.jvm_name or "", d.jvm_descriptor or ""): d
@@ -114,6 +119,8 @@ def anchored_holders(
             and d.document.get("category") == "composable-factory"
         )
         start = next(p for p in factory.parameters if p.name == "initialValue")
+        identity = (factory.owner, factory.jvm_name, factory.jvm_descriptor)
+        functions = factory_functions(factory, value, defaults.get(identity, {}))
         holders[holder.replace(".", "/")] = {
             "holder": holder,
             "valueClass": value,
@@ -121,6 +128,7 @@ def anchored_holders(
             "factory": anchored["factory"],
             "settled": anchored["settled"],
             **({"started": True} if start.has_default else {}),
+            **({"functions": functions} if functions else {}),
         }
     return holders
 

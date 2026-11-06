@@ -68,8 +68,10 @@ internal class Defaults(private val context: BindingContext) {
     }
 
     /**
-     * A constant string (`label: String = "AnimatedContent"`), or an empty lambda
-     * (`content: @Composable () -> Unit = {}`, a slot that draws nothing); nothing else.
+     * A constant string (`label: String = "AnimatedContent"`), an empty lambda
+     * (`content: @Composable () -> Unit = {}`, a slot that draws nothing), or a lambda of at most
+     * one implicit parameter answering one expression of this vocabulary whatever it is given
+     * (`confirmStateChange: (DrawerValue) -> Boolean = { true }`); nothing else.
      */
     private fun template(node: KtExpression, type: KotlinType): Map<String, Any?> {
         val constant = context[BindingContext.COMPILE_TIME_VALUE, node]
@@ -77,10 +79,22 @@ internal class Defaults(private val context: BindingContext) {
         if (node is KtStringTemplateExpression && constant is String) {
             return mapOf("kind" to "literal", "type" to type.classifier(), "value" to constant)
         }
-        check(node is KtLambdaExpression && node.bodyExpression?.statements.isNullOrEmpty()) {
+        check(node is KtLambdaExpression) {
             "unsupported default syntax: ${node.javaClass.simpleName}"
         }
-        return mapOf("kind" to "emptyLambda")
+        val statements = node.bodyExpression?.statements.orEmpty()
+        // An answer naming `it` resolves to no property, so it is refused below.
+        check(
+            statements.isEmpty() ||
+                (
+                    statements.size == 1 &&
+                        node.valueParameters.isEmpty() &&
+                        type.arguments.size <= 2
+                    ),
+        ) { "unsupported lambda default" }
+        return statements.singleOrNull()?.let { answer ->
+            mapOf("kind" to "lambda", "body" to expression(answer))
+        } ?: mapOf("kind" to "emptyLambda")
     }
 
     private fun literal(node: KtExpression, type: KotlinType): Map<String, Any?> {

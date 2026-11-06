@@ -1736,6 +1736,17 @@
         "modifier": {
           "type": "modifier"
         },
+        "confirmStateChange": {
+          "type": "function",
+          "payload": [
+            {
+              "name": "drawerValue",
+              "type": "string"
+            }
+          ],
+          "result": "boolean",
+          "since": "1.23.0"
+        },
         "value": {
           "type": "enum",
           "values": [
@@ -1775,9 +1786,31 @@
           "closed": "Closed",
           "open": "Open"
         },
-        "settled": "currentValue"
+        "settled": "currentValue",
+        "functions": {
+          "confirmStateChange": {
+            "payload": [
+              {
+                "name": "drawerValue",
+                "type": "string",
+                "native": "androidx.compose.material3.DrawerValue"
+              }
+            ],
+            "result": "boolean",
+            "native": "kotlin.Boolean",
+            "default": {
+              "kind": "lambda",
+              "body": {
+                "kind": "literal",
+                "type": "kotlin/Boolean",
+                "value": true
+              }
+            }
+          }
+        }
       },
       "reshaped": [
+        "confirmStateChange",
         "value",
         "onValueChange"
       ]
@@ -5529,6 +5562,17 @@
         "modifier": {
           "type": "modifier"
         },
+        "confirmStateChange": {
+          "type": "function",
+          "payload": [
+            {
+              "name": "drawerValue",
+              "type": "string"
+            }
+          ],
+          "result": "boolean",
+          "since": "1.23.0"
+        },
         "value": {
           "type": "enum",
           "values": [
@@ -5568,9 +5612,31 @@
           "closed": "Closed",
           "open": "Open"
         },
-        "settled": "currentValue"
+        "settled": "currentValue",
+        "functions": {
+          "confirmStateChange": {
+            "payload": [
+              {
+                "name": "drawerValue",
+                "type": "string",
+                "native": "androidx.compose.material3.DrawerValue"
+              }
+            ],
+            "result": "boolean",
+            "native": "kotlin.Boolean",
+            "default": {
+              "kind": "lambda",
+              "body": {
+                "kind": "literal",
+                "type": "kotlin/Boolean",
+                "value": true
+              }
+            }
+          }
+        }
       },
       "reshaped": [
+        "confirmStateChange",
         "value",
         "onValueChange"
       ]
@@ -9776,6 +9842,17 @@
         "modifier": {
           "type": "modifier"
         },
+        "positionalThreshold": {
+          "type": "function",
+          "payload": [
+            {
+              "name": "totalDistance",
+              "type": "number"
+            }
+          ],
+          "result": "number",
+          "since": "1.23.0"
+        },
         "value": {
           "type": "enum",
           "values": [
@@ -9817,9 +9894,27 @@
           "settled": "Settled"
         },
         "settled": "settledValue",
-        "started": true
+        "started": true,
+        "functions": {
+          "positionalThreshold": {
+            "payload": [
+              {
+                "name": "totalDistance",
+                "type": "number",
+                "native": "kotlin.Float"
+              }
+            ],
+            "result": "number",
+            "native": "kotlin.Float",
+            "default": {
+              "kind": "property",
+              "symbol": "androidx.compose.material3.SwipeToDismissBoxDefaults.positionalThreshold"
+            }
+          }
+        }
       },
       "reshaped": [
+        "positionalThreshold",
         "value",
         "onValueChange"
       ]

@@ -554,3 +554,14 @@ def test_call_generation_refuses_blockers_and_opaque_expressions(tmp_path):
     plan["status"] = "call-plan"
     with pytest.raises(ValueError, match="blocked"):
         render_call(plan, package="proof")
+
+
+def test_a_lambda_default_answers_one_expression_whatever_it_is_given() -> None:
+    from pycompose_codegen.emit.defaults import render_default
+
+    imports: set[str] = set()
+    answer = {"kind": "literal", "type": "kotlin/Boolean", "value": True}
+    assert render_default({"kind": "lambda", "body": answer}, imports) == "{ true }"
+    assert not imports
+    with pytest.raises(ValueError, match="invalid native default fields"):
+        render_default({"kind": "lambda", "body": answer, "it": 1}, imports)

@@ -1,10 +1,11 @@
 """Compile a ``@host`` Python function to a program the host evaluates.
 
 The function is read from its source, once, as it is defined. What it may say
-is a small, total part of Python over ``int``, ``float`` and ``bool``:
+is a small, total part of Python over ``int``, ``float``, ``bool`` and ``str``:
 
-- arguments, locals assigned once, and ``int``/``float``/``bool`` constants
-  the module or enclosing function defines (read as the function is defined);
+- arguments, locals assigned once, and ``int``/``float``/``bool``/``str``
+  constants the module or enclosing function defines (read as the function is
+  defined); an enum argument is a ``str`` (or a ``Literal`` of its spellings);
 - arithmetic (``+ - * / // %``), comparisons (chained too), ``and``, ``or``,
   ``not``, ``x if c else y``, and ``abs``, ``min``, ``max`` (two arguments),
   ``float``, and ``sin`` and ``cos`` (from ``math``);
@@ -12,7 +13,8 @@ is a small, total part of Python over ``int``, ``float`` and ``bool``:
 
 Integers mix with floats as Python mixes them. Two things differ on the host:
 integers are 64-bit, and ``x // 0`` and ``x % 0`` give 0 rather than raising.
-Anything else -- loops, calls, attributes, strings, I/O -- is refused with the
+Strings compare by ``==`` and ``!=`` and choose by ``x if c else y``. Anything
+else -- loops, calls, attributes, string operations, I/O -- is refused with the
 line that says it.
 """
 
@@ -36,7 +38,12 @@ from pycompose.model.programs.functions import (
 )
 from pycompose.ui._sources import built_source
 
-ANNOTATIONS: dict[str, Type] = {"int": "integer", "float": "number", "bool": "boolean"}
+ANNOTATIONS: dict[str, Type] = {
+    "int": "integer",
+    "float": "number",
+    "bool": "boolean",
+    "str": "string",
+}
 BINARY = {
     ast.Add: "plus",
     ast.Sub: "minus",
@@ -146,8 +153,10 @@ class _Compiler:
         name = node.id if isinstance(node, ast.Name) else None
         if node is not None and isinstance(node, ast.Constant):
             name = str(node.value)
+        if _spellings(node):
+            name = "str"
         if name not in ANNOTATIONS:
-            self.refuse(node or where, "annotate with int, float or bool")
+            self.refuse(node or where, "annotate with int, float, bool or str")
         return ANNOTATIONS[name]
 
     def block(
@@ -209,17 +218,17 @@ class _Compiler:
             return _Term({"integer": value}, "integer")
         if isinstance(value, float):
             return _Term({"number": value}, "number")
+        if isinstance(value, str):
+            return _Term({"string": value}, "string")
         self.refuse(node, f"host functions cannot use {type(value).__name__} values")
 
     def name(self, node: ast.Name, scope: Scope) -> _Term:
         if node.id in scope:
             return scope[node.id]
         value = self.constants.get(node.id)
-        if isinstance(value, int | float):
+        if isinstance(value, int | float | str):
             return self.constant(ast.copy_location(ast.Constant(value), node), scope)
-        self.refuse(
-            node, f"{node.id!r} is not an argument, a local or a number constant"
-        )
+        self.refuse(node, f"{node.id!r} is not an argument, a local or a constant")
 
     def unary(self, node: ast.UnaryOp, scope: Scope) -> _Term:
         operand = node.operand
@@ -337,3 +346,19 @@ class _Compiler:
             f"{self.function.__qualname__}: {message}",
             (self.file, line, getattr(node, "col_offset", 0) + 1, None),
         )
+
+
+def _spellings(node: ast.expr | None) -> bool:
+    """Whether an annotation is ``Literal[...]`` of strings: an enum's spellings."""
+    return (
+        isinstance(node, ast.Subscript)
+        and isinstance(node.value, ast.Name | ast.Attribute)
+        and (node.value.id if isinstance(node.value, ast.Name) else node.value.attr)
+        == "Literal"
+        and all(
+            isinstance(e, ast.Constant) and isinstance(e.value, str)
+            for e in (
+                node.slice.elts if isinstance(node.slice, ast.Tuple) else [node.slice]
+            )
+        )
+    )

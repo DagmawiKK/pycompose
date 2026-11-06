@@ -183,7 +183,7 @@ DERIVED = {
     "positional": (("holder", "factory", "initial", "position", "drive"), ("count",)),
     "anchored": (
         ("holder", "factory", "valueClass", "anchors", "settled"),
-        ("started",),
+        ("started", "functions"),
     ),
 }
 """Each derived family's required fields, then its optional ones."""
