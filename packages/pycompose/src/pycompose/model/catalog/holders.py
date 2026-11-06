@@ -37,7 +37,9 @@ class StateRule:
             dismissal it has already carried out, if it has one.
         derived: Kind ``properties``: the holder, factory and properties the
             pin implies, each property its own value and report (ADR-0058),
-            and the factory arguments it takes as values, if any.
+            and the factory arguments it takes as values, if any. Kind
+            ``positional``: the holder, factory, its start and count
+            parameters, its position property and its drive.
     """
 
     native: str
@@ -65,15 +67,8 @@ class StateRule:
         if not isinstance(native, str) or not native:
             raise ComponentRegistryError(f"{where}: 'native' must be a name")
         kind = data.get("kind")
-        if kind == "properties":
-            derived = {k: data.get(k) for k in ("holder", "factory", "properties")}
-            if not all(derived.values()):
-                raise ComponentRegistryError(
-                    f"{where}: name holder, factory, properties"
-                )
-            if "arguments" in data:
-                derived["arguments"] = data["arguments"]
-            return cls(native=native, kind="properties", derived=derived)
+        if isinstance(kind, str) and kind in DERIVED:
+            return cls(native=native, kind=kind, derived=_derived(data, kind, where))
         if not isinstance(kind, str) or kind not in STATE_KINDS:
             raise ComponentRegistryError(
                 f"{where}: unknown state kind {kind!r}; vocabulary: "
@@ -181,3 +176,20 @@ class TransientRule:
             "serial": self.serial,
             "occurrence": self.occurrence,
         }
+
+
+DERIVED = {
+    "properties": (("holder", "factory", "properties"), ("arguments",)),
+    "positional": (("holder", "factory", "initial", "position", "drive"), ("count",)),
+}
+"""Each derived family's required fields, then its optional ones."""
+
+
+def _derived(data: Mapping[str, object], kind: str, where: str) -> dict[str, object]:
+    """A derived family's fields: required ones present, optional ones kept."""
+    required, optional = DERIVED[kind]
+    derived = {key: data.get(key) for key in required}
+    if not all(derived.values()):
+        raise ComponentRegistryError(f"{where}: name {', '.join(required)}")
+    derived.update({key: data[key] for key in optional if key in data})
+    return derived

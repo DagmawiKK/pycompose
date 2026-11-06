@@ -114,14 +114,6 @@ STATE_FAMILIES: dict[str, Family] = {
         ("firstVisibleIndex", {"type": "integer", "minimum": 0, "maximum": _INT}),
         "onScrollIdle",
     ),
-    "pager": Family(
-        ("page", {"type": "integer", "minimum": 0, "maximum": _INT}),
-        "onPageSettled",
-    ),
-    "carousel": Family(
-        ("currentItem", {"type": "integer", "minimum": 0, "maximum": _INT}),
-        "onItemSettled",
-    ),
     "tooltip": Family(
         ("visible", {"type": "boolean"}),
         "onVisibilityChange",
@@ -247,3 +239,31 @@ def attach_gate(state: dict[str, Any] | None, props: dict[str, Any]) -> str | No
         return None
     gate = STATE_ATTACH_GATES.get(state.get("kind", ""))
     return gate if gate in props else None
+
+
+def positional_props(state: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """A positional family's props: the position the app wants, and its report.
+
+    A ``positional`` state names its holder's one scrollable position
+    (``pycompose_codegen.derive.positional_holders``): the app states it, and the
+    host reports the position it settles on to ``on<Position>Settled``.
+
+    Args:
+        state: A component's ``state`` block of kind ``positional``.
+
+    Returns:
+        Wire props by name.
+    """
+    position = state["position"]
+    return {
+        position: {"type": "integer", "minimum": 0, "maximum": _INT},
+        settled_name(position): {
+            "type": "actionId",
+            "payload": [{"name": position, "type": "integer"}],
+        },
+    }
+
+
+def settled_name(position: str) -> str:
+    """The report a position settles to (``currentPage``: ``onCurrentPageSettled``)."""
+    return f"on{position[:1].upper()}{position[1:]}Settled"

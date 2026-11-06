@@ -31,6 +31,9 @@ def _state_imports(entry: dict[str, Any]) -> set[str]:
         return set()
     if state["kind"] == "properties":
         return set(property_imports(state))
+    if state["kind"] == "positional":
+        # One runtime for every positional holder; its count is the children.
+        return {"com.pycompose.renderer.positional", "com.pycompose.renderer.unslotted"}
     qualified = {f"com.pycompose.renderer.{state_call(state['kind'])}"}
     if state["kind"] in STATE_STREAMS:
         qualified.add("com.pycompose.renderer.publish")

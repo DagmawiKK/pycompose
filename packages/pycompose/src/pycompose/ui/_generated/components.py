@@ -3659,7 +3659,7 @@ class HorizontalCenteredHeroCarousel(Component):
         max_small_item_width: int | float | Expression | Binding | None = None,
         min_small_item_width: int | float | Expression | Binding | None = None,
         modifier: Modifier | None = None,
-        on_item_settled: ActionTarget | None = None,
+        on_current_item_settled: ActionTarget | None = None,
         user_scroll_enabled: bool | None = None,
         children: Content = (),
     ) -> None:
@@ -3674,7 +3674,8 @@ class HorizontalCenteredHeroCarousel(Component):
             max_small_item_width: Native maxSmallItemWidth; None uses its default.
             min_small_item_width: Native minSmallItemWidth; None uses its default.
             modifier: Native modifier; None uses its default.
-            on_item_settled: Native onItemSettled; None uses its default.
+            on_current_item_settled: Native onCurrentItemSettled; None uses its
+                default.
             user_scroll_enabled: Native userScrollEnabled; None uses its default.
             children: Ordered child nodes with stable keys.
 
@@ -3696,8 +3697,8 @@ class HorizontalCenteredHeroCarousel(Component):
             props["min_small_item_width"] = lower_binding(
                 min_small_item_width, "composition"
             )
-        if on_item_settled is not None:
-            props["on_item_settled"] = on_item_settled
+        if on_current_item_settled is not None:
+            props["on_current_item_settled"] = on_current_item_settled
         if user_scroll_enabled is not None:
             props["user_scroll_enabled"] = user_scroll_enabled
         if contents and children:
@@ -3754,7 +3755,7 @@ class HorizontalMultiBrowseCarousel(Component):
         max_small_item_width: int | float | Expression | Binding | None = None,
         min_small_item_width: int | float | Expression | Binding | None = None,
         modifier: Modifier | None = None,
-        on_item_settled: ActionTarget | None = None,
+        on_current_item_settled: ActionTarget | None = None,
         preferred_item_width: int | float | Expression | Binding,
         user_scroll_enabled: bool | None = None,
         children: Content = (),
@@ -3769,7 +3770,8 @@ class HorizontalMultiBrowseCarousel(Component):
             max_small_item_width: Native maxSmallItemWidth; None uses its default.
             min_small_item_width: Native minSmallItemWidth; None uses its default.
             modifier: Native modifier; None uses its default.
-            on_item_settled: Native onItemSettled; None uses its default.
+            on_current_item_settled: Native onCurrentItemSettled; None uses its
+                default.
             preferred_item_width: Required native preferredItemWidth.
             user_scroll_enabled: Native userScrollEnabled; None uses its default.
             children: Ordered child nodes with stable keys.
@@ -3790,8 +3792,8 @@ class HorizontalMultiBrowseCarousel(Component):
             props["min_small_item_width"] = lower_binding(
                 min_small_item_width, "composition"
             )
-        if on_item_settled is not None:
-            props["on_item_settled"] = on_item_settled
+        if on_current_item_settled is not None:
+            props["on_current_item_settled"] = on_current_item_settled
         props["preferred_item_width"] = lower_binding(
             preferred_item_width, "composition"
         )
@@ -3815,9 +3817,9 @@ class HorizontalPager(Component):
         self,
         *contents: Node,
         id: str | None = None,
+        current_page: int | None = None,
         modifier: Modifier | None = None,
-        on_page_settled: ActionTarget | None = None,
-        page: int | None = None,
+        on_current_page_settled: ActionTarget | None = None,
         page_spacing: int | float | Expression | Binding | None = None,
         reverse_layout: bool | None = None,
         snap_position: JsonValue | None = None,
@@ -3830,9 +3832,10 @@ class HorizontalPager(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            current_page: Native currentPage; None uses its default.
             modifier: Native modifier; None uses its default.
-            on_page_settled: Native onPageSettled; None uses its default.
-            page: Native page; None uses its default.
+            on_current_page_settled: Native onCurrentPageSettled; None uses its
+                default.
             page_spacing: Native pageSpacing; None uses its default.
             reverse_layout: Native reverseLayout; None uses its default.
             snap_position: Native snapPosition; None uses its default.
@@ -3844,10 +3847,10 @@ class HorizontalPager(Component):
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
-        if on_page_settled is not None:
-            props["on_page_settled"] = on_page_settled
-        if page is not None:
-            props["page"] = page
+        if current_page is not None:
+            props["current_page"] = current_page
+        if on_current_page_settled is not None:
+            props["on_current_page_settled"] = on_current_page_settled
         if page_spacing is not None:
             props["page_spacing"] = lower_binding(page_spacing, "composition")
         if reverse_layout is not None:
@@ -3881,7 +3884,7 @@ class HorizontalUncontainedCarousel(Component):
         item_spacing: int | float | Expression | Binding | None = None,
         item_width: int | float | Expression | Binding,
         modifier: Modifier | None = None,
-        on_item_settled: ActionTarget | None = None,
+        on_current_item_settled: ActionTarget | None = None,
         user_scroll_enabled: bool | None = None,
         children: Content = (),
     ) -> None:
@@ -3894,7 +3897,8 @@ class HorizontalUncontainedCarousel(Component):
             item_spacing: Native itemSpacing; None uses its default.
             item_width: Required native itemWidth.
             modifier: Native modifier; None uses its default.
-            on_item_settled: Native onItemSettled; None uses its default.
+            on_current_item_settled: Native onCurrentItemSettled; None uses its
+                default.
             user_scroll_enabled: Native userScrollEnabled; None uses its default.
             children: Ordered child nodes with stable keys.
 
@@ -3907,8 +3911,8 @@ class HorizontalUncontainedCarousel(Component):
         if item_spacing is not None:
             props["item_spacing"] = lower_binding(item_spacing, "composition")
         props["item_width"] = lower_binding(item_width, "composition")
-        if on_item_settled is not None:
-            props["on_item_settled"] = on_item_settled
+        if on_current_item_settled is not None:
+            props["on_current_item_settled"] = on_current_item_settled
         if user_scroll_enabled is not None:
             props["user_scroll_enabled"] = user_scroll_enabled
         if contents and children:
@@ -9447,10 +9451,10 @@ class VerticalPager(Component):
         self,
         *contents: Node,
         id: str | None = None,
+        current_page: int | None = None,
         horizontal_alignment: _AlignmentHorizontal | None = None,
         modifier: Modifier | None = None,
-        on_page_settled: ActionTarget | None = None,
-        page: int | None = None,
+        on_current_page_settled: ActionTarget | None = None,
         page_spacing: int | float | Expression | Binding | None = None,
         reverse_layout: bool | None = None,
         snap_position: JsonValue | None = None,
@@ -9462,10 +9466,11 @@ class VerticalPager(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            current_page: Native currentPage; None uses its default.
             horizontal_alignment: Native horizontalAlignment; None uses its default.
             modifier: Native modifier; None uses its default.
-            on_page_settled: Native onPageSettled; None uses its default.
-            page: Native page; None uses its default.
+            on_current_page_settled: Native onCurrentPageSettled; None uses its
+                default.
             page_spacing: Native pageSpacing; None uses its default.
             reverse_layout: Native reverseLayout; None uses its default.
             snap_position: Native snapPosition; None uses its default.
@@ -9476,12 +9481,12 @@ class VerticalPager(Component):
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        if current_page is not None:
+            props["current_page"] = current_page
         if horizontal_alignment is not None:
             props["horizontal_alignment"] = horizontal_alignment
-        if on_page_settled is not None:
-            props["on_page_settled"] = on_page_settled
-        if page is not None:
-            props["page"] = page
+        if on_current_page_settled is not None:
+            props["on_current_page_settled"] = on_current_page_settled
         if page_spacing is not None:
             props["page_spacing"] = lower_binding(page_spacing, "composition")
         if reverse_layout is not None:

@@ -4468,7 +4468,7 @@
               },
               "type": "object"
             },
-            "onItemSettled": {
+            "onCurrentItemSettled": {
               "$ref": "#/definitions/Action"
             },
             "userScrollEnabled": {
@@ -4676,7 +4676,7 @@
               },
               "type": "object"
             },
-            "onItemSettled": {
+            "onCurrentItemSettled": {
               "$ref": "#/definitions/Action"
             },
             "preferredItemWidth": {
@@ -4736,6 +4736,11 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "currentPage": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -4747,13 +4752,8 @@
               },
               "type": "object"
             },
-            "onPageSettled": {
+            "onCurrentPageSettled": {
               "$ref": "#/definitions/Action"
-            },
-            "page": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
             },
             "pageSpacing": {
               "anyOf": [
@@ -4899,7 +4899,7 @@
               },
               "type": "object"
             },
-            "onItemSettled": {
+            "onCurrentItemSettled": {
               "$ref": "#/definitions/Action"
             },
             "userScrollEnabled": {
@@ -11855,6 +11855,11 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "currentPage": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
             "horizontalAlignment": {
               "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
@@ -11869,13 +11874,8 @@
               },
               "type": "object"
             },
-            "onPageSettled": {
+            "onCurrentPageSettled": {
               "$ref": "#/definitions/Action"
-            },
-            "page": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
             },
             "pageSpacing": {
               "anyOf": [
@@ -36844,7 +36844,7 @@
               },
               "type": "object"
             },
-            "onItemSettled": {
+            "onCurrentItemSettled": {
               "$ref": "#/definitions/Action"
             },
             "userScrollEnabled": {
@@ -37052,7 +37052,7 @@
               },
               "type": "object"
             },
-            "onItemSettled": {
+            "onCurrentItemSettled": {
               "$ref": "#/definitions/Action"
             },
             "preferredItemWidth": {
@@ -37112,6 +37112,11 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "currentPage": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -37123,13 +37128,8 @@
               },
               "type": "object"
             },
-            "onPageSettled": {
+            "onCurrentPageSettled": {
               "$ref": "#/definitions/Action"
-            },
-            "page": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
             },
             "pageSpacing": {
               "anyOf": [
@@ -37275,7 +37275,7 @@
               },
               "type": "object"
             },
-            "onItemSettled": {
+            "onCurrentItemSettled": {
               "$ref": "#/definitions/Action"
             },
             "userScrollEnabled": {
@@ -47580,6 +47580,11 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "currentPage": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
             "horizontalAlignment": {
               "$ref": "#/definitions/Family_AlignmentHorizontal"
             },
@@ -47594,13 +47599,8 @@
               },
               "type": "object"
             },
-            "onPageSettled": {
+            "onCurrentPageSettled": {
               "$ref": "#/definitions/Action"
-            },
-            "page": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
             },
             "pageSpacing": {
               "anyOf": [

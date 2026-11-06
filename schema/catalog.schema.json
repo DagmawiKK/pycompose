@@ -389,7 +389,11 @@
         },
         "source": { "type": "object" },
         "state": {
-          "oneOf": [{ "$ref": "#/$defs/stateBlock" }, { "$ref": "#/$defs/derivedState" }]
+          "oneOf": [
+            { "$ref": "#/$defs/stateBlock" },
+            { "$ref": "#/$defs/derivedState" },
+            { "$ref": "#/$defs/positionalState" }
+          ]
         },
         "transient": { "$ref": "#/$defs/transientBlock" },
         "interaction": { "$ref": "#/$defs/interactionBlock" },
@@ -437,6 +441,22 @@
         "consume": { "type": "string" },
         "provides": { "type": "string" },
         "host": { "const": true }
+      }
+    },
+    "positionalState": {
+      "type": "object",
+      "description": "A holder with one scrollable position the pin implies: its factory, the parameters it starts at and counts with, its position property and the member that drives it.",
+      "required": ["native", "kind", "holder", "factory", "initial", "position", "drive"],
+      "additionalProperties": false,
+      "properties": {
+        "native": { "type": "string" },
+        "kind": { "const": "positional" },
+        "holder": { "$ref": "#/$defs/dottedName" },
+        "factory": { "$ref": "#/$defs/dottedName" },
+        "initial": { "$ref": "#/$defs/identifier" },
+        "count": { "$ref": "#/$defs/identifier" },
+        "position": { "$ref": "#/$defs/identifier" },
+        "drive": { "$ref": "#/$defs/identifier" }
       }
     },
     "derivedState": {

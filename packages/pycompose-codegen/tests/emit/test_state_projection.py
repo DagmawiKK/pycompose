@@ -150,7 +150,7 @@ def test_every_declared_state_names_a_typed_value_and_a_matching_report() -> Non
     """
     for name, entry in sorted(components().items()):
         state = entry.get("state")
-        if state is None or state["kind"] == "properties":
+        if state is None or state["kind"] in {"properties", "positional"}:
             # A derived family's props are its holder's (test_property_holders).
             continue
         props = entry["props"]
@@ -195,7 +195,7 @@ def test_every_state_kind_is_a_vocabulary_member() -> None:
     for name, entry in sorted(components().items()):
         state = entry.get("state")
         if state is not None:
-            assert state["kind"] in {*STATE_KINDS, "properties"}, name
+            assert state["kind"] in {*STATE_KINDS, "properties", "positional"}, name
 
 
 def test_every_declared_dismissal_names_an_unclaimed_parameter() -> None:

@@ -3753,14 +3753,15 @@
           "minimum": 0,
           "maximum": 2147483647
         },
-        "onItemSettled": {
+        "onCurrentItemSettled": {
           "type": "actionId",
           "payload": [
             {
               "name": "currentItem",
               "type": "integer"
             }
-          ]
+          ],
+          "since": "1.23.0"
         }
       },
       "children": {
@@ -3770,13 +3771,17 @@
       },
       "state": {
         "native": "state",
-        "kind": "carousel",
-        "value": "currentItem",
-        "report": "onItemSettled"
+        "kind": "positional",
+        "holder": "androidx.compose.material3.carousel.CarouselState",
+        "factory": "androidx.compose.material3.carousel.rememberCarouselState",
+        "initial": "initialItem",
+        "count": "itemCount",
+        "position": "currentItem",
+        "drive": "animateScrollToItem"
       },
       "reshaped": [
         "currentItem",
-        "onItemSettled"
+        "onCurrentItemSettled"
       ]
     },
     "HorizontalDivider": {
@@ -3869,14 +3874,15 @@
           "minimum": 0,
           "maximum": 2147483647
         },
-        "onItemSettled": {
+        "onCurrentItemSettled": {
           "type": "actionId",
           "payload": [
             {
               "name": "currentItem",
               "type": "integer"
             }
-          ]
+          ],
+          "since": "1.23.0"
         }
       },
       "children": {
@@ -3886,13 +3892,17 @@
       },
       "state": {
         "native": "state",
-        "kind": "carousel",
-        "value": "currentItem",
-        "report": "onItemSettled"
+        "kind": "positional",
+        "holder": "androidx.compose.material3.carousel.CarouselState",
+        "factory": "androidx.compose.material3.carousel.rememberCarouselState",
+        "initial": "initialItem",
+        "count": "itemCount",
+        "position": "currentItem",
+        "drive": "animateScrollToItem"
       },
       "reshaped": [
         "currentItem",
-        "onItemSettled"
+        "onCurrentItemSettled"
       ]
     },
     "HorizontalPager": {
@@ -3942,19 +3952,21 @@
         "modifier": {
           "type": "modifier"
         },
-        "page": {
+        "currentPage": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 2147483647
+          "maximum": 2147483647,
+          "since": "1.23.0"
         },
-        "onPageSettled": {
+        "onCurrentPageSettled": {
           "type": "actionId",
           "payload": [
             {
-              "name": "page",
+              "name": "currentPage",
               "type": "integer"
             }
-          ]
+          ],
+          "since": "1.23.0"
         }
       },
       "children": {
@@ -3965,13 +3977,17 @@
       },
       "state": {
         "native": "state",
-        "kind": "pager",
-        "value": "page",
-        "report": "onPageSettled"
+        "kind": "positional",
+        "holder": "androidx.compose.foundation.pager.PagerState",
+        "factory": "androidx.compose.foundation.pager.rememberPagerState",
+        "initial": "initialPage",
+        "count": "pageCount",
+        "position": "currentPage",
+        "drive": "animateScrollToPage"
       },
       "reshaped": [
-        "page",
-        "onPageSettled"
+        "currentPage",
+        "onCurrentPageSettled"
       ]
     },
     "HorizontalUncontainedCarousel": {
@@ -4015,14 +4031,15 @@
           "minimum": 0,
           "maximum": 2147483647
         },
-        "onItemSettled": {
+        "onCurrentItemSettled": {
           "type": "actionId",
           "payload": [
             {
               "name": "currentItem",
               "type": "integer"
             }
-          ]
+          ],
+          "since": "1.23.0"
         }
       },
       "children": {
@@ -4032,13 +4049,17 @@
       },
       "state": {
         "native": "state",
-        "kind": "carousel",
-        "value": "currentItem",
-        "report": "onItemSettled"
+        "kind": "positional",
+        "holder": "androidx.compose.material3.carousel.CarouselState",
+        "factory": "androidx.compose.material3.carousel.rememberCarouselState",
+        "initial": "initialItem",
+        "count": "itemCount",
+        "position": "currentItem",
+        "drive": "animateScrollToItem"
       },
       "reshaped": [
         "currentItem",
-        "onItemSettled"
+        "onCurrentItemSettled"
       ]
     },
     "Icon": {
@@ -11061,19 +11082,21 @@
         "modifier": {
           "type": "modifier"
         },
-        "page": {
+        "currentPage": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 2147483647
+          "maximum": 2147483647,
+          "since": "1.23.0"
         },
-        "onPageSettled": {
+        "onCurrentPageSettled": {
           "type": "actionId",
           "payload": [
             {
-              "name": "page",
+              "name": "currentPage",
               "type": "integer"
             }
-          ]
+          ],
+          "since": "1.23.0"
         }
       },
       "children": {
@@ -11084,13 +11107,17 @@
       },
       "state": {
         "native": "state",
-        "kind": "pager",
-        "value": "page",
-        "report": "onPageSettled"
+        "kind": "positional",
+        "holder": "androidx.compose.foundation.pager.PagerState",
+        "factory": "androidx.compose.foundation.pager.rememberPagerState",
+        "initial": "initialPage",
+        "count": "pageCount",
+        "position": "currentPage",
+        "drive": "animateScrollToPage"
       },
       "reshaped": [
-        "page",
-        "onPageSettled"
+        "currentPage",
+        "onCurrentPageSettled"
       ]
     },
     "WideNavigationRail": {

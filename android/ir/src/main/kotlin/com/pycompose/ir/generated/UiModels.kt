@@ -1271,7 +1271,7 @@ data class HorizontalCenteredHeroCarouselProps(
     val `maxSmallItemWidth`: JsonElement? = null,
     val `minSmallItemWidth`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `onItemSettled`: String? = null,
+    val `onCurrentItemSettled`: String? = null,
     val `userScrollEnabled`: Boolean = true,
 ) : UiProps
 
@@ -1313,7 +1313,7 @@ data class HorizontalMultiBrowseCarouselProps(
     val `maxSmallItemWidth`: JsonElement? = null,
     val `minSmallItemWidth`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `onItemSettled`: String? = null,
+    val `onCurrentItemSettled`: String? = null,
     val `preferredItemWidth`: JsonElement,
     val `userScrollEnabled`: Boolean = true,
 ) : UiProps
@@ -1332,9 +1332,9 @@ data class HorizontalMultiBrowseCarousel(
 
 @Serializable
 data class HorizontalPagerProps(
+    val `currentPage`: Long? = null,
     override val `modifier`: JsonObject? = null,
-    val `onPageSettled`: String? = null,
-    val `page`: Long? = null,
+    val `onCurrentPageSettled`: String? = null,
     val `pageSpacing`: JsonElement? = null,
     val `reverseLayout`: Boolean = false,
     val `snapPosition`: JsonElement? = null,
@@ -1360,7 +1360,7 @@ data class HorizontalUncontainedCarouselProps(
     val `itemSpacing`: JsonElement? = null,
     val `itemWidth`: JsonElement,
     override val `modifier`: JsonObject? = null,
-    val `onItemSettled`: String? = null,
+    val `onCurrentItemSettled`: String? = null,
     val `userScrollEnabled`: Boolean = true,
 ) : UiProps
 
@@ -3529,10 +3529,10 @@ data class VerticalDragHandle(
 
 @Serializable
 data class VerticalPagerProps(
+    val `currentPage`: Long? = null,
     val `horizontalAlignment`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `onPageSettled`: String? = null,
-    val `page`: Long? = null,
+    val `onCurrentPageSettled`: String? = null,
     val `pageSpacing`: JsonElement? = null,
     val `reverseLayout`: Boolean = false,
     val `snapPosition`: JsonElement? = null,

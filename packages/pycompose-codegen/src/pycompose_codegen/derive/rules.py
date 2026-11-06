@@ -25,6 +25,7 @@ from pycompose_codegen.derive.candidate_props import CandidateError
 from pycompose_codegen.emit.state_families import (
     STATE_FAMILIES,
     TRANSIENT_FAMILIES,
+    positional_props,
     property_props,
 )
 
@@ -139,6 +140,10 @@ def _project(entry: dict[str, Any]) -> list[str]:
     """Give a bound holder its family's props: desired value, report, held."""
     if entry["state"]["kind"] == "properties":
         projected = property_props(entry["state"])
+        entry["props"].update(projected)
+        return list(projected)
+    if entry["state"]["kind"] == "positional":
+        projected = positional_props(entry["state"])
         entry["props"].update(projected)
         return list(projected)
     family = STATE_FAMILIES[entry["state"]["kind"]]

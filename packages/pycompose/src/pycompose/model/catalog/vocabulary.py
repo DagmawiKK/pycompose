@@ -48,8 +48,6 @@ STATE_KINDS = (
     "textInput",
     "search",
     "swipe",
-    "pager",
-    "carousel",
 )
 """State families the host creates, drives and reports for a component.
 
@@ -62,9 +60,9 @@ desired visible value through hover, focus and long-press gestures; textInput
 reconciles text and selection with an atomic, numbered edit report; search
 shares one editing projection and one expansion state across a collapsed bar
 and every expanded surface; a swipe reconciles a desired settled/dismissed
-anchor through horizontal gestures and reports the anchor it settled on; a
-pager scrolls to a desired page and reports the page it settled on, and a
-carousel does the same for its items. The
+anchor through horizontal gestures and reports the anchor it settled on. A
+holder with one scrollable position (a pager's page) is derived from the pin
+instead (``positional``). The
 vocabulary is closed for the same reason the interaction kinds are: the host
 must not be asked to drive a state object whose transitions it does not
 understand.
@@ -80,8 +78,6 @@ STATE_HOLDERS = {
     "textInput": "androidx.compose.foundation.text.input.TextFieldState",
     "search": "androidx.compose.material3.SearchBarState",
     "swipe": "androidx.compose.material3.SwipeToDismissBoxState",
-    "pager": "androidx.compose.foundation.pager.PagerState",
-    "carousel": "androidx.compose.material3.carousel.CarouselState",
 }
 """The native holder each state family creates and drives.
 

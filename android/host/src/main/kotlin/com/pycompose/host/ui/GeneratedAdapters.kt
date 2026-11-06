@@ -316,7 +316,6 @@ import com.pycompose.renderer.attachTo
 import com.pycompose.renderer.bound
 import com.pycompose.renderer.boundColor
 import com.pycompose.renderer.boundDp
-import com.pycompose.renderer.carouselState
 import com.pycompose.renderer.drawerState
 import com.pycompose.renderer.edit
 import com.pycompose.renderer.editText
@@ -328,7 +327,7 @@ import com.pycompose.renderer.inSlot
 import com.pycompose.renderer.index
 import com.pycompose.renderer.lazyListState
 import com.pycompose.renderer.number
-import com.pycompose.renderer.pagerState
+import com.pycompose.renderer.positional
 import com.pycompose.renderer.publish
 import com.pycompose.renderer.reconcileProperty
 import com.pycompose.renderer.rememberDrawing
@@ -1352,7 +1351,14 @@ object GeneratedAdapters {
                 val maxItemWidthValue = context.boundDp(model.props.maxItemWidth, Dp.VectorConverter, androidx.compose.ui.unit.Dp.Companion.Unspecified)
                 val maxSmallItemWidthValue = context.boundDp(model.props.maxSmallItemWidth, Dp.VectorConverter, androidx.compose.material3.carousel.CarouselDefaults.MaxSmallItemSize)
                 val minSmallItemWidthValue = context.boundDp(model.props.minSmallItemWidth, Dp.VectorConverter, androidx.compose.material3.carousel.CarouselDefaults.MinSmallItemSize)
-                val stateValue = context.carouselState(model.props.currentItem, model.props.onItemSettled, model.children.unslotted().size)
+                val stateValue = context.positional(
+                    model.props.currentItem, model.props.onCurrentItemSettled,
+                    model.children.unslotted().size,
+                    com.pycompose.renderer.Positional(
+                        { initial, count -> androidx.compose.material3.carousel.rememberCarouselState(initialItem = initial, itemCount = count) },
+                        { it.currentItem },
+                    ) { holder, target -> holder.animateScrollToItem(target) },
+                )
                 HorizontalCenteredHeroCarousel(
                     modifier = modifier,
                     itemSpacing = itemSpacingValue,
@@ -1380,7 +1386,14 @@ object GeneratedAdapters {
                 val maxSmallItemWidthValue = context.boundDp(model.props.maxSmallItemWidth, Dp.VectorConverter, androidx.compose.material3.carousel.CarouselDefaults.MaxSmallItemSize)
                 val minSmallItemWidthValue = context.boundDp(model.props.minSmallItemWidth, Dp.VectorConverter, androidx.compose.material3.carousel.CarouselDefaults.MinSmallItemSize)
                 val preferredItemWidthValue = bound(model.props.preferredItemWidth, Dp.VectorConverter) { plain -> context.number(plain).dp }
-                val stateValue = context.carouselState(model.props.currentItem, model.props.onItemSettled, model.children.unslotted().size)
+                val stateValue = context.positional(
+                    model.props.currentItem, model.props.onCurrentItemSettled,
+                    model.children.unslotted().size,
+                    com.pycompose.renderer.Positional(
+                        { initial, count -> androidx.compose.material3.carousel.rememberCarouselState(initialItem = initial, itemCount = count) },
+                        { it.currentItem },
+                    ) { holder, target -> holder.animateScrollToItem(target) },
+                )
                 HorizontalMultiBrowseCarousel(
                     modifier = modifier,
                     itemSpacing = itemSpacingValue,
@@ -1399,7 +1412,14 @@ object GeneratedAdapters {
                 val snapPositionValue = if (snapPositionWire != null) com.pycompose.renderer.generated.ValueResolver.snapPosition(snapPositionWire).getOrThrow() else androidx.compose.foundation.gestures.snapping.SnapPosition.Start
                 val verticalAlignmentValue = model.props.verticalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentVertical(it).getOrThrow() }
                     ?: androidx.compose.ui.Alignment.Companion.CenterVertically
-                val stateValue = context.pagerState(model.props.page, model.props.onPageSettled, model.children.unslotted().size)
+                val stateValue = context.positional(
+                    model.props.currentPage, model.props.onCurrentPageSettled,
+                    model.children.unslotted().size,
+                    com.pycompose.renderer.Positional(
+                        { initial, count -> androidx.compose.foundation.pager.rememberPagerState(initialPage = initial, pageCount = count) },
+                        { it.currentPage },
+                    ) { holder, target -> holder.animateScrollToPage(target) },
+                )
                 HorizontalPager(
                     modifier = modifier,
                     pageSpacing = pageSpacingValue,
@@ -1415,7 +1435,14 @@ object GeneratedAdapters {
                 val model = node as HorizontalUncontainedCarouselNode
                 val itemSpacingValue = context.boundDp(model.props.itemSpacing, Dp.VectorConverter, (0).dp)
                 val itemWidthValue = bound(model.props.itemWidth, Dp.VectorConverter) { plain -> context.number(plain).dp }
-                val stateValue = context.carouselState(model.props.currentItem, model.props.onItemSettled, model.children.unslotted().size)
+                val stateValue = context.positional(
+                    model.props.currentItem, model.props.onCurrentItemSettled,
+                    model.children.unslotted().size,
+                    com.pycompose.renderer.Positional(
+                        { initial, count -> androidx.compose.material3.carousel.rememberCarouselState(initialItem = initial, itemCount = count) },
+                        { it.currentItem },
+                    ) { holder, target -> holder.animateScrollToItem(target) },
+                )
                 HorizontalUncontainedCarousel(
                     modifier = modifier,
                     itemSpacing = itemSpacingValue,
@@ -3035,7 +3062,14 @@ object GeneratedAdapters {
                 val pageSpacingValue = context.boundDp(model.props.pageSpacing, Dp.VectorConverter, (0).dp)
                 val snapPositionWire = model.props.snapPosition
                 val snapPositionValue = if (snapPositionWire != null) com.pycompose.renderer.generated.ValueResolver.snapPosition(snapPositionWire).getOrThrow() else androidx.compose.foundation.gestures.snapping.SnapPosition.Start
-                val stateValue = context.pagerState(model.props.page, model.props.onPageSettled, model.children.unslotted().size)
+                val stateValue = context.positional(
+                    model.props.currentPage, model.props.onCurrentPageSettled,
+                    model.children.unslotted().size,
+                    com.pycompose.renderer.Positional(
+                        { initial, count -> androidx.compose.foundation.pager.rememberPagerState(initialPage = initial, pageCount = count) },
+                        { it.currentPage },
+                    ) { holder, target -> holder.animateScrollToPage(target) },
+                )
                 VerticalPager(
                     modifier = modifier,
                     horizontalAlignment = horizontalAlignmentValue,

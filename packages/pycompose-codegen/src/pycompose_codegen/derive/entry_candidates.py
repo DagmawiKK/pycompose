@@ -343,6 +343,19 @@ def _scope(name: str, plan: dict[str, Any], declaration: Declaration) -> str | N
     return scope_for(native.classifier)
 
 
+DERIVED = (
+    "holder",
+    "factory",
+    "properties",
+    "arguments",
+    "initial",
+    "count",
+    "position",
+    "drive",
+)
+"""What a derived holder family carries into its component's ``state``."""
+
+
 def _holders(plan: dict[str, Any]) -> dict[str, Any]:
     """The plan's state holder, or its several holders for a decision to choose.
 
@@ -353,12 +366,9 @@ def _holders(plan: dict[str, Any]) -> dict[str, Any]:
         {
             "native": parameter,
             "kind": spec["kind"],
-            # A derived family carries its holder: factory and properties.
-            **{
-                k: spec[k]
-                for k in ("holder", "factory", "properties", "arguments")
-                if k in spec
-            },
+            # A derived family carries its holder: its factory, and its
+            # properties, or its position and drive.
+            **{k: spec[k] for k in DERIVED if k in spec},
         }
         for parameter, spec in plan["parameters"].items()
         if spec["policy"] == "holder"

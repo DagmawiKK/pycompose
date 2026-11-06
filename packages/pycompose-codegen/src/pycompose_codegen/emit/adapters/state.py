@@ -17,6 +17,7 @@ from pycompose_codegen.emit.derived_families import properties_locals
 from pycompose_codegen.emit.state_families import (
     STATE_CONSTRUCTOR_PROPS,
     attach_gate,
+    settled_name,
 )
 
 
@@ -154,6 +155,8 @@ def _state(
     native = state["native"]
     if state["kind"] == "properties":
         return properties_locals(state), [f"{native} = {native}Value"], None
+    if state["kind"] == "positional":
+        return positional_locals(state), [f"{native} = {native}Value"], None
     held = f"{native}Value"
     value = camel(state["value"])
     report = camel(state["report"])
@@ -173,9 +176,6 @@ def _state(
         f", {_constructor_argument(name, props.get(name) or {})}"
         for name in STATE_CONSTRUCTOR_PROPS.get(state["kind"], ())
     )
-    if state["kind"] in {"pager", "carousel"}:
-        # A pager has as many pages as Python sent, a carousel as many items.
-        extras += ", model.children.unslotted().size"
     dismiss = state.get("dismiss")
     if dismiss is not None:
         # The component announces a dismissal it has already carried out; the
@@ -268,3 +268,31 @@ def _transient(transient: dict[str, Any], props: dict[str, Any]) -> str:
     )
     call = transient["kind"]
     return f"val {transient['native']}Value = context.{call}(model.id, {entries})"
+
+
+def positional_locals(state: dict[str, Any]) -> list[str]:
+    """A positional family: the host's one runtime, told how to make and drive it.
+
+    Its positions are the children Python sent, so the count the factory asks
+    for is theirs.
+
+    Args:
+        state: A ``state`` block of kind ``positional``.
+
+    Returns:
+        The Kotlin locals.
+    """
+    native, position = state["native"], state["position"]
+    count = f", {state['count']} = count" if "count" in state else ""
+    create = f"{state['factory']}({state['initial']} = initial{count})"
+    report = camel(settled_name(position))
+    return [
+        f"val {native}Value = context.positional(",
+        f"    model.props.{camel(position)}, model.props.{report},",
+        "    model.children.unslotted().size,",
+        "    com.pycompose.renderer.Positional(",
+        f"        {{ initial, count -> {create} }},",
+        f"        {{ it.{position} }},",
+        f"    ) {{ holder, target -> holder.{state['drive']}(target) }},",
+        ")",
+    ]
