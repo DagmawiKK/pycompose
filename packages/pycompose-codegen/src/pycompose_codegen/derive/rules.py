@@ -22,7 +22,10 @@ from pycompose.model.catalog.vocabulary import (
     INTERACTION_REPORTS,
 )
 from pycompose_codegen.derive.candidate_props import CandidateError
+from pycompose_codegen.derive.classpath_dump import Inventory
+from pycompose_codegen.derive.positional_holders import positional_holders
 from pycompose_codegen.emit.state_families import (
+    STATE_ATTACH_GATES,
     STATE_FAMILIES,
     TRANSIENT_FAMILIES,
     anchored_props,
@@ -31,7 +34,7 @@ from pycompose_codegen.emit.state_families import (
 )
 
 INTERACTION_SOURCE = "androidx/compose/foundation/interaction/MutableInteractionSource"
-SHAPES = frozenset({"flatten", "observe", "holder"})
+SHAPES = frozenset({"flatten", "observe", "holder", "attach"})
 """Decision keys these rules read."""
 
 
@@ -60,6 +63,8 @@ def reshape(
     _choose_holder(name, entry, decision.get("holder"))
     if "state" in entry:
         invented.extend(_project(entry))
+    if "attach" in decision:
+        invented.append(STATE_ATTACH_GATES[decision["attach"]])
     if "transient" in entry:
         family = TRANSIENT_FAMILIES[entry["transient"]["kind"]]
         entry["props"].update(copy.deepcopy(family["props"]))
@@ -76,6 +81,49 @@ def reshape(
         # Props Compose's signature has no counterpart for, so the drift
         # checker reads them as deliberate.
         entry["reshaped"] = invented
+    return entry
+
+
+def attached(
+    name: str, entry: dict[str, Any], decision: dict[str, Any], found: Inventory
+) -> dict[str, Any]:
+    """Carry the pinned positional holder a decision names on the modifier.
+
+    ``Column`` takes no ``ScrollState``; it scrolls by wearing one. Policy names
+    the holder (``attach``) and the pin says the rest: the holder joins the
+    component's state as its family derives it, behind the boolean gate the
+    app states.
+
+    Args:
+        name: The component's schema name, for refusals.
+        entry: The derived entry; not modified.
+        decision: The component's policy decision.
+        found: The pinned inventory.
+
+    Returns:
+        The entry with the holder as its state and the gate among its props,
+        or the entry itself when the decision attaches none.
+
+    Raises:
+        CandidateError: The holder is none the host attaches.
+    """
+    holder = decision.get("attach")
+    if holder is None:
+        return entry
+    spec = positional_holders(found).get(str(holder).replace(".", "/"))
+    gate = STATE_ATTACH_GATES.get(str(holder))
+    if spec is None or gate is None:
+        raise CandidateError(
+            f"{name}: attach names {holder!r}, which rides no modifier"
+        )
+    simple = spec["holder"].rsplit(".", 1)[1]
+    entry = copy.deepcopy(entry)
+    entry["state"] = {
+        "native": simple[:1].lower() + simple[1:],
+        "kind": "positional",
+        **spec,
+    }
+    entry["props"][gate] = {"type": "boolean"}
     return entry
 
 

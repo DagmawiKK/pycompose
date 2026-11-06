@@ -37,6 +37,9 @@ def state_call(kind: str) -> str:
     return f"{kind}State"
 
 
+LAZY_LIST = "androidx.compose.foundation.lazy.LazyListState"
+"""The holder whose list asks for the window of items it shows."""
+
 GATED_STATES = frozenset({"sheet"})
 """State families whose native component must be composed conditionally.
 
@@ -82,7 +85,7 @@ def host_locals(entry: dict[str, Any], out: Fragments) -> str | None:
             # Expressions anywhere in the snapshot may read this holder's streams.
             out.locals.append(f"context.publish(model.id, {state['native']}Value)")
         if (
-            state["kind"] == "lazyList"
+            state.get("holder") == LAZY_LIST
             and entry.get("children", {}).get("kind") == "items"
         ):
             # The list asks for the window it shows as the user scrolls.
@@ -156,7 +159,13 @@ def _state(
     if state["kind"] == "properties":
         return properties_locals(state), [f"{native} = {native}Value"], None
     if state["kind"] == "positional":
-        return positional_locals(state), [f"{native} = {native}Value"], None
+        # A holder riding the modifier fills no parameter.
+        attached = attach_gate(state, props) is not None
+        return (
+            positional_locals(state),
+            [] if attached else [f"{native} = {native}Value"],
+            None,
+        )
     if state["kind"] == "anchored":
         return anchored_locals(state), [f"{native} = {native}Value"], None
     held = f"{native}Value"

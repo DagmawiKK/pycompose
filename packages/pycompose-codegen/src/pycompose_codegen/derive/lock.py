@@ -47,7 +47,7 @@ from pycompose_codegen.derive.policy import (
     unclaimed,
 )
 from pycompose_codegen.derive.propose import value_families
-from pycompose_codegen.derive.rules import SHAPES, reshape
+from pycompose_codegen.derive.rules import SHAPES, attached, reshape
 from pycompose_codegen.derive.scoped_modifiers import (
     scoped_declarations,
     scoped_modifiers,
@@ -194,7 +194,7 @@ def planned(
         {key: decision[key] for key in REVIEW if key in decision},
         schema_name=name,
     )
-    return reshape(name, derived.entry, decision, plan)
+    return reshape(name, attached(name, derived.entry, decision, found), decision, plan)
 
 
 def generate(

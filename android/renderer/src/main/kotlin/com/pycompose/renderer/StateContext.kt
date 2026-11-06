@@ -1,7 +1,5 @@
 package com.pycompose.renderer
 
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.SnackbarHostState
@@ -106,31 +104,6 @@ fun RenderContext.searchState(
     val bar = rememberHostSearchBarState(expanded, onExpandedChange, observations::observe)
     return remember(editing, bar) { HostSearchState(editing, bar) }
 }
-
-/**
- * The node's scroll projection, attached through its modifier by the adapter.
- *
- * @param offset Desired offset in pixels, or an expression over holder streams;
- *   null leaves scrolling to gestures.
- * @param report Action id idle offsets report to; null reports none.
- */
-@Composable
-fun RenderContext.scrollState(
-    offset: JsonElement?,
-    report: String?,
-): ScrollState = rememberHostScrollState(offset?.let { number(it) }, report, observations::observe)
-
-/**
- * The node's lazy-list projection, reporting the first visible index at rest.
- *
- * @param index Desired first visible item; null leaves scrolling to gestures.
- * @param report Action id idle indexes report to; null reports none.
- */
-@Composable
-fun RenderContext.lazyListState(
-    index: Long?,
-    report: String?,
-): LazyListState = rememberHostLazyListState(index, report, observations::observe)
 
 /**
  * The node's snackbar host, showing a request only for a greater serial.

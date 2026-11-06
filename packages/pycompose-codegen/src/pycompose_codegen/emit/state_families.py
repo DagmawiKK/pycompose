@@ -108,11 +108,6 @@ STATE_FAMILIES: dict[str, Family] = {
             },
         },
     ),
-    "scroll": Family(("offset", {"type": "number"}), "onScrollIdle"),
-    "lazyList": Family(
-        ("firstVisibleIndex", {"type": "integer", "minimum": 0, "maximum": _INT}),
-        "onScrollIdle",
-    ),
     "tooltip": Family(
         ("visible", {"type": "boolean"}),
         "onVisibilityChange",
@@ -210,14 +205,15 @@ component.
 """
 
 
-STATE_ATTACH_GATES = {"scroll": "scrollable"}
-"""Props gating a family whose holder may ride the call's modifier.
+STATE_ATTACH_GATES = {"androidx.compose.foundation.ScrollState": "scrollable"}
+"""Props gating a holder class that may ride the call's modifier.
 
 ``Column`` has no scroll parameter -- scrolling attaches through its modifier,
-so the state cannot fill a native parameter. Its entry declares the boolean
-prop named here, which decides whether the adapter attaches the holder to the
-modifier the call receives. An entry without that prop (``ExposedDropdownMenu``
-takes a ``ScrollState``) passes the holder as its native parameter.
+so the state cannot fill a native parameter. Policy names the holder it carries
+(``attach``), and its entry declares the boolean prop named here, which decides
+whether the adapter attaches the holder to the modifier the call receives. An
+entry without that prop (``ExposedDropdownMenu`` takes a ``ScrollState``)
+passes the holder as its native parameter.
 """
 
 
@@ -233,7 +229,7 @@ def attach_gate(state: dict[str, Any] | None, props: dict[str, Any]) -> str | No
     """
     if state is None:
         return None
-    gate = STATE_ATTACH_GATES.get(state.get("kind", ""))
+    gate = STATE_ATTACH_GATES.get(state.get("holder", ""))
     return gate if gate in props else None
 
 

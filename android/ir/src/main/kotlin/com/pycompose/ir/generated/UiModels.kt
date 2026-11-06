@@ -516,9 +516,9 @@ data class CircularProgressIndicatorProgress(
 data class ColumnProps(
     val `horizontalAlignment`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
-    val `offset`: JsonElement? = null,
-    val `onScrollIdle`: String? = null,
+    val `onValueSettled`: String? = null,
     val `scrollable`: Boolean? = null,
+    val `value`: Long? = null,
     val `verticalArrangement`: JsonElement? = null,
 ) : UiProps
 
@@ -942,12 +942,12 @@ data class ExposedDropdownMenuProps(
     val `expanded`: Boolean,
     val `matchAnchorWidth`: Boolean = true,
     override val `modifier`: JsonObject? = null,
-    val `offset`: JsonElement? = null,
     val `onDismissRequest`: String,
-    val `onScrollIdle`: String? = null,
+    val `onValueSettled`: String? = null,
     val `shadowElevation`: JsonElement? = null,
     val `shape`: JsonElement? = null,
     val `tonalElevation`: JsonElement? = null,
+    val `value`: Long? = null,
 ) : UiProps
 
 @Serializable
@@ -1599,12 +1599,12 @@ data class Layout(
 
 @Serializable
 data class LazyColumnProps(
-    val `firstVisibleIndex`: Long? = null,
+    val `firstVisibleItemIndex`: Long? = null,
     val `horizontalAlignment`: JsonElement? = null,
     val `itemCount`: Long? = null,
     val `itemOffset`: Long? = null,
     override val `modifier`: JsonObject? = null,
-    val `onScrollIdle`: String? = null,
+    val `onFirstVisibleItemIndexSettled`: String? = null,
     val `reverseLayout`: Boolean = false,
     val `userScrollEnabled`: Boolean = true,
     val `verticalArrangement`: JsonElement? = null,
@@ -1625,11 +1625,11 @@ data class LazyColumn(
 
 @Serializable
 data class LazyRowProps(
-    val `firstVisibleIndex`: Long? = null,
+    val `firstVisibleItemIndex`: Long? = null,
     val `itemCount`: Long? = null,
     val `itemOffset`: Long? = null,
     override val `modifier`: JsonObject? = null,
-    val `onScrollIdle`: String? = null,
+    val `onFirstVisibleItemIndexSettled`: String? = null,
     val `reverseLayout`: Boolean = false,
     val `userScrollEnabled`: Boolean = true,
     val `verticalAlignment`: JsonElement? = null,

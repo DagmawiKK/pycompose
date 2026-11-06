@@ -22,9 +22,7 @@ from pycompose_codegen.derive.classpath_dump import Declaration
 from pycompose_codegen.derive.propose_lookup import source_name
 from pycompose_codegen.emit.adapters.eligibility import held_props
 from pycompose_codegen.emit.adapters.policy import camel
-from pycompose_codegen.emit.state_families import (
-    STATE_ATTACH_GATES,
-)
+from pycompose_codegen.emit.state_families import attach_gate
 
 MODIFIER = "androidx.compose.ui.Modifier"
 INTERACTION_SOURCE = "androidx.compose.foundation.interaction.MutableInteractionSource"
@@ -212,7 +210,7 @@ def _wiring_face(
         name = interaction["native"]
         add("interaction", name, Argument(name, "value", INTERACTION_SOURCE))
     state = entry.get("state")
-    if state and state["kind"] not in STATE_ATTACH_GATES:
+    if state and attach_gate(state, entry.get("props", {})) is None:
         add("state", state["native"], Argument(state["native"], "value"))
     if state and state.get("dismiss"):
         name = state["dismiss"]

@@ -326,14 +326,12 @@ import com.pycompose.renderer.generated.driveTo
 import com.pycompose.renderer.generated.paint
 import com.pycompose.renderer.inSlot
 import com.pycompose.renderer.index
-import com.pycompose.renderer.lazyListState
 import com.pycompose.renderer.number
 import com.pycompose.renderer.positional
 import com.pycompose.renderer.publish
 import com.pycompose.renderer.reconcileProperty
 import com.pycompose.renderer.rememberDrawing
 import com.pycompose.renderer.rememberMeasurePolicy
-import com.pycompose.renderer.scrollState
 import com.pycompose.renderer.sheetState
 import com.pycompose.renderer.sliderState
 import com.pycompose.renderer.snackbar
@@ -750,7 +748,14 @@ object GeneratedAdapters {
                     ?: androidx.compose.ui.Alignment.Companion.Start
                 val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() }
                     ?: androidx.compose.foundation.layout.Arrangement.Top
-                val scrollStateValue = context.scrollState(model.props.offset, model.props.onScrollIdle)
+                val scrollStateValue = context.positional(
+                    model.props.value, model.props.onValueSettled,
+                    model.children.unslotted().size,
+                    com.pycompose.renderer.Positional(
+                        { initial, _ -> androidx.compose.foundation.rememberScrollState(initial = initial) },
+                        { it.value },
+                    ) { holder, target -> holder.animateScrollTo(target) },
+                )
                 context.publish(model.id, scrollStateValue)
                 Column(
                     modifier = scrollStateValue.attachTo(modifier, model.props.scrollable),
@@ -1103,7 +1108,14 @@ object GeneratedAdapters {
                 val shapeWire = model.props.shape
                 val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.MenuDefaults.shape
                 val tonalElevationValue = context.boundDp(model.props.tonalElevation, Dp.VectorConverter, androidx.compose.material3.MenuDefaults.TonalElevation)
-                val scrollStateValue = context.scrollState(model.props.offset, model.props.onScrollIdle)
+                val scrollStateValue = context.positional(
+                    model.props.value, model.props.onValueSettled,
+                    model.children.unslotted().size,
+                    com.pycompose.renderer.Positional(
+                        { initial, _ -> androidx.compose.foundation.rememberScrollState(initial = initial) },
+                        { it.value },
+                    ) { holder, target -> holder.animateScrollTo(target) },
+                )
                 context.publish(model.id, scrollStateValue)
                 ExposedDropdownMenu(
                     modifier = modifier,
@@ -1627,7 +1639,14 @@ object GeneratedAdapters {
                     ?: androidx.compose.ui.Alignment.Companion.Start
                 val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() }
                     ?: androidx.compose.foundation.layout.Arrangement.Top
-                val stateValue = context.lazyListState(model.props.firstVisibleIndex, model.props.onScrollIdle)
+                val stateValue = context.positional(
+                    model.props.firstVisibleItemIndex, model.props.onFirstVisibleItemIndexSettled,
+                    model.children.unslotted().size,
+                    com.pycompose.renderer.Positional(
+                        { initial, _ -> androidx.compose.foundation.lazy.rememberLazyListState(initialFirstVisibleItemIndex = initial) },
+                        { it.firstVisibleItemIndex },
+                    ) { holder, target -> holder.animateScrollToItem(target) },
+                )
                 context.RequestWindows(stateValue, model.props.window, model.props.itemOffset, model.children.unslotted().size)
                 LazyColumn(
                     modifier = modifier,
@@ -1643,7 +1662,14 @@ object GeneratedAdapters {
                 val model = node as LazyRowNode
                 val verticalAlignmentValue = model.props.verticalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentVertical(it).getOrThrow() }
                     ?: androidx.compose.ui.Alignment.Companion.Top
-                val stateValue = context.lazyListState(model.props.firstVisibleIndex, model.props.onScrollIdle)
+                val stateValue = context.positional(
+                    model.props.firstVisibleItemIndex, model.props.onFirstVisibleItemIndexSettled,
+                    model.children.unslotted().size,
+                    com.pycompose.renderer.Positional(
+                        { initial, _ -> androidx.compose.foundation.lazy.rememberLazyListState(initialFirstVisibleItemIndex = initial) },
+                        { it.firstVisibleItemIndex },
+                    ) { holder, target -> holder.animateScrollToItem(target) },
+                )
                 context.RequestWindows(stateValue, model.props.window, model.props.itemOffset, model.children.unslotted().size)
                 LazyRow(
                     modifier = modifier,

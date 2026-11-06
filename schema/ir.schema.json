@@ -2066,21 +2066,16 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
+            "onValueSettled": {
               "$ref": "#/definitions/Action"
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "value": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
             },
             "verticalArrangement": {
               "$ref": "#/definitions/Family_ArrangementVertical"
@@ -3471,20 +3466,10 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
             "onDismissRequest": {
               "$ref": "#/definitions/Action"
             },
-            "onScrollIdle": {
+            "onValueSettled": {
               "$ref": "#/definitions/Action"
             },
             "shadowElevation": {
@@ -3553,6 +3538,11 @@
                   "$ref": "#/definitions/Binding"
                 }
               ]
+            },
+            "value": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
             }
           },
           "required": [
@@ -5534,7 +5524,7 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
+            "firstVisibleItemIndex": {
               "maximum": 2147483647,
               "minimum": 0,
               "type": "integer"
@@ -5563,7 +5553,7 @@
               },
               "type": "object"
             },
-            "onScrollIdle": {
+            "onFirstVisibleItemIndexSettled": {
               "$ref": "#/definitions/Action"
             },
             "reverseLayout": {
@@ -5598,7 +5588,7 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
+            "firstVisibleItemIndex": {
               "maximum": 2147483647,
               "minimum": 0,
               "type": "integer"
@@ -5624,7 +5614,7 @@
               },
               "type": "object"
             },
-            "onScrollIdle": {
+            "onFirstVisibleItemIndexSettled": {
               "$ref": "#/definitions/Action"
             },
             "reverseLayout": {
@@ -16197,19 +16187,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -16242,11 +16219,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -16267,9 +16239,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "default": "top",
@@ -16985,19 +16954,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -17146,11 +17102,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -17171,9 +17122,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "default": "top",
@@ -17958,19 +17906,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -18102,11 +18037,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -18127,9 +18057,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "$ref": "#/definitions/Family_ArrangementVertical"
@@ -18989,19 +18916,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -19133,11 +19047,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -19158,9 +19067,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "$ref": "#/definitions/Family_ArrangementVertical"
@@ -20020,19 +19926,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -20164,11 +20057,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -20189,9 +20077,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "$ref": "#/definitions/Family_ArrangementVertical"
@@ -21051,19 +20936,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -21195,11 +21067,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -21220,9 +21087,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "$ref": "#/definitions/Family_ArrangementVertical"
@@ -22082,19 +21946,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -22226,11 +22077,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -22251,9 +22097,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "$ref": "#/definitions/Family_ArrangementVertical"
@@ -23113,19 +22956,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -23257,11 +23087,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -23282,9 +23107,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "$ref": "#/definitions/Family_ArrangementVertical"
@@ -24144,19 +23966,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -24288,11 +24097,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -24313,9 +24117,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "$ref": "#/definitions/Family_ArrangementVertical"
@@ -25175,19 +24976,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -25360,11 +25148,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -25385,9 +25168,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "$ref": "#/definitions/Family_ArrangementVertical"
@@ -26304,19 +26084,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -26489,11 +26256,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -26514,9 +26276,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "$ref": "#/definitions/Family_ArrangementVertical"
@@ -27433,19 +27192,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -27526,11 +27272,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -27551,9 +27292,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "default": "top",
@@ -28280,19 +28018,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -28465,11 +28190,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -28490,9 +28210,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "$ref": "#/definitions/Family_ArrangementVertical"
@@ -29517,19 +29234,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -29755,11 +29459,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -29780,9 +29479,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "$ref": "#/definitions/Family_ArrangementVertical"
@@ -30955,19 +30651,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -31443,11 +31126,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -31468,9 +31146,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "$ref": "#/definitions/Family_ArrangementVertical"
@@ -34394,21 +34069,16 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
+            "onValueSettled": {
               "$ref": "#/definitions/Action"
             },
             "scrollable": {
               "type": "boolean"
+            },
+            "value": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
             },
             "verticalArrangement": {
               "$ref": "#/definitions/Family_ArrangementVertical"
@@ -35799,20 +35469,10 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
             "onDismissRequest": {
               "$ref": "#/definitions/Action"
             },
-            "onScrollIdle": {
+            "onValueSettled": {
               "$ref": "#/definitions/Action"
             },
             "shadowElevation": {
@@ -35881,6 +35541,11 @@
                   "$ref": "#/definitions/Binding"
                 }
               ]
+            },
+            "value": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
             }
           },
           "required": [
@@ -37862,7 +37527,7 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
+            "firstVisibleItemIndex": {
               "maximum": 2147483647,
               "minimum": 0,
               "type": "integer"
@@ -37891,7 +37556,7 @@
               },
               "type": "object"
             },
-            "onScrollIdle": {
+            "onFirstVisibleItemIndexSettled": {
               "$ref": "#/definitions/Action"
             },
             "reverseLayout": {
@@ -37926,7 +37591,7 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
+            "firstVisibleItemIndex": {
               "maximum": 2147483647,
               "minimum": 0,
               "type": "integer"
@@ -37952,7 +37617,7 @@
               },
               "type": "object"
             },
-            "onScrollIdle": {
+            "onFirstVisibleItemIndexSettled": {
               "$ref": "#/definitions/Action"
             },
             "reverseLayout": {
@@ -47844,19 +47509,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -47937,11 +47589,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -47962,9 +47609,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "default": "top",
@@ -48694,19 +48338,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -48855,11 +48486,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -48880,9 +48506,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "default": "top",
@@ -49670,19 +49293,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -49831,11 +49441,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -49856,9 +49461,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "default": "top",
@@ -50646,19 +50248,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -50807,11 +50396,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -50832,9 +50416,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "default": "top",
@@ -51622,19 +51203,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -51783,11 +51351,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -51808,9 +51371,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "default": "top",
@@ -52598,19 +52158,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -52759,11 +52306,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -52784,9 +52326,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "default": "top",
@@ -53574,19 +53113,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -53735,11 +53261,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -53760,9 +53281,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "default": "top",
@@ -54550,19 +54068,6 @@
               },
               "type": "object"
             },
-            "offset": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/definitions/Expression"
-                }
-              ]
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
-            },
             "scrollable": {
               "type": "boolean"
             },
@@ -54711,11 +54216,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "firstVisibleIndex": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
             "itemCount": {
               "maximum": 2147483647,
               "minimum": 0,
@@ -54736,9 +54236,6 @@
                 }
               },
               "type": "object"
-            },
-            "onScrollIdle": {
-              "$ref": "#/definitions/Action"
             },
             "verticalArrangement": {
               "default": "top",

@@ -85,7 +85,7 @@ class StreamExpressionTest {
         assertEquals(emptyList<String>(), reports)
     }
 
-    private fun scrolled(offset: Double): ValidatedIr {
+    private fun scrolled(offset: Int): ValidatedIr {
         val rows =
             (0 until 40).joinToString(",") {
                 """{"id":"row$it","type":"Text","props":{"text":"Row $it"}}"""
@@ -100,7 +100,7 @@ class StreamExpressionTest {
                     {"id":"band","type":"Surface","props":{"modifier":{"operations":[$size]},
                       "color":{"type":"expression","node":{"op":"mix","colors":["#FFFFFFFF","#FF0000FF"],
                         "args":[{"stream":"list","name":"progress"}]}}}},
-                    {"id":"list","type":"Column","props":{"scrollable":true,"offset":$offset,
+                    {"id":"list","type":"Column","props":{"scrollable":true,"value":$offset,
                       "modifier":{"operations":[$size]}},"children":[$rows]}]}}
                 """.trimIndent(),
             ).getOrThrow()
@@ -118,13 +118,13 @@ class StreamExpressionTest {
     fun aColourFollowsAScrollsProgress() {
         val reports = mutableListOf<String>()
         val renderer = renderer(reports)
-        var ir by mutableStateOf(scrolled(0.0))
+        var ir by mutableStateOf(scrolled(0))
         compose.setContent { PyComposeTheme { renderer.Render(ir) } }
         compose.waitForIdle()
         // At the top: progress 0, the mix's start.
         assertTrue("top is white: ${band()}", band().blue > 0.9f && band().red > 0.9f)
 
-        ir = scrolled(100_000.0)
+        ir = scrolled(100_000)
         compose.mainClock.advanceTimeBy(2_000)
         compose.waitForIdle()
         // Scrolled to the end: progress 1, the mix's stop.

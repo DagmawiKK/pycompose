@@ -2,9 +2,6 @@ package com.pycompose.renderer
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.ScrollableState
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
@@ -215,42 +212,6 @@ internal fun rememberHostTooltipState(
 }
 
 /**
- * The host-owned scroll state for one node, reconciled to the app's desired offset.
- *
- * A scroll has no settled callback of its own: it settles when the fling
- * ends, so the report rides the idle transition and only when the offset
- * differs from the one composition found. A change of the desired offset
- * scrolls the holder there; the scroll's own progress makes that a settled
- * change like any other, and the app hears it back.
- *
- * @param offset Desired offset in pixels; null leaves the scroll to gestures.
- * @param report Action id settled offsets report to; null reports none.
- * @param observation Receives the observed value, the action id and its state.
- */
-@Composable
-internal fun rememberHostScrollState(
-    offset: Double?,
-    report: String?,
-    observation: Observation,
-): ScrollState {
-    // Top, like the drawer starts closed: a stated offset is a drive from
-    // there, and the drive's own settle is what reports the arrival.
-    val state = rememberScrollState(initial = 0)
-    val lastDesired = rememberSaveable { mutableStateOf<Double?>(null) }
-    OnDesired(state, offset, answered(report)) { wanted ->
-        if (wanted != lastDesired.value) {
-            val desired = wanted?.toInt()
-            if (desired != null && desired != state.value) {
-                state.scrollTo(desired)
-            }
-            lastDesired.value = wanted
-        }
-    }
-    ObserveIdlePosition(state, { state.value }, "offset", report, observation)
-    return state
-}
-
-/**
  * The modifier carrying this scroll, or the plain one when the app asked for none.
  *
  * A scroll holder fills no native parameter: it rides the component's own
@@ -264,44 +225,6 @@ fun ScrollState.attachTo(
     modifier: Modifier,
     scrollable: Boolean?,
 ): Modifier = if (scrollable == true) modifier.verticalScroll(this) else modifier
-
-/**
- * The host-owned lazy list state for one node, reconciled to the desired index.
- *
- * The holder is remembered under the node's key; a change of the desired index
- * scrolls the list there through the suspending call, and the settled index
- * reports when the scroll ends -- an item the app asked for lands at the top
- * exactly once, and a user's own fling reports where it came to rest.
- *
- * @param index Desired first visible item; null leaves the list to gestures.
- * @param report Action id settled indexes report to; null reports none.
- * @param observation Receives the observed value, the action id and its state.
- */
-@Composable
-internal fun rememberHostLazyListState(
-    index: Long?,
-    report: String?,
-    observation: Observation,
-): LazyListState {
-    val state = rememberLazyListState()
-    val lastDesired = rememberSaveable { mutableStateOf<Long?>(null) }
-    OnDesired(state, index, answered(report)) { wanted ->
-        if (wanted != lastDesired.value) {
-            val desired = wanted?.toInt()
-            if (
-                desired != null &&
-                (desired != state.firstVisibleItemIndex || state.firstVisibleItemScrollOffset != 0)
-            ) {
-                state.scrollToItem(desired)
-            }
-            lastDesired.value = wanted
-        }
-    }
-    ObserveIdlePosition(state, {
-        state.firstVisibleItemIndex
-    }, "firstVisibleIndex", report, observation)
-    return state
-}
 
 /** One idle policy for every native scroll holder, including drag-to-fling hand-off. */
 @Composable

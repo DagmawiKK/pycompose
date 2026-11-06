@@ -37,7 +37,8 @@ CATALOG = json.loads(SCHEMA_PATH.read_text())
 
 @pytest.mark.parametrize("value", [-1, 2**31])
 @pytest.mark.parametrize(
-    ("component", "prop"), [("Slider", "steps"), ("LazyColumn", "firstVisibleIndex")]
+    ("component", "prop"),
+    [("Slider", "steps"), ("LazyColumn", "firstVisibleItemIndex")],
 )
 def test_state_integers_cannot_overflow_or_violate_native_bounds(
     component: str, prop: str, value: int
@@ -225,7 +226,10 @@ def test_every_family_table_names_known_state_kinds() -> None:
     from pycompose.model.catalog.registry import STATE_KINDS
 
     assert set(STATE_KINDS) >= GATED_STATES
-    assert set(STATE_ATTACH_GATES) <= set(STATE_KINDS)
+    held = {
+        s.get("holder") for c in CATALOG["components"].values() if (s := c.get("state"))
+    }
+    assert set(STATE_ATTACH_GATES) <= held
     assert set(STATE_CONSTRUCTOR_PROPS) <= set(STATE_KINDS)
 
 
@@ -284,14 +288,13 @@ def _payload(registry: dict[str, Any], prop: str, component: str = STATEFUL) -> 
 
 
 def _with_scrollable(registry: dict[str, Any], prop_type: str) -> None:
-    """Give the sheet a scroll state with one deliberately typed gate prop.
+    """Declare the column's scroll gate with one deliberately chosen type.
 
     Args:
         registry: The loaded catalog.
         prop_type: The prop type to declare the gate with.
     """
-    _state(registry).update(kind="scroll")
-    registry["components"][STATEFUL]["props"]["scrollable"] = {"type": prop_type}
+    registry["components"]["Column"]["props"]["scrollable"] = {"type": prop_type}
 
 
 def test_a_numeric_desired_value_and_a_family_gate_load(

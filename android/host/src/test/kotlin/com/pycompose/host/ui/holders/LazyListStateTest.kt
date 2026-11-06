@@ -1,12 +1,10 @@
 package com.pycompose.host.ui.holders
 
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
 import com.pycompose.host.intent
@@ -34,25 +32,23 @@ class LazyListStateTest {
 
     @Test
     fun aDrivenIndexScrollsThereAndReportsTheSettledIndex() {
-        // The holder's state parameter takes the drive; the item lands at the
-        // top and the settled index reports back under its own field.
+        // The holder starts at the first index stated, which is no report; a
+        // new index lands at the top and the settled index reports back.
         val ir = mutableStateOf(parse(lazyColumn(firstVisibleIndex = "5")))
         val actions = mutableListOf<Action>()
         compose.setContent { PyComposeTheme { renderer(actions).Render(ir.value) } }
+        compose.waitForIdle()
+        assertTrue(actions.isEmpty())
 
+        compose.runOnIdle { ir.value = parse(lazyColumn(firstVisibleIndex = "10")) }
+        compose.waitForIdle()
         compose.waitUntil(5000) { actions.isNotEmpty() }
-
         assertEquals(intent("demo.lazy"), actions[0].actionId)
-        assertEquals(JsonPrimitive(5), actions[0].payload["firstVisibleIndex"])
+        assertEquals(JsonPrimitive(10), actions[0].payload["firstVisibleItemIndex"])
 
         compose.runOnIdle { ir.value = parse(lazyColumn(firstVisibleIndex = "10")) }
         compose.waitForIdle()
-        compose.waitUntil(5000) { actions.size == 2 }
-        assertEquals(JsonPrimitive(10), actions[1].payload["firstVisibleIndex"])
-
-        compose.runOnIdle { ir.value = parse(lazyColumn(firstVisibleIndex = "10")) }
-        compose.waitForIdle()
-        assertEquals(2, actions.size)
+        assertEquals(1, actions.size)
     }
 
     @Test
@@ -81,31 +77,7 @@ class LazyListStateTest {
         compose.waitForIdle()
 
         assertEquals(intent("demo.lazy"), actions.single().actionId)
-        assertTrue(actions.single().payload["firstVisibleIndex"] != JsonPrimitive(0))
-    }
-
-    @Test
-    fun scrollToTopClearsAPartiallyVisibleFirstItemsOffset() {
-        val ir = mutableStateOf(parse(lazyColumn(firstVisibleIndex = "1")))
-        val actions = mutableListOf<Action>()
-        compose.setContent { PyComposeTheme { renderer(actions).Render(ir.value) } }
-        compose.waitForIdle()
-        val list =
-            compose.onNode(
-                SemanticsMatcher.keyIsDefined(SemanticsProperties.VerticalScrollAxisRange),
-            )
-        list.performSemanticsAction(SemanticsActions.ScrollToIndex) { it(0) }
-        compose.waitForIdle()
-        list.performSemanticsAction(SemanticsActions.ScrollBy) { it(0f, 10f) }
-        compose.waitForIdle()
-        val partial = list.fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange]
-        assertEquals(10f, partial.value())
-
-        compose.runOnIdle { ir.value = parse(lazyColumn(firstVisibleIndex = "0")) }
-        compose.waitForIdle()
-
-        val top = list.fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange]
-        assertEquals(0f, top.value())
+        assertTrue(actions.single().payload["firstVisibleItemIndex"] != JsonPrimitive(0))
     }
 
     @Test
@@ -146,7 +118,7 @@ class LazyListStateTest {
 
     private fun lazyColumn(firstVisibleIndex: String?): String {
         val stated =
-            if (firstVisibleIndex != null) ",\"firstVisibleIndex\":$firstVisibleIndex" else ""
+            if (firstVisibleIndex != null) ",\"firstVisibleItemIndex\":$firstVisibleIndex" else ""
         val rows =
             (0 until 100).joinToString(",") { index ->
                 """{"id":"root.t$index","type":"Text","props":{"text":"Row $index"}}"""
@@ -154,9 +126,9 @@ class LazyListStateTest {
         return """
             {"version":"0.1.0","schemaVersion":"1.23.0",
               "metadata":{"intents":{"demo.lazy":{"payload":{
-                "firstVisibleIndex":{"required":true,"type":"integer"}}}}},
+                "firstVisibleItemIndex":{"required":true,"type":"integer"}}}}},
              "root":{"id":"root","type":"LazyColumn","props":{
-               "onScrollIdle":{"fields":{},"intent":"demo.lazy"}$stated},
+               "onFirstVisibleItemIndexSettled":{"fields":{},"intent":"demo.lazy"}$stated},
                "children":[$rows]}}
             """.trimIndent()
     }

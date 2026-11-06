@@ -1406,20 +1406,24 @@
         "modifier": {
           "type": "modifier"
         },
-        "offset": {
-          "type": "number"
+        "scrollable": {
+          "type": "boolean"
         },
-        "onScrollIdle": {
+        "value": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647,
+          "since": "1.23.0"
+        },
+        "onValueSettled": {
           "type": "actionId",
           "payload": [
             {
-              "name": "offset",
-              "type": "number"
+              "name": "value",
+              "type": "integer"
             }
-          ]
-        },
-        "scrollable": {
-          "type": "boolean"
+          ],
+          "since": "1.23.0"
         }
       },
       "children": {
@@ -1427,17 +1431,20 @@
         "provides": "androidx.compose.foundation.layout.ColumnScope",
         "min": 0
       },
-      "reshaped": [
-        "offset",
-        "onScrollIdle",
-        "scrollable"
-      ],
       "state": {
         "native": "scrollState",
-        "kind": "scroll",
-        "value": "offset",
-        "report": "onScrollIdle"
-      }
+        "kind": "positional",
+        "holder": "androidx.compose.foundation.ScrollState",
+        "factory": "androidx.compose.foundation.rememberScrollState",
+        "initial": "initial",
+        "position": "value",
+        "drive": "animateScrollTo"
+      },
+      "reshaped": [
+        "value",
+        "onValueSettled",
+        "scrollable"
+      ]
     },
     "Crossfade": {
       "package": "androidx.compose.animation",
@@ -2694,17 +2701,21 @@
         "modifier": {
           "type": "modifier"
         },
-        "offset": {
-          "type": "number"
+        "value": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647,
+          "since": "1.23.0"
         },
-        "onScrollIdle": {
+        "onValueSettled": {
           "type": "actionId",
           "payload": [
             {
-              "name": "offset",
-              "type": "number"
+              "name": "value",
+              "type": "integer"
             }
-          ]
+          ],
+          "since": "1.23.0"
         }
       },
       "children": {
@@ -2715,13 +2726,16 @@
       "scope": "androidx.compose.material3.ExposedDropdownMenuBoxScope",
       "state": {
         "native": "scrollState",
-        "kind": "scroll",
-        "value": "offset",
-        "report": "onScrollIdle"
+        "kind": "positional",
+        "holder": "androidx.compose.foundation.ScrollState",
+        "factory": "androidx.compose.foundation.rememberScrollState",
+        "initial": "initial",
+        "position": "value",
+        "drive": "animateScrollTo"
       },
       "reshaped": [
-        "offset",
-        "onScrollIdle"
+        "value",
+        "onValueSettled"
       ]
     },
     "ExposedDropdownMenuBox": {
@@ -4817,19 +4831,21 @@
         "modifier": {
           "type": "modifier"
         },
-        "firstVisibleIndex": {
+        "firstVisibleItemIndex": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 2147483647
+          "maximum": 2147483647,
+          "since": "1.23.0"
         },
-        "onScrollIdle": {
+        "onFirstVisibleItemIndexSettled": {
           "type": "actionId",
           "payload": [
             {
-              "name": "firstVisibleIndex",
+              "name": "firstVisibleItemIndex",
               "type": "integer"
             }
-          ]
+          ],
+          "since": "1.23.0"
         },
         "verticalArrangement": {
           "type": "enum",
@@ -4852,13 +4868,16 @@
       },
       "state": {
         "native": "state",
-        "kind": "lazyList",
-        "value": "firstVisibleIndex",
-        "report": "onScrollIdle"
+        "kind": "positional",
+        "holder": "androidx.compose.foundation.lazy.LazyListState",
+        "factory": "androidx.compose.foundation.lazy.rememberLazyListState",
+        "initial": "initialFirstVisibleItemIndex",
+        "position": "firstVisibleItemIndex",
+        "drive": "animateScrollToItem"
       },
       "reshaped": [
-        "firstVisibleIndex",
-        "onScrollIdle"
+        "firstVisibleItemIndex",
+        "onFirstVisibleItemIndexSettled"
       ]
     },
     "LazyRow": {
@@ -4899,19 +4918,21 @@
         "modifier": {
           "type": "modifier"
         },
-        "firstVisibleIndex": {
+        "firstVisibleItemIndex": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 2147483647
+          "maximum": 2147483647,
+          "since": "1.23.0"
         },
-        "onScrollIdle": {
+        "onFirstVisibleItemIndexSettled": {
           "type": "actionId",
           "payload": [
             {
-              "name": "firstVisibleIndex",
+              "name": "firstVisibleItemIndex",
               "type": "integer"
             }
-          ]
+          ],
+          "since": "1.23.0"
         }
       },
       "children": {
@@ -4920,13 +4941,16 @@
       },
       "state": {
         "native": "state",
-        "kind": "lazyList",
-        "value": "firstVisibleIndex",
-        "report": "onScrollIdle"
+        "kind": "positional",
+        "holder": "androidx.compose.foundation.lazy.LazyListState",
+        "factory": "androidx.compose.foundation.lazy.rememberLazyListState",
+        "initial": "initialFirstVisibleItemIndex",
+        "position": "firstVisibleItemIndex",
+        "drive": "animateScrollToItem"
       },
       "reshaped": [
-        "firstVisibleIndex",
-        "onScrollIdle"
+        "firstVisibleItemIndex",
+        "onFirstVisibleItemIndexSettled"
       ]
     },
     "LeadingIconTab": {

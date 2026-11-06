@@ -41,8 +41,6 @@ INTERACTION_REPORTS = {"press": "pressed", "focus": "focused", "hover": "hovered
 STATE_KINDS = (
     "sheet",
     "slider",
-    "scroll",
-    "lazyList",
     "tooltip",
     "textInput",
     "search",
@@ -52,14 +50,14 @@ STATE_KINDS = (
 A family is one host-side implementation: a sheet reconciles a desired
 open/closed value for a modal surface that has to be composed to be shown at
 all; a slider drives the
-thumb to a desired number and reports the settled one; scroll and lazyList
-report a resting position once scrolling comes to rest; a tooltip reconciles a
+thumb to a desired number and reports the settled one; a tooltip reconciles a
 desired visible value through hover, focus and long-press gestures; textInput
 reconciles text and selection with an atomic, numbered edit report; search
 shares one editing projection and one expansion state across a collapsed bar
 and every expanded surface. A holder with one scrollable position (a pager's
-page) or one anchor of an enum (a drawer open or closed, a swipe settled or
-dismissed) is derived from the pin instead (``positional``, ``anchored``). The
+page, a list's first visible item, a scroll's offset) or one anchor of an enum
+(a drawer open or closed, a swipe settled or dismissed) is derived from the pin
+instead (``positional``, ``anchored``). The
 vocabulary is closed for the same reason the interaction kinds are: the host
 must not be asked to drive a state object whose transitions it does not
 understand.
@@ -68,8 +66,6 @@ understand.
 STATE_HOLDERS = {
     "sheet": "androidx.compose.material3.SheetState",
     "slider": "androidx.compose.material3.SliderState",
-    "scroll": "androidx.compose.foundation.ScrollState",
-    "lazyList": "androidx.compose.foundation.lazy.LazyListState",
     "tooltip": "androidx.compose.material3.TooltipState",
     "textInput": "androidx.compose.foundation.text.input.TextFieldState",
     "search": "androidx.compose.material3.SearchBarState",

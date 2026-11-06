@@ -1610,9 +1610,9 @@ class Column(Component):
         id: str | None = None,
         horizontal_alignment: _ColumnHorizontalAlignment | None = None,
         modifier: Modifier | None = None,
-        offset: int | float | Expression | None = None,
-        on_scroll_idle: ActionTarget | None = None,
+        on_value_settled: ActionTarget | None = None,
         scrollable: bool | None = None,
+        value: int | None = None,
         vertical_arrangement: _ArrangementVertical | None = None,
         children: Content = (),
     ) -> None:
@@ -1623,9 +1623,9 @@ class Column(Component):
             id: Stable instance key; None derives the node's path id.
             horizontal_alignment: Native horizontalAlignment; None uses its default.
             modifier: Native modifier; None uses its default.
-            offset: Native offset; None uses its default.
-            on_scroll_idle: Native onScrollIdle; None uses its default.
+            on_value_settled: Native onValueSettled; None uses its default.
             scrollable: Native scrollable; None uses its default.
+            value: Native value; None uses its default.
             vertical_arrangement: Native verticalArrangement; None uses its default.
             children: Ordered child nodes with stable keys.
 
@@ -1635,12 +1635,12 @@ class Column(Component):
         props: dict[str, PropValue] = {}
         if horizontal_alignment is not None:
             props["horizontal_alignment"] = horizontal_alignment
-        if offset is not None:
-            props["offset"] = offset
-        if on_scroll_idle is not None:
-            props["on_scroll_idle"] = on_scroll_idle
+        if on_value_settled is not None:
+            props["on_value_settled"] = on_value_settled
         if scrollable is not None:
             props["scrollable"] = scrollable
+        if value is not None:
+            props["value"] = value
         if vertical_arrangement is not None:
             props["vertical_arrangement"] = vertical_arrangement
         if contents and children:
@@ -2784,12 +2784,12 @@ class ExposedDropdownMenu(Component):
         expanded: bool,
         match_anchor_width: bool | None = None,
         modifier: Modifier | None = None,
-        offset: int | float | Expression | None = None,
         on_dismiss_request: ActionTarget,
-        on_scroll_idle: ActionTarget | None = None,
+        on_value_settled: ActionTarget | None = None,
         shadow_elevation: int | float | Expression | Binding | None = None,
         shape: JsonValue | None = None,
         tonal_elevation: int | float | Expression | Binding | None = None,
+        value: int | None = None,
         children: Content = (),
         content: Content | None = None,
     ) -> None:
@@ -2803,12 +2803,12 @@ class ExposedDropdownMenu(Component):
             expanded: Required native expanded.
             match_anchor_width: Native matchAnchorWidth; None uses its default.
             modifier: Native modifier; None uses its default.
-            offset: Native offset; None uses its default.
             on_dismiss_request: Required native onDismissRequest.
-            on_scroll_idle: Native onScrollIdle; None uses its default.
+            on_value_settled: Native onValueSettled; None uses its default.
             shadow_elevation: Native shadowElevation; None uses its default.
             shape: Native shape; None uses its default.
             tonal_elevation: Native tonalElevation; None uses its default.
+            value: Native value; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
 
@@ -2823,17 +2823,17 @@ class ExposedDropdownMenu(Component):
         props["expanded"] = expanded
         if match_anchor_width is not None:
             props["match_anchor_width"] = match_anchor_width
-        if offset is not None:
-            props["offset"] = offset
         props["on_dismiss_request"] = on_dismiss_request
-        if on_scroll_idle is not None:
-            props["on_scroll_idle"] = on_scroll_idle
+        if on_value_settled is not None:
+            props["on_value_settled"] = on_value_settled
         if shadow_elevation is not None:
             props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
         if shape is not None:
             props["shape"] = shape
         if tonal_elevation is not None:
             props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
+        if value is not None:
+            props["value"] = value
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -4480,10 +4480,10 @@ class LazyColumn(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        first_visible_index: int | None = None,
+        first_visible_item_index: int | None = None,
         horizontal_alignment: _AlignmentHorizontal | None = None,
         modifier: Modifier | None = None,
-        on_scroll_idle: ActionTarget | None = None,
+        on_first_visible_item_index_settled: ActionTarget | None = None,
         reverse_layout: bool | None = None,
         user_scroll_enabled: bool | None = None,
         vertical_arrangement: _LazyColumnVerticalArrangement | None = None,
@@ -4497,10 +4497,12 @@ class LazyColumn(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
-            first_visible_index: Native firstVisibleIndex; None uses its default.
+            first_visible_item_index: Native firstVisibleItemIndex; None uses its
+                default.
             horizontal_alignment: Native horizontalAlignment; None uses its default.
             modifier: Native modifier; None uses its default.
-            on_scroll_idle: Native onScrollIdle; None uses its default.
+            on_first_visible_item_index_settled: Native
+                onFirstVisibleItemIndexSettled; None uses its default.
             reverse_layout: Native reverseLayout; None uses its default.
             user_scroll_enabled: Native userScrollEnabled; None uses its default.
             vertical_arrangement: Native verticalArrangement; None uses its default.
@@ -4514,12 +4516,14 @@ class LazyColumn(Component):
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
-        if first_visible_index is not None:
-            props["first_visible_index"] = first_visible_index
+        if first_visible_item_index is not None:
+            props["first_visible_item_index"] = first_visible_item_index
         if horizontal_alignment is not None:
             props["horizontal_alignment"] = horizontal_alignment
-        if on_scroll_idle is not None:
-            props["on_scroll_idle"] = on_scroll_idle
+        if on_first_visible_item_index_settled is not None:
+            props["on_first_visible_item_index_settled"] = (
+                on_first_visible_item_index_settled
+            )
         if reverse_layout is not None:
             props["reverse_layout"] = reverse_layout
         if user_scroll_enabled is not None:
@@ -4552,9 +4556,9 @@ class LazyRow(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        first_visible_index: int | None = None,
+        first_visible_item_index: int | None = None,
         modifier: Modifier | None = None,
-        on_scroll_idle: ActionTarget | None = None,
+        on_first_visible_item_index_settled: ActionTarget | None = None,
         reverse_layout: bool | None = None,
         user_scroll_enabled: bool | None = None,
         vertical_alignment: _AlignmentVertical | None = None,
@@ -4568,9 +4572,11 @@ class LazyRow(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
-            first_visible_index: Native firstVisibleIndex; None uses its default.
+            first_visible_item_index: Native firstVisibleItemIndex; None uses its
+                default.
             modifier: Native modifier; None uses its default.
-            on_scroll_idle: Native onScrollIdle; None uses its default.
+            on_first_visible_item_index_settled: Native
+                onFirstVisibleItemIndexSettled; None uses its default.
             reverse_layout: Native reverseLayout; None uses its default.
             user_scroll_enabled: Native userScrollEnabled; None uses its default.
             vertical_alignment: Native verticalAlignment; None uses its default.
@@ -4584,10 +4590,12 @@ class LazyRow(Component):
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
-        if first_visible_index is not None:
-            props["first_visible_index"] = first_visible_index
-        if on_scroll_idle is not None:
-            props["on_scroll_idle"] = on_scroll_idle
+        if first_visible_item_index is not None:
+            props["first_visible_item_index"] = first_visible_item_index
+        if on_first_visible_item_index_settled is not None:
+            props["on_first_visible_item_index_settled"] = (
+                on_first_visible_item_index_settled
+            )
         if reverse_layout is not None:
             props["reverse_layout"] = reverse_layout
         if user_scroll_enabled is not None:

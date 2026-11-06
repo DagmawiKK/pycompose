@@ -262,19 +262,56 @@ def test_a_hold_is_stale_only_when_its_own_overload_derives(
 def test_a_bound_holder_takes_its_family_projection() -> None:
     from pycompose_codegen.derive.rules import reshape
 
-    entry = {"props": {}, "state": {"native": "state", "kind": "scroll"}}
-    shaped = reshape("Scroll", entry, {}, _plan())
+    entry = {"props": {}, "state": {"native": "state", "kind": "tooltip"}}
+    shaped = reshape("Tooltip", entry, {}, _plan())
     assert shaped["state"] == {
         "native": "state",
-        "kind": "scroll",
-        "value": "offset",
-        "report": "onScrollIdle",
+        "kind": "tooltip",
+        "value": "visible",
+        "report": "onVisibilityChange",
     }
-    assert shaped["props"]["onScrollIdle"] == {
+    assert shaped["props"]["onVisibilityChange"] == {
         "type": "actionId",
-        "payload": [{"name": "offset", "type": "number"}],
+        "payload": [{"name": "visible", "type": "boolean"}],
     }
-    assert shaped["reshaped"] == ["offset", "onScrollIdle"]
+    assert shaped["reshaped"][:2] == ["visible", "onVisibilityChange"]
+
+
+def test_an_attached_holder_rides_the_modifier_behind_its_gate(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from pycompose_codegen.derive import rules
+
+    scroll = {
+        "holder": "androidx.compose.foundation.ScrollState",
+        "factory": "androidx.compose.foundation.rememberScrollState",
+        "initial": "initial",
+        "position": "value",
+        "drive": "animateScrollTo",
+    }
+    monkeypatch.setattr(
+        rules,
+        "positional_holders",
+        lambda _found: {"androidx/compose/foundation/ScrollState": scroll},
+    )
+    decision = {"attach": "androidx.compose.foundation.ScrollState"}
+    entry = rules.attached("Column", {"props": {}}, decision, None)  # type: ignore[arg-type]
+    shaped = rules.reshape("Column", entry, decision, _plan())
+    assert shaped["state"] == {"native": "scrollState", "kind": "positional", **scroll}
+    assert shaped["props"]["scrollable"] == {"type": "boolean"}
+    assert shaped["reshaped"] == ["value", "onValueSettled", "scrollable"]
+
+
+def test_an_attach_naming_no_attached_holder_is_refused(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from pycompose_codegen.derive import rules
+    from pycompose_codegen.derive.candidate_props import CandidateError
+
+    monkeypatch.setattr(rules, "positional_holders", lambda _found: {})
+    decision = {"attach": "androidx.compose.foundation.ScrollState"}
+    with pytest.raises(CandidateError, match="rides no modifier"):
+        rules.attached("Column", {"props": {}}, decision, None)  # type: ignore[arg-type]
 
 
 def test_a_family_with_held_props_projects_them_after_its_report() -> None:
@@ -294,8 +331,8 @@ def test_a_family_with_held_props_projects_them_after_its_report() -> None:
 def test_a_declined_holder_is_not_bound() -> None:
     from pycompose_codegen.derive.rules import reshape
 
-    entry = {"props": {}, "state": {"native": "scrollState", "kind": "scroll"}}
-    shaped = reshape("DropdownMenu", entry, {"holder": False}, _plan())
+    entry = {"props": {}, "state": {"native": "state", "kind": "tooltip"}}
+    shaped = reshape("TooltipBox", entry, {"holder": False}, _plan())
     assert "state" not in shaped
     assert shaped["props"] == {}
 

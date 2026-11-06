@@ -20,14 +20,14 @@ data class Positional<H : ScrollableState>(
 )
 
 /**
- * The node's positional holder -- a pager's page, a carousel's item, any holder with one
- * scrollable position the pin derives. The app states the position it wants and the host
- * drives there; the position it settles on, by gesture or by drive, is reported once scrolling
- * comes to rest. Its positions are the children Python sent.
+ * The node's positional holder -- a pager's page, a list's first visible item, a scroll's
+ * offset, any holder with one scrollable position the pin derives. The app states the position
+ * it wants and the host drives there; the holder bounds it, and the position it settles on, by
+ * gesture or by drive, is reported once scrolling comes to rest.
  *
  * @param desired Desired position; null leaves scrolling to gestures.
  * @param report Action id settled positions report to; null reports none.
- * @param count How many positions there are, read whenever the holder asks.
+ * @param count How many children Python sent, read whenever a counting holder asks.
  * @param holder How the pin makes, reads and drives this holder.
  * @return The holder.
  */
@@ -39,12 +39,12 @@ fun <H : ScrollableState> RenderContext.positional(
     holder: Positional<H>,
 ): H {
     val (create, position, drive) = holder
-    val positions = rememberUpdatedState(count)
-    val state = create(desired?.toInt() ?: 0) { positions.value }
+    val children = rememberUpdatedState(count)
+    val state = create(desired?.toInt() ?: 0) { children.value }
     val lastDesired = rememberSaveable { mutableStateOf<Long?>(null) }
     OnDesired(state, desired, answered(report)) { wanted ->
         if (wanted != lastDesired.value) {
-            val target = wanted?.toInt()?.coerceIn(0, (positions.value - 1).coerceAtLeast(0))
+            val target = wanted?.toInt()
             if (target != null && target != position(state)) drive(state, target)
             lastDesired.value = wanted
         }

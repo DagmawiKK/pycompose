@@ -32,25 +32,24 @@ class ScrollStateTest {
 
     @Test
     fun aColumnBehindTheGateScrollsThereAndReportsTheSettledOffset() {
-        // The holder rides the modifier behind the app's boolean; a driven
-        // offset settles like any scroll and reports the pixel it came to.
-        val ir = mutableStateOf(parse(column(offset = "300.0", scrollable = true)))
+        // The holder rides the modifier behind the app's boolean. It starts at
+        // the first offset stated, which is no report; a new offset settles
+        // like any scroll and reports the pixel it came to.
+        val ir = mutableStateOf(parse(column(offset = 300, scrollable = true)))
         val actions = mutableListOf<Action>()
         compose.setContent { PyComposeTheme { renderer(actions).Render(ir.value) } }
+        compose.waitForIdle()
+        assertTrue(actions.isEmpty())
 
+        compose.runOnIdle { ir.value = parse(column(offset = 600, scrollable = true)) }
+        compose.waitForIdle()
         compose.waitUntil(5000) { actions.isNotEmpty() }
-
         assertEquals(intent("demo.scroll"), actions[0].actionId)
-        assertEquals(JsonPrimitive(300), actions[0].payload["offset"])
+        assertEquals(JsonPrimitive(600), actions[0].payload["value"])
 
-        compose.runOnIdle { ir.value = parse(column(offset = "600.0", scrollable = true)) }
+        compose.runOnIdle { ir.value = parse(column(offset = 600, scrollable = true)) }
         compose.waitForIdle()
-        compose.waitUntil(5000) { actions.size == 2 }
-        assertEquals(JsonPrimitive(600), actions[1].payload["offset"])
-
-        compose.runOnIdle { ir.value = parse(column(offset = "600.0", scrollable = true)) }
-        compose.waitForIdle()
-        assertEquals(2, actions.size)
+        assertEquals(1, actions.size)
     }
 
     @Test
@@ -84,13 +83,13 @@ class ScrollStateTest {
 
         assertEquals(actions.toString(), 1, actions.size)
         assertEquals(intent("demo.scroll"), actions.single().actionId)
-        assertTrue(actions.single().payload["offset"] != JsonPrimitive(0))
+        assertTrue(actions.single().payload["value"] != JsonPrimitive(0))
     }
 
     @Test
     fun restoringTheScrollDoesNotReapplyAnUnchangedDesiredOffset() {
         val restoration = StateRestorationTester(compose)
-        val ir = parse(column(offset = "0.0", scrollable = true))
+        val ir = parse(column(offset = 0, scrollable = true))
         val actions = mutableListOf<Action>()
         restoration.setContent { PyComposeTheme { renderer(actions).Render(ir) } }
         compose.waitForIdle()
@@ -124,11 +123,11 @@ class ScrollStateTest {
     private fun parse(source: String): ValidatedIr = IrParser().parse(source).getOrThrow()
 
     private fun column(
-        offset: String?,
+        offset: Int?,
         scrollable: Boolean,
     ): String {
         val gate = if (scrollable) ",\"scrollable\":true" else ""
-        val stated = if (offset != null) ",\"offset\":$offset" else ""
+        val stated = if (offset != null) ",\"value\":$offset" else ""
         val rows =
             (0 until 100).joinToString(",") { index ->
                 """{"id":"root.t$index","type":"Text","props":{"text":"Row $index"}}"""
@@ -136,9 +135,9 @@ class ScrollStateTest {
         return """
             {"version":"0.1.0","schemaVersion":"1.23.0",
               "metadata":{"intents":{"demo.scroll":{"payload":{
-                "offset":{"required":true,"type":"number"}}}}},
+                "value":{"required":true,"type":"integer"}}}}},
              "root":{"id":"root","type":"Column","props":{
-               "onScrollIdle":{"fields":{},"intent":"demo.scroll"}$stated$gate},
+               "onValueSettled":{"fields":{},"intent":"demo.scroll"}$stated$gate},
                "children":[$rows]}}
             """.trimIndent()
     }

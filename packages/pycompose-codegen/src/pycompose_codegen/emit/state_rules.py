@@ -24,7 +24,6 @@ from pycompose_codegen.emit.state_anchors import (
     validate_optional_field,
 )
 from pycompose_codegen.emit.state_families import (
-    STATE_ATTACH_GATES,
     STATE_CONSTRUCTOR_PROPS,
 )
 
@@ -309,10 +308,9 @@ def _validate_family_props(where: str, kind: str, props: dict[str, Any]) -> None
     """Check the props a family needs beyond the desired value and its report.
 
     A family's holder may need more than the two props the block names: a
-    ``SliderState`` is constructed from the range and the steps, and a family
-    whose holder rides the call's modifier gates the attach with a boolean
-    prop. Both are ordinary props the app states, held by the adapter on the
-    holder's behalf, so the block's own keys stay bounded.
+    ``SliderState`` is constructed from the range and the steps. They are
+    ordinary props the app states, held by the adapter on the holder's behalf,
+    so the block's own keys stay bounded.
 
     Args:
         where: Prefix for error messages.
@@ -322,11 +320,8 @@ def _validate_family_props(where: str, kind: str, props: dict[str, Any]) -> None
     missing = [
         extra for extra in STATE_CONSTRUCTOR_PROPS.get(kind, ()) if extra not in props
     ]
-    gate = STATE_ATTACH_GATES.get(kind)
     if missing:
         die(f"{where}: state kind {kind!r} needs the props {', '.join(missing)}")
-    if gate in props and props[gate].get("type") != "boolean":
-        die(f"{where}: prop {gate!r} must be a boolean")
     if kind == "sheet":
         validate_anchor(where, "value", props["value"], SHEET_VALUES)
         _validate_report(where, {"report": "onValueChange"}, props, "string")

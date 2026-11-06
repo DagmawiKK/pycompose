@@ -42,8 +42,12 @@ def _state_imports(entry: dict[str, Any]) -> set[str]:
         return qualified
     if state["kind"] == "positional":
         # One runtime for every positional holder; its count is the children.
-        return {"com.pycompose.renderer.positional", "com.pycompose.renderer.unslotted"}
-    qualified = {f"com.pycompose.renderer.{state_call(state['kind'])}"}
+        qualified = {
+            "com.pycompose.renderer.positional",
+            "com.pycompose.renderer.unslotted",
+        }
+    else:
+        qualified = {f"com.pycompose.renderer.{state_call(state['kind'])}"}
     if holder_streams(state["kind"], state.get("holder")):
         qualified.add("com.pycompose.renderer.publish")
     if attach_gate(state, entry.get("props", {})) is not None:

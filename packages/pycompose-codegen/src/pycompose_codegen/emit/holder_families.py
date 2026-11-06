@@ -15,6 +15,7 @@ from pycompose_codegen.emit.adapters.policy import camel
 from pycompose_codegen.emit.rules import die
 from pycompose_codegen.emit.state_families import (
     anchored_props,
+    attach_gate,
     positional_props,
     settled_name,
 )
@@ -42,6 +43,9 @@ def validate_positional(
             die(f"{where}: positional needs {key!r}")
     if positional_props(state).keys() - props.keys():
         die(f"{where}: the position and its report must be among the props")
+    gate = attach_gate(state, props)
+    if gate is not None and props[gate].get("type") != "boolean":
+        die(f"{where}: prop {gate!r} must be a boolean")
 
 
 ANCHORED_KEYS = frozenset(
@@ -99,7 +103,7 @@ def positional_locals(state: dict[str, Any]) -> list[str]:
         f"    model.props.{camel(position)}, model.props.{report},",
         "    model.children.unslotted().size,",
         "    com.pycompose.renderer.Positional(",
-        f"        {{ initial, count -> {create} }},",
+        f"        {{ initial, {'count' if count else '_'} -> {create} }},",
         f"        {{ it.{position} }},",
         f"    ) {{ holder, target -> holder.{state['drive']}(target) }},",
         ")",

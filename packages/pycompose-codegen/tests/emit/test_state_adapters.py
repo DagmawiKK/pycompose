@@ -84,31 +84,37 @@ SLIDER = {
 
 SCROLL = {
     "props": {
-        "offset": {"type": "number"},
-        "onScrollIdle": {"type": "actionId", "payload": []},
+        "value": {"type": "integer"},
+        "onValueSettled": {"type": "actionId", "payload": []},
         "scrollable": {"type": "boolean"},
     },
     "children": {"allowed": True},
     "state": {
         "native": "scrollState",
-        "kind": "scroll",
-        "value": "offset",
-        "report": "onScrollIdle",
+        "kind": "positional",
+        "holder": "androidx.compose.foundation.ScrollState",
+        "factory": "androidx.compose.foundation.rememberScrollState",
+        "initial": "initial",
+        "position": "value",
+        "drive": "animateScrollTo",
     },
 }
 """A scroll-gated column entry: the holder rides the modifier, not a parameter."""
 
 LAZY = {
     "props": {
-        "firstVisibleIndex": {"type": "integer"},
-        "onScrollIdle": {"type": "actionId", "payload": []},
+        "firstVisibleItemIndex": {"type": "integer"},
+        "onFirstVisibleItemIndexSettled": {"type": "actionId", "payload": []},
     },
     "children": {"allowed": False},
     "state": {
         "native": "state",
-        "kind": "lazyList",
-        "value": "firstVisibleIndex",
-        "report": "onScrollIdle",
+        "kind": "positional",
+        "holder": "androidx.compose.foundation.lazy.LazyListState",
+        "factory": "androidx.compose.foundation.lazy.rememberLazyListState",
+        "initial": "initialFirstVisibleItemIndex",
+        "position": "firstVisibleItemIndex",
+        "drive": "animateScrollToItem",
     },
 }
 """A lazy-list entry: the state parameter takes the holder directly."""
@@ -139,10 +145,8 @@ def test_a_slider_carries_its_range_and_steps_to_the_holder() -> None:
 def test_a_scroll_holder_rides_the_modifier_behind_a_boolean() -> None:
     """The scroll attaches through the modifier, gated by the app's prop."""
     adapter = render("Column", SCROLL)
-    assert (
-        "val scrollStateValue = context.scrollState("
-        "model.props.offset, model.props.onScrollIdle)" in adapter
-    )
+    assert "val scrollStateValue = context.positional(" in adapter
+    assert "model.props.value, model.props.onValueSettled," in adapter
     assert (
         "modifier = scrollStateValue.attachTo(modifier, model.props.scrollable)"
         in adapter
@@ -156,12 +160,13 @@ def test_a_scroll_holder_rides_the_modifier_behind_a_boolean() -> None:
 def test_a_lazy_list_fills_the_state_parameter() -> None:
     """LazyColumn's state parameter takes the holder directly."""
     adapter = render("LazyColumn", LAZY)
+    assert "val stateValue = context.positional(" in adapter
     assert (
-        "val stateValue = context.lazyListState("
-        "model.props.firstVisibleIndex, model.props.onScrollIdle)" in adapter
+        "model.props.firstVisibleItemIndex, model.props.onFirstVisibleItemIndexSettled,"
+        in adapter
     )
     assert "state = stateValue" in adapter
-    assert "firstVisibleIndex =" not in adapter
+    assert "firstVisibleItemIndex =" not in adapter
 
 
 def test_a_tooltip_holder_receives_persistence_after_value_and_report() -> None:

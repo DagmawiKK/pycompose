@@ -133,7 +133,8 @@
   },
   "Column": {
     "decision": {
-      "category": "layout"
+      "category": "layout",
+      "attach": "androidx.compose.foundation.ScrollState"
     },
     "patch": {
       "props": {
@@ -143,37 +144,11 @@
             "centerHorizontally",
             "end"
           ]
-        },
-        "offset": {
-          "type": "number"
-        },
-        "onScrollIdle": {
-          "type": "actionId",
-          "payload": [
-            {
-              "name": "offset",
-              "type": "number"
-            }
-          ]
-        },
-        "scrollable": {
-          "type": "boolean"
         }
       },
       "children": {
         "kind": null,
         "min": 0
-      },
-      "reshaped": [
-        "offset",
-        "onScrollIdle",
-        "scrollable"
-      ],
-      "state": {
-        "native": "scrollState",
-        "kind": "scroll",
-        "value": "offset",
-        "report": "onScrollIdle"
       }
     }
   },

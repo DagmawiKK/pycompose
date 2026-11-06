@@ -92,4 +92,4 @@ def test_a_prop_whose_kotlin_type_the_lock_never_states_is_refused() -> None:
     # An integer wire value may be an index, a timestamp or a selection range;
     # the lock states the Kotlin type where it knows it and refuses otherwise.
     assert "animation" not in CATALOG["components"]["TextField"]["props"]["selection"]
-    assert "animation" not in CATALOG["components"]["Column"]["props"]["offset"]
+    assert "animation" not in CATALOG["components"]["Column"]["props"]["value"]

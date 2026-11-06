@@ -56,7 +56,8 @@ def held_props(entry: dict[str, Any]) -> set[str]:
     if state.get("kind") == "properties":
         return set(property_props(state))
     if state.get("kind") == "positional":
-        return set(positional_props(state))
+        gate = attach_gate(state, entry.get("props", {}))
+        return set(positional_props(state)) | ({gate} if gate else set())
     if state.get("kind") == "anchored":
         return set(anchored_props(state))
     held = {
