@@ -81,6 +81,7 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.AlertDialogDefaults.TonalElevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -588,6 +589,7 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.BottomAppBarDefaults.ContainerElevation",
+          "nativeValue": 0.0,
           "since": "1.23.0",
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
@@ -636,6 +638,7 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.BottomAppBarDefaults.ContainerElevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -695,18 +698,21 @@
         "sheetMaxWidth": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.BottomSheetDefaults.SheetMaxWidth",
+          "nativeValue": 640.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
         "sheetPeekHeight": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.BottomSheetDefaults.SheetPeekHeight",
+          "nativeValue": 56.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
         "sheetShadowElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.BottomSheetDefaults.Elevation",
+          "nativeValue": 1.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -722,6 +728,7 @@
         "sheetTonalElevation": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -1112,6 +1119,7 @@
         "expandedHeight": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.TopAppBarExpandedHeight",
+          "nativeValue": 64.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -1248,6 +1256,7 @@
         "gapSize": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularIndicatorTrackGapSize",
+          "nativeValue": 4.0,
           "since": "1.23.0",
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
@@ -1265,6 +1274,7 @@
         "strokeWidth": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularStrokeWidth",
+          "nativeValue": 4.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -1309,6 +1319,7 @@
         "gapSize": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularIndicatorTrackGapSize",
+          "nativeValue": 4.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -1335,6 +1346,7 @@
         "strokeWidth": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.CircularStrokeWidth",
+          "nativeValue": 4.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -1579,6 +1591,7 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.DatePickerDefaults.TonalElevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -1677,6 +1690,7 @@
         "drawerTonalElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.DrawerDefaults.DismissibleDrawerElevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -1781,6 +1795,7 @@
         "shadowElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -1792,6 +1807,7 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -1847,6 +1863,7 @@
         "shadowElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.MenuDefaults.ShadowElevation",
+          "nativeValue": 3.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -1858,6 +1875,7 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.MenuDefaults.TonalElevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -2517,6 +2535,7 @@
         "shadowElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -2528,6 +2547,7 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -2571,12 +2591,14 @@
         "shadowElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -2640,6 +2662,7 @@
         "shadowElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.MenuDefaults.ShadowElevation",
+          "nativeValue": 3.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -2651,6 +2674,7 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.MenuDefaults.TonalElevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -3674,6 +3698,87 @@
         "min": 0
       }
     },
+    "HorizontalCenteredHeroCarousel": {
+      "package": "androidx.compose.material3.carousel",
+      "category": "material3",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/carousel/CarouselState;Landroidx/compose/ui/Modifier;FFLandroidx/compose/foundation/gestures/TargetedFlingBehavior;ZFFLandroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "HorizontalCenteredHeroCarousel-p2lB3Bg",
+        "name": "HorizontalCenteredHeroCarousel",
+        "owner": "androidx.compose.material3.carousel.CarouselKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "itemSpacing": {
+          "type": "dp",
+          "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "maxItemWidth": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.ui.unit.Dp.Companion.Unspecified",
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "maxSmallItemWidth": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.carousel.CarouselDefaults.MaxSmallItemSize",
+          "nativeValue": 56.0,
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "minSmallItemWidth": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.carousel.CarouselDefaults.MinSmallItemSize",
+          "nativeValue": 40.0,
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "userScrollEnabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "currentItem": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "onItemSettled": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "currentItem",
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "indexed",
+        "provides": "androidx.compose.material3.carousel.CarouselItemScope"
+      },
+      "state": {
+        "native": "state",
+        "kind": "carousel",
+        "value": "currentItem",
+        "report": "onItemSettled"
+      },
+      "reshaped": [
+        "currentItem",
+        "onItemSettled"
+      ]
+    },
     "HorizontalDivider": {
       "package": "androidx.compose.material3",
       "category": "layout",
@@ -3697,6 +3802,7 @@
         "thickness": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.DividerDefaults.Thickness",
+          "nativeValue": 1.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -3707,6 +3813,87 @@
       "children": {
         "allowed": false
       }
+    },
+    "HorizontalMultiBrowseCarousel": {
+      "package": "androidx.compose.material3.carousel",
+      "category": "material3",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/carousel/CarouselState;FLandroidx/compose/ui/Modifier;FLandroidx/compose/foundation/gestures/TargetedFlingBehavior;ZFFLandroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "HorizontalMultiBrowseCarousel-3tcCNu0",
+        "name": "HorizontalMultiBrowseCarousel",
+        "owner": "androidx.compose.material3.carousel.CarouselKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "itemSpacing": {
+          "type": "dp",
+          "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "maxSmallItemWidth": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.carousel.CarouselDefaults.MaxSmallItemSize",
+          "nativeValue": 56.0,
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "minSmallItemWidth": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.carousel.CarouselDefaults.MinSmallItemSize",
+          "nativeValue": 40.0,
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "preferredItemWidth": {
+          "type": "dp",
+          "required": true,
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "userScrollEnabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "currentItem": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "onItemSettled": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "currentItem",
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "indexed",
+        "provides": "androidx.compose.material3.carousel.CarouselItemScope"
+      },
+      "state": {
+        "native": "state",
+        "kind": "carousel",
+        "value": "currentItem",
+        "report": "onItemSettled"
+      },
+      "reshaped": [
+        "currentItem",
+        "onItemSettled"
+      ]
     },
     "HorizontalPager": {
       "package": "androidx.compose.foundation.pager",
@@ -3724,6 +3911,7 @@
         "pageSpacing": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -3784,6 +3972,73 @@
       "reshaped": [
         "page",
         "onPageSettled"
+      ]
+    },
+    "HorizontalUncontainedCarousel": {
+      "package": "androidx.compose.material3.carousel",
+      "category": "material3",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/carousel/CarouselState;FLandroidx/compose/ui/Modifier;FLandroidx/compose/foundation/gestures/TargetedFlingBehavior;ZLandroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "HorizontalUncontainedCarousel-VUP9l70",
+        "name": "HorizontalUncontainedCarousel",
+        "owner": "androidx.compose.material3.carousel.CarouselKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "itemSpacing": {
+          "type": "dp",
+          "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "itemWidth": {
+          "type": "dp",
+          "required": true,
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "userScrollEnabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "currentItem": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "onItemSettled": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "currentItem",
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "indexed",
+        "provides": "androidx.compose.material3.carousel.CarouselItemScope"
+      },
+      "state": {
+        "native": "state",
+        "kind": "carousel",
+        "value": "currentItem",
+        "report": "onItemSettled"
+      },
+      "reshaped": [
+        "currentItem",
+        "onItemSettled"
       ]
     },
     "Icon": {
@@ -4423,6 +4678,7 @@
         "collapsedHeight": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.LargeAppBarCollapsedHeight",
+          "nativeValue": 64.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -4434,6 +4690,7 @@
         "expandedHeight": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.LargeAppBarExpandedHeight",
+          "nativeValue": 152.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -4752,6 +5009,7 @@
         "gapSize": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.LinearIndicatorTrackGapSize",
+          "nativeValue": 4.0,
           "since": "1.23.0",
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
@@ -4822,6 +5080,7 @@
         "gapSize": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.ProgressIndicatorDefaults.LinearIndicatorTrackGapSize",
+          "nativeValue": 4.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -4867,12 +5126,14 @@
         "shadowElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.ListItemDefaults.Elevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.ListItemDefaults.Elevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -4970,6 +5231,7 @@
         "collapsedHeight": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.MediumAppBarCollapsedHeight",
+          "nativeValue": 64.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -4981,6 +5243,7 @@
         "expandedHeight": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.MediumAppBarExpandedHeight",
+          "nativeValue": 112.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -5055,6 +5318,7 @@
         "sheetMaxWidth": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.BottomSheetDefaults.SheetMaxWidth",
+          "nativeValue": 640.0,
           "since": "1.23.0",
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
@@ -5062,6 +5326,7 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "since": "1.23.0",
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
@@ -5160,6 +5425,7 @@
         "drawerTonalElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.DrawerDefaults.ModalDrawerElevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -5274,6 +5540,7 @@
         "expandedHeaderTopPadding": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "since": "1.23.0",
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
@@ -5419,6 +5686,7 @@
         "space": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.SegmentedButtonDefaults.BorderWidth",
+          "nativeValue": 1.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -5455,6 +5723,7 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.NavigationBarDefaults.Elevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -6813,6 +7082,7 @@
         "drawerTonalElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.DrawerDefaults.PermanentDrawerElevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -6897,12 +7167,14 @@
         "maxWidth": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.TooltipDefaults.plainTooltipMaxWidth",
+          "nativeValue": 200.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
         "shadowElevation": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "since": "1.23.0",
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
@@ -6916,6 +7188,7 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "since": "1.23.0",
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
@@ -6982,12 +7255,14 @@
         "edgePadding": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.TabRowDefaults.ScrollableTabRowEdgeStartPadding",
+          "nativeValue": 52.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
         "minTabWidth": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.TabRowDefaults.ScrollableTabRowMinTabWidth",
+          "nativeValue": 90.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -7255,12 +7530,14 @@
         "maxWidth": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.TooltipDefaults.richTooltipMaxWidth",
+          "nativeValue": 320.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
         "shadowElevation": {
           "type": "dp",
           "nativeDefault": "(3.0).dp",
+          "nativeValue": 3.0,
           "since": "1.23.0",
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
@@ -7274,6 +7551,7 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "(0.0).dp",
+          "nativeValue": 0.0,
           "since": "1.23.0",
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
@@ -7428,6 +7706,7 @@
         "shadowElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -7439,6 +7718,7 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -7653,12 +7933,14 @@
         "edgePadding": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.TabRowDefaults.ScrollableTabRowEdgeStartPadding",
+          "nativeValue": 52.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
         "minTabWidth": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.TabRowDefaults.ScrollableTabRowMinTabWidth",
+          "nativeValue": 90.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -8203,6 +8485,7 @@
         "space": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.SegmentedButtonDefaults.BorderWidth",
+          "nativeValue": 1.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -8690,6 +8973,7 @@
         "shadowElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -8701,6 +8985,7 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -9048,6 +9333,7 @@
         "shadowElevation": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -9059,6 +9345,7 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -9117,6 +9404,7 @@
         "shadowElevation": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -9128,6 +9416,7 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -9217,6 +9506,7 @@
         "shadowElevation": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -9228,6 +9518,7 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -9321,6 +9612,7 @@
         "shadowElevation": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -9332,6 +9624,7 @@
         "tonalElevation": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -10510,6 +10803,7 @@
         "expandedHeight": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.TopAppBarDefaults.TopAppBarExpandedHeight",
+          "nativeValue": 64.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -10645,6 +10939,7 @@
         "thickness": {
           "type": "dp",
           "nativeDefault": "androidx.compose.material3.DividerDefaults.Thickness",
+          "nativeValue": 1.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -10746,6 +11041,7 @@
         "pageSpacing": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
@@ -11314,12 +11610,14 @@
         "x": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "layout"
         },
         "y": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "layout"
         }
@@ -11368,24 +11666,28 @@
         "left": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
         "top": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
         "right": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         },
         "bottom": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         }
@@ -11492,6 +11794,7 @@
         "velocity": {
           "type": "dp",
           "nativeDefault": "androidx.compose.foundation.MarqueeDefaults.Velocity",
+          "nativeValue": 30.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "composition"
         }
@@ -12193,12 +12496,14 @@
         "x": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "layout"
         },
         "y": {
           "type": "dp",
           "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
           "animation": "androidx.compose.ui.unit.Dp",
           "phase": "layout"
         }

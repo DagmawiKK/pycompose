@@ -1264,6 +1264,30 @@ data class FlowRow(
 }
 
 @Serializable
+data class HorizontalCenteredHeroCarouselProps(
+    val `currentItem`: Long? = null,
+    val `itemSpacing`: JsonElement? = null,
+    val `maxItemWidth`: JsonElement? = null,
+    val `maxSmallItemWidth`: JsonElement? = null,
+    val `minSmallItemWidth`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `onItemSettled`: String? = null,
+    val `userScrollEnabled`: Boolean = true,
+) : UiProps
+
+@Serializable
+@SerialName("HorizontalCenteredHeroCarousel")
+data class HorizontalCenteredHeroCarousel(
+    override val id: String,
+    override val props: HorizontalCenteredHeroCarouselProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "HorizontalCenteredHeroCarousel"
+}
+
+@Serializable
 data class HorizontalDividerProps(
     val `color`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
@@ -1280,6 +1304,30 @@ data class HorizontalDivider(
     override val children: List<UiNode> get() = emptyList()
     override fun withChildren(children: List<UiNode>): UiNode = this
     override val componentType: String get() = "HorizontalDivider"
+}
+
+@Serializable
+data class HorizontalMultiBrowseCarouselProps(
+    val `currentItem`: Long? = null,
+    val `itemSpacing`: JsonElement? = null,
+    val `maxSmallItemWidth`: JsonElement? = null,
+    val `minSmallItemWidth`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `onItemSettled`: String? = null,
+    val `preferredItemWidth`: JsonElement,
+    val `userScrollEnabled`: Boolean = true,
+) : UiProps
+
+@Serializable
+@SerialName("HorizontalMultiBrowseCarousel")
+data class HorizontalMultiBrowseCarousel(
+    override val id: String,
+    override val props: HorizontalMultiBrowseCarouselProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "HorizontalMultiBrowseCarousel"
 }
 
 @Serializable
@@ -1304,6 +1352,28 @@ data class HorizontalPager(
 ) : UiNode {
     override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "HorizontalPager"
+}
+
+@Serializable
+data class HorizontalUncontainedCarouselProps(
+    val `currentItem`: Long? = null,
+    val `itemSpacing`: JsonElement? = null,
+    val `itemWidth`: JsonElement,
+    override val `modifier`: JsonObject? = null,
+    val `onItemSettled`: String? = null,
+    val `userScrollEnabled`: Boolean = true,
+) : UiProps
+
+@Serializable
+@SerialName("HorizontalUncontainedCarousel")
+data class HorizontalUncontainedCarousel(
+    override val id: String,
+    override val props: HorizontalUncontainedCarouselProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "HorizontalUncontainedCarousel"
 }
 
 @Serializable

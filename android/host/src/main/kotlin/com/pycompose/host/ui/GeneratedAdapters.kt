@@ -142,6 +142,9 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuite
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldLayout
+import androidx.compose.material3.carousel.HorizontalCenteredHeroCarousel
+import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
+import androidx.compose.material3.carousel.HorizontalUncontainedCarousel
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
@@ -209,8 +212,11 @@ import com.pycompose.ir.generated.FlexBox as FlexBoxNode
 import com.pycompose.ir.generated.FloatingActionButton as FloatingActionButtonNode
 import com.pycompose.ir.generated.FlowColumn as FlowColumnNode
 import com.pycompose.ir.generated.FlowRow as FlowRowNode
+import com.pycompose.ir.generated.HorizontalCenteredHeroCarousel as HorizontalCenteredHeroCarouselNode
 import com.pycompose.ir.generated.HorizontalDivider as HorizontalDividerNode
+import com.pycompose.ir.generated.HorizontalMultiBrowseCarousel as HorizontalMultiBrowseCarouselNode
 import com.pycompose.ir.generated.HorizontalPager as HorizontalPagerNode
+import com.pycompose.ir.generated.HorizontalUncontainedCarousel as HorizontalUncontainedCarouselNode
 import com.pycompose.ir.generated.Icon as IconNode
 import com.pycompose.ir.generated.IconButton as IconButtonNode
 import com.pycompose.ir.generated.IconToggleButton as IconToggleButtonNode
@@ -310,6 +316,7 @@ import com.pycompose.renderer.attachTo
 import com.pycompose.renderer.bound
 import com.pycompose.renderer.boundColor
 import com.pycompose.renderer.boundDp
+import com.pycompose.renderer.carouselState
 import com.pycompose.renderer.drawerState
 import com.pycompose.renderer.edit
 import com.pycompose.renderer.editText
@@ -1339,6 +1346,24 @@ object GeneratedAdapters {
                     content = { context.childrenIn(this, model.children) },
                 )
             }
+            .register("HorizontalCenteredHeroCarousel") { node, modifier, context ->
+                val model = node as HorizontalCenteredHeroCarouselNode
+                val itemSpacingValue = context.boundDp(model.props.itemSpacing, Dp.VectorConverter, (0).dp)
+                val maxItemWidthValue = context.boundDp(model.props.maxItemWidth, Dp.VectorConverter, androidx.compose.ui.unit.Dp.Companion.Unspecified)
+                val maxSmallItemWidthValue = context.boundDp(model.props.maxSmallItemWidth, Dp.VectorConverter, androidx.compose.material3.carousel.CarouselDefaults.MaxSmallItemSize)
+                val minSmallItemWidthValue = context.boundDp(model.props.minSmallItemWidth, Dp.VectorConverter, androidx.compose.material3.carousel.CarouselDefaults.MinSmallItemSize)
+                val stateValue = context.carouselState(model.props.currentItem, model.props.onItemSettled, model.children.unslotted().size)
+                HorizontalCenteredHeroCarousel(
+                    modifier = modifier,
+                    itemSpacing = itemSpacingValue,
+                    maxItemWidth = maxItemWidthValue,
+                    maxSmallItemWidth = maxSmallItemWidthValue,
+                    minSmallItemWidth = minSmallItemWidthValue,
+                    userScrollEnabled = model.props.userScrollEnabled,
+                    state = stateValue,
+                    content = { index -> context.childrenIn(this, listOfNotNull(model.children.unslotted().getOrNull(index))) },
+                )
+            }
             .register("HorizontalDivider") { node, modifier, context ->
                 val model = node as HorizontalDividerNode
                 val colorValue = context.boundColor(model.props.color, Color.colorVectorConverter(ColorSpaces.Srgb), androidx.compose.material3.DividerDefaults.color)
@@ -1347,6 +1372,24 @@ object GeneratedAdapters {
                     modifier = modifier,
                     color = colorValue,
                     thickness = thicknessValue,
+                )
+            }
+            .register("HorizontalMultiBrowseCarousel") { node, modifier, context ->
+                val model = node as HorizontalMultiBrowseCarouselNode
+                val itemSpacingValue = context.boundDp(model.props.itemSpacing, Dp.VectorConverter, (0).dp)
+                val maxSmallItemWidthValue = context.boundDp(model.props.maxSmallItemWidth, Dp.VectorConverter, androidx.compose.material3.carousel.CarouselDefaults.MaxSmallItemSize)
+                val minSmallItemWidthValue = context.boundDp(model.props.minSmallItemWidth, Dp.VectorConverter, androidx.compose.material3.carousel.CarouselDefaults.MinSmallItemSize)
+                val preferredItemWidthValue = bound(model.props.preferredItemWidth, Dp.VectorConverter) { plain -> context.number(plain).dp }
+                val stateValue = context.carouselState(model.props.currentItem, model.props.onItemSettled, model.children.unslotted().size)
+                HorizontalMultiBrowseCarousel(
+                    modifier = modifier,
+                    itemSpacing = itemSpacingValue,
+                    maxSmallItemWidth = maxSmallItemWidthValue,
+                    minSmallItemWidth = minSmallItemWidthValue,
+                    preferredItemWidth = preferredItemWidthValue,
+                    userScrollEnabled = model.props.userScrollEnabled,
+                    state = stateValue,
+                    content = { index -> context.childrenIn(this, listOfNotNull(model.children.unslotted().getOrNull(index))) },
                 )
             }
             .register("HorizontalPager") { node, modifier, context ->
@@ -1366,6 +1409,20 @@ object GeneratedAdapters {
                     verticalAlignment = verticalAlignmentValue,
                     state = stateValue,
                     pageContent = { index -> context.childrenIn(this, listOfNotNull(model.children.unslotted().getOrNull(index))) },
+                )
+            }
+            .register("HorizontalUncontainedCarousel") { node, modifier, context ->
+                val model = node as HorizontalUncontainedCarouselNode
+                val itemSpacingValue = context.boundDp(model.props.itemSpacing, Dp.VectorConverter, (0).dp)
+                val itemWidthValue = bound(model.props.itemWidth, Dp.VectorConverter) { plain -> context.number(plain).dp }
+                val stateValue = context.carouselState(model.props.currentItem, model.props.onItemSettled, model.children.unslotted().size)
+                HorizontalUncontainedCarousel(
+                    modifier = modifier,
+                    itemSpacing = itemSpacingValue,
+                    itemWidth = itemWidthValue,
+                    userScrollEnabled = model.props.userScrollEnabled,
+                    state = stateValue,
+                    content = { index -> context.childrenIn(this, listOfNotNull(model.children.unslotted().getOrNull(index))) },
                 )
             }
             .register("Icon") { node, modifier, context ->

@@ -118,6 +118,10 @@ STATE_FAMILIES: dict[str, Family] = {
         ("page", {"type": "integer", "minimum": 0, "maximum": _INT}),
         "onPageSettled",
     ),
+    "carousel": Family(
+        ("currentItem", {"type": "integer", "minimum": 0, "maximum": _INT}),
+        "onItemSettled",
+    ),
     "tooltip": Family(
         ("visible", {"type": "boolean"}),
         "onVisibilityChange",

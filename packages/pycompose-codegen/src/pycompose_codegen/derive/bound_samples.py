@@ -21,7 +21,8 @@ PACKED = frozenset({"int", "integer", "long"})
 """The parameter types that carry a colour's packed value."""
 
 DP = 64
-"""The dp a bound prop states when it declares no value of its own.
+"""The dp a bound prop states when it declares no value of its own, and the pin
+states none for its native default either.
 
 A prop with no literal default still has to be a value its component accepts.
 The app bars require their expanded height to reach their collapsed one, whose
@@ -79,6 +80,10 @@ def _target(where: str, spec: dict[str, Any], values: dict[str, Any]) -> Any:
     """
     if "default" in spec:
         return spec["default"]
+    if "nativeValue" in spec:
+        # The size the native default amounts to, which the component accepts by
+        # definition, whatever its other props are left at.
+        return spec["nativeValue"]
     if spec["type"] == "color" and "valueType" in spec:
         return _tagged_colour(where, spec["valueType"], values)
     if spec["type"] == "dp":

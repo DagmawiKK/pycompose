@@ -180,7 +180,27 @@ internal class Defaults(private val context: BindingContext) {
             check(property.staticReceiver()) {
                 "instance property default: ${property.symbol()}"
             }
-            mapOf("kind" to "property", "symbol" to property.symbol())
+            val value = statedValue(property)
+            mapOf("kind" to "property", "symbol" to property.symbol()) +
+                (value?.let { mapOf("value" to it) } ?: emptyMap())
+        }
+    }
+
+    /**
+     * The value a public constant's pinned source states, when it states a unit
+     * conversion of one (`MinSmallItemSize = 40.dp`): reduced as a token is, and recorded beside
+     * the reference, which shipped Kotlin still names. Anything computed states no value.
+     */
+    private fun statedValue(property: PropertyDescriptor): Map<String, Any?>? {
+        val declaration = DescriptorToSourceUtils.descriptorToDeclaration(property) as? KtProperty
+        val initializer = declaration?.initializer?.takeIf {
+            declaration.getter == null && !declaration.hasDelegate()
+        }
+        if (initializer == null || !resolving.add(property.symbol())) return null
+        return try {
+            runCatching { expression(initializer) }.getOrNull()?.takeIf(::isStated)
+        } finally {
+            resolving.remove(property.symbol())
         }
     }
 
@@ -238,3 +258,8 @@ internal class Defaults(private val context: BindingContext) {
         return mapOf("kind" to "call", "symbol" to symbol)
     }
 }
+
+/** A unit conversion of a literal: a size the source states (`40.dp`). */
+private fun isStated(value: Map<String, Any?>): Boolean = value["kind"] == "extensionProperty" &&
+    value["symbol"] in TOKEN_UNIT_CONVERSIONS &&
+    (value["receiver"] as? Map<*, *>)?.get("kind") == "literal"

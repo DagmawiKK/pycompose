@@ -75,8 +75,11 @@ __all__ = [
     "FloatingActionButton",
     "FlowColumn",
     "FlowRow",
+    "HorizontalCenteredHeroCarousel",
     "HorizontalDivider",
+    "HorizontalMultiBrowseCarousel",
     "HorizontalPager",
+    "HorizontalUncontainedCarousel",
     "Icon",
     "IconButton",
     "IconToggleButton",
@@ -3639,6 +3642,72 @@ class FlowRow(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
+class HorizontalCenteredHeroCarousel(Component):
+    """Native HorizontalCenteredHeroCarousel;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "HorizontalCenteredHeroCarousel"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        current_item: int | None = None,
+        item_spacing: int | float | Expression | Binding | None = None,
+        max_item_width: int | float | Expression | Binding | None = None,
+        max_small_item_width: int | float | Expression | Binding | None = None,
+        min_small_item_width: int | float | Expression | Binding | None = None,
+        modifier: Modifier | None = None,
+        on_item_settled: ActionTarget | None = None,
+        user_scroll_enabled: bool | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered HorizontalCenteredHeroCarousel.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            current_item: Native currentItem; None uses its default.
+            item_spacing: Native itemSpacing; None uses its default.
+            max_item_width: Native maxItemWidth; None uses its default.
+            max_small_item_width: Native maxSmallItemWidth; None uses its default.
+            min_small_item_width: Native minSmallItemWidth; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_item_settled: Native onItemSettled; None uses its default.
+            user_scroll_enabled: Native userScrollEnabled; None uses its default.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if current_item is not None:
+            props["current_item"] = current_item
+        if item_spacing is not None:
+            props["item_spacing"] = lower_binding(item_spacing, "composition")
+        if max_item_width is not None:
+            props["max_item_width"] = lower_binding(max_item_width, "composition")
+        if max_small_item_width is not None:
+            props["max_small_item_width"] = lower_binding(
+                max_small_item_width, "composition"
+            )
+        if min_small_item_width is not None:
+            props["min_small_item_width"] = lower_binding(
+                min_small_item_width, "composition"
+            )
+        if on_item_settled is not None:
+            props["on_item_settled"] = on_item_settled
+        if user_scroll_enabled is not None:
+            props["user_scroll_enabled"] = user_scroll_enabled
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
 class HorizontalDivider(Component):
     """Native HorizontalDivider; props and defaults follow the component manifest."""
 
@@ -3667,6 +3736,73 @@ class HorizontalDivider(Component):
         if thickness is not None:
             props["thickness"] = lower_binding(thickness, "composition")
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class HorizontalMultiBrowseCarousel(Component):
+    """Native HorizontalMultiBrowseCarousel;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "HorizontalMultiBrowseCarousel"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        current_item: int | None = None,
+        item_spacing: int | float | Expression | Binding | None = None,
+        max_small_item_width: int | float | Expression | Binding | None = None,
+        min_small_item_width: int | float | Expression | Binding | None = None,
+        modifier: Modifier | None = None,
+        on_item_settled: ActionTarget | None = None,
+        preferred_item_width: int | float | Expression | Binding,
+        user_scroll_enabled: bool | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered HorizontalMultiBrowseCarousel.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            current_item: Native currentItem; None uses its default.
+            item_spacing: Native itemSpacing; None uses its default.
+            max_small_item_width: Native maxSmallItemWidth; None uses its default.
+            min_small_item_width: Native minSmallItemWidth; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_item_settled: Native onItemSettled; None uses its default.
+            preferred_item_width: Required native preferredItemWidth.
+            user_scroll_enabled: Native userScrollEnabled; None uses its default.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if current_item is not None:
+            props["current_item"] = current_item
+        if item_spacing is not None:
+            props["item_spacing"] = lower_binding(item_spacing, "composition")
+        if max_small_item_width is not None:
+            props["max_small_item_width"] = lower_binding(
+                max_small_item_width, "composition"
+            )
+        if min_small_item_width is not None:
+            props["min_small_item_width"] = lower_binding(
+                min_small_item_width, "composition"
+            )
+        if on_item_settled is not None:
+            props["on_item_settled"] = on_item_settled
+        props["preferred_item_width"] = lower_binding(
+            preferred_item_width, "composition"
+        )
+        if user_scroll_enabled is not None:
+            props["user_scroll_enabled"] = user_scroll_enabled
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
 class HorizontalPager(Component):
@@ -3722,6 +3858,59 @@ class HorizontalPager(Component):
             props["user_scroll_enabled"] = user_scroll_enabled
         if vertical_alignment is not None:
             props["vertical_alignment"] = vertical_alignment
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class HorizontalUncontainedCarousel(Component):
+    """Native HorizontalUncontainedCarousel;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "HorizontalUncontainedCarousel"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        current_item: int | None = None,
+        item_spacing: int | float | Expression | Binding | None = None,
+        item_width: int | float | Expression | Binding,
+        modifier: Modifier | None = None,
+        on_item_settled: ActionTarget | None = None,
+        user_scroll_enabled: bool | None = None,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered HorizontalUncontainedCarousel.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            current_item: Native currentItem; None uses its default.
+            item_spacing: Native itemSpacing; None uses its default.
+            item_width: Required native itemWidth.
+            modifier: Native modifier; None uses its default.
+            on_item_settled: Native onItemSettled; None uses its default.
+            user_scroll_enabled: Native userScrollEnabled; None uses its default.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if current_item is not None:
+            props["current_item"] = current_item
+        if item_spacing is not None:
+            props["item_spacing"] = lower_binding(item_spacing, "composition")
+        props["item_width"] = lower_binding(item_width, "composition")
+        if on_item_settled is not None:
+            props["on_item_settled"] = on_item_settled
+        if user_scroll_enabled is not None:
+            props["user_scroll_enabled"] = user_scroll_enabled
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id

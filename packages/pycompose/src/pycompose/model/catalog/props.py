@@ -67,6 +67,8 @@ class PropDef:
             locale a string is read in.
         value_type: Optional approved native value family for tagged inputs.
         native_default: Native default provider used by generated adapters.
+        native_value: The size a dp prop's native default amounts to, when the
+            pin states it; the gates sample there. Codegen-only.
         native_type: The narrower native Kotlin type when the wire type is
             wider, as with ``Int`` integer props; None means the wire type is
             already native.
@@ -109,6 +111,7 @@ class PropDef:
     reads: tuple[str, ...] = ()
     value_type: str | None = None
     native_default: str | None = None
+    native_value: float | None = None
     native_type: str | None = None
     fallback: str | None = None
     nullable: bool = False
@@ -217,6 +220,7 @@ class PropDef:
             reads=tuple(cast("list[str]", data.get("reads") or ())),
             value_type=cast("str | None", data.get("valueType")),
             native_default=cast("str | None", data.get("nativeDefault")),
+            native_value=cast("float | None", data.get("nativeValue")),
             native_type=cast("str | None", data.get("nativeType")),
             animation=cast("str | None", data.get("animation")),
             phase=cast("str | None", data.get("phase")),
@@ -245,6 +249,7 @@ class PropDef:
                 for key, value in {
                     "valueType": self.value_type,
                     "nativeDefault": self.native_default,
+                    "nativeValue": self.native_value,
                     "nativeType": self.native_type,
                     "animation": self.animation,
                     "phase": self.phase,

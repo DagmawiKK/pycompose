@@ -146,6 +146,10 @@
       "required": ["type"],
       "additionalProperties": false,
       "properties": {
+        "nativeValue": {
+          "type": "number",
+          "description": "The size a dp prop's native default amounts to, when the pin states it (TopAppBarDefaults.MediumAppBarCollapsedHeight = 64.dp): evidence the gates sample at, never what the host passes."
+        },
         "type": { "type": "string" },
         "description": { "type": "string", "minLength": 1 },
         "values": {

@@ -49,7 +49,9 @@ def render_default(expression: dict[str, Any], imports: set[str]) -> str:
             "memberProperty": {"receiver"},
             "call": set(),
         }[kind]
-        _keys(expression, {"kind", "symbol", *fields})
+        # A constant names itself; a size its source states rides beside it.
+        stated = {"value"} & set(expression) if kind == "property" else set()
+        _keys(expression, {"kind", "symbol", *fields, *stated})
         symbol = expression["symbol"]
         if not isinstance(symbol, str) or not SYMBOL.fullmatch(symbol):
             raise ValueError("default needs a qualified native symbol")

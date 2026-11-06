@@ -173,8 +173,8 @@ def _state(
         f", {_constructor_argument(name, props.get(name) or {})}"
         for name in STATE_CONSTRUCTOR_PROPS.get(state["kind"], ())
     )
-    if state["kind"] == "pager":
-        # A pager has as many pages as Python sent.
+    if state["kind"] in {"pager", "carousel"}:
+        # A pager has as many pages as Python sent, a carousel as many items.
         extras += ", model.children.unslotted().size"
     dismiss = state.get("dismiss")
     if dismiss is not None:

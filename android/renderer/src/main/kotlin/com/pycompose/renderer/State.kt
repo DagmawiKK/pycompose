@@ -4,8 +4,6 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -305,39 +303,9 @@ internal fun rememberHostLazyListState(
     return state
 }
 
-/**
- * The host-owned pager holder for one node: it animates to the page the app wants, and
- * reports the page it settles on once paging comes to rest, by gesture or by drive.
- *
- * @param page Desired page; null leaves paging to gestures.
- * @param report Action id settled pages report to; null reports none.
- * @param count How many pages there are, read whenever the pager asks.
- * @param observation Receives the kind, the action id and the settled page.
- */
-@Composable
-internal fun rememberHostPagerState(
-    page: Long?,
-    report: String?,
-    count: Int,
-    observation: Observation,
-): PagerState {
-    val pages = rememberUpdatedState(count)
-    val state = rememberPagerState(initialPage = page?.toInt() ?: 0) { pages.value }
-    val lastDesired = rememberSaveable { mutableStateOf<Long?>(null) }
-    OnDesired(state, page, answered(report)) { wanted ->
-        if (wanted != lastDesired.value) {
-            val desired = wanted?.toInt()?.coerceIn(0, (pages.value - 1).coerceAtLeast(0))
-            if (desired != null && desired != state.currentPage) state.animateScrollToPage(desired)
-            lastDesired.value = wanted
-        }
-    }
-    ObserveIdlePosition(state, { state.currentPage }, "page", report, observation)
-    return state
-}
-
 /** One idle policy for every native scroll holder, including drag-to-fling hand-off. */
 @Composable
-private fun ObserveIdlePosition(
+internal fun ObserveIdlePosition(
     state: ScrollableState,
     position: () -> Int,
     kind: String,

@@ -335,10 +335,33 @@ def _dp_prop(
         return None
     if rendered is not None:
         prop["nativeDefault"] = rendered
+    stated = _stated_dp(spec.get("default"))
+    if stated is not None:
+        prop["nativeValue"] = stated
     if spec["type"]["nullable"]:
         prop["nullable"] = True
     review.append(f"{parameter}: dp nativeDefault {rendered}")
     return prop
+
+
+def _stated_dp(default: object) -> float | None:
+    """The dp a native default amounts to, when the pin states it: ``(0).dp``, or a
+    public constant whose source is ``40.dp``. A sample binds there, a value the
+    component accepts by definition."""
+    if isinstance(default, dict) and default.get("kind") == "property":
+        default = default.get("value")
+    if (
+        not isinstance(default, dict)
+        or default.get("symbol") != "androidx.compose.ui.unit.dp"
+    ):
+        return None
+    receiver = default.get("receiver")
+    if not isinstance(receiver, dict) or receiver.get("kind") != "literal":
+        return None
+    value = receiver.get("value")
+    if isinstance(value, bool) or not isinstance(value, int | float):
+        return None
+    return float(value)
 
 
 def _plain_value_prop(

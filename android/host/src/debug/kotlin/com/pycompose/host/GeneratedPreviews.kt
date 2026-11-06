@@ -349,16 +349,34 @@ private fun FlowRowPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FlowRow"}, "type": "Text"}], "id": "preview", "props": {}, "type": "FlowRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "HorizontalCenteredHeroCarousel", showBackground = true)
+@Composable
+private fun HorizontalCenteredHeroCarouselPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "HorizontalCenteredHeroCarousel"}, "type": "Text"}], "id": "preview", "props": {}, "type": "HorizontalCenteredHeroCarousel"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "HorizontalDivider", showBackground = true)
 @Composable
 private fun HorizontalDividerPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "HorizontalDivider", "type": "semantics"}]}}, "type": "HorizontalDivider"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "HorizontalMultiBrowseCarousel", showBackground = true)
+@Composable
+private fun HorizontalMultiBrowseCarouselPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "HorizontalMultiBrowseCarousel"}, "type": "Text"}], "id": "preview", "props": {"preferredItemWidth": 8}, "type": "HorizontalMultiBrowseCarousel"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "HorizontalPager", showBackground = true)
 @Composable
 private fun HorizontalPagerPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "HorizontalPager"}, "type": "Text"}], "id": "preview", "props": {}, "type": "HorizontalPager"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "HorizontalUncontainedCarousel", showBackground = true)
+@Composable
+private fun HorizontalUncontainedCarouselPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "HorizontalUncontainedCarousel"}, "type": "Text"}], "id": "preview", "props": {"itemWidth": 8}, "type": "HorizontalUncontainedCarousel"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Icon", showBackground = true)
