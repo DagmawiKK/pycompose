@@ -9,15 +9,15 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose.model.catalog.vocabulary import STATE_STREAMS
+from pycompose.model.catalog.vocabulary import holder_streams
 from pycompose_codegen.emit.adapters.fragments import Fragments
 from pycompose_codegen.emit.adapters.policy import camel
 from pycompose_codegen.emit.adapters.props import render_value
 from pycompose_codegen.emit.derived_families import properties_locals
+from pycompose_codegen.emit.holder_families import anchored_locals, positional_locals
 from pycompose_codegen.emit.state_families import (
     STATE_CONSTRUCTOR_PROPS,
     attach_gate,
-    settled_name,
 )
 
 
@@ -78,7 +78,7 @@ def host_locals(entry: dict[str, Any], out: Fragments) -> str | None:
         locals_, arguments, gate = _state(state, entry.get("props", {}))
         out.locals.extend(locals_)
         out.arguments.extend(arguments)
-        if state["kind"] in STATE_STREAMS:
+        if holder_streams(state["kind"], state.get("holder")):
             # Expressions anywhere in the snapshot may read this holder's streams.
             out.locals.append(f"context.publish(model.id, {state['native']}Value)")
         if (
@@ -157,6 +157,8 @@ def _state(
         return properties_locals(state), [f"{native} = {native}Value"], None
     if state["kind"] == "positional":
         return positional_locals(state), [f"{native} = {native}Value"], None
+    if state["kind"] == "anchored":
+        return anchored_locals(state), [f"{native} = {native}Value"], None
     held = f"{native}Value"
     value = camel(state["value"])
     report = camel(state["report"])
@@ -268,31 +270,3 @@ def _transient(transient: dict[str, Any], props: dict[str, Any]) -> str:
     )
     call = transient["kind"]
     return f"val {transient['native']}Value = context.{call}(model.id, {entries})"
-
-
-def positional_locals(state: dict[str, Any]) -> list[str]:
-    """A positional family: the host's one runtime, told how to make and drive it.
-
-    Its positions are the children Python sent, so the count the factory asks
-    for is theirs.
-
-    Args:
-        state: A ``state`` block of kind ``positional``.
-
-    Returns:
-        The Kotlin locals.
-    """
-    native, position = state["native"], state["position"]
-    count = f", {state['count']} = count" if "count" in state else ""
-    create = f"{state['factory']}({state['initial']} = initial{count})"
-    report = camel(settled_name(position))
-    return [
-        f"val {native}Value = context.positional(",
-        f"    model.props.{camel(position)}, model.props.{report},",
-        "    model.children.unslotted().size,",
-        "    com.pycompose.renderer.Positional(",
-        f"        {{ initial, count -> {create} }},",
-        f"        {{ it.{position} }},",
-        f"    ) {{ holder, target -> holder.{state['drive']}(target) }},",
-        ")",
-    ]

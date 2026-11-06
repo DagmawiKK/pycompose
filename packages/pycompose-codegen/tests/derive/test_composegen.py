@@ -262,19 +262,19 @@ def test_a_hold_is_stale_only_when_its_own_overload_derives(
 def test_a_bound_holder_takes_its_family_projection() -> None:
     from pycompose_codegen.derive.rules import reshape
 
-    entry = {"props": {}, "state": {"native": "drawerState", "kind": "drawer"}}
-    shaped = reshape("Drawer", entry, {}, _plan())
+    entry = {"props": {}, "state": {"native": "state", "kind": "scroll"}}
+    shaped = reshape("Scroll", entry, {}, _plan())
     assert shaped["state"] == {
-        "native": "drawerState",
-        "kind": "drawer",
-        "value": "open",
-        "report": "onOpenChange",
+        "native": "state",
+        "kind": "scroll",
+        "value": "offset",
+        "report": "onScrollIdle",
     }
-    assert shaped["props"]["onOpenChange"] == {
+    assert shaped["props"]["onScrollIdle"] == {
         "type": "actionId",
-        "payload": [{"name": "open", "type": "boolean"}],
+        "payload": [{"name": "offset", "type": "number"}],
     }
-    assert shaped["reshaped"] == ["open", "onOpenChange"]
+    assert shaped["reshaped"] == ["offset", "onScrollIdle"]
 
 
 def test_a_family_with_held_props_projects_them_after_its_report() -> None:

@@ -40,7 +40,7 @@ class StreamExpressionTest {
             .parse(
                 """
                 {"version":"0.1.0","schemaVersion":"1.23.0","root":{"id":"nav","type":"ModalNavigationDrawer",
-                  "props":{"open":$open,"scrimColor":{"type":"expression","node":{"op":"alpha",
+                  "props":{"value":"${if (open) "open" else "closed"}","scrimColor":{"type":"expression","node":{"op":"alpha",
                     "color":"#FFFF0000","args":[{"stream":"nav","name":"progress"}]}}},
                   "children":[
                     {"id":"menu","type":"Text","slot":"drawer","props":{"text":"Menu"}},

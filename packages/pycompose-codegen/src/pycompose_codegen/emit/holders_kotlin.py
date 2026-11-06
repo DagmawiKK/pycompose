@@ -38,25 +38,5 @@ def render_holder_drives(registry: dict[str, Any]) -> str:
             "    }",
             "}",
             "",
-            *_anchored(holder, spec),
         ]
     return "\n".join(lines)
-
-
-def _anchored(holder: str, spec: dict[str, Any]) -> list[str]:
-    """A holder's pinned factory at one anchor, and its settled anchor, if derived."""
-    anchored = spec.get("anchored")
-    if anchored is None:
-        return []
-    value = spec["value"]
-    return [
-        f"/** A [{holder}] created at [initial] by its pinned factory. */",
-        "@androidx.compose.runtime.Composable",
-        f"fun rememberAnchored(initial: {value}): {holder} =",
-        f"    {anchored['factory']}(initialValue = initial)",
-        "",
-        f"/** The anchor [{holder}] has settled on. */",
-        f"val {holder}.settledAnchor: {value}",
-        f"    get() = {anchored['settled']}",
-        "",
-    ]

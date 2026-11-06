@@ -65,18 +65,73 @@ def derive(
                 anchor: {"method": d.name, **({"anchor": True} if d.parameters else {})}
                 for anchor, d in table.items()
             },
-            **_anchored(found, holder, value),
         }
     return holders, errors
 
 
-def _anchored(found: Inventory, holder: str, value: str) -> dict[str, Any]:
+def anchored_holders(
+    found: Inventory, drives: dict[Key, dict[str, Any]]
+) -> dict[str, dict[str, Any]]:
+    """Every holder the pin lets the host's anchored runtime create and drive.
+
+    A holder qualifies on its own evidence, whichever component takes it: drives
+    covering every anchor of its value enum, a factory starting at an anchor,
+    and a settled anchor to read back.
+
+    Args:
+        found: The validated inventory of the current pin.
+        drives: Drive evidence keyed by JVM identity (``source_drives``).
+
+    Returns:
+        Per holder, by slash classifier: its class, value enum and anchors (as
+        the wire spells them), factory, settled member, and whether the factory
+        has its own start, so the app may leave the value unstated.
+    """
+    members = {
+        (d.owner, d.jvm_name or "", d.jvm_descriptor or ""): d
+        for d in found.declarations
+    }
+    holders = {}
+    for holder in sorted({key[0] for key in drives}):
+        evidence = [
+            (members[key], drive)
+            for key, drive in drives.items()
+            if key[0] == holder
+            and key in members
+            and drive["kind"] != "unknown"
+            and "kotlin/Deprecated" not in members[key].annotations
+        ]
+        value, table, missing = (
+            _table(found, evidence) if evidence else ("", {}, ["drives"])
+        )
+        anchored = None if missing else _anchored(found, holder, value)
+        if anchored is None:
+            continue
+        factory = next(
+            d
+            for d in found.declarations
+            if f"{d.package}.{d.name}" == anchored["factory"]
+            and d.document.get("category") == "composable-factory"
+        )
+        start = next(p for p in factory.parameters if p.name == "initialValue")
+        holders[holder.replace(".", "/")] = {
+            "holder": holder,
+            "valueClass": value,
+            "anchors": {entry[:1].lower() + entry[1:]: entry for entry in table},
+            "factory": anchored["factory"],
+            "settled": anchored["settled"],
+            **({"started": True} if start.has_default else {}),
+        }
+    return holders
+
+
+def _anchored(found: Inventory, holder: str, value: str) -> dict[str, str] | None:
     """How a holder is created at an anchor and read back, when the pin says.
 
     The factory is the one current composable factory taking ``initialValue``
     of the value enum with every other parameter defaulted; the settled anchor
     is ``settledValue`` where the holder has one, else ``currentValue``. A
-    holder lacking either is driven only by hand-written code.
+    holder lacking either is no anchored holder.
     """
     slashed = holder.replace(".", "/")
     enum = value.replace(".", "/")
@@ -101,11 +156,9 @@ def _anchored(found: Inventory, holder: str, value: str) -> dict[str, Any]:
     }
     settled = next((n for n in ("settledValue", "currentValue") if n in readable), None)
     if len(factories) != 1 or settled is None:
-        return {}
+        return None
     factory = factories[0]
-    return {
-        "anchored": {"factory": f"{factory.package}.{factory.name}", "settled": settled}
-    }
+    return {"factory": f"{factory.package}.{factory.name}", "settled": settled}
 
 
 def _holders(members: dict[Key, Declaration], registry: dict[str, Any]) -> set[str]:

@@ -240,7 +240,7 @@ def test_protocols_report_the_activated_host_protocols() -> None:
     assert view["slots"] == ["Surface"]
     assert view["reshaped"] == ["Button"]
     assert view["stateByKind"]["slider"] == ["Slider"]
-    assert view["stateByKind"]["drawer"] == []
+    assert view["stateByKind"]["sheet"] == []
     assert view["transientByKind"]["snackbar"] == ["SnackbarHost"]
 
 

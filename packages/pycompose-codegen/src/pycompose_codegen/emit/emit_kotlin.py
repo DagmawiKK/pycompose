@@ -232,6 +232,7 @@ def _kt_streams(registry: dict[str, Any]) -> list[str]:
         LAYOUT_LIMITS,
         LAYOUT_SIGNATURES,
         STATE_STREAMS,
+        holder_streams,
     )
 
     def signatures_map(
@@ -271,9 +272,10 @@ def _kt_streams(registry: dict[str, Any]) -> list[str]:
         if "continuous" in modifier.get("gesture", {})
     }
     exposing = {
-        name: STATE_STREAMS[spec["state"]["kind"]]
+        name: holder_streams(spec["state"]["kind"], spec["state"].get("holder"))
         for name, spec in sorted(registry["components"].items())
-        if spec.get("state", {}).get("kind") in STATE_STREAMS
+        if "state" in spec
+        and holder_streams(spec["state"]["kind"], spec["state"].get("holder"))
     }
     return [
         "    val streams: Map<String, Set<String>> = mapOf(",

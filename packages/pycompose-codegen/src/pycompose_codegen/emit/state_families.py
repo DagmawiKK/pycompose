@@ -16,7 +16,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from pycompose_codegen.emit.state_anchors import SHEET_VALUES, SWIPE_VALUES
+from pycompose_codegen.emit.state_anchors import SHEET_VALUES
 
 _INT = 2**31 - 1
 _SELECTION: dict[str, dict[str, Any]] = {
@@ -83,7 +83,6 @@ class Family:
 
 
 STATE_FAMILIES: dict[str, Family] = {
-    "drawer": Family(("open", {"type": "boolean"}), "onOpenChange"),
     "sheet": Family(
         ("open", {"type": "boolean"}),
         "onOpenChange",
@@ -134,9 +133,6 @@ STATE_FAMILIES: dict[str, Family] = {
             "onEdit": _EDIT,
         },
         shared=True,
-    ),
-    "swipe": Family(
-        ("value", {"type": "enum", "values": list(SWIPE_VALUES)}), "onValueChange"
     ),
 }
 """Every state family's projection, keyed like ``STATE_KINDS``."""
@@ -267,3 +263,27 @@ def positional_props(state: dict[str, Any]) -> dict[str, dict[str, Any]]:
 def settled_name(position: str) -> str:
     """The report a position settles to (``currentPage``: ``onCurrentPageSettled``)."""
     return f"on{position[:1].upper()}{position[1:]}Settled"
+
+
+def anchored_props(state: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """An anchored family's props: the anchor the app wants, and the one it settles on.
+
+    An ``anchored`` state names its holder's value enum
+    (``pycompose_codegen.derive.holders``); each anchor crosses as its entry in
+    lowerCamel. The app may leave the value unstated only where the factory has
+    its own start.
+
+    Args:
+        state: A component's ``state`` block of kind ``anchored``.
+
+    Returns:
+        Wire props by name.
+    """
+    required = {} if state.get("started") else {"required": True}
+    return {
+        "value": {"type": "enum", "values": list(state["anchors"]), **required},
+        "onValueChange": {
+            "type": "actionId",
+            "payload": [{"name": "value", "type": "string"}],
+        },
+    }

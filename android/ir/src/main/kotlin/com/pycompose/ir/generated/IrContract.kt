@@ -407,8 +407,8 @@ object IrContract {
             props = mapOf(
                 "gesturesEnabled" to PropertyRule("boolean", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
-                "onOpenChange" to PropertyRule("actionId", required = false),
-                "open" to PropertyRule("boolean", required = false),
+                "onValueChange" to PropertyRule("actionId", required = false, since = "1.23.0"),
+                "value" to PropertyRule("enum", required = true, values = setOf("closed", "open"), since = "1.23.0"),
             ),
         ),
         "DockedSearchBar" to ComponentRule(
@@ -1175,9 +1175,9 @@ object IrContract {
             props = mapOf(
                 "gesturesEnabled" to PropertyRule("boolean", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
-                "onOpenChange" to PropertyRule("actionId", required = false),
-                "open" to PropertyRule("boolean", required = false),
+                "onValueChange" to PropertyRule("actionId", required = false, since = "1.23.0"),
                 "scrimColor" to PropertyRule("color", required = false, valueType = "Color", animation = true),
+                "value" to PropertyRule("enum", required = true, values = setOf("closed", "open"), since = "1.23.0"),
             ),
         ),
         "ModalWideNavigationRail" to ComponentRule(
@@ -2033,7 +2033,7 @@ object IrContract {
                 "gesturesEnabled" to PropertyRule("boolean", required = false),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onValueChange" to PropertyRule("actionId", required = false),
-                "value" to PropertyRule("enum", required = false, values = setOf("settled", "startToEnd", "endToStart")),
+                "value" to PropertyRule("enum", required = false, values = setOf("startToEnd", "endToStart", "settled")),
             ),
         ),
         "Switch" to ComponentRule(

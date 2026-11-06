@@ -65,6 +65,7 @@ def _drawer(scrim: object, key: str = "nav") -> Snapshot:
         root=ModalNavigationDrawer(
             Column(Text(text="Body")),
             id=key,
+            value="closed",
             scrim_color=scrim,
             drawer=Text(text="Menu"),
         )

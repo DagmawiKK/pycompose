@@ -1729,17 +1729,24 @@
         "modifier": {
           "type": "modifier"
         },
-        "open": {
-          "type": "boolean"
+        "value": {
+          "type": "enum",
+          "values": [
+            "closed",
+            "open"
+          ],
+          "required": true,
+          "since": "1.23.0"
         },
-        "onOpenChange": {
+        "onValueChange": {
           "type": "actionId",
           "payload": [
             {
-              "name": "open",
-              "type": "boolean"
+              "name": "value",
+              "type": "string"
             }
-          ]
+          ],
+          "since": "1.23.0"
         }
       },
       "children": {
@@ -1753,13 +1760,19 @@
       },
       "state": {
         "native": "drawerState",
-        "kind": "drawer",
-        "value": "open",
-        "report": "onOpenChange"
+        "kind": "anchored",
+        "holder": "androidx.compose.material3.DrawerState",
+        "factory": "androidx.compose.material3.rememberDrawerState",
+        "valueClass": "androidx.compose.material3.DrawerValue",
+        "anchors": {
+          "closed": "Closed",
+          "open": "Open"
+        },
+        "settled": "currentValue"
       },
       "reshaped": [
-        "open",
-        "onOpenChange"
+        "value",
+        "onValueChange"
       ]
     },
     "DockedSearchBar": {
@@ -5492,17 +5505,24 @@
         "modifier": {
           "type": "modifier"
         },
-        "open": {
-          "type": "boolean"
+        "value": {
+          "type": "enum",
+          "values": [
+            "closed",
+            "open"
+          ],
+          "required": true,
+          "since": "1.23.0"
         },
-        "onOpenChange": {
+        "onValueChange": {
           "type": "actionId",
           "payload": [
             {
-              "name": "open",
-              "type": "boolean"
+              "name": "value",
+              "type": "string"
             }
-          ]
+          ],
+          "since": "1.23.0"
         }
       },
       "children": {
@@ -5516,13 +5536,19 @@
       },
       "state": {
         "native": "drawerState",
-        "kind": "drawer",
-        "value": "open",
-        "report": "onOpenChange"
+        "kind": "anchored",
+        "holder": "androidx.compose.material3.DrawerState",
+        "factory": "androidx.compose.material3.rememberDrawerState",
+        "valueClass": "androidx.compose.material3.DrawerValue",
+        "anchors": {
+          "closed": "Closed",
+          "open": "Open"
+        },
+        "settled": "currentValue"
       },
       "reshaped": [
-        "open",
-        "onOpenChange"
+        "value",
+        "onValueChange"
       ]
     },
     "ModalWideNavigationRail": {
@@ -9729,9 +9755,9 @@
         "value": {
           "type": "enum",
           "values": [
-            "settled",
             "startToEnd",
-            "endToStart"
+            "endToStart",
+            "settled"
           ]
         },
         "onValueChange": {
@@ -9757,9 +9783,17 @@
       },
       "state": {
         "native": "state",
-        "kind": "swipe",
-        "value": "value",
-        "report": "onValueChange"
+        "kind": "anchored",
+        "holder": "androidx.compose.material3.SwipeToDismissBoxState",
+        "factory": "androidx.compose.material3.rememberSwipeToDismissBoxState",
+        "valueClass": "androidx.compose.material3.SwipeToDismissBoxValue",
+        "anchors": {
+          "startToEnd": "StartToEnd",
+          "endToStart": "EndToStart",
+          "settled": "Settled"
+        },
+        "settled": "settledValue",
+        "started": true
       },
       "reshaped": [
         "value",
@@ -21599,10 +21633,6 @@
         "Open": {
           "method": "open"
         }
-      },
-      "anchored": {
-        "factory": "androidx.compose.material3.rememberDrawerState",
-        "settled": "currentValue"
       }
     },
     "androidx.compose.material3.SheetState": {
@@ -21620,10 +21650,6 @@
         "PartiallyExpanded": {
           "method": "partialExpand"
         }
-      },
-      "anchored": {
-        "factory": "androidx.compose.material3.rememberStandardBottomSheetState",
-        "settled": "currentValue"
       }
     },
     "androidx.compose.material3.SwipeToDismissBoxState": {
@@ -21641,10 +21667,6 @@
         "Settled": {
           "method": "reset"
         }
-      },
-      "anchored": {
-        "factory": "androidx.compose.material3.rememberSwipeToDismissBoxState",
-        "settled": "settledValue"
       }
     }
   }

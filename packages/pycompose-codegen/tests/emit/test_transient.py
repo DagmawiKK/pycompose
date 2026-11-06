@@ -144,7 +144,7 @@ def test_the_shape_and_the_validator_agree_on_the_transient_keys() -> None:
             "'occurrence' must name one of the props",
         ),
         (
-            lambda registry: _transient(registry, {"occurrence": "open"}),
+            lambda registry: _transient(registry, {"occurrence": "value"}),
             "must be an actionId",
         ),
         (

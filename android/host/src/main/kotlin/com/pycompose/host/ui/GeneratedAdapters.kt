@@ -312,16 +312,17 @@ import com.pycompose.ir.generated.WideNavigationRail as WideNavigationRailNode
 import com.pycompose.ir.generated.WideNavigationRailItem as WideNavigationRailItemNode
 import com.pycompose.renderer.Reseed
 import com.pycompose.renderer.Wanted
+import com.pycompose.renderer.anchoredState
 import com.pycompose.renderer.attachTo
 import com.pycompose.renderer.bound
 import com.pycompose.renderer.boundColor
 import com.pycompose.renderer.boundDp
-import com.pycompose.renderer.drawerState
 import com.pycompose.renderer.edit
 import com.pycompose.renderer.editText
 import com.pycompose.renderer.edited
 import com.pycompose.renderer.editedText
 import com.pycompose.renderer.expressionColor
+import com.pycompose.renderer.generated.driveTo
 import com.pycompose.renderer.generated.paint
 import com.pycompose.renderer.inSlot
 import com.pycompose.renderer.index
@@ -336,7 +337,6 @@ import com.pycompose.renderer.scrollState
 import com.pycompose.renderer.sheetState
 import com.pycompose.renderer.sliderState
 import com.pycompose.renderer.snackbar
-import com.pycompose.renderer.swipeState
 import com.pycompose.renderer.textInputState
 import com.pycompose.renderer.unslotted
 import com.pycompose.renderer.wanted
@@ -843,7 +843,14 @@ object GeneratedAdapters {
             }
             .register("DismissibleNavigationDrawer") { node, modifier, context ->
                 val model = node as DismissibleNavigationDrawerNode
-                val drawerStateValue = context.drawerState(model.props.open, model.props.onOpenChange)
+                val drawerStateValue = context.anchoredState(
+                    model.props.value, model.props.onValueChange,
+                    com.pycompose.renderer.Anchors(
+                        mapOf("closed" to androidx.compose.material3.DrawerValue.Closed, "open" to androidx.compose.material3.DrawerValue.Open),
+                        { initial -> androidx.compose.material3.rememberDrawerState(initialValue = checkNotNull(initial)) },
+                        { it.currentValue },
+                    ) { holder, anchor -> holder.driveTo(anchor) },
+                )
                 context.publish(model.id, drawerStateValue)
                 DismissibleNavigationDrawer(
                     modifier = modifier,
@@ -1795,7 +1802,14 @@ object GeneratedAdapters {
             .register("ModalNavigationDrawer") { node, modifier, context ->
                 val model = node as ModalNavigationDrawerNode
                 val scrimColorValue = context.boundColor(model.props.scrimColor, Color.colorVectorConverter(ColorSpaces.Srgb), androidx.compose.material3.DrawerDefaults.scrimColor)
-                val drawerStateValue = context.drawerState(model.props.open, model.props.onOpenChange)
+                val drawerStateValue = context.anchoredState(
+                    model.props.value, model.props.onValueChange,
+                    com.pycompose.renderer.Anchors(
+                        mapOf("closed" to androidx.compose.material3.DrawerValue.Closed, "open" to androidx.compose.material3.DrawerValue.Open),
+                        { initial -> androidx.compose.material3.rememberDrawerState(initialValue = checkNotNull(initial)) },
+                        { it.currentValue },
+                    ) { holder, anchor -> holder.driveTo(anchor) },
+                )
                 context.publish(model.id, drawerStateValue)
                 ModalNavigationDrawer(
                     modifier = modifier,
@@ -2770,7 +2784,14 @@ object GeneratedAdapters {
             }
             .register("SwipeToDismissBox") { node, modifier, context ->
                 val model = node as SwipeToDismissBoxNode
-                val stateValue = context.swipeState(model.props.value, model.props.onValueChange)
+                val stateValue = context.anchoredState(
+                    model.props.value, model.props.onValueChange,
+                    com.pycompose.renderer.Anchors(
+                        mapOf("startToEnd" to androidx.compose.material3.SwipeToDismissBoxValue.StartToEnd, "endToStart" to androidx.compose.material3.SwipeToDismissBoxValue.EndToStart, "settled" to androidx.compose.material3.SwipeToDismissBoxValue.Settled),
+                        { initial -> initial?.let { androidx.compose.material3.rememberSwipeToDismissBoxState(initialValue = it) } ?: androidx.compose.material3.rememberSwipeToDismissBoxState() },
+                        { it.settledValue },
+                    ) { holder, anchor -> holder.driveTo(anchor) },
+                )
                 SwipeToDismissBox(
                     modifier = modifier,
                     enableDismissFromEndToStart = model.props.enableDismissFromEndToStart,

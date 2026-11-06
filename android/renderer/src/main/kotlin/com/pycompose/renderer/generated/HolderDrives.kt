@@ -11,15 +11,6 @@ suspend fun androidx.compose.material3.DrawerState.driveTo(anchor: androidx.comp
     }
 }
 
-/** A [androidx.compose.material3.DrawerState] created at [initial] by its pinned factory. */
-@androidx.compose.runtime.Composable
-fun rememberAnchored(initial: androidx.compose.material3.DrawerValue): androidx.compose.material3.DrawerState =
-    androidx.compose.material3.rememberDrawerState(initialValue = initial)
-
-/** The anchor [androidx.compose.material3.DrawerState] has settled on. */
-val androidx.compose.material3.DrawerState.settledAnchor: androidx.compose.material3.DrawerValue
-    get() = currentValue
-
 /** Drive [androidx.compose.material3.SheetState] to [anchor] through its pinned member. */
 suspend fun androidx.compose.material3.SheetState.driveTo(anchor: androidx.compose.material3.SheetValue) {
     when (anchor) {
@@ -29,15 +20,6 @@ suspend fun androidx.compose.material3.SheetState.driveTo(anchor: androidx.compo
     }
 }
 
-/** A [androidx.compose.material3.SheetState] created at [initial] by its pinned factory. */
-@androidx.compose.runtime.Composable
-fun rememberAnchored(initial: androidx.compose.material3.SheetValue): androidx.compose.material3.SheetState =
-    androidx.compose.material3.rememberStandardBottomSheetState(initialValue = initial)
-
-/** The anchor [androidx.compose.material3.SheetState] has settled on. */
-val androidx.compose.material3.SheetState.settledAnchor: androidx.compose.material3.SheetValue
-    get() = currentValue
-
 /** Drive [androidx.compose.material3.SwipeToDismissBoxState] to [anchor] through its pinned member. */
 suspend fun androidx.compose.material3.SwipeToDismissBoxState.driveTo(anchor: androidx.compose.material3.SwipeToDismissBoxValue) {
     when (anchor) {
@@ -46,12 +28,3 @@ suspend fun androidx.compose.material3.SwipeToDismissBoxState.driveTo(anchor: an
         androidx.compose.material3.SwipeToDismissBoxValue.Settled -> reset()
     }
 }
-
-/** A [androidx.compose.material3.SwipeToDismissBoxState] created at [initial] by its pinned factory. */
-@androidx.compose.runtime.Composable
-fun rememberAnchored(initial: androidx.compose.material3.SwipeToDismissBoxValue): androidx.compose.material3.SwipeToDismissBoxState =
-    androidx.compose.material3.rememberSwipeToDismissBoxState(initialValue = initial)
-
-/** The anchor [androidx.compose.material3.SwipeToDismissBoxState] has settled on. */
-val androidx.compose.material3.SwipeToDismissBoxState.settledAnchor: androidx.compose.material3.SwipeToDismissBoxValue
-    get() = settledValue

@@ -1,4 +1,4 @@
-"""The swipe family: a closed three-anchor enum on one host-owned holder."""
+"""The swipe holder: its pinned three-anchor enum, derived as an anchored family."""
 
 from __future__ import annotations
 
@@ -33,12 +33,10 @@ def test_the_swipe_family_is_closed_and_declares_a_string_report() -> None:
     """The three native anchors are the whole value set, never an open string."""
     spec = REGISTRY.components["SwipeToDismissBox"]
     assert spec.state is not None
-    assert spec.state.kind == "swipe"
-    assert spec.state.value == "value"
-    assert spec.state.report == "onValueChange"
+    assert spec.state.kind == "anchored"
     value = spec.props["value"]
     assert value.type == "enum"
-    assert value.values == ("settled", "startToEnd", "endToStart")
+    assert value.values == ("startToEnd", "endToStart", "settled")
     assert not value.required
     report = spec.props["onValueChange"]
     assert report.type == "actionId"

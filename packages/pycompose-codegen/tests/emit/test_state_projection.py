@@ -20,7 +20,6 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from pycompose_codegen.emit.state_anchors import SWIPE_VALUES
 from pycompose_codegen.emit.state_rules import STATE_VALUE_TYPES
 
 from pycompose.host.wire import emit_ir, to_dict, validate_ir
@@ -53,7 +52,7 @@ def test_state_integers_cannot_overflow_or_violate_native_bounds(
     assert not validate_prop(value, REGISTRY.components[component].props[prop])
 
 
-STATEFUL = "ModalNavigationDrawer"
+STATEFUL = "ModalBottomSheet"
 
 GATED = "ModalBottomSheet"
 
@@ -87,19 +86,23 @@ def components() -> dict[str, Any]:
 
 
 def test_the_generated_constructor_states_the_desired_value() -> None:
-    """The value and the report are props; the wire carries them camelCase."""
+    """The value and the report are props; the wire carries them camelCase.
+
+    A drawer's holder is derived from the pin, so its value is the anchor of
+    ``DrawerValue`` the app wants, spelled in lowerCamel.
+    """
     wire = snapshot(
         ModalNavigationDrawer(
             id="drawer",
-            open=True,
-            on_open_change="submit",
+            value="open",
+            on_value_change="submit",
             children=[Text(id="body", text="Body")],
             drawer=[Text(id="panel", text="Menu")],
         )
     )
     props = wire["root"]["props"]
-    assert props["open"] is True
-    assert props["onOpenChange"] == "submit"
+    assert props["value"] == "open"
+    assert props["onValueChange"] == "submit"
     slots = {
         child["props"]["text"]: child.get("slot") for child in wire["root"]["children"]
     }
@@ -108,9 +111,7 @@ def test_the_generated_constructor_states_the_desired_value() -> None:
 
 def test_an_undeclared_desired_value_is_omitted_from_the_wire() -> None:
     """Absent is not false: the app said nothing, so nothing is reconciled."""
-    wire = snapshot(
-        ModalNavigationDrawer(id="drawer", on_open_change="submit", children=[])
-    )
+    wire = snapshot(ModalBottomSheet(id="sheet", on_open_change="submit", children=[]))
     assert "open" not in wire["root"]["props"]
 
 
@@ -150,7 +151,7 @@ def test_every_declared_state_names_a_typed_value_and_a_matching_report() -> Non
     """
     for name, entry in sorted(components().items()):
         state = entry.get("state")
-        if state is None or state["kind"] in {"properties", "positional"}:
+        if state is None or state["kind"] in {"properties", "positional", "anchored"}:
             # A derived family's props are its holder's (test_property_holders).
             continue
         props = entry["props"]
@@ -166,16 +167,6 @@ def test_every_declared_state_names_a_typed_value_and_a_matching_report() -> Non
                 {"name": "selectionStart", "type": "integer"},
                 {"name": "selectionEnd", "type": "integer"},
             ], name
-            continue
-        if state["kind"] == "swipe":
-            assert value["type"] == "enum", name
-            assert value["values"] == list(SWIPE_VALUES), name
-            assert not value.get("required"), name
-            report = props[state["report"]]
-            assert report["type"] == "actionId", name
-            assert [field["type"] for field in report["payload"]] == ["string"], name
-            assert state["value"] in entry.get("reshaped", []), name
-            assert state["report"] in entry.get("reshaped", []), name
             continue
         assert value["type"] in STATE_VALUE_TYPES, name
         assert not value.get("required"), name
@@ -195,7 +186,12 @@ def test_every_state_kind_is_a_vocabulary_member() -> None:
     for name, entry in sorted(components().items()):
         state = entry.get("state")
         if state is not None:
-            assert state["kind"] in {*STATE_KINDS, "properties", "positional"}, name
+            assert state["kind"] in {
+                *STATE_KINDS,
+                "properties",
+                "positional",
+                "anchored",
+            }, name
 
 
 def test_every_declared_dismissal_names_an_unclaimed_parameter() -> None:
@@ -288,7 +284,7 @@ def _payload(registry: dict[str, Any], prop: str, component: str = STATEFUL) -> 
 
 
 def _with_scrollable(registry: dict[str, Any], prop_type: str) -> None:
-    """Give the drawer a scroll state with one deliberately typed gate prop.
+    """Give the sheet a scroll state with one deliberately typed gate prop.
 
     Args:
         registry: The loaded catalog.
@@ -301,7 +297,7 @@ def _with_scrollable(registry: dict[str, Any], prop_type: str) -> None:
 def test_a_numeric_desired_value_and_a_family_gate_load(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """A number can drive a family the way a boolean drives a drawer.
+    """A number can drive a family the way a boolean drives a sheet.
 
     The declaration itself is type-polymorphic: which scalar a family drives
     is the family's business, and the report answers in the same scalar.
@@ -346,7 +342,7 @@ def test_a_modifier_riding_family_carries_its_boolean_gate_prop(
             "repeats another parameter",
         ),
         (
-            lambda registry: _state(registry).update(native="drawerContent"),
+            lambda registry: _state(registry).update(native="dragHandle"),
             "repeats another parameter",
         ),
         (
@@ -358,11 +354,11 @@ def test_a_modifier_riding_family_carries_its_boolean_gate_prop(
             "repeats another parameter",
         ),
         (
-            lambda registry: _state(registry).update(dismiss="drawerState"),
+            lambda registry: _state(registry).update(dismiss="sheetState"),
             "repeats another parameter",
         ),
         (
-            lambda registry: _state(registry).update(dismiss="drawerContent"),
+            lambda registry: _state(registry).update(dismiss="dragHandle"),
             "repeats another parameter",
         ),
         (
@@ -431,57 +427,55 @@ def test_the_codegen_refuses_an_unrenderable_state(
         load_with(tmp_path, monkeypatch, break_it)
 
 
-def test_a_swipe_names_the_closed_enum_and_its_string_report() -> None:
-    """The swipe's three anchors are the whole value set, not an open string."""
+def test_an_anchored_holder_names_its_pinned_anchors_and_a_string_report() -> None:
+    """A swipe's anchors are its pinned enum's entries, and its report one string."""
     entry = components()["SwipeToDismissBox"]
-    assert entry["state"] == {
-        "native": "state",
-        "kind": "swipe",
-        "value": "value",
-        "report": "onValueChange",
+    state = entry["state"]
+    assert state["kind"] == "anchored"
+    assert state["anchors"] == {
+        "startToEnd": "StartToEnd",
+        "endToStart": "EndToStart",
+        "settled": "Settled",
     }
-    assert entry["props"]["value"]["values"] == list(SWIPE_VALUES)
+    assert entry["props"]["value"]["values"] == ["startToEnd", "endToStart", "settled"]
+    # Its factory has its own start, so the app may leave the anchor unstated.
+    assert not entry["props"]["value"].get("required")
     assert entry["props"]["onValueChange"]["payload"] == [
         {"name": "value", "type": "string"}
     ]
+    assert components()["ModalNavigationDrawer"]["props"]["value"]["required"]
 
 
 @pytest.mark.parametrize(
     ("break_it", "expected"),
     [
         (
-            lambda registry: registry["components"]["SwipeToDismissBox"]["props"][
-                "value"
-            ].update(type="string"),
-            "must be an enum with the values",
+            lambda registry: _state(registry, "SwipeToDismissBox").update(extra=1),
+            "unknown keys",
         ),
         (
-            lambda registry: registry["components"]["SwipeToDismissBox"]["props"][
-                "value"
-            ].update(values=["settled", "startToEnd"]),
-            "must be an enum with the values",
+            lambda registry: _state(registry, "SwipeToDismissBox").update(anchors={}),
+            "name holder, factory, valueClass, anchors, settled",
         ),
         (
-            lambda registry: registry["components"]["SwipeToDismissBox"]["props"][
-                "value"
-            ].update(required=True),
-            "must be optional",
+            lambda registry: _state(registry, "SwipeToDismissBox").update(settled=""),
+            "name holder, factory, valueClass, anchors, settled",
         ),
         (
-            lambda registry: registry["components"]["SwipeToDismissBox"]["props"][
+            lambda registry: registry["components"]["SwipeToDismissBox"]["props"].pop(
                 "onValueChange"
-            ]["payload"][0].update(type="boolean"),
-            "needs one string payload field",
+            ),
+            "must be among the props",
         ),
     ],
 )
-def test_the_codegen_refuses_an_unrenderable_swipe(
+def test_the_codegen_refuses_an_unrenderable_anchored_holder(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     break_it: Callable[[dict[str, Any]], None],
     expected: str,
 ) -> None:
-    """A swipe family the host cannot map to its closed anchors is refused."""
+    """An anchored family missing a pinned member or its projection is refused."""
     with pytest.raises(SystemExit, match=expected):
         load_with(tmp_path, monkeypatch, break_it)
 
@@ -511,8 +505,8 @@ def test_the_runtime_registry_round_trips_the_state() -> None:
     from pycompose.model.catalog.registry import ComponentSpec
 
     state = {
-        "native": "drawerState",
-        "kind": "drawer",
+        "native": "sheetState",
+        "kind": "sheet",
         "value": "open",
         "report": "onOpenChange",
     }
@@ -527,7 +521,7 @@ def test_the_runtime_registry_round_trips_the_state() -> None:
         },
     )
     assert spec.state is not None
-    assert spec.state.kind == "drawer"
+    assert spec.state.kind == "sheet"
     assert spec.to_mapping()["state"] == state
     dismissed = {**state, "dismiss": "onDismissRequest"}
     spec = ComponentSpec.from_mapping(

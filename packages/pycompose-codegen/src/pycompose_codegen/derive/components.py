@@ -30,8 +30,10 @@ from pycompose_codegen.derive.classpath_dump import (
     Parameter,
     inventory,
     source_defaults,
+    source_drives,
 )
 from pycompose_codegen.derive.classpath_types import KotlinType
+from pycompose_codegen.derive.holders import anchored_holders
 from pycompose_codegen.derive.keyed import KEY, is_keyed
 from pycompose_codegen.derive.opt_ins import OptInIndex, opt_in_index
 from pycompose_codegen.derive.positional_holders import positional_holders
@@ -399,9 +401,14 @@ def propose_components(
     providers = scope_providers((d for d in found.declarations if d.composable), scopes)
     objects = frozenset(c.classifier for c in found.classes if c.class_kind == "OBJECT")
     # A positional holder's entry names its kind; a property holder's is implied.
+    drives = source_drives()
     holders = {
         **{
             c: {"kind": "positional", **h} for c, h in positional_holders(found).items()
+        },
+        **{
+            c: {"kind": "anchored", **h}
+            for c, h in anchored_holders(found, drives).items()
         },
         **property_holders(found, defaults),
     }

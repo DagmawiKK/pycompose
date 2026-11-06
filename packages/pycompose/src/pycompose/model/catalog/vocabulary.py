@@ -39,7 +39,6 @@ INTERACTION_REPORTS = {"press": "pressed", "focus": "focused", "hover": "hovered
 """The boolean payload field each observed interaction reports."""
 
 STATE_KINDS = (
-    "drawer",
     "sheet",
     "slider",
     "scroll",
@@ -47,29 +46,26 @@ STATE_KINDS = (
     "tooltip",
     "textInput",
     "search",
-    "swipe",
 )
 """State families the host creates, drives and reports for a component.
 
-A family is one host-side implementation: a drawer reconciles a desired
-open/closed value through gestures and animation; a sheet does the same for a
-modal surface that has to be composed to be shown at all; a slider drives the
+A family is one host-side implementation: a sheet reconciles a desired
+open/closed value for a modal surface that has to be composed to be shown at
+all; a slider drives the
 thumb to a desired number and reports the settled one; scroll and lazyList
 report a resting position once scrolling comes to rest; a tooltip reconciles a
 desired visible value through hover, focus and long-press gestures; textInput
 reconciles text and selection with an atomic, numbered edit report; search
 shares one editing projection and one expansion state across a collapsed bar
-and every expanded surface; a swipe reconciles a desired settled/dismissed
-anchor through horizontal gestures and reports the anchor it settled on. A
-holder with one scrollable position (a pager's page) is derived from the pin
-instead (``positional``). The
+and every expanded surface. A holder with one scrollable position (a pager's
+page) or one anchor of an enum (a drawer open or closed, a swipe settled or
+dismissed) is derived from the pin instead (``positional``, ``anchored``). The
 vocabulary is closed for the same reason the interaction kinds are: the host
 must not be asked to drive a state object whose transitions it does not
 understand.
 """
 
 STATE_HOLDERS = {
-    "drawer": "androidx.compose.material3.DrawerState",
     "sheet": "androidx.compose.material3.SheetState",
     "slider": "androidx.compose.material3.SliderState",
     "scroll": "androidx.compose.foundation.ScrollState",
@@ -77,7 +73,6 @@ STATE_HOLDERS = {
     "tooltip": "androidx.compose.material3.TooltipState",
     "textInput": "androidx.compose.foundation.text.input.TextFieldState",
     "search": "androidx.compose.material3.SearchBarState",
-    "swipe": "androidx.compose.material3.SwipeToDismissBoxState",
 }
 """The native holder each state family creates and drives.
 
@@ -110,13 +105,32 @@ DECODERS = ("resourceFont", "resourceImage", "resourceText")
 
 Every other family a prop names crosses the wire as its tagged value."""
 
-STATE_STREAMS = {"drawer": ("progress",), "scroll": ("offset", "progress")}
-"""Streams each state family's holder exposes to expressions.
+STATE_STREAMS = {
+    "androidx.compose.material3.DrawerState": ("progress",),
+    "androidx.compose.foundation.ScrollState": ("offset", "progress"),
+}
+"""Streams each holder class exposes to expressions, whichever family drives it.
 
 A stream is a number the host reads from the holder every frame -- a drawer's
 open fraction, a scroll's offset and fraction -- so a prop bound to an
 expression over it follows a gesture without Python running per frame.
 """
+
+
+def holder_streams(kind: str, holder: object = None) -> tuple[str, ...]:
+    """The streams a state's holder exposes: a derived family names its holder,
+    a hand-written one is its kind's.
+
+    Args:
+        kind: The state's family.
+        holder: The holder class a derived family names, if any.
+
+    Returns:
+        The stream names, none for a holder that exposes none.
+    """
+    named = holder if isinstance(holder, str) else STATE_HOLDERS.get(kind, "")
+    return STATE_STREAMS.get(named, ())
+
 
 EXPRESSION_OPS = ("times", "plus", "minus", "clamp", "alpha", "mix")
 """The closed expression vocabulary: arithmetic and clamp over numbers, and the

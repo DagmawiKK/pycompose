@@ -181,6 +181,10 @@ class TransientRule:
 DERIVED = {
     "properties": (("holder", "factory", "properties"), ("arguments",)),
     "positional": (("holder", "factory", "initial", "position", "drive"), ("count",)),
+    "anchored": (
+        ("holder", "factory", "valueClass", "anchors", "settled"),
+        ("started",),
+    ),
 }
 """Each derived family's required fields, then its optional ones."""
 

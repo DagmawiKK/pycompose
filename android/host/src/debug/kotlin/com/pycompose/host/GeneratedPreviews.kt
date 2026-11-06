@@ -196,7 +196,7 @@ private fun DismissibleDrawerSheetPreview() {
 @Preview(name = "DismissibleNavigationDrawer", showBackground = true)
 @Composable
 private fun DismissibleNavigationDrawerPreview() {
-    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.drawer", "props": {"text": "drawer"}, "slot": "drawer", "type": "Text"}, {"id": "preview.child", "props": {"text": "DismissibleNavigationDrawer"}, "type": "Text"}], "id": "preview", "props": {}, "type": "DismissibleNavigationDrawer"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.drawer", "props": {"text": "drawer"}, "slot": "drawer", "type": "Text"}, {"id": "preview.child", "props": {"text": "DismissibleNavigationDrawer"}, "type": "Text"}], "id": "preview", "props": {"value": "closed"}, "type": "DismissibleNavigationDrawer"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "DockedSearchBar", showBackground = true)
@@ -508,7 +508,7 @@ private fun ModalDrawerSheetPreview() {
 @Preview(name = "ModalNavigationDrawer", showBackground = true)
 @Composable
 private fun ModalNavigationDrawerPreview() {
-    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.drawer", "props": {"text": "drawer"}, "slot": "drawer", "type": "Text"}, {"id": "preview.child", "props": {"text": "ModalNavigationDrawer"}, "type": "Text"}], "id": "preview", "props": {}, "type": "ModalNavigationDrawer"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.drawer", "props": {"text": "drawer"}, "slot": "drawer", "type": "Text"}, {"id": "preview.child", "props": {"text": "ModalNavigationDrawer"}, "type": "Text"}], "id": "preview", "props": {"value": "closed"}, "type": "ModalNavigationDrawer"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ModalWideNavigationRail", showBackground = true)

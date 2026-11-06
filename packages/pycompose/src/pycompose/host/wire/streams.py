@@ -20,7 +20,7 @@ from pycompose.errors import IrValidationError
 from pycompose.model.canonical import freeze_json, thaw_json
 from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.catalog.modifiers import gesture_streams
-from pycompose.model.catalog.vocabulary import STATE_STREAMS
+from pycompose.model.catalog.vocabulary import holder_streams
 from pycompose.model.nodes.node import Node, Props
 from pycompose.model.programs.bindings import is_binding
 from pycompose.model.programs.expressions import (
@@ -146,8 +146,9 @@ def exposed(node: Node) -> set[str]:
         The stream names expressions may read from it.
     """
     spec = REGISTRY.components.get(node.type)
-    family = spec.state.kind if spec is not None and spec.state else None
-    names = set(STATE_STREAMS.get(family or "", ()))
+    state = spec.state if spec is not None else None
+    held = (state.derived or {}).get("holder") if state is not None else None
+    names = set(holder_streams(state.kind, held)) if state is not None else set()
     modifier = node.props.values.get("modifier")
     operations = modifier.get("operations") if isinstance(modifier, Mapping) else None
     gestures = gesture_streams(REGISTRY.derived_modifiers)

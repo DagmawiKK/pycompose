@@ -9,6 +9,10 @@ import re
 from typing import Any, cast
 
 from pycompose_codegen.emit.derived_families import validate_properties
+from pycompose_codegen.emit.holder_families import (
+    validate_anchored,
+    validate_positional,
+)
 from pycompose_codegen.emit.rules import (
     NATIVE_PARAMETER,
     die,
@@ -22,7 +26,6 @@ from pycompose_codegen.emit.state_anchors import (
 from pycompose_codegen.emit.state_families import (
     STATE_ATTACH_GATES,
     STATE_CONSTRUCTOR_PROPS,
-    positional_props,
 )
 
 INTERACTION_KEYS = frozenset({"native", "observations"})
@@ -209,7 +212,10 @@ def _validate_state(
         validate_properties(where, props, state)
         return
     if state.get("kind") == "positional":
-        _validate_positional(where, props, state)
+        validate_positional(where, props, state)
+        return
+    if state.get("kind") == "anchored":
+        validate_anchored(where, props, state)
         return
     unknown = sorted(set(state) - STATE_KEYS)
     if unknown:
@@ -234,25 +240,6 @@ def _validate_state(
     if dismiss is not None:
         _claimed_parameter(where, "dismiss", dismiss, claimed | {injected})
     _validate_family_props(where, kind, props)
-
-
-POSITIONAL_KEYS = frozenset(
-    {"native", "kind", "holder", "factory", "initial", "count", "position", "drive"}
-)
-
-
-def _validate_positional(
-    where: str, props: dict[str, Any], state: dict[str, Any]
-) -> None:
-    """Check a positional family: its pinned members, and the props it projects."""
-    unknown = sorted(set(state) - POSITIONAL_KEYS)
-    if unknown:
-        die(f"{where} has unknown keys: {', '.join(unknown)}")
-    for key in POSITIONAL_KEYS - {"count"}:
-        if not isinstance(state.get(key), str) or not state[key]:
-            die(f"{where}: positional needs {key!r}")
-    if positional_props(state).keys() - props.keys():
-        die(f"{where}: the position and its report must be among the props")
 
 
 def _validate_value_family(

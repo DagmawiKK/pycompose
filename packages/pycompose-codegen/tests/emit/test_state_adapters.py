@@ -12,19 +12,18 @@ from __future__ import annotations
 from pycompose_codegen.emit.adapters.assemble import render
 from pycompose_codegen.emit.adapters.eligibility import is_mechanical
 from pycompose_codegen.emit.adapters.imports import extra_imports
-from test_state_projection import GATED, STATEFUL, components
+from test_state_projection import GATED, components
 
 
 def test_the_adapter_passes_the_host_holder_where_the_schema_says() -> None:
     """The desired value and its report are not native parameters."""
-    adapter = render(STATEFUL, components()[STATEFUL])
-    assert (
-        "val drawerStateValue = context.drawerState("
-        "model.props.open, model.props.onOpenChange)" in adapter
-    )
+    drawer = "ModalNavigationDrawer"
+    adapter = render(drawer, components()[drawer])
+    assert "val drawerStateValue = context.anchoredState(" in adapter
+    assert "model.props.value, model.props.onValueChange," in adapter
     assert "drawerState = drawerStateValue" in adapter
-    assert "open =" not in adapter
-    assert "onOpenChange =" not in adapter
+    assert "value =" not in adapter
+    assert "onValueChange =" not in adapter
     assert 'context.slot(model.children, "drawer")?.invoke()' in adapter
     assert "content = { context.children(model.children) }" in adapter
 
@@ -60,7 +59,7 @@ def test_the_holder_stays_outside_the_gate() -> None:
 def test_a_component_without_a_holder_gets_no_state_local() -> None:
     """Only components that declare a holder ask the renderer for one."""
     adapter = render("Column", components()["Column"])
-    assert "context.drawerState(" not in adapter
+    assert "context.anchoredState(" not in adapter
 
 
 SLIDER = {
@@ -189,9 +188,10 @@ def test_a_swipe_holder_reports_the_settled_anchor_and_fills_row_slots() -> None
     """The enum value and its report are held; both contents use RowScope."""
     entry = components()["SwipeToDismissBox"]
     adapter = render("SwipeToDismissBox", entry)
+    assert "val stateValue = context.anchoredState(" in adapter
     assert (
-        "val stateValue = context.swipeState("
-        "model.props.value, model.props.onValueChange)" in adapter
+        "{ initial -> initial?.let { androidx.compose.material3."
+        "rememberSwipeToDismissBoxState(initialValue = it) }" in adapter
     )
     assert "state = stateValue" in adapter
     # The holder consumes the desired anchor and its report.
@@ -202,7 +202,7 @@ def test_a_swipe_holder_reports_the_settled_anchor_and_fills_row_slots() -> None
         'model.children, "backgroundContent") ?: {}' in adapter
     )
     assert "content = { context.childrenIn(this, model.children) }" in adapter
-    assert "com.pycompose.renderer.swipeState" in extra_imports(entry)
+    assert "com.pycompose.renderer.anchoredState" in extra_imports(entry)
 
 
 def test_a_held_enum_value_does_not_block_a_mechanical_adapter() -> None:

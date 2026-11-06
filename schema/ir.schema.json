@@ -2446,13 +2446,19 @@
               },
               "type": "object"
             },
-            "onOpenChange": {
+            "onValueChange": {
               "$ref": "#/definitions/Action"
             },
-            "open": {
-              "type": "boolean"
+            "value": {
+              "enum": [
+                "closed",
+                "open"
+              ]
             }
           },
+          "required": [
+            "value"
+          ],
           "type": "object"
         },
         "type": {
@@ -6455,11 +6461,8 @@
               },
               "type": "object"
             },
-            "onOpenChange": {
+            "onValueChange": {
               "$ref": "#/definitions/Action"
-            },
-            "open": {
-              "type": "boolean"
             },
             "scrimColor": {
               "anyOf": [
@@ -6473,8 +6476,17 @@
                   "$ref": "#/definitions/Binding"
                 }
               ]
+            },
+            "value": {
+              "enum": [
+                "closed",
+                "open"
+              ]
             }
           },
+          "required": [
+            "value"
+          ],
           "type": "object"
         },
         "type": {
@@ -25222,12 +25234,6 @@
                 }
               },
               "type": "object"
-            },
-            "onOpenChange": {
-              "$ref": "#/definitions/Action"
-            },
-            "open": {
-              "type": "boolean"
             }
           },
           "type": "object"
@@ -25429,12 +25435,6 @@
                 }
               },
               "type": "object"
-            },
-            "onOpenChange": {
-              "$ref": "#/definitions/Action"
-            },
-            "open": {
-              "type": "boolean"
             },
             "scrimColor": {
               "anyOf": [
@@ -26363,12 +26363,6 @@
                 }
               },
               "type": "object"
-            },
-            "onOpenChange": {
-              "$ref": "#/definitions/Action"
-            },
-            "open": {
-              "type": "boolean"
             }
           },
           "type": "object"
@@ -26613,12 +26607,6 @@
                 }
               },
               "type": "object"
-            },
-            "onOpenChange": {
-              "$ref": "#/definitions/Action"
-            },
-            "open": {
-              "type": "boolean"
             },
             "scrimColor": {
               "anyOf": [
@@ -28351,12 +28339,6 @@
                 }
               },
               "type": "object"
-            },
-            "onOpenChange": {
-              "$ref": "#/definitions/Action"
-            },
-            "open": {
-              "type": "boolean"
             }
           },
           "type": "object"
@@ -28660,12 +28642,6 @@
                 }
               },
               "type": "object"
-            },
-            "onOpenChange": {
-              "$ref": "#/definitions/Action"
-            },
-            "open": {
-              "type": "boolean"
             },
             "scrimColor": {
               "anyOf": [
@@ -29600,12 +29576,6 @@
                 }
               },
               "type": "object"
-            },
-            "onOpenChange": {
-              "$ref": "#/definitions/Action"
-            },
-            "open": {
-              "type": "boolean"
             }
           },
           "type": "object"
@@ -29962,12 +29932,6 @@
                 }
               },
               "type": "object"
-            },
-            "onOpenChange": {
-              "$ref": "#/definitions/Action"
-            },
-            "open": {
-              "type": "boolean"
             },
             "scrimColor": {
               "anyOf": [
@@ -31124,12 +31088,6 @@
                 }
               },
               "type": "object"
-            },
-            "onOpenChange": {
-              "$ref": "#/definitions/Action"
-            },
-            "open": {
-              "type": "boolean"
             }
           },
           "type": "object"
@@ -31736,12 +31694,6 @@
                 }
               },
               "type": "object"
-            },
-            "onOpenChange": {
-              "$ref": "#/definitions/Action"
-            },
-            "open": {
-              "type": "boolean"
             },
             "scrimColor": {
               "anyOf": [
@@ -34822,13 +34774,19 @@
               },
               "type": "object"
             },
-            "onOpenChange": {
+            "onValueChange": {
               "$ref": "#/definitions/Action"
             },
-            "open": {
-              "type": "boolean"
+            "value": {
+              "enum": [
+                "closed",
+                "open"
+              ]
             }
           },
+          "required": [
+            "value"
+          ],
           "type": "object"
         },
         "type": {
@@ -38831,11 +38789,8 @@
               },
               "type": "object"
             },
-            "onOpenChange": {
+            "onValueChange": {
               "$ref": "#/definitions/Action"
-            },
-            "open": {
-              "type": "boolean"
             },
             "scrimColor": {
               "anyOf": [
@@ -38849,8 +38804,17 @@
                   "$ref": "#/definitions/Binding"
                 }
               ]
+            },
+            "value": {
+              "enum": [
+                "closed",
+                "open"
+              ]
             }
           },
+          "required": [
+            "value"
+          ],
           "type": "object"
         },
         "type": {

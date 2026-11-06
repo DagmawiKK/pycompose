@@ -13,6 +13,7 @@ from pycompose.model.catalog.registry import CONSUMERS, SLOT_KINDS
 from pycompose_codegen.emit.adapters.policy import MECHANICAL
 from pycompose_codegen.emit.state_families import (
     STATE_CONSTRUCTOR_PROPS,
+    anchored_props,
     attach_gate,
     positional_props,
     property_props,
@@ -56,6 +57,8 @@ def held_props(entry: dict[str, Any]) -> set[str]:
         return set(property_props(state))
     if state.get("kind") == "positional":
         return set(positional_props(state))
+    if state.get("kind") == "anchored":
+        return set(anchored_props(state))
     held = {
         name for key in ("value", "report") if isinstance(name := state.get(key), str)
     }

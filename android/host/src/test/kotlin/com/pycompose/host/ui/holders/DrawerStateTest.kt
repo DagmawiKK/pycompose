@@ -35,22 +35,21 @@ class DrawerStateTest {
 
     @Test
     fun theHostDrivesTheDrawerAndReportsEverySettledChange() {
-        // The app states the desired value; the host owns the DrawerState,
-        // drives it towards that value, and reports what it settled on. The
-        // report is how the app learns about a change it did not cause.
-        val ir = mutableStateOf(parse(drawer(open = "true")))
+        // The app states the desired anchor; the host owns the DrawerState,
+        // created at that anchor, drives it towards each new one, and reports
+        // what it settled on. The first anchor is where it starts: no report.
+        val ir = mutableStateOf(parse(drawer("open")))
         val actions = mutableListOf<Action>()
         compose.setContent { PyComposeTheme { renderer(actions).Render(ir.value) } }
         compose.waitForIdle()
 
         assertEquals(0.dp, panelLeft())
-        compose.waitUntil(5000) { actions.isNotEmpty() }
-        assertEquals("""{"open":true}""", actions[0].payload.toString())
+        assertTrue(actions.isEmpty())
 
-        compose.runOnIdle { ir.value = parse(drawer(open = "false")) }
+        compose.runOnIdle { ir.value = parse(drawer("closed")) }
         compose.waitForIdle()
-        assertEquals(2, actions.size)
-        assertEquals("""{"open":false}""", actions[1].payload.toString())
+        assertEquals(1, actions.size)
+        assertEquals("""{"value":"closed"}""", actions[0].payload.toString())
         assertTrue(panelLeft() < 0.dp)
     }
 
@@ -59,17 +58,17 @@ class DrawerStateTest {
         // The user moving the drawer is the report's whole reason to exist:
         // the app still desires open, and the host must not fight the gesture
         // by re-opening on the next snapshot.
-        val ir = mutableStateOf(parse(drawer(open = "true")))
+        val ir = mutableStateOf(parse(drawer("open")))
         val actions = mutableListOf<Action>()
         compose.setContent { PyComposeTheme { renderer(actions).Render(ir.value) } }
-        compose.waitUntil(5000) { actions.isNotEmpty() }
+        compose.waitForIdle()
 
         compose
             .onNode(SemanticsMatcher.keyIsDefined(SemanticsActions.Dismiss))
             .performSemanticsAction(SemanticsActions.Dismiss)
-        compose.waitUntil(5000) { actions.size == 2 }
+        compose.waitUntil(5000) { actions.size == 1 }
 
-        assertEquals("""{"open":false}""", actions[1].payload.toString())
+        assertEquals("""{"value":"closed"}""", actions[0].payload.toString())
         compose.waitForIdle()
         assertTrue(panelLeft() < 0.dp)
     }
@@ -78,16 +77,16 @@ class DrawerStateTest {
     fun aRepeatedSnapshotKeepsTheDrawerAndReportsNothing() {
         // Pulling a snapshot twice must not recreate state a gesture is
         // moving, and must not replay a report the app already handled.
-        val source = drawer(open = "true")
+        val source = drawer("open")
         val ir = mutableStateOf(parse(source))
         val actions = mutableListOf<Action>()
         compose.setContent { PyComposeTheme { renderer(actions).Render(ir.value) } }
-        compose.waitUntil(5000) { actions.isNotEmpty() }
+        compose.waitForIdle()
 
         compose.runOnIdle { ir.value = parse(source) }
         compose.waitForIdle()
 
-        assertEquals(1, actions.size)
+        assertTrue(actions.isEmpty())
         assertEquals(0.dp, panelLeft())
     }
 
@@ -96,20 +95,20 @@ class DrawerStateTest {
         // The app ignores the user's dismissal and keeps stating "open". Across a
         // rotation that is not a new statement, so the user's gesture stands.
         val actions = mutableListOf<Action>()
-        val ir = mutableStateOf(parse(drawer(open = "true")))
+        val ir = mutableStateOf(parse(drawer("open")))
         val restoration = restored(ir, actions)
-        compose.waitUntil(5000) { actions.size == 1 }
+        compose.waitForIdle()
         compose
             .onNode(SemanticsMatcher.keyIsDefined(SemanticsActions.Dismiss))
             .performSemanticsAction(SemanticsActions.Dismiss)
-        compose.waitUntil(5000) { actions.size == 2 }
-        compose.runOnIdle { ir.value = parse(drawer(open = "true"), actions) }
+        compose.waitUntil(5000) { actions.size == 1 }
+        compose.runOnIdle { ir.value = parse(drawer("open"), actions) }
 
         restoration.emulateSavedInstanceStateRestore()
         compose.waitForIdle()
 
         assertTrue(panelLeft() < 0.dp)
-        assertEquals(2, actions.size)
+        assertEquals(1, actions.size)
     }
 
     @Test
@@ -117,15 +116,15 @@ class DrawerStateTest {
         // After process death the app restores its own data; a value different
         // from its last statement is a new statement, and it wins.
         val actions = mutableListOf<Action>()
-        val ir = mutableStateOf(parse(drawer(open = "true")))
+        val ir = mutableStateOf(parse(drawer("open")))
         val restoration = restored(ir, actions)
-        compose.waitUntil(5000) { actions.size == 1 }
-        compose.runOnIdle { ir.value = parse(drawer(open = "false"), actions) }
+        compose.waitForIdle()
+        compose.runOnIdle { ir.value = parse(drawer("closed"), actions) }
 
         restoration.emulateSavedInstanceStateRestore()
-        compose.waitUntil(5000) { actions.size == 2 }
+        compose.waitUntil(5000) { actions.size == 1 }
 
-        assertEquals("""{"open":false}""", actions[1].payload.toString())
+        assertEquals("""{"value":"closed"}""", actions[0].payload.toString())
         assertTrue(panelLeft() < 0.dp)
     }
 
@@ -153,21 +152,16 @@ class DrawerStateTest {
         actions: List<Action> = emptyList(),
     ): ValidatedIr = IrParser().parse(echoing(source, actions)).getOrThrow()
 
-    private fun drawer(
-        open: String?,
-        report: Boolean = true,
-    ): String {
-        val props = mutableListOf<String>()
-        if (open != null) {
-            props.add("\"open\":$open")
-        }
-        if (report) {
-            props.add("\"onOpenChange\":{\"fields\":{},\"intent\":\"demo.drawer\"}")
-        }
+    private fun drawer(value: String): String {
+        val props =
+            listOf(
+                "\"value\":\"$value\"",
+                "\"onValueChange\":{\"fields\":{},\"intent\":\"demo.drawer\"}",
+            )
         return """
-            {"version":"0.1.0","schemaVersion":"1.18.0",
+            {"version":"0.1.0","schemaVersion":"1.23.0",
               "metadata":{"intents":{"demo.drawer":{"payload":{
-                "open":{"required":true,"type":"boolean"}}}}},
+                "value":{"required":true,"type":"string"}}}}},
              "root":{"id":"root","type":"ModalNavigationDrawer","props":{
                ${props.joinToString(",")}
              },

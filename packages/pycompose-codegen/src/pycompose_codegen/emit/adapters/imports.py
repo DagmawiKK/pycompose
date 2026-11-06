@@ -10,7 +10,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import Any
 
-from pycompose.model.catalog.vocabulary import STATE_STREAMS
+from pycompose.model.catalog.vocabulary import holder_streams
 from pycompose.model.programs.bindings import animatable
 from pycompose_codegen.emit.adapters.bound import plain_imports
 from pycompose_codegen.emit.adapters.state import state_call
@@ -31,11 +31,20 @@ def _state_imports(entry: dict[str, Any]) -> set[str]:
         return set()
     if state["kind"] == "properties":
         return set(property_imports(state))
+    if state["kind"] == "anchored":
+        # One runtime for every anchored holder, driven through its pinned drives.
+        qualified = {
+            "com.pycompose.renderer.anchoredState",
+            "com.pycompose.renderer.generated.driveTo",
+        }
+        if holder_streams(state["kind"], state.get("holder")):
+            qualified.add("com.pycompose.renderer.publish")
+        return qualified
     if state["kind"] == "positional":
         # One runtime for every positional holder; its count is the children.
         return {"com.pycompose.renderer.positional", "com.pycompose.renderer.unslotted"}
     qualified = {f"com.pycompose.renderer.{state_call(state['kind'])}"}
-    if state["kind"] in STATE_STREAMS:
+    if holder_streams(state["kind"], state.get("holder")):
         qualified.add("com.pycompose.renderer.publish")
     if attach_gate(state, entry.get("props", {})) is not None:
         # The holder rides the component's modifier, so the extension making

@@ -121,16 +121,6 @@
               "anchor": { "const": true }
             }
           }
-        },
-        "anchored": {
-          "type": "object",
-          "description": "How the holder is created at an anchor and read back: its one composable factory taking initialValue, and the property holding its settled anchor.",
-          "required": ["factory", "settled"],
-          "additionalProperties": false,
-          "properties": {
-            "factory": { "$ref": "#/$defs/dottedName" },
-            "settled": { "$ref": "#/$defs/identifier" }
-          }
         }
       }
     },
@@ -392,7 +382,8 @@
           "oneOf": [
             { "$ref": "#/$defs/stateBlock" },
             { "$ref": "#/$defs/derivedState" },
-            { "$ref": "#/$defs/positionalState" }
+            { "$ref": "#/$defs/positionalState" },
+            { "$ref": "#/$defs/anchoredState" }
           ]
         },
         "transient": { "$ref": "#/$defs/transientBlock" },
@@ -441,6 +432,22 @@
         "consume": { "type": "string" },
         "provides": { "type": "string" },
         "host": { "const": true }
+      }
+    },
+    "anchoredState": {
+      "type": "object",
+      "description": "A holder of one enum's anchors the pin implies: its factory, value enum, each anchor by its wire spelling, the member it settles on, and whether its factory has its own start.",
+      "required": ["native", "kind", "holder", "factory", "valueClass", "anchors", "settled"],
+      "additionalProperties": false,
+      "properties": {
+        "native": { "type": "string" },
+        "kind": { "const": "anchored" },
+        "holder": { "$ref": "#/$defs/dottedName" },
+        "factory": { "$ref": "#/$defs/dottedName" },
+        "valueClass": { "$ref": "#/$defs/dottedName" },
+        "anchors": { "type": "object", "minProperties": 1, "additionalProperties": { "type": "string" } },
+        "settled": { "$ref": "#/$defs/identifier" },
+        "started": { "const": true }
       }
     },
     "positionalState": {

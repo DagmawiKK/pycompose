@@ -240,6 +240,11 @@ _ArrangementVertical = Literal[
     "top",
 ]
 
+_DismissibleNavigationDrawerValue = Literal[
+    "closed",
+    "open",
+]
+
 _FlowColumnItemHorizontalAlignment = Literal[
     "start",
     "centerHorizontally",
@@ -291,6 +296,11 @@ _ModalBottomSheetValue = Literal[
     "expanded",
 ]
 
+_ModalNavigationDrawerValue = Literal[
+    "closed",
+    "open",
+]
+
 _NavigationSuiteType = Literal[
     "navigationBar",
     "navigationDrawer",
@@ -333,9 +343,9 @@ _NavigationItemIconPosition = Literal[
 ]
 
 _SwipeToDismissBoxValue = Literal[
-    "settled",
     "startToEnd",
     "endToStart",
+    "settled",
 ]
 
 _FontFamily = Literal[
@@ -1956,8 +1966,8 @@ class DismissibleNavigationDrawer(Component):
         id: str | None = None,
         gestures_enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_open_change: ActionTarget | None = None,
-        open: bool | None = None,
+        on_value_change: ActionTarget | None = None,
+        value: _DismissibleNavigationDrawerValue,
         children: Content = (),
         content: Content | None = None,
         drawer: Content | None = None,
@@ -1969,8 +1979,8 @@ class DismissibleNavigationDrawer(Component):
             id: Stable instance key; None derives the node's path id.
             gestures_enabled: Native gesturesEnabled; None uses its default.
             modifier: Native modifier; None uses its default.
-            on_open_change: Native onOpenChange; None uses its default.
-            open: Native open; None uses its default.
+            on_value_change: Native onValueChange; None uses its default.
+            value: Required native value.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
             drawer: Nodes for the native drawerContent slot.
@@ -1981,10 +1991,9 @@ class DismissibleNavigationDrawer(Component):
         props: dict[str, PropValue] = {}
         if gestures_enabled is not None:
             props["gestures_enabled"] = gestures_enabled
-        if on_open_change is not None:
-            props["on_open_change"] = on_open_change
-        if open is not None:
-            props["open"] = open
+        if on_value_change is not None:
+            props["on_value_change"] = on_value_change
+        props["value"] = value
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -5128,9 +5137,9 @@ class ModalNavigationDrawer(Component):
         id: str | None = None,
         gestures_enabled: bool | None = None,
         modifier: Modifier | None = None,
-        on_open_change: ActionTarget | None = None,
-        open: bool | None = None,
+        on_value_change: ActionTarget | None = None,
         scrim_color: JsonValue | Expression | Binding | None = None,
+        value: _ModalNavigationDrawerValue,
         children: Content = (),
         content: Content | None = None,
         drawer: Content | None = None,
@@ -5142,9 +5151,9 @@ class ModalNavigationDrawer(Component):
             id: Stable instance key; None derives the node's path id.
             gestures_enabled: Native gesturesEnabled; None uses its default.
             modifier: Native modifier; None uses its default.
-            on_open_change: Native onOpenChange; None uses its default.
-            open: Native open; None uses its default.
+            on_value_change: Native onValueChange; None uses its default.
             scrim_color: Native scrimColor; None uses its default.
+            value: Required native value.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
             drawer: Nodes for the native drawerContent slot.
@@ -5155,12 +5164,11 @@ class ModalNavigationDrawer(Component):
         props: dict[str, PropValue] = {}
         if gestures_enabled is not None:
             props["gestures_enabled"] = gestures_enabled
-        if on_open_change is not None:
-            props["on_open_change"] = on_open_change
-        if open is not None:
-            props["open"] = open
+        if on_value_change is not None:
+            props["on_value_change"] = on_value_change
         if scrim_color is not None:
             props["scrim_color"] = lower_binding(scrim_color, "composition")
+        props["value"] = value
         if content is not None:
             if children:
                 raise IrValidationError(

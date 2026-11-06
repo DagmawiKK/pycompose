@@ -658,8 +658,8 @@ data class DismissibleDrawerSheet(
 data class DismissibleNavigationDrawerProps(
     val `gesturesEnabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
-    val `onOpenChange`: String? = null,
-    val `open`: Boolean? = null,
+    val `onValueChange`: String? = null,
+    val `value`: String,
 ) : UiProps
 
 @Serializable
@@ -1842,9 +1842,9 @@ data class ModalDrawerSheet(
 data class ModalNavigationDrawerProps(
     val `gesturesEnabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
-    val `onOpenChange`: String? = null,
-    val `open`: Boolean? = null,
+    val `onValueChange`: String? = null,
     val `scrimColor`: JsonElement? = null,
+    val `value`: String,
 ) : UiProps
 
 @Serializable
