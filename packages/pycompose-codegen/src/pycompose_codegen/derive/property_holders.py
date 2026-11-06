@@ -18,9 +18,11 @@ members sort by what the types say:
   values settle: one report named after it carries them all, rather than a
   report per change.
 
-A read-only property the factory only seeds as ``initial...``
-(``DateRangePickerState.selectedStartDateMillis``) is a value the pin gives no
-drive, so its holder is not one; its components stay refused.
+A read-only property the factory seeds as ``initial...``
+(``DateRangePickerState.selectedStartDateMillis``) is a value too: re-creating
+the holder at the new value is its drive, as it is for a time picker's dial --
+unless the holder has suspend members of its own, which would be its drive
+(``TooltipState.show()`` also starts a timeout re-creation would skip).
 """
 
 from __future__ import annotations
@@ -88,7 +90,11 @@ def _factory(found: Inventory, classifier: str) -> Declaration | None:
 
 
 def _seed(
-    factory: Declaration, prop: Declaration, defaults: dict[str, Any]
+    factory: Declaration,
+    prop: Declaration,
+    defaults: dict[str, Any],
+    *,
+    read_only: bool = False,
 ) -> dict[str, Any] | None:
     """The factory parameter a property's holder is created at, if any.
 
@@ -98,10 +104,12 @@ def _seed(
     seeds it, so the holder is re-created to drive it. A parameter named after
     the property itself (``rememberSliderState(value)``) is the same value the
     setter writes, so the setter drives it and it seeds nothing. Only a literal
-    default is one the host can fall back on when the app states nothing, and
-    only a non-null property can tell "states nothing" from "clears".
+    default is one the host can fall back on when the app states nothing. A
+    settable property is seeded only when non-null, where "states nothing" and
+    "clears" differ; a read-only one has no setter, so re-creating the holder
+    drives it either way.
     """
-    if prop.return_type.nullable:
+    if prop.return_type.nullable and not read_only:
         return None
     names = {"initial" + prop.name[:1].upper() + prop.name[1:]}
     for parameter in factory.parameters:
@@ -168,25 +176,38 @@ def property_holders(
     holders = {}
     for classifier, every in sorted(properties.items()):
         factory = _factory(found, classifier)
-        members = [d for d in every if _settable(d)]
-        if factory is None or not members:
+        if factory is None:
             continue
         parameters = {p.name: p for p in factory.parameters}
+        own = defaults.get(
+            (factory.owner, factory.jvm_name or "", factory.jvm_descriptor or ""), {}
+        )
+        # Read-only, it is driven by re-creating the holder its factory seeds,
+        # where the holder moves by no suspend member of its own.
+        recreated = [
+            d
+            for d in every
+            if not _settable(d)
+            and not _drives_itself(found, classifier)
+            and _seed(factory, d, own, read_only=True) is not None
+        ]
+        members = [d for d in every if _settable(d)] + recreated
         fixed = [d for d in every if not _settable(d) and d.name in parameters]
-        if any(_seeded(d) in parameters for d in every if not _settable(d)) or any(
+        if not members or any(
             parameters[d.name].type.classifier != d.return_type.classifier
             for d in fixed
         ):
             continue
-        own = defaults.get(
-            (factory.owner, factory.jvm_name or "", factory.jvm_descriptor or ""), {}
-        )
         held: dict[str, dict[str, Any]] = {
             d.name: {
                 "type": WIRE[d.return_type.classifier][0],
                 "nativeType": WIRE[d.return_type.classifier][1],
                 **({"nullable": True} if d.return_type.nullable else {}),
-                **({"seed": seed} if (seed := _seed(factory, d, own)) else {}),
+                **(
+                    {"seed": seed}
+                    if (seed := _seed(factory, d, own, read_only=d in recreated))
+                    else {}
+                ),
             }
             for d in sorted(members, key=lambda d: d.name)
         }
@@ -218,11 +239,6 @@ def property_holders(
             **({"settles": settles[0]} if len(settles) == 1 else {}),
         }
     return holders
-
-
-def _seeded(prop: Declaration) -> str:
-    """The factory parameter that only seeds a property: ``initial`` and its name."""
-    return "initial" + prop.name[:1].upper() + prop.name[1:]
 
 
 def _scalar(classifier: str, default: dict[str, Any] | None) -> dict[str, Any]:
@@ -262,3 +278,14 @@ def _families(
             native = {"required": True}
         found[parameter.name] = {"type": "value", "valueType": family, **native}
     return found
+
+
+def _drives_itself(found: Inventory, classifier: str) -> bool:
+    """Whether a holder has a public suspend member: its own drive."""
+    return any(
+        d.document.get("suspend")
+        and d.dispatch_receiver is not None
+        and d.dispatch_receiver.classifier == classifier
+        and _public(d)
+        for d in found.declarations
+    )

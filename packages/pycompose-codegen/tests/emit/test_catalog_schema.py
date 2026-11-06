@@ -115,11 +115,18 @@ def test_the_tooltip_trio_shares_a_scope_and_one_visibility_state() -> None:
     """The box owns visibility; its scoped content cannot stand alone."""
     components = _catalog()["components"]
     box = components["TooltipBox"]
+    # show() is the holder's own drive, so the host's tooltip runtime keeps it.
     assert box["state"] == {
         "native": "state",
         "kind": "tooltip",
         "value": "visible",
         "report": "onVisibilityChange",
+    }
+    # Its position provider is built by the pin's one builder for the type.
+    assert box["built"]["positionProvider"] == {
+        "factory": "androidx.compose.material3.TooltipDefaults."
+        "rememberTooltipPositionProvider",
+        "arguments": ["positioning"],
     }
     assert (
         box["slots"]["tooltip"]["provides"] == "androidx.compose.material3.TooltipScope"

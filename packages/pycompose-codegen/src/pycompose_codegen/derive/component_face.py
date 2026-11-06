@@ -209,6 +209,9 @@ def _wiring_face(
     if interaction:
         name = interaction["native"]
         add("interaction", name, Argument(name, "value", INTERACTION_SOURCE))
+    for native in entry.get("built", {}):
+        # The host builds it with the pin's builder; its props are the builder's.
+        add("built", native, Argument(native, "value"))
     state = entry.get("state")
     if state and attach_gate(state, entry.get("props", {})) is None:
         add("state", state["native"], Argument(state["native"], "value"))

@@ -4,7 +4,7 @@ A family is one host implementation (see ``STATE_KINDS``); it decides what the
 app states and what it hears back, whatever component binds it. A drawer's
 desired state is ``open`` and its settled report ``onOpenChange``, in
 ``ModalNavigationDrawer`` and ``DismissibleNavigationDrawer`` alike. A family
-may also hold props its holder is built from (a tooltip's persistence);
+may also hold props its holder is built from (a sheet's partial anchor);
 the adapter passes those to the holder, never to the component.
 
 The compiler projects these props onto every component the pin binds to a
@@ -196,8 +196,8 @@ STATE_CONSTRUCTOR_PROPS = {
 }
 """Props each family's holder needs at construction, beyond its primary projection.
 
-A ``TooltipState`` is built with its persistence policy and owns it for as
-long as it lives. A sheet carries a second projection beside its boolean
+A ``SheetState`` is built with its partial-anchor policy and owns it for as
+long as it lives. A sheet also carries a second projection beside its boolean
 presence -- the anchor and its report -- because one node states both. They
 flow into the renderer call that creates the holder rather than into the
 component's own arguments. Every

@@ -40,6 +40,18 @@
       "category": "overlays"
     }
   },
+  "BasicSecureTextField": {
+    "decision": {
+      "category": "input",
+      "holder": "state"
+    }
+  },
+  "BasicTextField": {
+    "decision": {
+      "category": "foundation",
+      "identity": "androidx.compose.foundation:foundation-android androidx.compose.foundation.text.BasicTextFieldKt.BasicTextField(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Landroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/KeyboardActions;ZIILandroidx/compose/ui/text/input/VisualTransformation;Lkotlin/jvm/functions/Function1;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/graphics/Brush;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V"
+    }
+  },
   "BottomAppBar": {
     "decision": {
       "category": "navigation",
@@ -821,6 +833,12 @@
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SegmentedButtonKt.SegmentedButton(Landroidx/compose/material3/SingleChoiceSegmentedButtonRowScope;ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SegmentedButtonColors;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V"
     }
   },
+  "SelectionContainer": {
+    "decision": {
+      "category": "foundation",
+      "identity": "androidx.compose.foundation:foundation-android androidx.compose.foundation.text.selection.SelectionContainerKt.SelectionContainer(Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V"
+    }
+  },
   "ShortNavigationBar": {
     "decision": {
       "category": "navigation"
@@ -864,6 +882,22 @@
   "Spacer": {
     "decision": {
       "category": "layout"
+    }
+  },
+  "StatefulBasicTextField": {
+    "decision": {
+      "category": "input",
+      "holder": "state",
+      "nativeName": "BasicTextField",
+      "identity": "androidx.compose.foundation:foundation-android androidx.compose.foundation.text.BasicTextFieldKt.BasicTextField(Landroidx/compose/foundation/text/input/TextFieldState;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/foundation/text/input/InputTransformation;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/input/KeyboardActionHandler;Landroidx/compose/foundation/text/input/TextFieldLineLimits;Lkotlin/jvm/functions/Function2;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/graphics/Brush;Landroidx/compose/foundation/text/input/OutputTransformation;Landroidx/compose/foundation/text/input/TextFieldDecorator;Landroidx/compose/foundation/ScrollState;Landroidx/compose/runtime/Composer;III)V"
+    }
+  },
+  "StatefulOutlinedTextField": {
+    "decision": {
+      "category": "input",
+      "holder": "state",
+      "nativeName": "OutlinedTextField",
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.OutlinedTextFieldKt.OutlinedTextField(Landroidx/compose/foundation/text/input/TextFieldState;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Landroidx/compose/material3/TextFieldLabelPosition;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/foundation/text/input/InputTransformation;Landroidx/compose/foundation/text/input/OutputTransformation;Landroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/input/KeyboardActionHandler;Landroidx/compose/foundation/text/input/TextFieldLineLimits;Lkotlin/jvm/functions/Function2;Landroidx/compose/foundation/ScrollState;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;IIII)V"
     }
   },
   "StatefulSearchBar": {
@@ -910,6 +944,14 @@
         "onEdit"
       ],
       "adapter": "manual"
+    }
+  },
+  "StatefulTextField": {
+    "decision": {
+      "category": "input",
+      "holder": "state",
+      "nativeName": "TextField",
+      "identity": "androidx.compose.material3:material3-android androidx.compose.material3.TextFieldKt.TextField(Landroidx/compose/foundation/text/input/TextFieldState;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Landroidx/compose/material3/TextFieldLabelPosition;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/foundation/text/input/InputTransformation;Landroidx/compose/foundation/text/input/OutputTransformation;Landroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/input/KeyboardActionHandler;Landroidx/compose/foundation/text/input/TextFieldLineLimits;Lkotlin/jvm/functions/Function2;Landroidx/compose/foundation/ScrollState;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;IIII)V"
     }
   },
   "SuggestionChip": {
@@ -1040,17 +1082,6 @@
   "TooltipBox": {
     "decision": {
       "category": "overlays"
-    },
-    "patch": {
-      "children": {
-        "kind": "content"
-      },
-      "adapter": "manual",
-      "props": {
-        "onDismissRequest": {
-          "refuse": "its hand-written adapter does not read it yet"
-        }
-      }
     }
   },
   "TopAppBar": {

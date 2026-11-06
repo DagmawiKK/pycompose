@@ -287,6 +287,8 @@ class ComponentSpec:
             binding compiler resolves it: artifact, owner, name, JVM name and
             JVM descriptor. Absent when the adapter is hand-written and
             legitimately spans a family of overloads.
+        built: Codegen-only: native parameters the host fills by calling the
+            pin's one builder for their type, with the props it names.
     """
 
     name: str
@@ -307,6 +309,7 @@ class ComponentSpec:
     overload_of: str | None = None
     boxed: bool = False
     source: Mapping[str, str] | None = None
+    built: Mapping[str, Mapping[str, object]] | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "props", MappingProxyType(dict(self.props)))
@@ -370,6 +373,7 @@ class ComponentSpec:
             overload_of=cast("str | None", data.get("overloadOf")),
             boxed=data.get("boxed") is True,
             source=_source(name, data.get("source")),
+            built=cast("Mapping[str, Mapping[str, object]] | None", data.get("built")),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -408,6 +412,7 @@ class ComponentSpec:
             "scope": self.scope,
             "overloadOf": self.overload_of,
             "boxed": self.boxed,
+            "built": None if self.built is None else dict(self.built),
         }
         result.update({key: value for key, value in optional.items() if value})
         if self.source is not None:

@@ -20,7 +20,6 @@ object BuiltinComponents {
         searchFields()
             .statefulSearchFields()
             .sharedSearchBars()
-            .tooltips()
 
     @OptIn(ExperimentalMaterial3Api::class)
     private fun ComponentRegistry.Builder.searchFields(): ComponentRegistry.Builder =

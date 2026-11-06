@@ -279,9 +279,11 @@ def _validate_defaults(
             die(f"prop {name}.{prop_name} 'nativeDefault' must be Kotlin source")
         from pycompose_codegen.emit.adapters.policy import SCALAR_KOTLIN
 
-        # A scalar's only native default is null: the optional prop of a
-        # parameter that takes it, read as the parameter's own absence.
-        scalar_null = ptype in SCALAR_KOTLIN and prop["nativeDefault"] == "null"
+        # A scalar's or a callback's only native default is null: the optional
+        # prop of a parameter that takes it, read as the parameter's own absence.
+        scalar_null = (ptype in SCALAR_KOTLIN or ptype == "actionId") and prop[
+            "nativeDefault"
+        ] == "null"
         if (
             ptype not in {"value", "dp"}
             and not scalar_null
@@ -291,7 +293,8 @@ def _validate_defaults(
             # stated default would quietly differ from the pinned one.
             die(
                 f"prop {name}.{prop_name} 'nativeDefault' is read only for "
-                "value, dp and named-constant props, and as null for a scalar"
+                "value, dp and named-constant props, and as null for a scalar "
+                "or a callback"
             )
     if ptype == "dp" and not (
         prop.get("required") or "default" in prop or "nativeDefault" in prop

@@ -16,12 +16,12 @@ from pathlib import Path
 from typing import Any
 
 from pycompose.model.catalog.vocabulary import (
-    HOST_VALUES,
     RESOURCE_TYPES,
     STATE_HOLDERS,
     TRANSIENT_HOLDERS,
 )
 from pycompose_codegen.checkout import PACKAGE, ROOT
+from pycompose_codegen.derive.builders import buildable, built_rule, value_builders
 from pycompose_codegen.derive.classpath_dump import (
     DUMP_DIR,
     Declaration,
@@ -87,6 +87,9 @@ def _binding_rule(
         rule = {"policy": "scalar", "wireType": SCALARS[value.classifier]}
     elif source_name(value.classifier) in families and not value.arguments:
         rule = {"policy": "value", "family": families[source_name(value.classifier)]}
+    elif buildable(parameter, holders):
+        bind = lambda arg, own: bind_parameter(arg, families, own, holders)  # noqa: E731
+        rule = built_rule(holders[value.classifier], bind)
     else:
         raise ValueError(f"no wire policy for {value.classifier}")
     return rule
@@ -121,8 +124,9 @@ def _holder(
         return None
     if (kind := HOLDER_KINDS.get(source_name(value.classifier))) is not None:
         return {"policy": "holder", "kind": kind}
-    if value.classifier in holders:
-        return {"policy": "holder", "kind": "properties", **holders[value.classifier]}
+    held = holders.get(value.classifier)
+    if held is not None and held.get("kind") != "built":
+        return {"policy": "holder", "kind": "properties", **held}
     return None
 
 
@@ -141,9 +145,6 @@ def _host_filled(
         return holder
     if name in TRANSIENT_BY_HOLDER and not value.nullable:
         return {"policy": "transient", "kind": TRANSIENT_BY_HOLDER[name]}
-    if name in HOST_VALUES and not value.nullable:
-        prop, spec = HOST_VALUES[name]
-        return {"policy": "hostValue", "prop": prop, "spec": spec}
     if name in RESOURCE_TYPES and not value.arguments:
         decoder, kinds = RESOURCE_TYPES[name]
         return {"policy": "resource", "decode": decoder, "values": list(kinds)}
@@ -178,7 +179,7 @@ def bind_parameter(
         if producer is None
         else _produced(parameter, producer, families, defaults, holders)
     )
-    if rule["policy"] in {"modifier", "holder", "transient", "hostValue"}:
+    if rule["policy"] in {"modifier", "holder", "transient", "built"}:
         # The host supplies both: the wire never carries their defaults.
         return rule
     if parameter.has_default:
@@ -402,7 +403,10 @@ def propose_components(
     objects = frozenset(c.classifier for c in found.classes if c.class_kind == "OBJECT")
     # A positional holder's entry names its kind; a property holder's is implied.
     drives = source_drives()
+    # Later wins: a drive (LazyListState) beats re-creation, which beats building.
     holders = {
+        **value_builders(found, defaults),
+        **property_holders(found, defaults, families),
         **{
             c: {"kind": "positional", **h} for c, h in positional_holders(found).items()
         },
@@ -410,7 +414,6 @@ def propose_components(
             c: {"kind": "anchored", **h}
             for c, h in anchored_holders(found, drives, defaults).items()
         },
-        **property_holders(found, defaults, families),
     }
     producers = producer_interfaces(found)
     candidates = [

@@ -308,7 +308,7 @@ def _validate_family_props(where: str, kind: str, props: dict[str, Any]) -> None
     """Check the props a family needs beyond the desired value and its report.
 
     A family's holder may need more than the two props the block names: a
-    ``TooltipState`` is constructed with its persistence. They are
+    ``SheetState`` is constructed with its partial-anchor policy. They are
     ordinary props the app states, held by the adapter on the holder's behalf,
     so the block's own keys stay bounded.
 

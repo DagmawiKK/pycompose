@@ -96,7 +96,7 @@ class TooltipStateTest {
             {"version":"0.1.0","schemaVersion":"1.23.0",
               "metadata":{"intents":{"demo.visibility":{"payload":{
                 "visible":{"required":true,"type":"boolean"}}}}},
-             "root":{"id":"root","type":"TooltipBox","props":{
+             "root":{"id":"root","type":"TooltipBox","props":{"positioning":{"type":"TooltipAnchorPosition","name":"Above"},
                $desired"isPersistent":$persistent,"onVisibilityChange":{"fields":{},
                  "intent":"demo.visibility"}},"children":[
                {"id":"anchor","type":"Text","props":{"text":"$anchor"}},

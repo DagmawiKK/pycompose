@@ -74,7 +74,6 @@ FLOOR_COMPONENTS = frozenset(
         "SearchBarStateInputField",
         "ExpandedDockedSearchBar",
         "ExpandedFullScreenSearchBar",
-        "TooltipBox",
     }
 )
 """Components every generated host compiles against, referenced or not.

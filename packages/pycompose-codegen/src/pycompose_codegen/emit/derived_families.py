@@ -76,12 +76,19 @@ def properties_locals(state: dict[str, Any]) -> list[str]:
             desired = f"{prop}?.let {{ Wanted(it{narrow}) }}"
         lines.append(f"val {native}{pascal(name)}Wanted = {desired}")
         if "seed" in spec:
-            # Absent from the app, a re-created holder keeps what the last had.
-            seeded.append(
-                f"{spec['seed']['parameter']} = {native}{pascal(name)}Wanted?.value"
-                f" ?: {seeds}.previous?.{name}"
-                f" ?: {_literal(spec['seed']['default'], spec['nativeType'])}"
+            # Absent from the app, a re-created holder keeps what the last had;
+            # a stated null clears.
+            wanted = f"{native}{pascal(name)}Wanted"
+            literal = _literal(spec["seed"]["default"], spec["nativeType"])
+            kept = f"{seeds}.previous?.{name}" + (
+                "" if literal == "null" else f" ?: {literal}"
             )
+            stated = (
+                f"if ({wanted} != null) {wanted}.value else {kept}"
+                if spec.get("nullable")
+                else f"{wanted}?.value ?: {kept}"
+            )
+            seeded.append(f"{spec['seed']['parameter']} = {stated}")
     if any("seed" in spec for spec in state["properties"].values()):
         lines.append(f"val {seeds} = remember {{ Reseed<{state['holder']}>() }}")
         keys.insert(0, f"{seeds}.generation")
@@ -140,6 +147,8 @@ def _constructed(wire: str, spec: dict[str, Any]) -> str:
 
 def _literal(value: Any, native: str) -> str:
     """A literal default, spelled as the property's Kotlin type."""
+    if value is None:
+        return "null"
     if isinstance(value, bool):
         return "true" if value else "false"
     if native == "String":

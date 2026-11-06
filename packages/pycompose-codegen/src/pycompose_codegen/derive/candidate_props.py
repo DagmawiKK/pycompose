@@ -91,6 +91,9 @@ def wire_shape(
 
     Returns:
         The props, the children block, the named slots, and the review notes.
+
+    Raises:
+        CandidateError: A built parameter's argument has no wire shape.
     """
     props: dict[str, Any] = {}
     slots: dict[str, Any] = {}
@@ -102,9 +105,13 @@ def wire_shape(
             # A holder is the component's state or transient, not a prop;
             # derive() binds it.
             continue
-        if policy == "hostValue":
-            # The host builds the native value from a prop it names.
-            props[spec["prop"]] = dict(spec["spec"])
+        if policy == "built":
+            # The host builds it with the pin's one builder, from these props.
+            for argument, rule in spec["arguments"].items():
+                prop = wire_prop(name, argument, rule, families, review)
+                if prop is None:
+                    raise CandidateError(f"{name}: {parameter} cannot be built")
+                props[argument] = prop
             continue
         if policy == "omit":
             reason = gap_reason(plan, parameter) or "no wire policy"
@@ -405,6 +412,9 @@ def _event_prop(
     prop: dict[str, Any] = {"type": "actionId"}
     if spec["required"]:
         prop["required"] = True
+    elif _literal_default(spec) == (True, None) and spec["type"]["nullable"]:
+        # Unbound, Compose's own null stands (a tooltip then dismisses itself).
+        prop["nativeDefault"] = "null"
     items = list(spec.get("payload") or ())
     renamed = PAYLOAD_NAMES.get(parameter) if len(items) == 1 else None
     payload = []

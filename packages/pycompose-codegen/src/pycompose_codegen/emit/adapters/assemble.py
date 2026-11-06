@@ -25,6 +25,7 @@ from __future__ import annotations
 from typing import Any
 
 from pycompose.model.catalog.lock import REGISTRY
+from pycompose_codegen.emit.adapters.built import built_arguments, built_props
 from pycompose_codegen.emit.adapters.eligibility import held_props, is_mechanical
 from pycompose_codegen.emit.adapters.fragments import Fragments
 from pycompose_codegen.emit.adapters.imports import extra_imports
@@ -102,9 +103,11 @@ def render(
         # Every prop of a transient component is a request input the host
         # consumes on its behalf; none names a native parameter of its own.
         held |= set(entry.get("props", {}))
-    if not resolve_constructor(state, entry.get("props", {}), out):
+    if not resolve_constructor(
+        state, entry.get("props", {}), out
+    ) or not built_arguments(entry, out, animations):
         return ""
-    held |= echoed_text(entry.get("props", {}), out)
+    held |= echoed_text(entry.get("props", {}), out) | built_props(entry)
     fills = loaded_resources(entry.get("props", {}), out)
     held |= {
         name for prop, spec in fills.values() for name in (prop, *spec.get("reads", ()))

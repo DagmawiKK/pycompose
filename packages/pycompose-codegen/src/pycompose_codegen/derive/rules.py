@@ -73,9 +73,10 @@ def reshape(
         )
         invented.extend(family["props"])
     invented.extend(
-        spec["prop"]
+        argument
         for spec in plan["parameters"].values()
-        if spec["policy"] == "hostValue"
+        if spec["policy"] == "built"
+        for argument in spec["arguments"]
     )
     if invented:
         # Props Compose's signature has no counterpart for, so the drift

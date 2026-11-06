@@ -262,19 +262,19 @@ def test_a_hold_is_stale_only_when_its_own_overload_derives(
 def test_a_bound_holder_takes_its_family_projection() -> None:
     from pycompose_codegen.derive.rules import reshape
 
-    entry = {"props": {}, "state": {"native": "state", "kind": "tooltip"}}
-    shaped = reshape("Tooltip", entry, {}, _plan())
+    entry = {"props": {}, "state": {"native": "sheetState", "kind": "sheet"}}
+    shaped = reshape("ModalBottomSheet", entry, {}, _plan())
     assert shaped["state"] == {
-        "native": "state",
-        "kind": "tooltip",
-        "value": "visible",
-        "report": "onVisibilityChange",
+        "native": "sheetState",
+        "kind": "sheet",
+        "value": "open",
+        "report": "onOpenChange",
     }
-    assert shaped["props"]["onVisibilityChange"] == {
+    assert shaped["props"]["onOpenChange"] == {
         "type": "actionId",
-        "payload": [{"name": "visible", "type": "boolean"}],
+        "payload": [{"name": "open", "type": "boolean"}],
     }
-    assert shaped["reshaped"][:2] == ["visible", "onVisibilityChange"]
+    assert shaped["reshaped"][:2] == ["open", "onOpenChange"]
 
 
 def test_an_attached_holder_rides_the_modifier_behind_its_gate(
@@ -317,17 +317,26 @@ def test_an_attach_naming_no_attached_holder_is_refused(
 def test_a_family_with_held_props_projects_them_after_its_report() -> None:
     from pycompose_codegen.derive.rules import reshape
 
-    entry = {"props": {}, "state": {"native": "state", "kind": "tooltip"}}
-    shaped = reshape("TooltipBox", entry, {}, _plan())
-    assert shaped["reshaped"] == ["visible", "onVisibilityChange", "isPersistent"]
-    assert shaped["props"]["isPersistent"] == {"type": "boolean", "default": False}
+    entry = {"props": {}, "state": {"native": "sheetState", "kind": "sheet"}}
+    shaped = reshape("ModalBottomSheet", entry, {}, _plan())
+    assert shaped["reshaped"] == [
+        "open",
+        "onOpenChange",
+        "value",
+        "onValueChange",
+        "skipPartiallyExpanded",
+    ]
+    assert shaped["props"]["skipPartiallyExpanded"] == {
+        "type": "boolean",
+        "default": False,
+    }
 
 
 def test_a_declined_holder_is_not_bound() -> None:
     from pycompose_codegen.derive.rules import reshape
 
-    entry = {"props": {}, "state": {"native": "state", "kind": "tooltip"}}
-    shaped = reshape("TooltipBox", entry, {"holder": False}, _plan())
+    entry = {"props": {}, "state": {"native": "sheetState", "kind": "sheet"}}
+    shaped = reshape("ModalBottomSheet", entry, {"holder": False}, _plan())
     assert "state" not in shaped
     assert shaped["props"] == {}
 
@@ -338,7 +347,11 @@ def test_codegen_reads_held_props_from_the_families() -> None:
         STATE_FAMILIES,
     )
 
-    assert STATE_CONSTRUCTOR_PROPS["tooltip"] == ("isPersistent",)
+    assert STATE_CONSTRUCTOR_PROPS["sheet"] == (
+        "value",
+        "onValueChange",
+        "skipPartiallyExpanded",
+    )
     assert set(STATE_CONSTRUCTOR_PROPS) == {
         kind for kind, family in STATE_FAMILIES.items() if family.held
     }
@@ -402,17 +415,30 @@ def test_a_transient_holder_takes_its_family_projection() -> None:
     assert shaped["reshaped"] == ["message", "actionLabel", "serial", "onDismiss"]
 
 
-def test_the_host_builds_a_value_from_a_prop_it_names() -> None:
+def test_a_type_with_one_builder_is_built_from_the_builders_props() -> None:
     from pycompose_codegen.derive.classpath_types import Parameter
     from pycompose_codegen.derive.components import _binding_rule
 
     provider = _type("androidx/compose/ui/window/PopupPositionProvider")
+    anchor = _type("androidx/compose/material3/TooltipAnchorPosition")
+    builders = {
+        "androidx/compose/ui/window/PopupPositionProvider": {
+            "kind": "built",
+            "factory": "androidx.compose.material3.TooltipDefaults."
+            "rememberTooltipPositionProvider",
+            "parameters": [Parameter("positioning", anchor, False, None)],
+            "defaults": {},
+        }
+    }
+    families = {
+        "androidx.compose.material3.TooltipAnchorPosition": "TooltipAnchorPosition"
+    }
     rule = _binding_rule(
-        Parameter("positionProvider", provider, False, None), {}, {}, {}
+        Parameter("positionProvider", provider, False, None), families, {}, builders
     )
-    assert rule["policy"] == "hostValue"
-    assert rule["prop"] == "position"
-    assert rule["spec"]["valueType"] == "TooltipAnchorPosition"
+    assert rule["policy"] == "built"
+    assert rule["factory"].endswith("rememberTooltipPositionProvider")
+    assert rule["arguments"]["positioning"]["family"] == "TooltipAnchorPosition"
 
 
 def test_an_overload_with_several_holders_binds_the_one_named() -> None:

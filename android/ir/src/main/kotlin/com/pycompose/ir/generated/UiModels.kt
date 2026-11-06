@@ -176,6 +176,34 @@ data class BasicAlertDialog(
 }
 
 @Serializable
+data class BasicSecureTextFieldProps(
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onEdit`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
+    val `readOnly`: Boolean = false,
+    val `selectionEnd`: Long,
+    val `selectionStart`: Long,
+    val `text`: String,
+    val `textObfuscationMode`: JsonElement? = null,
+    val `textStyle`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("BasicSecureTextField")
+data class BasicSecureTextField(
+    override val id: String,
+    override val props: BasicSecureTextFieldProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
+    override val componentType: String get() = "BasicSecureTextField"
+}
+
+@Serializable
 data class BasicTextProps(
     val `color`: JsonElement? = null,
     val `minLines`: JsonElement = JsonPrimitive(1L),
@@ -223,6 +251,27 @@ data class BasicTextField(
     override val children: List<UiNode> get() = emptyList()
     override fun withChildren(children: List<UiNode>): UiNode = this
     override val componentType: String get() = "BasicTextField"
+}
+
+@Serializable
+data class BasicTooltipBoxProps(
+    val `enableUserInput`: Boolean = true,
+    val `focusable`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `positioning`: JsonElement,
+    val `propagateMinConstraints`: Boolean = false,
+) : UiProps
+
+@Serializable
+@SerialName("BasicTooltipBox")
+data class BasicTooltipBox(
+    override val id: String,
+    override val props: BasicTooltipBoxProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "BasicTooltipBox"
 }
 
 @Serializable
@@ -597,6 +646,33 @@ data class DatePickerDialog(
 ) : UiNode {
     override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "DatePickerDialog"
+}
+
+@Serializable
+data class DateRangePickerProps(
+    val `colors`: JsonElement? = null,
+    val `displayedMonthMillis`: Long? = null,
+    val `initialDisplayMode`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `onDisplayedMonthMillisChange`: String? = null,
+    val `onSelectedEndDateMillisChange`: String? = null,
+    val `onSelectedStartDateMillisChange`: String? = null,
+    val `selectableDates`: JsonElement? = null,
+    val `selectedEndDateMillis`: OptionalValue = OptionalValue.Absent,
+    val `selectedStartDateMillis`: OptionalValue = OptionalValue.Absent,
+    val `showModeToggle`: Boolean = true,
+) : UiProps
+
+@Serializable
+@SerialName("DateRangePicker")
+data class DateRangePicker(
+    override val id: String,
+    override val props: DateRangePickerProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
+    override val componentType: String get() = "DateRangePicker"
 }
 
 @Serializable
@@ -2403,6 +2479,24 @@ data class Popup(
 }
 
 @Serializable
+data class PopupPopupPositionProviderProps(
+    override val `modifier`: JsonObject? = null,
+    val `positioning`: JsonElement,
+) : UiProps
+
+@Serializable
+@SerialName("PopupPopupPositionProvider")
+data class PopupPopupPositionProvider(
+    override val id: String,
+    override val props: PopupPopupPositionProviderProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "PopupPopupPositionProvider"
+}
+
+@Serializable
 data class PrimaryScrollableTabRowProps(
     val `containerColor`: JsonElement? = null,
     val `contentColor`: JsonElement? = null,
@@ -3012,6 +3106,64 @@ data class Spacer(
 }
 
 @Serializable
+data class StatefulBasicTextFieldProps(
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onEdit`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
+    val `readOnly`: Boolean = false,
+    val `selectionEnd`: Long,
+    val `selectionStart`: Long,
+    val `text`: String,
+    val `textStyle`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("StatefulBasicTextField")
+data class StatefulBasicTextField(
+    override val id: String,
+    override val props: StatefulBasicTextFieldProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
+    override val componentType: String get() = "StatefulBasicTextField"
+}
+
+@Serializable
+data class StatefulOutlinedTextFieldProps(
+    val `colors`: JsonElement? = null,
+    val `contentPadding`: JsonElement? = null,
+    val `enabled`: Boolean = true,
+    val `isError`: Boolean = false,
+    override val `modifier`: JsonObject? = null,
+    val `onEdit`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
+    val `readOnly`: Boolean = false,
+    val `selectionEnd`: Long,
+    val `selectionStart`: Long,
+    val `shape`: JsonElement? = null,
+    val `text`: String,
+    val `textStyle`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("StatefulOutlinedTextField")
+data class StatefulOutlinedTextField(
+    override val id: String,
+    override val props: StatefulOutlinedTextFieldProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "StatefulOutlinedTextField"
+}
+
+@Serializable
 data class StatefulSearchBarProps(
     val `expanded`: Boolean? = null,
     override val `modifier`: JsonObject? = null,
@@ -3064,6 +3216,36 @@ data class StatefulSearchBarInputField(
 ) : UiNode {
     override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "StatefulSearchBarInputField"
+}
+
+@Serializable
+data class StatefulTextFieldProps(
+    val `colors`: JsonElement? = null,
+    val `enabled`: Boolean = true,
+    val `isError`: Boolean = false,
+    override val `modifier`: JsonObject? = null,
+    val `onEdit`: String,
+    val `onFocus`: String? = null,
+    val `onHover`: String? = null,
+    val `onPress`: String? = null,
+    val `readOnly`: Boolean = false,
+    val `selectionEnd`: Long,
+    val `selectionStart`: Long,
+    val `shape`: JsonElement? = null,
+    val `text`: String,
+    val `textStyle`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("StatefulTextField")
+data class StatefulTextField(
+    override val id: String,
+    override val props: StatefulTextFieldProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "StatefulTextField"
 }
 
 @Serializable
@@ -3459,8 +3641,9 @@ data class TooltipBoxProps(
     val `hasAction`: Boolean = false,
     val `isPersistent`: Boolean = false,
     override val `modifier`: JsonObject? = null,
+    val `onDismissRequest`: String? = null,
     val `onVisibilityChange`: String? = null,
-    val `position`: JsonElement? = null,
+    val `positioning`: JsonElement,
     val `visible`: Boolean? = null,
 ) : UiProps
 

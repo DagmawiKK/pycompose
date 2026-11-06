@@ -156,24 +156,22 @@ def test_a_lazy_list_fills_the_state_parameter() -> None:
     assert "firstVisibleItemIndex =" not in adapter
 
 
-def test_a_tooltip_holder_receives_persistence_after_value_and_report() -> None:
-    """Every holder follows the same constructor call convention."""
-    entry = {
-        "props": {
-            "visible": {"type": "boolean"},
-            "onVisibilityChange": {"type": "actionId", "payload": []},
-            "isPersistent": {"type": "boolean", "default": False},
-        },
-        "children": {"allowed": False},
-        "state": components()["TooltipBox"]["state"],
-    }
-    adapter = render("Tooltip", entry)
+def test_a_tooltip_is_generated_with_its_built_position_and_its_runtime() -> None:
+    """The box's provider is the pin's one builder; the host's runtime shows it."""
+    adapter = render("TooltipBox", components()["TooltipBox"])
+    assert (
+        "positionProvider = androidx.compose.material3.TooltipDefaults."
+        "rememberTooltipPositionProvider(positioning = positioningValue)" in adapter
+    )
     assert (
         "context.tooltipState(model.props.visible, model.props.onVisibilityChange, "
         "model.props.isPersistent)" in adapter
     )
-    assert "isPersistent =" not in adapter
-    assert "com.pycompose.renderer.tooltipState" in extra_imports(entry)
+    # Unbound, a dismissal request keeps Compose's own null, which dismisses.
+    assert (
+        "onDismissRequest = model.props.onDismissRequest?.let { action -> "
+        "{ context.actions.dispatch(action) } }" in adapter
+    )
 
 
 def test_a_swipe_holder_reports_the_settled_anchor_and_fills_row_slots() -> None:

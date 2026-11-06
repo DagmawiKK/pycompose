@@ -146,6 +146,7 @@ def test_tooltip_content_fills_the_box_slot_and_reaches_the_wire() -> None:
     root = snapshot(
         TooltipBox(
             id="tip",
+            positioning="below",
             visible=True,
             is_persistent=True,
             tooltip=PlainTooltip(
@@ -159,6 +160,10 @@ def test_tooltip_content_fills_the_box_slot_and_reaches_the_wire() -> None:
     )["root"]
     assert root["props"]["visible"] is True
     assert root["props"]["isPersistent"] is True
+    assert root["props"]["positioning"] == {
+        "type": "TooltipAnchorPosition",
+        "name": "Below",
+    }
     assert [child.get("slot") for child in root["children"]] == [None, "tooltip"]
     tooltip = root["children"][1]
     assert tooltip["props"]["caretShape"] == {"type": "caretShape"}
@@ -172,6 +177,7 @@ def test_a_rich_tooltip_keeps_title_action_and_body_distinct() -> None:
     root = snapshot(
         TooltipBox(
             id="tip",
+            positioning="above",
             tooltip=RichTooltip(
                 id="tip.tooltip",
                 title=Text(id="tip.title", text="title"),

@@ -369,8 +369,8 @@ def test_a_modifier_riding_family_carries_its_boolean_gate_prop(
             "'dismiss' must be a name",
         ),
         (
-            lambda registry: _state(registry).update(kind="tooltip"),
-            "needs the props isPersistent",
+            lambda registry: _state(registry).update(kind="textInput"),
+            "prop 'open' must be a required string",
         ),
         (
             lambda registry: _with_scrollable(registry, "number"),

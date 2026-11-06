@@ -336,22 +336,27 @@ def _callback(prop_name: str, spec: dict[str, Any]) -> str | None:
         The argument, or None when the callback shape is one this cannot render.
     """
     payload = spec.get("payload")
+    if payload and (len(payload) != 1 or payload[0]["type"] not in SCALAR_KOTLIN):
+        return None
+    field = f"{payload[0]['name']} -> " if payload else ""
+    if not spec.get("required") and spec.get("nativeDefault") == "null":
+        # Unbound, the parameter keeps Compose's null and its own behaviour.
+        call = _dispatch("action", payload)
+        bound = f"model.props.{prop_name}?.let {{ action -> {{ {field}{call} }} }}"
+        return f"{prop_name} = {bound}"
     # An optional callback's action id is nullable: a call the app did not bind
     # reaches nobody, and the native default behaviour stays in charge.
     action = f"model.props.{prop_name}" if spec.get("required") else "it"
     bound = "" if spec.get("required") else f"model.props.{prop_name}?.let {{ "
     close = "" if spec.get("required") else " }"
+    return f"{prop_name} = {{ {field}{bound}{_dispatch(action, payload)}{close} }}"
+
+
+def _dispatch(action: str, payload: list[dict[str, Any]] | None) -> str:
+    """Report one callback: the bare action, or its one argument as the event."""
     if not payload:
-        return f"{prop_name} = {{ {bound}context.actions.dispatch({action}){close} }}"
-    if len(payload) != 1:
-        return None
-    field_name, kind = payload[0]["name"], payload[0]["type"]
-    if kind not in SCALAR_KOTLIN:
-        return None
-    return (
-        f"{prop_name} = {{ {field_name} -> "
-        f"{bound}context.event({action}, JsonPrimitive({field_name})){close} }}"
-    )
+        return f"context.actions.dispatch({action})"
+    return f"context.event({action}, JsonPrimitive({payload[0]['name']}))"
 
 
 def _render_provider(

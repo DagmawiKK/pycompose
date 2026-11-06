@@ -38,7 +38,7 @@ class TooltipComponentsTest {
         val source =
             """
             {"version":"0.1.0","schemaVersion":"1.23.0","root":{
-              "id":"tip","type":"TooltipBox","props":{"visible":true,"isPersistent":true},
+              "id":"tip","type":"TooltipBox","props":{"positioning":{"type":"TooltipAnchorPosition","name":"Above"},"visible":true,"isPersistent":true},
                 "children":[
                 {"id":"anchor","type":"Text","props":{"text":"Initial anchor"}},
                 {"id":"tooltip","type":"PlainTooltip","props":{},"slot":"tooltip","children":[
@@ -57,7 +57,7 @@ class TooltipComponentsTest {
             {"version":"0.1.0","schemaVersion":"1.23.0","root":{
               "id":"root","type":"Column","props":{},"children":[
                 {"id":"rich","type":"TooltipBox","props":{
-                  "visible":true,"isPersistent":true,"hasAction":true,"position":{"type":"TooltipAnchorPosition","name":"Below"}},
+                  "visible":true,"isPersistent":true,"hasAction":true,"positioning":{"type":"TooltipAnchorPosition","name":"Below"}},
                     "children":[
                   {"id":"rich.anchor","type":"Text","props":{"text":"Rich anchor"}},
                   {"id":"rich.tooltip","type":"RichTooltip","props":{
@@ -82,7 +82,7 @@ class TooltipComponentsTest {
             """
             {"version":"0.1.0","schemaVersion":"1.23.0","root":{
               "id":"root","type":"Column","props":{},"children":[
-                {"id":"plain","type":"TooltipBox","props":{"visible":false},"children":[
+                {"id":"plain","type":"TooltipBox","props":{"positioning":{"type":"TooltipAnchorPosition","name":"Above"},"visible":false},"children":[
                   {"id":"plain.anchor","type":"Text","props":{"text":"Hidden anchor"}},
                   {"id":"plain.tooltip","type":"PlainTooltip","props":{},"slot":"tooltip",
                     "children":[
@@ -103,7 +103,7 @@ class TooltipComponentsTest {
              "metadata":{"intents":{"demo.visibility":{"payload":{
                  "visible":{"required":true,"type":"boolean"}}}}},
              "root":{"id":"root","type":"Column","props":{},"children":[
-               {"id":"plain","type":"TooltipBox","props":{
+               {"id":"plain","type":"TooltipBox","props":{"positioning":{"type":"TooltipAnchorPosition","name":"Above"},
                  "enableUserInput":true,
                  "onVisibilityChange":{"fields":{},"intent":"demo.visibility"}},"children":[
                  {"id":"plain.anchor","type":"Text","props":{"text":"Gesture anchor"}},

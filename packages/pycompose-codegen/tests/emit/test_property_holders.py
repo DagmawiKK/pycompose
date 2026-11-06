@@ -29,9 +29,21 @@ def test_each_settable_property_is_stated_and_reported() -> None:
     assert date["selectedDateMillis"] == {"type": "integer", "nullable": True}
 
 
-def test_a_holder_with_a_read_only_property_is_not_derived() -> None:
-    # DateRangePickerState only reads its selection: setting it needs a drive.
-    assert "DateRangePicker" not in COMPONENTS
+def test_a_read_only_property_its_factory_seeds_is_driven_by_re_creation() -> None:
+    # DateRangePickerState only reads its selection; its factory seeds it, so
+    # re-creating the holder at the new range is the drive, and null clears.
+    properties = COMPONENTS["DateRangePicker"]["state"]["properties"]
+    assert properties["selectedStartDateMillis"]["seed"] == {
+        "parameter": "initialSelectedStartDateMillis",
+        "default": None,
+    }
+    block = render("DateRangePicker", COMPONENTS["DateRangePicker"])
+    assert (
+        "initialSelectedStartDateMillis = "
+        "if (stateSelectedStartDateMillisWanted != null) "
+        "stateSelectedStartDateMillisWanted.value else "
+        "stateSeeds.previous?.selectedStartDateMillis," in block
+    )
 
 
 def test_the_factory_seeds_what_the_setter_cannot() -> None:

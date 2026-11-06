@@ -27,8 +27,10 @@ __all__ = [
     "Badge",
     "BadgedBox",
     "BasicAlertDialog",
+    "BasicSecureTextField",
     "BasicText",
     "BasicTextField",
+    "BasicTooltipBox",
     "BottomAppBar",
     "BottomAppBarActions",
     "BottomSheetScaffold",
@@ -46,6 +48,7 @@ __all__ = [
     "Crossfade",
     "DatePicker",
     "DatePickerDialog",
+    "DateRangePicker",
     "Dialog",
     "DisableSelection",
     "DismissibleDrawerSheet",
@@ -126,6 +129,7 @@ __all__ = [
     "PermanentNavigationDrawer",
     "PlainTooltip",
     "Popup",
+    "PopupPopupPositionProvider",
     "PrimaryScrollableTabRow",
     "PrimaryTabRow",
     "ProvideTextStyle",
@@ -154,8 +158,11 @@ __all__ = [
     "SnackbarHost",
     "SoundEffectOnInteraction",
     "Spacer",
+    "StatefulBasicTextField",
+    "StatefulOutlinedTextField",
     "StatefulSearchBar",
     "StatefulSearchBarInputField",
+    "StatefulTextField",
     "SuggestionChip",
     "Surface",
     "SurfaceChecked",
@@ -200,12 +207,28 @@ _Alignment = Literal[
     "topStart",
 ]
 
+_TextObfuscationMode = Literal[
+    "hidden",
+    "revealLastTyped",
+    "system",
+    "visible",
+]
+
 _TextOverflow = Literal[
     "clip",
     "ellipsis",
     "middleEllipsis",
     "startEllipsis",
     "visible",
+]
+
+_TooltipAnchorPosition = Literal[
+    "above",
+    "below",
+    "end",
+    "left",
+    "right",
+    "start",
 ]
 
 _BoxContentAlignment = Literal[
@@ -313,13 +336,6 @@ _NavigationSuiteType = Literal[
     "wideNavigationRailExpanded",
 ]
 
-_TextObfuscationMode = Literal[
-    "hidden",
-    "revealLastTyped",
-    "system",
-    "visible",
-]
-
 _RowVerticalAlignment = Literal[
     "top",
     "centerVertically",
@@ -391,15 +407,6 @@ _TextDecoration = Literal[
 _TimePickerLayoutType = Literal[
     "horizontal",
     "vertical",
-]
-
-_TooltipBoxPosition = Literal[
-    "above",
-    "below",
-    "left",
-    "right",
-    "start",
-    "end",
 ]
 
 _ToggleableState = Literal[
@@ -784,6 +791,69 @@ class BasicAlertDialog(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
+class BasicSecureTextField(Component):
+    """Native BasicSecureTextField; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "BasicSecureTextField"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_edit: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        read_only: bool | None = None,
+        selection_end: int,
+        selection_start: int,
+        text: str,
+        text_obfuscation_mode: _TextObfuscationMode | None = None,
+        text_style: JsonValue | None = None,
+    ) -> None:
+        """Construct a registered BasicSecureTextField.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_edit: Required native onEdit.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
+            read_only: Native readOnly; None uses its default.
+            selection_end: Required native selectionEnd.
+            selection_start: Required native selectionStart.
+            text: Required native text.
+            text_obfuscation_mode: Native textObfuscationMode; None uses its
+                default.
+            text_style: Native textStyle; None uses its default.
+        """
+        props: dict[str, PropValue] = {}
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_edit"] = on_edit
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
+        if read_only is not None:
+            props["read_only"] = read_only
+        props["selection_end"] = selection_end
+        props["selection_start"] = selection_start
+        props["text"] = text
+        if text_obfuscation_mode is not None:
+            props["text_obfuscation_mode"] = text_obfuscation_mode
+        if text_style is not None:
+            props["text_style"] = text_style
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
 class BasicText(Component):
     """Native BasicText; props and defaults follow the component manifest."""
 
@@ -887,6 +957,62 @@ class BasicTextField(Component):
             props["text_style"] = text_style
         props["value"] = value
         super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class BasicTooltipBox(Component):
+    """Native BasicTooltipBox; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "BasicTooltipBox"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        enable_user_input: bool | None = None,
+        focusable: bool | None = None,
+        modifier: Modifier | None = None,
+        positioning: _TooltipAnchorPosition,
+        propagate_min_constraints: bool | None = None,
+        children: Content = (),
+        tooltip: Content | None = None,
+    ) -> None:
+        """Construct a registered BasicTooltipBox.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            enable_user_input: Native enableUserInput; None uses its default.
+            focusable: Native focusable; None uses its default.
+            modifier: Native modifier; None uses its default.
+            positioning: Required native positioning.
+            propagate_min_constraints: Native propagateMinConstraints; None uses its
+                default.
+            children: Ordered child nodes with stable keys.
+            tooltip: Nodes for the native tooltip slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if enable_user_input is not None:
+            props["enable_user_input"] = enable_user_input
+        if focusable is not None:
+            props["focusable"] = focusable
+        props["positioning"] = positioning
+        if propagate_min_constraints is not None:
+            props["propagate_min_constraints"] = propagate_min_constraints
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if tooltip is not None:
+            slotted += slot_nodes(tooltip, key="tooltip", slot="tooltip")
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
 
 
 class BottomAppBar(Component):
@@ -1823,6 +1949,78 @@ class DatePickerDialog(Component):
         super().__init__(
             id=id, children=normalized + slotted, modifier=modifier, **props
         )
+
+
+class DateRangePicker(Component):
+    """Native DateRangePicker; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "DateRangePicker"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        displayed_month_millis: int | None = None,
+        initial_display_mode: JsonValue | None = None,
+        modifier: Modifier | None = None,
+        on_displayed_month_millis_change: ActionTarget | None = None,
+        on_selected_end_date_millis_change: ActionTarget | None = None,
+        on_selected_start_date_millis_change: ActionTarget | None = None,
+        selectable_dates: JsonValue | None = None,
+        selected_end_date_millis: int | None | _Unset = UNSET,
+        selected_start_date_millis: int | None | _Unset = UNSET,
+        show_mode_toggle: bool | None = None,
+    ) -> None:
+        """Construct a registered DateRangePicker.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            displayed_month_millis: Native displayedMonthMillis; None uses its
+                default.
+            initial_display_mode: Native initialDisplayMode; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_displayed_month_millis_change: Native onDisplayedMonthMillisChange;
+                None uses its default.
+            on_selected_end_date_millis_change: Native
+                onSelectedEndDateMillisChange; None uses its default.
+            on_selected_start_date_millis_change: Native
+                onSelectedStartDateMillisChange; None uses its default.
+            selectable_dates: Native selectableDates; None uses its default.
+            selected_end_date_millis: Native selectedEndDateMillis; omitted uses its
+                default; None is null.
+            selected_start_date_millis: Native selectedStartDateMillis; omitted uses
+                its default; None is null.
+            show_mode_toggle: Native showModeToggle; None uses its default.
+        """
+        props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if displayed_month_millis is not None:
+            props["displayed_month_millis"] = displayed_month_millis
+        if initial_display_mode is not None:
+            props["initial_display_mode"] = initial_display_mode
+        if on_displayed_month_millis_change is not None:
+            props["on_displayed_month_millis_change"] = on_displayed_month_millis_change
+        if on_selected_end_date_millis_change is not None:
+            props["on_selected_end_date_millis_change"] = (
+                on_selected_end_date_millis_change
+            )
+        if on_selected_start_date_millis_change is not None:
+            props["on_selected_start_date_millis_change"] = (
+                on_selected_start_date_millis_change
+            )
+        if selectable_dates is not None:
+            props["selectable_dates"] = selectable_dates
+        if not isinstance(selected_end_date_millis, _Unset):
+            props["selected_end_date_millis"] = selected_end_date_millis
+        if not isinstance(selected_start_date_millis, _Unset):
+            props["selected_start_date_millis"] = selected_start_date_millis
+        if show_mode_toggle is not None:
+            props["show_mode_toggle"] = show_mode_toggle
+        super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
 class Dialog(Component):
@@ -6704,11 +6902,17 @@ class PlainTooltip(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
-class Popup(Component):
+class _Popup(Component):
     """Native Popup; props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "Popup"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "content",
+        }
+    )
 
     def __init__(
         self,
@@ -6735,6 +6939,41 @@ class Popup(Component):
             )
         normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class Popup(_Popup):
+    """Native Popup; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+    ) -> Popup: ...
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        positioning: _TooltipAnchorPosition,
+        children: Content = (),
+    ) -> PopupPopupPositionProvider: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class PrimaryScrollableTabRow(Component):
@@ -8229,6 +8468,175 @@ class Spacer(Component):
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
+class StatefulBasicTextField(Component):
+    """Native BasicTextField; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "StatefulBasicTextField"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_edit: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        read_only: bool | None = None,
+        selection_end: int,
+        selection_start: int,
+        text: str,
+        text_style: JsonValue | None = None,
+    ) -> None:
+        """Construct a registered StatefulBasicTextField.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_edit: Required native onEdit.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
+            read_only: Native readOnly; None uses its default.
+            selection_end: Required native selectionEnd.
+            selection_start: Required native selectionStart.
+            text: Required native text.
+            text_style: Native textStyle; None uses its default.
+        """
+        props: dict[str, PropValue] = {}
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["on_edit"] = on_edit
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
+        if read_only is not None:
+            props["read_only"] = read_only
+        props["selection_end"] = selection_end
+        props["selection_start"] = selection_start
+        props["text"] = text
+        if text_style is not None:
+            props["text_style"] = text_style
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
+class StatefulOutlinedTextField(Component):
+    """Native OutlinedTextField; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "StatefulOutlinedTextField"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        content_padding: JsonValue | None = None,
+        enabled: bool | None = None,
+        is_error: bool | None = None,
+        modifier: Modifier | None = None,
+        on_edit: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        read_only: bool | None = None,
+        selection_end: int,
+        selection_start: int,
+        shape: JsonValue | None = None,
+        text: str,
+        text_style: JsonValue | None = None,
+        label: Content | None = None,
+        leading_icon: Content | None = None,
+        placeholder: Content | None = None,
+        prefix: Content | None = None,
+        suffix: Content | None = None,
+        supporting_text: Content | None = None,
+        trailing_icon: Content | None = None,
+    ) -> None:
+        """Construct a registered StatefulOutlinedTextField.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            content_padding: Native contentPadding; None uses its default.
+            enabled: Native enabled; None uses its default.
+            is_error: Native isError; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_edit: Required native onEdit.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
+            read_only: Native readOnly; None uses its default.
+            selection_end: Required native selectionEnd.
+            selection_start: Required native selectionStart.
+            shape: Native shape; None uses its default.
+            text: Required native text.
+            text_style: Native textStyle; None uses its default.
+            label: Nodes for the native label slot.
+            leading_icon: Nodes for the native leadingIcon slot.
+            placeholder: Nodes for the native placeholder slot.
+            prefix: Nodes for the native prefix slot.
+            suffix: Nodes for the native suffix slot.
+            supporting_text: Nodes for the native supportingText slot.
+            trailing_icon: Nodes for the native trailingIcon slot.
+        """
+        props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if content_padding is not None:
+            props["content_padding"] = content_padding
+        if enabled is not None:
+            props["enabled"] = enabled
+        if is_error is not None:
+            props["is_error"] = is_error
+        props["on_edit"] = on_edit
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
+        if read_only is not None:
+            props["read_only"] = read_only
+        props["selection_end"] = selection_end
+        props["selection_start"] = selection_start
+        if shape is not None:
+            props["shape"] = shape
+        props["text"] = text
+        if text_style is not None:
+            props["text_style"] = text_style
+        slotted: tuple[Node, ...] = ()
+        if label is not None:
+            slotted += slot_nodes(label, key="label", slot="label")
+        if leading_icon is not None:
+            slotted += slot_nodes(leading_icon, key="leadingIcon", slot="leadingIcon")
+        if placeholder is not None:
+            slotted += slot_nodes(placeholder, key="placeholder", slot="placeholder")
+        if prefix is not None:
+            slotted += slot_nodes(prefix, key="prefix", slot="prefix")
+        if suffix is not None:
+            slotted += slot_nodes(suffix, key="suffix", slot="suffix")
+        if supporting_text is not None:
+            slotted += slot_nodes(
+                supporting_text,
+                key="supportingText",
+                slot="supportingText",
+            )
+        if trailing_icon is not None:
+            slotted += slot_nodes(
+                trailing_icon,
+                key="trailingIcon",
+                slot="trailingIcon",
+            )
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
 class StatefulSearchBar(Component):
     """Native SearchBar; props and defaults follow the component manifest."""
 
@@ -8371,6 +8779,113 @@ class StatefulSearchBarInputField(Component):
             slotted += slot_nodes(prefix, key="prefix", slot="prefix")
         if suffix is not None:
             slotted += slot_nodes(suffix, key="suffix", slot="suffix")
+        if trailing_icon is not None:
+            slotted += slot_nodes(
+                trailing_icon,
+                key="trailingIcon",
+                slot="trailingIcon",
+            )
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class StatefulTextField(Component):
+    """Native TextField; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "StatefulTextField"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        colors: JsonValue | None = None,
+        enabled: bool | None = None,
+        is_error: bool | None = None,
+        modifier: Modifier | None = None,
+        on_edit: ActionTarget,
+        on_focus: ActionTarget | None = None,
+        on_hover: ActionTarget | None = None,
+        on_press: ActionTarget | None = None,
+        read_only: bool | None = None,
+        selection_end: int,
+        selection_start: int,
+        shape: JsonValue | None = None,
+        text: str,
+        text_style: JsonValue | None = None,
+        label: Content | None = None,
+        leading_icon: Content | None = None,
+        placeholder: Content | None = None,
+        prefix: Content | None = None,
+        suffix: Content | None = None,
+        supporting_text: Content | None = None,
+        trailing_icon: Content | None = None,
+    ) -> None:
+        """Construct a registered StatefulTextField.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
+            enabled: Native enabled; None uses its default.
+            is_error: Native isError; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_edit: Required native onEdit.
+            on_focus: Native onFocus; None uses its default.
+            on_hover: Native onHover; None uses its default.
+            on_press: Native onPress; None uses its default.
+            read_only: Native readOnly; None uses its default.
+            selection_end: Required native selectionEnd.
+            selection_start: Required native selectionStart.
+            shape: Native shape; None uses its default.
+            text: Required native text.
+            text_style: Native textStyle; None uses its default.
+            label: Nodes for the native label slot.
+            leading_icon: Nodes for the native leadingIcon slot.
+            placeholder: Nodes for the native placeholder slot.
+            prefix: Nodes for the native prefix slot.
+            suffix: Nodes for the native suffix slot.
+            supporting_text: Nodes for the native supportingText slot.
+            trailing_icon: Nodes for the native trailingIcon slot.
+        """
+        props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
+        if enabled is not None:
+            props["enabled"] = enabled
+        if is_error is not None:
+            props["is_error"] = is_error
+        props["on_edit"] = on_edit
+        if on_focus is not None:
+            props["on_focus"] = on_focus
+        if on_hover is not None:
+            props["on_hover"] = on_hover
+        if on_press is not None:
+            props["on_press"] = on_press
+        if read_only is not None:
+            props["read_only"] = read_only
+        props["selection_end"] = selection_end
+        props["selection_start"] = selection_start
+        if shape is not None:
+            props["shape"] = shape
+        props["text"] = text
+        if text_style is not None:
+            props["text_style"] = text_style
+        slotted: tuple[Node, ...] = ()
+        if label is not None:
+            slotted += slot_nodes(label, key="label", slot="label")
+        if leading_icon is not None:
+            slotted += slot_nodes(leading_icon, key="leadingIcon", slot="leadingIcon")
+        if placeholder is not None:
+            slotted += slot_nodes(placeholder, key="placeholder", slot="placeholder")
+        if prefix is not None:
+            slotted += slot_nodes(prefix, key="prefix", slot="prefix")
+        if suffix is not None:
+            slotted += slot_nodes(suffix, key="suffix", slot="suffix")
+        if supporting_text is not None:
+            slotted += slot_nodes(
+                supporting_text,
+                key="supportingText",
+                slot="supportingText",
+            )
         if trailing_icon is not None:
             slotted += slot_nodes(
                 trailing_icon,
@@ -9318,11 +9833,11 @@ class TooltipBox(Component):
         has_action: bool | None = None,
         is_persistent: bool | None = None,
         modifier: Modifier | None = None,
+        on_dismiss_request: ActionTarget | None = None,
         on_visibility_change: ActionTarget | None = None,
-        position: _TooltipBoxPosition | None = None,
+        positioning: _TooltipAnchorPosition,
         visible: bool | None = None,
         children: Content = (),
-        content: Content | None = None,
         tooltip: Content | None = None,
     ) -> None:
         """Construct a registered TooltipBox.
@@ -9335,11 +9850,11 @@ class TooltipBox(Component):
             has_action: Native hasAction; None uses its default.
             is_persistent: Native isPersistent; None uses its default.
             modifier: Native modifier; None uses its default.
+            on_dismiss_request: Native onDismissRequest; None uses its default.
             on_visibility_change: Native onVisibilityChange; None uses its default.
-            position: Native position; None uses its default.
+            positioning: Required native positioning.
             visible: Native visible; None uses its default.
             children: Ordered child nodes with stable keys.
-            content: Alternative spelling for content children.
             tooltip: Nodes for the native tooltip slot.
 
         Raises:
@@ -9354,18 +9869,13 @@ class TooltipBox(Component):
             props["has_action"] = has_action
         if is_persistent is not None:
             props["is_persistent"] = is_persistent
+        if on_dismiss_request is not None:
+            props["on_dismiss_request"] = on_dismiss_request
         if on_visibility_change is not None:
             props["on_visibility_change"] = on_visibility_change
-        if position is not None:
-            props["position"] = position
+        props["positioning"] = positioning
         if visible is not None:
             props["visible"] = visible
-        if content is not None:
-            if children:
-                raise IrValidationError(
-                    "cannot supply both slot and children", node_id=id
-                )
-            children = content_nodes(content, key="content")
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id
@@ -10150,6 +10660,53 @@ class OutlinedCardWithoutOnClick(OutlinedCard):
         Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
 
 
+class PopupPopupPositionProvider(Popup):
+    """Native Popup; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "PopupPopupPositionProvider"
+    required_keywords = frozenset(
+        {
+            "positioning",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "content",
+            "positioning",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        positioning: _TooltipAnchorPosition,
+        children: Content = (),
+    ) -> None:
+        """Construct a registered PopupPopupPositionProvider.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            positioning: Required native positioning.
+            children: Ordered child nodes with stable keys.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        props["positioning"] = positioning
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
+
+
 class SliderValue(Slider):
     """Native Slider; props and defaults follow the component manifest."""
 
@@ -10522,5 +11079,6 @@ NavigationSuiteScaffoldLayout.overloads = (
     NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType,
 )
 OutlinedCard.overloads = (OutlinedCardWithoutOnClick,)
+Popup.overloads = (PopupPopupPositionProvider,)
 Slider.overloads = (SliderValue,)
 Surface.overloads = (SurfaceChecked, SurfaceOnClick, SurfaceSelected)

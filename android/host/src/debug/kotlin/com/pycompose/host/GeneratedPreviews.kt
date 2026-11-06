@@ -61,6 +61,12 @@ private fun BasicAlertDialogPreview() {
     Sample("""{"metadata": {"intents": {"preview.onDismissRequest": {"payload": {}}}}, "root": {"children": [{"id": "preview.child", "props": {"text": "BasicAlertDialog"}, "type": "Text"}], "id": "preview", "props": {"onDismissRequest": {"fields": {}, "intent": "preview.onDismissRequest"}}, "type": "BasicAlertDialog"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "BasicSecureTextField", showBackground = true)
+@Composable
+private fun BasicSecureTextFieldPreview() {
+    Sample("""{"metadata": {"intents": {"preview.onEdit": {"payload": {"selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onEdit": {"fields": {}, "intent": "preview.onEdit"}, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "BasicSecureTextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "BasicText", showBackground = true)
 @Composable
 private fun BasicTextPreview() {
@@ -71,6 +77,12 @@ private fun BasicTextPreview() {
 @Composable
 private fun BasicTextFieldPreview() {
     Sample("""{"metadata": {"intents": {"preview.onValueChange": {"payload": {"value": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onValueChange": {"fields": {}, "intent": "preview.onValueChange"}, "value": "Preview"}, "type": "BasicTextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "BasicTooltipBox", showBackground = true)
+@Composable
+private fun BasicTooltipBoxPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.tooltip", "props": {"text": "tooltip"}, "slot": "tooltip", "type": "Text"}, {"id": "preview.child", "props": {"text": "BasicTooltipBox"}, "type": "Text"}], "id": "preview", "props": {"positioning": {"name": "Above", "type": "TooltipAnchorPosition"}}, "type": "BasicTooltipBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "BottomAppBar", showBackground = true)
@@ -173,6 +185,12 @@ private fun DatePickerPreview() {
 @Composable
 private fun DatePickerDialogPreview() {
     Sample("""{"metadata": {"intents": {"preview.onDismissRequest": {"payload": {}}}}, "root": {"children": [{"id": "preview.confirmButton", "props": {"text": "confirmButton"}, "slot": "confirmButton", "type": "Text"}, {"id": "preview.child", "props": {"text": "DatePickerDialog"}, "type": "Text"}], "id": "preview", "props": {"onDismissRequest": {"fields": {}, "intent": "preview.onDismissRequest"}}, "type": "DatePickerDialog"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "DateRangePicker", showBackground = true)
+@Composable
+private fun DateRangePickerPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "DateRangePicker", "type": "semantics"}]}}, "type": "DateRangePicker"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "Dialog", showBackground = true)
@@ -655,6 +673,12 @@ private fun PopupPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "Popup"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Popup"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "PopupPopupPositionProvider", showBackground = true)
+@Composable
+private fun PopupPopupPositionProviderPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "PopupPopupPositionProvider"}, "type": "Text"}], "id": "preview", "props": {"positioning": {"name": "Above", "type": "TooltipAnchorPosition"}}, "type": "PopupPopupPositionProvider"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "PrimaryScrollableTabRow", showBackground = true)
 @Composable
 private fun PrimaryScrollableTabRowPreview() {
@@ -823,6 +847,18 @@ private fun SpacerPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "Spacer", "type": "semantics"}]}}, "type": "Spacer"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "StatefulBasicTextField", showBackground = true)
+@Composable
+private fun StatefulBasicTextFieldPreview() {
+    Sample("""{"metadata": {"intents": {"preview.onEdit": {"payload": {"selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onEdit": {"fields": {}, "intent": "preview.onEdit"}, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulBasicTextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "StatefulOutlinedTextField", showBackground = true)
+@Composable
+private fun StatefulOutlinedTextFieldPreview() {
+    Sample("""{"metadata": {"intents": {"preview.onEdit": {"payload": {"selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onEdit": {"fields": {}, "intent": "preview.onEdit"}, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulOutlinedTextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "StatefulSearchBar", showBackground = true)
 @Composable
 private fun StatefulSearchBarPreview() {
@@ -833,6 +869,12 @@ private fun StatefulSearchBarPreview() {
 @Composable
 private fun StatefulSearchBarInputFieldPreview() {
     Sample("""{"metadata": {"intents": {"preview.onEdit": {"payload": {"selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}, "preview.onExpandedChange": {"payload": {"expanded": {"required": true, "type": "boolean"}}}, "preview.onSearch": {"payload": {"query": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"expanded": true, "onEdit": {"fields": {}, "intent": "preview.onEdit"}, "onExpandedChange": {"fields": {}, "intent": "preview.onExpandedChange"}, "onSearch": {"fields": {}, "intent": "preview.onSearch"}, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBarInputField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "StatefulTextField", showBackground = true)
+@Composable
+private fun StatefulTextFieldPreview() {
+    Sample("""{"metadata": {"intents": {"preview.onEdit": {"payload": {"selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"id": "preview", "props": {"onEdit": {"fields": {}, "intent": "preview.onEdit"}, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulTextField"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SuggestionChip", showBackground = true)
@@ -928,7 +970,7 @@ private fun TimePickerDialogPreview() {
 @Preview(name = "TooltipBox", showBackground = true)
 @Composable
 private fun TooltipBoxPreview() {
-    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.tooltip", "props": {"text": "tooltip"}, "slot": "tooltip", "type": "Text"}, {"id": "preview.child", "props": {"text": "TooltipBox"}, "type": "Text"}], "id": "preview", "props": {}, "type": "TooltipBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.tooltip", "props": {"text": "tooltip"}, "slot": "tooltip", "type": "Text"}, {"id": "preview.child", "props": {"text": "TooltipBox"}, "type": "Text"}], "id": "preview", "props": {"positioning": {"name": "Above", "type": "TooltipAnchorPosition"}}, "type": "TooltipBox"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "TopAppBar", showBackground = true)

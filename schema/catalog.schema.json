@@ -395,6 +395,19 @@
         "scope": { "type": "string" },
         "overloadOf": { "type": "string", "minLength": 1 },
         "boxed": { "const": true },
+        "built": {
+          "type": "object",
+          "description": "Native parameters the host fills by calling the pin's one builder for their type, with the props it names.",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["factory", "arguments"],
+            "additionalProperties": false,
+            "properties": {
+              "factory": { "$ref": "#/$defs/dottedName" },
+              "arguments": { "type": "array", "items": { "$ref": "#/$defs/identifier" } }
+            }
+          }
+        },
         "adapter": { "type": "string" },
         "reshaped": {
           "type": "array",

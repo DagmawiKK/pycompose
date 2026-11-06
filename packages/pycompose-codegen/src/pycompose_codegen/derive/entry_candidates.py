@@ -298,6 +298,14 @@ def derive(
         review.append("modifier: none native; a Box carries the node's")
     if slots:
         entry["slots"] = slots
+    built = {
+        parameter: {"factory": spec["factory"], "arguments": list(spec["arguments"])}
+        for parameter, spec in plan["parameters"].items()
+        if spec["policy"] == "built"
+    }
+    if built:
+        # Native parameters the host fills by calling the pin's builder with props.
+        entry["built"] = built
     entry.update(_holders(plan))
     transients = [
         {"kind": spec["kind"], "native": parameter}

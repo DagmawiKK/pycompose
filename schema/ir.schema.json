@@ -848,6 +848,77 @@
       },
       "type": "object"
     },
+    "C_BasicSecureTextField": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onEdit": {
+              "$ref": "#/definitions/Action"
+            },
+            "onFocus": {
+              "$ref": "#/definitions/Action"
+            },
+            "onHover": {
+              "$ref": "#/definitions/Action"
+            },
+            "onPress": {
+              "$ref": "#/definitions/Action"
+            },
+            "readOnly": {
+              "default": false,
+              "type": "boolean"
+            },
+            "selectionEnd": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionStart": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "text": {
+              "type": "string"
+            },
+            "textObfuscationMode": {
+              "$ref": "#/definitions/Family_TextObfuscationMode"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            }
+          },
+          "required": [
+            "onEdit",
+            "selectionEnd",
+            "selectionStart",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "BasicSecureTextField"
+        }
+      },
+      "type": "object"
+    },
     "C_BasicText": {
       "properties": {
         "children": false,
@@ -985,6 +1056,61 @@
         },
         "type": {
           "const": "BasicTextField"
+        }
+      },
+      "type": "object"
+    },
+    "C_BasicTooltipBox": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "tooltip"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enableUserInput": {
+              "default": true,
+              "type": "boolean"
+            },
+            "focusable": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "positioning": {
+              "$ref": "#/definitions/Family_TooltipAnchorPosition"
+            },
+            "propagateMinConstraints": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "positioning"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "BasicTooltipBox"
         }
       },
       "type": "object"
@@ -2271,6 +2397,77 @@
         },
         "type": {
           "const": "DatePickerDialog"
+        }
+      },
+      "type": "object"
+    },
+    "C_DateRangePicker": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_DatePickerColors"
+            },
+            "displayedMonthMillis": {
+              "type": "integer"
+            },
+            "initialDisplayMode": {
+              "$ref": "#/definitions/Family_DisplayMode"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onDisplayedMonthMillisChange": {
+              "$ref": "#/definitions/Action"
+            },
+            "onSelectedEndDateMillisChange": {
+              "$ref": "#/definitions/Action"
+            },
+            "onSelectedStartDateMillisChange": {
+              "$ref": "#/definitions/Action"
+            },
+            "selectableDates": {
+              "$ref": "#/definitions/Family_SelectableDates"
+            },
+            "selectedEndDateMillis": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "selectedStartDateMillis": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showModeToggle": {
+              "default": true,
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "DateRangePicker"
         }
       },
       "type": "object"
@@ -8141,6 +8338,41 @@
       },
       "type": "object"
     },
+    "C_PopupPopupPositionProvider": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "positioning": {
+              "$ref": "#/definitions/Family_TooltipAnchorPosition"
+            }
+          },
+          "required": [
+            "positioning"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "PopupPopupPositionProvider"
+        }
+      },
+      "type": "object"
+    },
     "C_PrimaryScrollableTabRow": {
       "properties": {
         "children": {
@@ -10115,6 +10347,175 @@
       },
       "type": "object"
     },
+    "C_StatefulBasicTextField": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onEdit": {
+              "$ref": "#/definitions/Action"
+            },
+            "onFocus": {
+              "$ref": "#/definitions/Action"
+            },
+            "onHover": {
+              "$ref": "#/definitions/Action"
+            },
+            "onPress": {
+              "$ref": "#/definitions/Action"
+            },
+            "readOnly": {
+              "default": false,
+              "type": "boolean"
+            },
+            "selectionEnd": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionStart": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "text": {
+              "type": "string"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            }
+          },
+          "required": [
+            "onEdit",
+            "selectionEnd",
+            "selectionStart",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "StatefulBasicTextField"
+        }
+      },
+      "type": "object"
+    },
+    "C_StatefulOutlinedTextField": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "label",
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "isError": {
+              "default": false,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onEdit": {
+              "$ref": "#/definitions/Action"
+            },
+            "onFocus": {
+              "$ref": "#/definitions/Action"
+            },
+            "onHover": {
+              "$ref": "#/definitions/Action"
+            },
+            "onPress": {
+              "$ref": "#/definitions/Action"
+            },
+            "readOnly": {
+              "default": false,
+              "type": "boolean"
+            },
+            "selectionEnd": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionStart": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "text": {
+              "type": "string"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            }
+          },
+          "required": [
+            "onEdit",
+            "selectionEnd",
+            "selectionStart",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "StatefulOutlinedTextField"
+        }
+      },
+      "type": "object"
+    },
     "C_StatefulSearchBar": {
       "properties": {
         "children": {
@@ -10342,6 +10743,104 @@
         },
         "type": {
           "const": "StatefulSearchBarInputField"
+        }
+      },
+      "type": "object"
+    },
+    "C_StatefulTextField": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "label",
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "isError": {
+              "default": false,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onEdit": {
+              "$ref": "#/definitions/Action"
+            },
+            "onFocus": {
+              "$ref": "#/definitions/Action"
+            },
+            "onHover": {
+              "$ref": "#/definitions/Action"
+            },
+            "onPress": {
+              "$ref": "#/definitions/Action"
+            },
+            "readOnly": {
+              "default": false,
+              "type": "boolean"
+            },
+            "selectionEnd": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionStart": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "text": {
+              "type": "string"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            }
+          },
+          "required": [
+            "onEdit",
+            "selectionEnd",
+            "selectionStart",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "StatefulTextField"
         }
       },
       "type": "object"
@@ -11726,16 +12225,22 @@
               },
               "type": "object"
             },
+            "onDismissRequest": {
+              "$ref": "#/definitions/Action"
+            },
             "onVisibilityChange": {
               "$ref": "#/definitions/Action"
             },
-            "position": {
+            "positioning": {
               "$ref": "#/definitions/Family_TooltipAnchorPosition"
             },
             "visible": {
               "type": "boolean"
             }
           },
+          "required": [
+            "positioning"
+          ],
           "type": "object"
         },
         "type": {
@@ -15707,10 +16212,16 @@
               "$ref": "#/definitions/C_BasicAlertDialog"
             },
             {
+              "$ref": "#/definitions/C_BasicSecureTextField"
+            },
+            {
               "$ref": "#/definitions/C_BasicText"
             },
             {
               "$ref": "#/definitions/C_BasicTextField"
+            },
+            {
+              "$ref": "#/definitions/C_BasicTooltipBox"
             },
             {
               "$ref": "#/definitions/C_BottomAppBar"
@@ -15762,6 +16273,9 @@
             },
             {
               "$ref": "#/definitions/C_DatePickerDialog"
+            },
+            {
+              "$ref": "#/definitions/C_DateRangePicker"
             },
             {
               "$ref": "#/definitions/C_Dialog"
@@ -16004,6 +16518,9 @@
               "$ref": "#/definitions/C_Popup"
             },
             {
+              "$ref": "#/definitions/C_PopupPopupPositionProvider"
+            },
+            {
               "$ref": "#/definitions/C_PrimaryScrollableTabRow"
             },
             {
@@ -16088,10 +16605,19 @@
               "$ref": "#/definitions/C_Spacer"
             },
             {
+              "$ref": "#/definitions/C_StatefulBasicTextField"
+            },
+            {
+              "$ref": "#/definitions/C_StatefulOutlinedTextField"
+            },
+            {
               "$ref": "#/definitions/C_StatefulSearchBar"
             },
             {
               "$ref": "#/definitions/C_StatefulSearchBarInputField"
+            },
+            {
+              "$ref": "#/definitions/C_StatefulTextField"
             },
             {
               "$ref": "#/definitions/C_SuggestionChip"
@@ -33031,6 +33557,77 @@
       },
       "type": "object"
     },
+    "V_1_23_0_BasicSecureTextField": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onEdit": {
+              "$ref": "#/definitions/Action"
+            },
+            "onFocus": {
+              "$ref": "#/definitions/Action"
+            },
+            "onHover": {
+              "$ref": "#/definitions/Action"
+            },
+            "onPress": {
+              "$ref": "#/definitions/Action"
+            },
+            "readOnly": {
+              "default": false,
+              "type": "boolean"
+            },
+            "selectionEnd": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionStart": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "text": {
+              "type": "string"
+            },
+            "textObfuscationMode": {
+              "$ref": "#/definitions/Family_TextObfuscationMode"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            }
+          },
+          "required": [
+            "onEdit",
+            "selectionEnd",
+            "selectionStart",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "BasicSecureTextField"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_BasicText": {
       "properties": {
         "children": false,
@@ -33168,6 +33765,61 @@
         },
         "type": {
           "const": "BasicTextField"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_BasicTooltipBox": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "tooltip"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enableUserInput": {
+              "default": true,
+              "type": "boolean"
+            },
+            "focusable": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "positioning": {
+              "$ref": "#/definitions/Family_TooltipAnchorPosition"
+            },
+            "propagateMinConstraints": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "positioning"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "BasicTooltipBox"
         }
       },
       "type": "object"
@@ -34454,6 +35106,77 @@
         },
         "type": {
           "const": "DatePickerDialog"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_DateRangePicker": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_DatePickerColors"
+            },
+            "displayedMonthMillis": {
+              "type": "integer"
+            },
+            "initialDisplayMode": {
+              "$ref": "#/definitions/Family_DisplayMode"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onDisplayedMonthMillisChange": {
+              "$ref": "#/definitions/Action"
+            },
+            "onSelectedEndDateMillisChange": {
+              "$ref": "#/definitions/Action"
+            },
+            "onSelectedStartDateMillisChange": {
+              "$ref": "#/definitions/Action"
+            },
+            "selectableDates": {
+              "$ref": "#/definitions/Family_SelectableDates"
+            },
+            "selectedEndDateMillis": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "selectedStartDateMillis": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showModeToggle": {
+              "default": true,
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "DateRangePicker"
         }
       },
       "type": "object"
@@ -42399,10 +43122,16 @@
               "$ref": "#/definitions/V_1_23_0_BasicAlertDialog"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_BasicSecureTextField"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_BasicText"
             },
             {
               "$ref": "#/definitions/V_1_23_0_BasicTextField"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_BasicTooltipBox"
             },
             {
               "$ref": "#/definitions/V_1_23_0_BottomAppBar"
@@ -42454,6 +43183,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_DatePickerDialog"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_DateRangePicker"
             },
             {
               "$ref": "#/definitions/V_1_23_0_Dialog"
@@ -42696,6 +43428,9 @@
               "$ref": "#/definitions/V_1_23_0_Popup"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_PopupPopupPositionProvider"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_PrimaryScrollableTabRow"
             },
             {
@@ -42780,10 +43515,19 @@
               "$ref": "#/definitions/V_1_23_0_Spacer"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_StatefulBasicTextField"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_StatefulOutlinedTextField"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_StatefulSearchBar"
             },
             {
               "$ref": "#/definitions/V_1_23_0_StatefulSearchBarInputField"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_StatefulTextField"
             },
             {
               "$ref": "#/definitions/V_1_23_0_SuggestionChip"
@@ -43672,6 +44416,41 @@
         },
         "type": {
           "const": "Popup"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_PopupPopupPositionProvider": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "positioning": {
+              "$ref": "#/definitions/Family_TooltipAnchorPosition"
+            }
+          },
+          "required": [
+            "positioning"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "PopupPopupPositionProvider"
         }
       },
       "type": "object"
@@ -45650,6 +46429,175 @@
       },
       "type": "object"
     },
+    "V_1_23_0_StatefulBasicTextField": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onEdit": {
+              "$ref": "#/definitions/Action"
+            },
+            "onFocus": {
+              "$ref": "#/definitions/Action"
+            },
+            "onHover": {
+              "$ref": "#/definitions/Action"
+            },
+            "onPress": {
+              "$ref": "#/definitions/Action"
+            },
+            "readOnly": {
+              "default": false,
+              "type": "boolean"
+            },
+            "selectionEnd": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionStart": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "text": {
+              "type": "string"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            }
+          },
+          "required": [
+            "onEdit",
+            "selectionEnd",
+            "selectionStart",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "StatefulBasicTextField"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_StatefulOutlinedTextField": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "label",
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
+            "contentPadding": {
+              "$ref": "#/definitions/Family_PaddingValues"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "isError": {
+              "default": false,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onEdit": {
+              "$ref": "#/definitions/Action"
+            },
+            "onFocus": {
+              "$ref": "#/definitions/Action"
+            },
+            "onHover": {
+              "$ref": "#/definitions/Action"
+            },
+            "onPress": {
+              "$ref": "#/definitions/Action"
+            },
+            "readOnly": {
+              "default": false,
+              "type": "boolean"
+            },
+            "selectionEnd": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionStart": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "text": {
+              "type": "string"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            }
+          },
+          "required": [
+            "onEdit",
+            "selectionEnd",
+            "selectionStart",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "StatefulOutlinedTextField"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_StatefulSearchBar": {
       "properties": {
         "children": {
@@ -45877,6 +46825,104 @@
         },
         "type": {
           "const": "StatefulSearchBarInputField"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_StatefulTextField": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "label",
+                  "leadingIcon",
+                  "placeholder",
+                  "prefix",
+                  "suffix",
+                  "supportingText",
+                  "trailingIcon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "isError": {
+              "default": false,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onEdit": {
+              "$ref": "#/definitions/Action"
+            },
+            "onFocus": {
+              "$ref": "#/definitions/Action"
+            },
+            "onHover": {
+              "$ref": "#/definitions/Action"
+            },
+            "onPress": {
+              "$ref": "#/definitions/Action"
+            },
+            "readOnly": {
+              "default": false,
+              "type": "boolean"
+            },
+            "selectionEnd": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionStart": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "text": {
+              "type": "string"
+            },
+            "textStyle": {
+              "$ref": "#/definitions/Family_TextStyle"
+            }
+          },
+          "required": [
+            "onEdit",
+            "selectionEnd",
+            "selectionStart",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "StatefulTextField"
         }
       },
       "type": "object"
@@ -47261,16 +48307,22 @@
               },
               "type": "object"
             },
+            "onDismissRequest": {
+              "$ref": "#/definitions/Action"
+            },
             "onVisibilityChange": {
               "$ref": "#/definitions/Action"
             },
-            "position": {
+            "positioning": {
               "$ref": "#/definitions/Family_TooltipAnchorPosition"
             },
             "visible": {
               "type": "boolean"
             }
           },
+          "required": [
+            "positioning"
+          ],
           "type": "object"
         },
         "type": {

@@ -53,11 +53,11 @@ what a derived family needs; each names that member or protocol:
   composed and keeps it while hidden, so presence is composition: the host
   composes it to show it and removes it once hidden, which no holder member
   states.
-* ``tooltip`` -- ``TooltipState.isVisible`` is read-only, seeded by
-  ``initialIsVisible``; ``show()`` and ``dismiss()`` are an interface's members
-  whose implementation flips a transition's target, so the pin gives no
-  evidence of the value each sets. Its one user, ``TooltipBox``, builds its
-  ``PopupPositionProvider`` from the position the app names.
+* ``tooltip`` -- ``TooltipState.isVisible`` is read-only and moves through
+  ``show()``, which also starts a non-persistent tooltip's timeout and must
+  wait out its anchor's focus initialization; re-creating the holder would skip
+  both, and the pin gives no evidence of which value ``show()`` and
+  ``dismiss()`` set.
 * ``textInput`` -- ``TextFieldState.text`` and ``selection`` are read-only and
   change only inside ``edit { }``, a ``TextFieldBuffer`` block no type rule
   drives; its reports are numbered, atomic text-and-selection edits, so an
@@ -68,8 +68,9 @@ what a derived family needs; each names that member or protocol:
 
 A holder with one scrollable position (a pager's page, a list's first visible
 item, a scroll's offset), one anchor of an enum (a drawer open or closed, a
-swipe settled or dismissed) or settable properties (a slider's value, a time
-picker's hour) is derived from the pin instead (``positional``, ``anchored``,
+swipe settled or dismissed) or properties (a slider's value, a time picker's
+hour, a date range picker's selection, re-created to change) is derived from the pin
+instead (``positional``, ``anchored``,
 ``properties``). The vocabulary is closed for the same reason the interaction
 kinds are: the host must not be asked to drive a state object whose
 transitions it does not understand.
@@ -185,23 +186,6 @@ work is bounded before the program first runs."""
 
 TRANSIENT_HOLDERS = {"snackbar": "androidx.compose.material3.SnackbarHostState"}
 """The native holder each transient family remembers and fulfils requests on."""
-
-HOST_VALUES = {
-    "androidx.compose.ui.window.PopupPositionProvider": (
-        "position",
-        {
-            "type": "enum",
-            "valueType": "TooltipAnchorPosition",
-            "values": ["above", "below", "left", "right", "start", "end"],
-            "default": "above",
-        },
-    ),
-}
-"""Native types the host builds from a wire prop it names: the prop and its spec.
-
-A popup position provider measures the anchor and the screen, which the app
-cannot; the app states where the popup goes and the host builds the provider.
-"""
 
 RESOURCE_TYPES = {
     "androidx.compose.ui.graphics.painter.Painter": (
