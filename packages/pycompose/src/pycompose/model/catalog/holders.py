@@ -179,7 +179,10 @@ class TransientRule:
 
 
 DERIVED = {
-    "properties": (("holder", "factory", "properties"), ("arguments",)),
+    "properties": (
+        ("holder", "factory", "properties"),
+        ("arguments", "construct", "settles"),
+    ),
     "positional": (
         ("holder", "factory", "initial", "position", "drive"),
         ("count", "spec", "snap"),

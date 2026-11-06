@@ -2,12 +2,25 @@
 
 ``TimePicker(state: TimePickerState)`` reads its holder's ``hour`` and ``minute``
 and writes them as the user picks; Python wants to set them and hear them back.
-That is the whole family whenever a holder has a public ``remember...`` factory
-callable with no arguments, and every public scalar property it exposes can be
-set: each property becomes a desired prop and an ``on<Property>Change`` report,
-reconciled by the host's generic ``reconcileProperty``. A holder with a scalar
-property it only reads (``DateRangePickerState.selectedStartDateMillis``) needs
-a drive the pin does not name, so it is not one; its components stay refused.
+That is the family whenever a holder has a public ``remember...`` factory
+callable with no arguments and a public scalar property it lets be set. Its
+members sort by what the types say:
+
+* a settable scalar property is a value: a desired prop and its report,
+  reconciled by the host's generic ``reconcileProperty``;
+* a read-only property the factory takes under its own name
+  (``SliderState.steps``), and a factory parameter of a value family
+  (``valueRange: ClosedFloatingPointRange``), fix the holder as it is created:
+  each is a prop, and a different one re-creates the holder;
+* any other read-only scalar (``isDragging``) is what the holder computes, and
+  stays off the wire;
+* a settable ``() -> Unit`` property (``onValueChangeFinished``) is when its
+  values settle: one report named after it carries them all, rather than a
+  report per change.
+
+A read-only property the factory only seeds as ``initial...``
+(``DateRangePickerState.selectedStartDateMillis``) is a value the pin gives no
+drive, so its holder is not one; its components stay refused.
 """
 
 from __future__ import annotations
@@ -17,6 +30,7 @@ from typing import Any
 from pycompose_codegen.derive.classpath_dump import Inventory
 from pycompose_codegen.derive.classpath_types import Declaration
 from pycompose_codegen.derive.implementations import implementation_members
+from pycompose_codegen.emit.defaults import render_default
 
 WIRE = {
     "kotlin/Boolean": ("boolean", "Boolean"),
@@ -80,14 +94,16 @@ def _seed(
 
     ``rememberTimePickerState(initialHour = 5)`` creates a holder whose dial
     stands at five; setting ``hour`` later moves the number but not the hand.
-    A parameter named after the property, or ``initial`` and its name, of the
-    property's type seeds it; only a literal default is one the host can fall
-    back on when the app states nothing, and only a non-null property can tell
-    "states nothing" from "clears".
+    A parameter named ``initial`` and the property's name, of its type, only
+    seeds it, so the holder is re-created to drive it. A parameter named after
+    the property itself (``rememberSliderState(value)``) is the same value the
+    setter writes, so the setter drives it and it seeds nothing. Only a literal
+    default is one the host can fall back on when the app states nothing, and
+    only a non-null property can tell "states nothing" from "clears".
     """
     if prop.return_type.nullable:
         return None
-    names = {prop.name, "initial" + prop.name[:1].upper() + prop.name[1:]}
+    names = {"initial" + prop.name[:1].upper() + prop.name[1:]}
     for parameter in factory.parameters:
         default = defaults.get(parameter.name) or {}
         if (
@@ -125,16 +141,20 @@ def _arguments(
 
 
 def property_holders(
-    found: Inventory, defaults: dict[tuple[str, str, str], dict[str, Any]]
+    found: Inventory,
+    defaults: dict[tuple[str, str, str], dict[str, Any]],
+    families: dict[str, str],
 ) -> dict[str, dict[str, Any]]:
     """Every holder class whose family the pin implies, by slash classifier.
 
     Args:
         found: The pinned inventory.
         defaults: Compiler-resolved defaults by JVM identity, for the seeds.
+        families: Value families by source-spelled native type.
 
     Returns:
-        Per holder: its class, its factory, and its properties' wire specs.
+        Per holder: its class, its factory, its properties' wire specs, what
+        fixes it as it is created, and the member its values settle through.
     """
     properties: dict[str, list[Declaration]] = {}
     for d in found.declarations:
@@ -146,9 +166,17 @@ def property_holders(
         ):
             properties.setdefault(d.dispatch_receiver.classifier, []).append(d)
     holders = {}
-    for classifier, members in sorted(properties.items()):
+    for classifier, every in sorted(properties.items()):
         factory = _factory(found, classifier)
-        if factory is None or not all(_settable(d) for d in members):
+        members = [d for d in every if _settable(d)]
+        if factory is None or not members:
+            continue
+        parameters = {p.name: p for p in factory.parameters}
+        fixed = [d for d in every if not _settable(d) and d.name in parameters]
+        if any(_seeded(d) in parameters for d in every if not _settable(d)) or any(
+            parameters[d.name].type.classifier != d.return_type.classifier
+            for d in fixed
+        ):
             continue
         own = defaults.get(
             (factory.owner, factory.jvm_name or "", factory.jvm_descriptor or ""), {}
@@ -164,10 +192,73 @@ def property_holders(
         }
         seeded = {spec["seed"]["parameter"] for spec in held.values() if "seed" in spec}
         arguments = _arguments(found, factory, own, seeded)
+        construct = {
+            **{
+                d.name: _scalar(d.return_type.classifier, own.get(d.name))
+                for d in fixed
+            },
+            **_families(factory, own, families, seeded | set(arguments)),
+        }
+        settles = [
+            d.name
+            for d in found.declarations
+            if d.document.get("declarationKind") == "property"
+            and d.dispatch_receiver is not None
+            and d.dispatch_receiver.classifier == classifier
+            and _public(d)
+            and _settable(d)
+            and d.return_type.classifier == "kotlin/Function0"
+        ]
         holders[classifier] = {
             "holder": classifier.replace("/", "."),
             "factory": f"{factory.package}.{factory.name}",
             "properties": held,
             **({"arguments": arguments} if arguments else {}),
+            **({"construct": construct} if construct else {}),
+            **({"settles": settles[0]} if len(settles) == 1 else {}),
         }
     return holders
+
+
+def _seeded(prop: Declaration) -> str:
+    """The factory parameter that only seeds a property: ``initial`` and its name."""
+    return "initial" + prop.name[:1].upper() + prop.name[1:]
+
+
+def _scalar(classifier: str, default: dict[str, Any] | None) -> dict[str, Any]:
+    """A scalar the holder is created with, defaulted where the pin states a literal."""
+    wire, native = WIRE[classifier]
+    literal = (default or {}).get("kind") == "literal"
+    return {
+        "type": wire,
+        "nativeType": native,
+        **(
+            {"default": default["value"]} if literal and default else {"required": True}
+        ),
+    }
+
+
+def _families(
+    factory: Declaration,
+    defaults: dict[str, Any],
+    families: dict[str, str],
+    taken: set[str],
+) -> dict[str, dict[str, Any]]:
+    """Factory parameters of a value family: ``valueRange`` as a ``Range``.
+
+    A default the vocabulary renders stands when the app states none; any other
+    makes the prop required, since the host cannot reproduce it.
+    """
+    found = {}
+    for parameter in factory.parameters:
+        family = families.get(parameter.type.classifier.replace("/", "."))
+        if parameter.name in taken or family is None:
+            continue
+        default = defaults.get(parameter.name) or {}
+        native: dict[str, object]
+        try:
+            native = {"nativeDefault": render_default(default, set())}
+        except ValueError:
+            native = {"required": True}
+        found[parameter.name] = {"type": "value", "valueType": family, **native}
+    return found

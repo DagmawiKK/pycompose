@@ -104,6 +104,7 @@ import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
@@ -268,6 +269,7 @@ import com.pycompose.ir.generated.PrimaryTabRow as PrimaryTabRowNode
 import com.pycompose.ir.generated.ProvideTextStyle as ProvideTextStyleNode
 import com.pycompose.ir.generated.PullToRefreshBox as PullToRefreshBoxNode
 import com.pycompose.ir.generated.RadioButton as RadioButtonNode
+import com.pycompose.ir.generated.RangeSlider as RangeSliderNode
 import com.pycompose.ir.generated.RichTooltip as RichTooltipNode
 import com.pycompose.ir.generated.Row as RowNode
 import com.pycompose.ir.generated.Scaffold as ScaffoldNode
@@ -333,8 +335,8 @@ import com.pycompose.renderer.reconcileProperty
 import com.pycompose.renderer.rememberDrawing
 import com.pycompose.renderer.rememberFunction
 import com.pycompose.renderer.rememberMeasurePolicy
+import com.pycompose.renderer.reportSettled
 import com.pycompose.renderer.sheetState
-import com.pycompose.renderer.sliderState
 import com.pycompose.renderer.snackbar
 import com.pycompose.renderer.textInputState
 import com.pycompose.renderer.unslotted
@@ -781,15 +783,16 @@ object GeneratedAdapters {
                 val model = node as DatePickerNode
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.datePickerColors(colorsWire).getOrThrow() else androidx.compose.material3.DatePickerDefaults.colors()
-                val stateDisplayedMonthMillis = model.props.displayedMonthMillis?.let { Wanted(it) }
-                val stateSelectedDateMillis = model.props.selectedDateMillis.wanted { it.long }
-                val stateValue = key(model.props.selectableDates) {
+                val stateDisplayedMonthMillisWanted = model.props.displayedMonthMillis?.let { Wanted(it) }
+                val stateSelectedDateMillisWanted = model.props.selectedDateMillis.wanted { it.long }
+                val stateValue = key(model.props.selectableDates, model.props.initialDisplayMode) {
                     androidx.compose.material3.rememberDatePickerState(
                         selectableDates = model.props.selectableDates?.let { com.pycompose.renderer.generated.ValueResolver.selectableDates(it).getOrThrow() } ?: androidx.compose.material3.DatePickerDefaults.AllDates,
+                        initialDisplayMode = model.props.initialDisplayMode?.let { com.pycompose.renderer.generated.ValueResolver.displayMode(it).getOrThrow() } ?: androidx.compose.material3.DisplayMode.Companion.Picker,
                     )
                 }
-                context.reconcileProperty(stateValue, "displayedMonthMillis", stateDisplayedMonthMillis, model.props.onDisplayedMonthMillisChange, { stateValue.displayedMonthMillis }, { stateValue.displayedMonthMillis = it }) { JsonPrimitive(it) }
-                context.reconcileProperty(stateValue, "selectedDateMillis", stateSelectedDateMillis, model.props.onSelectedDateMillisChange, { stateValue.selectedDateMillis }, { stateValue.selectedDateMillis = it }) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "displayedMonthMillis", stateDisplayedMonthMillisWanted, model.props.onDisplayedMonthMillisChange, { stateValue.displayedMonthMillis }, { stateValue.displayedMonthMillis = it }) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "selectedDateMillis", stateSelectedDateMillisWanted, model.props.onSelectedDateMillisChange, { stateValue.selectedDateMillis }, { stateValue.selectedDateMillis = it }) { JsonPrimitive(it) }
                 DatePicker(
                     modifier = modifier,
                     colors = colorsValue,
@@ -2374,6 +2377,28 @@ object GeneratedAdapters {
                     interactionSource = interactionSourceValue,
                 )
             }
+            .register("RangeSlider") { node, modifier, context ->
+                val model = node as RangeSliderNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.sliderColors(colorsWire).getOrThrow() else androidx.compose.material3.SliderDefaults.colors()
+                val stateActiveRangeEndWanted = model.props.activeRangeEnd?.let { Wanted(context.number(it).toFloat()) }
+                val stateActiveRangeStartWanted = model.props.activeRangeStart?.let { Wanted(context.number(it).toFloat()) }
+                val stateValue = key(model.props.steps, model.props.valueRange) {
+                    androidx.compose.material3.rememberRangeSliderState(
+                        steps = model.props.steps.toInt(),
+                        valueRange = model.props.valueRange.let { com.pycompose.renderer.generated.ValueResolver.range(it).getOrThrow() },
+                    )
+                }
+                val stateSettled = context.reportSettled(stateValue, model.props.onValueChangeFinished, { stateValue.onValueChangeFinished = it }) { JsonObject(mapOf("activeRangeEnd" to JsonPrimitive(stateValue.activeRangeEnd), "activeRangeStart" to JsonPrimitive(stateValue.activeRangeStart))) }
+                context.reconcileProperty(stateValue, "activeRangeEnd", stateActiveRangeEndWanted, null, { stateValue.activeRangeEnd }, { stateValue.activeRangeEnd = it; stateSettled() }, answering = model.props.onValueChangeFinished) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "activeRangeStart", stateActiveRangeStartWanted, null, { stateValue.activeRangeStart }, { stateValue.activeRangeStart = it; stateSettled() }, answering = model.props.onValueChangeFinished) { JsonPrimitive(it) }
+                RangeSlider(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    enabled = model.props.enabled,
+                    state = stateValue,
+                )
+            }
             .registerScoped<TooltipScope>("RichTooltip") { node, modifier, context ->
                 val model = node as RichTooltipNode
                 val caretShapeWire = model.props.caretShape
@@ -2608,11 +2633,20 @@ object GeneratedAdapters {
             }
             .register("Slider") { node, modifier, context ->
                 val model = node as SliderNode
-                val valueRangeValue = com.pycompose.renderer.generated.ValueResolver.range(model.props.valueRange).getOrThrow()
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.sliderColors(colorsWire).getOrThrow() else androidx.compose.material3.SliderDefaults.colors()
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
-                val stateValue = context.sliderState(model.props.value, model.props.onValueChangeFinished, valueRangeValue, model.props.steps)
+                val stateShouldAutoSnapWanted = model.props.shouldAutoSnap?.let { Wanted(it) }
+                val stateValueWanted = model.props.value?.let { Wanted(context.number(it).toFloat()) }
+                val stateValue = key(model.props.steps, model.props.valueRange) {
+                    androidx.compose.material3.rememberSliderState(
+                        steps = model.props.steps.toInt(),
+                        valueRange = model.props.valueRange.let { com.pycompose.renderer.generated.ValueResolver.range(it).getOrThrow() },
+                    )
+                }
+                val stateSettled = context.reportSettled(stateValue, model.props.onValueChangeFinished, { stateValue.onValueChangeFinished = it }) { JsonObject(mapOf("shouldAutoSnap" to JsonPrimitive(stateValue.shouldAutoSnap), "value" to JsonPrimitive(stateValue.value))) }
+                context.reconcileProperty(stateValue, "shouldAutoSnap", stateShouldAutoSnapWanted, null, { stateValue.shouldAutoSnap }, { stateValue.shouldAutoSnap = it; stateSettled() }, answering = model.props.onValueChangeFinished) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "value", stateValueWanted, null, { stateValue.value }, { stateValue.value = it; stateSettled() }, answering = model.props.onValueChangeFinished) { JsonPrimitive(it) }
                 Slider(
                     modifier = modifier,
                     colors = colorsValue,
@@ -3021,19 +3055,19 @@ object GeneratedAdapters {
                 val model = node as TimeInputNode
                 val colorsWire = model.props.colors
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.timePickerColors(colorsWire).getOrThrow() else androidx.compose.material3.TimePickerDefaults.colors()
-                val stateHour = model.props.hour?.let { Wanted(it.toInt()) }
-                val stateIs24hour = model.props.is24hour?.let { Wanted(it) }
-                val stateMinute = model.props.minute?.let { Wanted(it.toInt()) }
+                val stateHourWanted = model.props.hour?.let { Wanted(it.toInt()) }
+                val stateIs24hourWanted = model.props.is24hour?.let { Wanted(it) }
+                val stateMinuteWanted = model.props.minute?.let { Wanted(it.toInt()) }
                 val stateSeeds = remember { Reseed<androidx.compose.material3.TimePickerState>() }
                 val stateValue = key(stateSeeds.generation) {
                     androidx.compose.material3.rememberTimePickerState(
-                        initialHour = stateHour?.value ?: stateSeeds.previous?.hour ?: 0,
-                        initialMinute = stateMinute?.value ?: stateSeeds.previous?.minute ?: 0,
+                        initialHour = stateHourWanted?.value ?: stateSeeds.previous?.hour ?: 0,
+                        initialMinute = stateMinuteWanted?.value ?: stateSeeds.previous?.minute ?: 0,
                     )
                 }
-                context.reconcileProperty(stateValue, "hour", stateHour, model.props.onHourChange, { stateValue.hour }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
-                context.reconcileProperty(stateValue, "is24hour", stateIs24hour, model.props.onIs24hourChange, { stateValue.is24hour }, { stateValue.is24hour = it }) { JsonPrimitive(it) }
-                context.reconcileProperty(stateValue, "minute", stateMinute, model.props.onMinuteChange, { stateValue.minute }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "hour", stateHourWanted, model.props.onHourChange, { stateValue.hour }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "is24hour", stateIs24hourWanted, model.props.onIs24hourChange, { stateValue.is24hour }, { stateValue.is24hour = it }) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "minute", stateMinuteWanted, model.props.onMinuteChange, { stateValue.minute }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
                 TimeInput(
                     modifier = modifier,
                     colors = colorsValue,
@@ -3046,19 +3080,19 @@ object GeneratedAdapters {
                 val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.timePickerColors(colorsWire).getOrThrow() else androidx.compose.material3.TimePickerDefaults.colors()
                 val layoutTypeValue = model.props.layoutType?.let { com.pycompose.renderer.generated.ValueResolver.timePickerLayoutType(it).getOrThrow() }
                     ?: androidx.compose.material3.TimePickerDefaults.layoutType()
-                val stateHour = model.props.hour?.let { Wanted(it.toInt()) }
-                val stateIs24hour = model.props.is24hour?.let { Wanted(it) }
-                val stateMinute = model.props.minute?.let { Wanted(it.toInt()) }
+                val stateHourWanted = model.props.hour?.let { Wanted(it.toInt()) }
+                val stateIs24hourWanted = model.props.is24hour?.let { Wanted(it) }
+                val stateMinuteWanted = model.props.minute?.let { Wanted(it.toInt()) }
                 val stateSeeds = remember { Reseed<androidx.compose.material3.TimePickerState>() }
                 val stateValue = key(stateSeeds.generation) {
                     androidx.compose.material3.rememberTimePickerState(
-                        initialHour = stateHour?.value ?: stateSeeds.previous?.hour ?: 0,
-                        initialMinute = stateMinute?.value ?: stateSeeds.previous?.minute ?: 0,
+                        initialHour = stateHourWanted?.value ?: stateSeeds.previous?.hour ?: 0,
+                        initialMinute = stateMinuteWanted?.value ?: stateSeeds.previous?.minute ?: 0,
                     )
                 }
-                context.reconcileProperty(stateValue, "hour", stateHour, model.props.onHourChange, { stateValue.hour }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
-                context.reconcileProperty(stateValue, "is24hour", stateIs24hour, model.props.onIs24hourChange, { stateValue.is24hour }, { stateValue.is24hour = it }) { JsonPrimitive(it) }
-                context.reconcileProperty(stateValue, "minute", stateMinute, model.props.onMinuteChange, { stateValue.minute }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "hour", stateHourWanted, model.props.onHourChange, { stateValue.hour }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "is24hour", stateIs24hourWanted, model.props.onIs24hourChange, { stateValue.is24hour }, { stateValue.is24hour = it }) { JsonPrimitive(it) }
+                context.reconcileProperty(stateValue, "minute", stateMinuteWanted, model.props.onMinuteChange, { stateValue.minute }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
                 TimePicker(
                     modifier = modifier,
                     colors = colorsValue,

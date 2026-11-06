@@ -1,12 +1,10 @@
 package com.pycompose.renderer
 
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SliderState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import kotlinx.serialization.json.JsonElement
 
 /**
  * The node's sheet projection, including whether its native sheet is composed.
@@ -29,31 +27,6 @@ fun RenderContext.sheetState(
         SheetContract(open, report, value, valueReport),
         skipPartiallyExpanded,
         observations,
-    )
-
-/**
- * The node's slider projection; a gesture reports only its finished value.
- *
- * @param value Desired value, or an expression over holder streams; null starts
- *   at the range's floor.
- * @param report Action id finished values report to; null reports none.
- * @param valueRange Native range; null uses zero to one.
- * @param steps Step count between range bounds; null uses none.
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun RenderContext.sliderState(
-    value: JsonElement?,
-    report: String?,
-    valueRange: ClosedFloatingPointRange<Float>?,
-    steps: Long?,
-): SliderState =
-    rememberHostSliderState(
-        value?.let { number(it) },
-        report,
-        valueRange,
-        steps,
-        observations::observe,
     )
 
 /**

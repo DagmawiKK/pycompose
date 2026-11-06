@@ -62,26 +62,6 @@ def test_a_component_without_a_holder_gets_no_state_local() -> None:
     assert "context.anchoredState(" not in adapter
 
 
-SLIDER = {
-    "props": {
-        "value": {"type": "number"},
-        "onValueChangeFinished": {
-            "type": "actionId",
-            "payload": [{"name": "value", "type": "number"}],
-        },
-        "valueRange": {"type": "value", "valueType": "Range", "required": True},
-        "steps": {"type": "integer"},
-    },
-    "children": {"allowed": False},
-    "state": {
-        "native": "state",
-        "kind": "slider",
-        "value": "value",
-        "report": "onValueChangeFinished",
-    },
-}
-"""A slider entry as the catalog will carry it, before the catalog does."""
-
 SCROLL = {
     "props": {
         "value": {"type": "integer"},
@@ -120,26 +100,28 @@ LAZY = {
 """A lazy-list entry: the state parameter takes the holder directly."""
 
 
-def test_a_slider_carries_its_range_and_steps_to_the_holder() -> None:
-    """The holder is constructed from the app's range and steps, not defaults."""
-    adapter = render("Slider", SLIDER)
-    # The range crosses as tagged data and reaches the holder resolved.
+def test_a_slider_is_created_from_its_range_and_reports_where_it_settles() -> None:
+    """The slider's family is derived: what fixes the holder keys its factory,
+    and its values report together through the holder's settle callback."""
+    slider = components()["Slider"]
+    adapter = render("Slider", slider)
     assert (
-        "val valueRangeValue = "
-        "com.pycompose.renderer.generated.ValueResolver.range("
-        "model.props.valueRange).getOrThrow()" in adapter
+        "val stateValue = key(model.props.steps, model.props.valueRange) {" in adapter
     )
+    assert "steps = model.props.steps.toInt()," in adapter
+    # A number value may follow a holder stream.
+    value = "model.props.value?.let { Wanted(context.number(it).toFloat()) }"
+    assert value in adapter
+    # No report per change: the settle callback carries them, drives wait on it,
+    # and a drive reports where the holder left it.
+    assert "answering = model.props.onValueChangeFinished" in adapter
     assert (
-        "val stateValue = context.sliderState("
-        "model.props.value, model.props.onValueChangeFinished, "
-        "valueRangeValue, model.props.steps)" in adapter
+        "val stateSettled = context.reportSettled(stateValue, "
+        "model.props.onValueChangeFinished, "
+        "{ stateValue.onValueChangeFinished = it })" in adapter
     )
+    assert "{ stateValue.value = it; stateSettled() }" in adapter
     assert "state = stateValue" in adapter
-    # The held props name no native parameter: the holder consumes them.
-    assert "value =" not in adapter
-    assert "onValueChangeFinished =" not in adapter
-    assert "valueRange =" not in adapter
-    assert "steps =" not in adapter
 
 
 def test_a_scroll_holder_rides_the_modifier_behind_a_boolean() -> None:
@@ -157,7 +139,9 @@ def test_a_scroll_holder_rides_the_modifier_behind_a_boolean() -> None:
     # The stem is documentary: Column has no state parameter to fill.
     assert "scrollState =" not in adapter
     assert "com.pycompose.renderer.attachTo" in extra_imports(SCROLL)
-    assert "com.pycompose.renderer.attachTo" not in extra_imports(SLIDER)
+    assert "com.pycompose.renderer.attachTo" not in extra_imports(
+        components()["Slider"]
+    )
 
 
 def test_a_lazy_list_fills_the_state_parameter() -> None:

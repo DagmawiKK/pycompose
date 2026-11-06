@@ -557,6 +557,7 @@ data class Crossfade(
 data class DatePickerProps(
     val `colors`: JsonElement? = null,
     val `displayedMonthMillis`: Long? = null,
+    val `initialDisplayMode`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `onDisplayedMonthMillisChange`: String? = null,
     val `onSelectedDateMillisChange`: String? = null,
@@ -2503,6 +2504,30 @@ data class RadioButton(
 }
 
 @Serializable
+data class RangeSliderProps(
+    val `activeRangeEnd`: JsonElement? = null,
+    val `activeRangeStart`: JsonElement? = null,
+    val `colors`: JsonElement? = null,
+    val `enabled`: Boolean = true,
+    override val `modifier`: JsonObject? = null,
+    val `onValueChangeFinished`: String? = null,
+    val `steps`: Long = 0L,
+    val `valueRange`: JsonElement,
+) : UiProps
+
+@Serializable
+@SerialName("RangeSlider")
+data class RangeSlider(
+    override val id: String,
+    override val props: RangeSliderProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
+    override val componentType: String get() = "RangeSlider"
+}
+
+@Serializable
 data class RichTooltipProps(
     val `caretShape`: OptionalValue = OptionalValue.Absent,
     val `colors`: JsonElement? = null,
@@ -2836,6 +2861,7 @@ data class SliderProps(
     val `onHover`: String? = null,
     val `onPress`: String? = null,
     val `onValueChangeFinished`: String? = null,
+    val `shouldAutoSnap`: Boolean? = null,
     val `steps`: Long = 0L,
     val `value`: JsonElement? = null,
     val `valueRange`: JsonElement,

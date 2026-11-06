@@ -501,7 +501,7 @@
     },
     "derivedState": {
       "type": "object",
-      "description": "ADR-0058: a family the pin implies; each property is its own value and report, each factory argument its own value.",
+      "description": "ADR-0058: a family the pin implies; each property is its own value and report (or one report through the holder's settle callback), each factory argument its own value.",
       "required": ["native", "kind", "holder", "factory", "properties"],
       "additionalProperties": false,
       "properties": {
@@ -545,6 +545,27 @@
               }
             }
           }
+        },
+        "construct": {
+          "type": "object",
+          "description": "What fixes the holder as it is created: a read-only property its factory takes by name, or a factory parameter of a value family; a different one re-creates the holder.",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["type"],
+            "additionalProperties": false,
+            "properties": {
+              "type": { "type": "string" },
+              "nativeType": { "type": "string" },
+              "valueType": { "type": "string" },
+              "default": {},
+              "nativeDefault": { "type": "string" },
+              "required": { "const": true }
+            }
+          }
+        },
+        "settles": {
+          "$ref": "#/$defs/identifier",
+          "description": "The settable () -> Unit property the holder calls when its values settle; one report named after it carries them all."
         }
       }
     },

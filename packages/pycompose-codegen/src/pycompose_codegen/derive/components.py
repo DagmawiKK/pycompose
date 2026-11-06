@@ -410,7 +410,7 @@ def propose_components(
             c: {"kind": "anchored", **h}
             for c, h in anchored_holders(found, drives, defaults).items()
         },
-        **property_holders(found, defaults),
+        **property_holders(found, defaults, families),
     }
     producers = producer_interfaces(found)
     candidates = [

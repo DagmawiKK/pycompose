@@ -317,15 +317,10 @@ def test_an_attach_naming_no_attached_holder_is_refused(
 def test_a_family_with_held_props_projects_them_after_its_report() -> None:
     from pycompose_codegen.derive.rules import reshape
 
-    entry = {"props": {}, "state": {"native": "state", "kind": "slider"}}
-    shaped = reshape("Slider", entry, {}, _plan())
-    assert shaped["reshaped"] == [
-        "value",
-        "onValueChangeFinished",
-        "valueRange",
-        "steps",
-    ]
-    assert shaped["props"]["valueRange"]["valueType"] == "Range"
+    entry = {"props": {}, "state": {"native": "state", "kind": "tooltip"}}
+    shaped = reshape("TooltipBox", entry, {}, _plan())
+    assert shaped["reshaped"] == ["visible", "onVisibilityChange", "isPersistent"]
+    assert shaped["props"]["isPersistent"] == {"type": "boolean", "default": False}
 
 
 def test_a_declined_holder_is_not_bound() -> None:
@@ -343,7 +338,7 @@ def test_codegen_reads_held_props_from_the_families() -> None:
         STATE_FAMILIES,
     )
 
-    assert STATE_CONSTRUCTOR_PROPS["slider"] == ("valueRange", "steps")
+    assert STATE_CONSTRUCTOR_PROPS["tooltip"] == ("isPersistent",)
     assert set(STATE_CONSTRUCTOR_PROPS) == {
         kind for kind, family in STATE_FAMILIES.items() if family.held
     }

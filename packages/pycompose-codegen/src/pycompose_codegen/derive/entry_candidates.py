@@ -359,6 +359,8 @@ DERIVED = (
     "settled",
     "started",
     "functions",
+    "construct",
+    "settles",
 )
 """What a derived holder family carries into its component's ``state``."""
 

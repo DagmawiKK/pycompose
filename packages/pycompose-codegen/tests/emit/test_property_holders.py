@@ -45,17 +45,20 @@ def test_the_factory_seeds_what_the_setter_cannot() -> None:
 
 def test_the_adapter_reconciles_each_property_through_the_factorys_holder() -> None:
     block = render("TimePicker", COMPONENTS["TimePicker"])
-    assert "val stateHour = model.props.hour?.let { Wanted(it.toInt()) }" in block
+    assert "val stateHourWanted = model.props.hour?.let { Wanted(it.toInt()) }" in block
     assert "val stateValue = key(stateSeeds.generation) {" in block
     assert "androidx.compose.material3.rememberTimePickerState(" in block
-    assert "initialHour = stateHour?.value ?: stateSeeds.previous?.hour ?: 0," in block
     assert (
-        "initialMinute = stateMinute?.value ?: stateSeeds.previous?.minute ?: 0,"
+        "initialHour = stateHourWanted?.value ?: stateSeeds.previous?.hour ?: 0,"
+        in block
+    )
+    assert (
+        "initialMinute = stateMinuteWanted?.value ?: stateSeeds.previous?.minute ?: 0,"
         in block
     )
     # A seeded property is driven by a new holder; the rest by the setter.
     assert (
-        'context.reconcileProperty(stateValue, "hour", stateHour, '
+        'context.reconcileProperty(stateValue, "hour", stateHourWanted, '
         "model.props.onHourChange, { stateValue.hour }, "
         "{ stateSeeds.from(stateValue) }, seeded = true)" in block
     )
@@ -64,7 +67,10 @@ def test_the_adapter_reconciles_each_property_through_the_factorys_holder() -> N
     date = render("DatePicker", COMPONENTS["DatePicker"])
     assert "model.props.selectedDateMillis.wanted { it.long }" in date
     # A factory argument is resolved as the holder is created, and re-creates it.
-    assert "val stateValue = key(model.props.selectableDates) {" in date
+    assert (
+        "val stateValue = key(model.props.selectableDates, "
+        "model.props.initialDisplayMode) {" in date
+    )
     assert (
         "selectableDates = model.props.selectableDates?.let { "
         "com.pycompose.renderer.generated.ValueResolver.selectableDates(it)"

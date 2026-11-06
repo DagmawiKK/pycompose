@@ -40,7 +40,6 @@ INTERACTION_REPORTS = {"press": "pressed", "focus": "focused", "hover": "hovered
 
 STATE_KINDS = (
     "sheet",
-    "slider",
     "tooltip",
     "textInput",
     "search",
@@ -49,8 +48,7 @@ STATE_KINDS = (
 
 A family is one host-side implementation: a sheet reconciles a desired
 open/closed value for a modal surface that has to be composed to be shown at
-all; a slider drives the
-thumb to a desired number and reports the settled one; a tooltip reconciles a
+all; a tooltip reconciles a
 desired visible value through hover, focus and long-press gestures; textInput
 reconciles text and selection with an atomic, numbered edit report; search
 shares one editing projection and one expansion state across a collapsed bar
@@ -65,7 +63,6 @@ understand.
 
 STATE_HOLDERS = {
     "sheet": "androidx.compose.material3.SheetState",
-    "slider": "androidx.compose.material3.SliderState",
     "tooltip": "androidx.compose.material3.TooltipState",
     "textInput": "androidx.compose.foundation.text.input.TextFieldState",
     "search": "androidx.compose.material3.SearchBarState",

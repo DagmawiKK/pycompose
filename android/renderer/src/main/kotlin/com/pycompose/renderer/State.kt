@@ -4,7 +4,6 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SliderState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TooltipState
 import androidx.compose.material3.rememberTooltipState
@@ -14,7 +13,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshotFlow
@@ -92,79 +90,6 @@ internal inline fun <reified E : Enum<E>> String.anchor(): E? =
 internal class Settled<T>(
     var value: T,
 )
-
-/**
- * The host-owned slider state for one node, reconciled to the app's desired value.
- *
- * The holder is remembered under the node's key and constructed from the range
- * and the step count the app states, so a new snapshot re-renders the tree
- * without recreating a drag in flight. A *change* of the desired value moves
- * the value through the public value setter, and the
- * holder coerces the result into its own range. A gesture settles through
- * [SliderState.onValueChangeFinished], which is where the report rides: the app
- * hears settled values, never each frame of a drag the host did not cause.
- *
- * @param value Desired value; null starts the holder at the range's floor.
- * @param report Action id settled values report to; null reports none.
- * @param valueRange The holder's range; null uses the native floor-to-one.
- * @param steps Step count between range bounds; null uses none.
- * @param observation Receives the observed value, the action id and its state.
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-internal fun rememberHostSliderState(
-    value: Double?,
-    report: String?,
-    valueRange: ClosedFloatingPointRange<Float>?,
-    steps: Long?,
-    observation: Observation,
-): SliderState {
-    val range = valueRange ?: (0f..1f)
-    val count = (steps ?: 0L).toInt()
-    val saver =
-        remember(range, count) {
-            Saver<SliderState, Float>(
-                save = { it.value },
-                restore = { SliderState(value = it, steps = count, valueRange = range) },
-            )
-        }
-    val state =
-        rememberSaveable(range.start, range.endInclusive, count, saver = saver) {
-            SliderState(
-                value = range.start,
-                steps = count,
-                valueRange = range,
-            )
-        }
-    val channel = rememberUpdatedState(report)
-    val currentObservation = rememberUpdatedState(observation)
-    val lastDesired =
-        rememberSaveable(range.start, range.endInclusive, count) {
-            mutableStateOf<Double?>(null)
-        }
-    val settled = remember(state) { Settled(state.value) }
-    val reportSettled = {
-        val current = state.value
-        if (current != settled.value) {
-            settled.value = current
-            channel.value?.let { action ->
-                currentObservation.value("value", action, JsonPrimitive(current))
-            }
-        }
-    }
-    LaunchedEffect(state) { state.onValueChangeFinished = reportSettled }
-    OnDesired(state, value, answered(report)) { wanted ->
-        if (wanted != lastDesired.value) {
-            val desired = wanted?.toFloat()
-            if (desired != null && desired != state.value) {
-                state.value = desired
-                reportSettled()
-            }
-            lastDesired.value = wanted
-        }
-    }
-    return state
-}
 
 /**
  * The host-owned tooltip state for one node, reconciled to the app's desired value.

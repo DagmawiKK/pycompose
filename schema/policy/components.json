@@ -671,6 +671,20 @@
       "category": "input"
     }
   },
+  "RangeSlider": {
+    "decision": {
+      "category": "input"
+    },
+    "patch": {
+      "props": {
+        "steps": {
+          "minimum": 0,
+          "maximum": 2147483645,
+          "description": "Tick marks between the range's ends; the holder refuses a negative count, which the pin does not state."
+        }
+      }
+    }
+  },
   "RichTooltip": {
     "decision": {
       "category": "overlays"
@@ -826,6 +840,15 @@
     "decision": {
       "category": "input",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SliderKt.Slider(Landroidx/compose/material3/SliderState;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SliderColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V"
+    },
+    "patch": {
+      "props": {
+        "steps": {
+          "minimum": 0,
+          "maximum": 2147483645,
+          "description": "Tick marks between the range's ends; the holder refuses a negative count, which the pin does not state."
+        }
+      }
     }
   },
   "Snackbar": {

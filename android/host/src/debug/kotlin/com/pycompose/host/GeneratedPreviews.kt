@@ -685,6 +685,12 @@ private fun RadioButtonPreview() {
     Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "RadioButton", "type": "semantics"}]}, "onClick": {"fields": {}, "intent": "preview.onClick"}, "selected": true}, "type": "RadioButton"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "RangeSlider", showBackground = true)
+@Composable
+private fun RangeSliderPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "RangeSlider", "type": "semantics"}]}, "valueRange": {"end": 1, "start": 0, "type": "Range"}}, "type": "RangeSlider"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "RichTooltip", showBackground = true)
 @Composable
 private fun RichTooltipPreview() {

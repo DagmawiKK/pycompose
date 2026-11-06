@@ -1,10 +1,12 @@
 package com.pycompose.renderer
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import com.pycompose.ir.OptionalValue
 import kotlinx.serialization.json.JsonElement
@@ -44,6 +46,8 @@ fun <V> OptionalValue.wanted(decode: (JsonPrimitive) -> V): Wanted<V?>? =
  * @param seeded Whether the holder was created at the desired value (see
  *   [Reseed]), which then counts as driven: a re-created holder must not
  *   re-create itself again.
+ * @param answering The report whose answers the desired value waits for: its own, or the
+ *   holder's settle report where the holder reports there (see [reportSettled]).
  * @param wire Spells a value on the wire.
  */
 @Suppress("LongParameterList")
@@ -56,6 +60,7 @@ fun <V> RenderContext.reconcileProperty(
     read: () -> V,
     write: (V) -> Unit,
     seeded: Boolean = false,
+    answering: String? = report,
     wire: (V) -> JsonElement,
 ) {
     Reconcile(
@@ -77,8 +82,43 @@ fun <V> RenderContext.reconcileProperty(
                     )
                 }
             },
-        answered = answered(report),
+        answered = answered(answering),
     ) { write(it.value) }
+}
+
+/**
+ * A holder's values reported where the holder says they settle -- a slider's
+ * `onValueChangeFinished` -- rather than on every change: the app hears where a drag ended,
+ * never each frame of it, and hears it once. A drive reports through the check this returns,
+ * called after it writes: the holder may have made something else of the value (a tick).
+ *
+ * @param state The node's remembered holder; a re-created one is given the callback again.
+ * @param report Action id the settled values report to; null reports none.
+ * @param install Sets the holder's settle callback.
+ * @param values The holder's values now, as the report's payload.
+ * @return Reports the values if they changed since the last report.
+ */
+@Composable
+fun RenderContext.reportSettled(
+    state: Any,
+    report: String?,
+    install: (() -> Unit) -> Unit,
+    values: () -> JsonObject,
+): () -> Unit {
+    val channel = rememberUpdatedState(report)
+    val reported = remember(state) { Settled(values()) }
+    val check =
+        remember(state) {
+            {
+                val now = values()
+                if (now != reported.value) {
+                    reported.value = now
+                    channel.value?.let { observations.observeAsked("settled", it, now) }
+                }
+            }
+        }
+    LaunchedEffect(state) { install(check) }
+    return check
 }
 
 /**

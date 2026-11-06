@@ -131,6 +131,7 @@ __all__ = [
     "ProvideTextStyle",
     "PullToRefreshBox",
     "RadioButton",
+    "RangeSlider",
     "RichTooltip",
     "Row",
     "Scaffold",
@@ -1703,6 +1704,7 @@ class DatePicker(Component):
         id: str | None = None,
         colors: JsonValue | None = None,
         displayed_month_millis: int | None = None,
+        initial_display_mode: JsonValue | None = None,
         modifier: Modifier | None = None,
         on_displayed_month_millis_change: ActionTarget | None = None,
         on_selected_date_millis_change: ActionTarget | None = None,
@@ -1717,6 +1719,7 @@ class DatePicker(Component):
             colors: Native colors; None uses its default.
             displayed_month_millis: Native displayedMonthMillis; None uses its
                 default.
+            initial_display_mode: Native initialDisplayMode; None uses its default.
             modifier: Native modifier; None uses its default.
             on_displayed_month_millis_change: Native onDisplayedMonthMillisChange;
                 None uses its default.
@@ -1732,6 +1735,8 @@ class DatePicker(Component):
             props["colors"] = colors
         if displayed_month_millis is not None:
             props["displayed_month_millis"] = displayed_month_millis
+        if initial_display_mode is not None:
+            props["initial_display_mode"] = initial_display_mode
         if on_displayed_month_millis_change is not None:
             props["on_displayed_month_millis_change"] = on_displayed_month_millis_change
         if on_selected_date_millis_change is not None:
@@ -6940,6 +6945,56 @@ class RadioButton(Component):
         super().__init__(id=id, children=(), modifier=modifier, **props)
 
 
+class RangeSlider(Component):
+    """Native RangeSlider; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "RangeSlider"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        active_range_end: int | float | Expression | None = None,
+        active_range_start: int | float | Expression | None = None,
+        colors: JsonValue | None = None,
+        enabled: bool | None = None,
+        modifier: Modifier | None = None,
+        on_value_change_finished: ActionTarget | None = None,
+        steps: int | None = None,
+        value_range: JsonValue,
+    ) -> None:
+        """Construct a registered RangeSlider.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            active_range_end: Native activeRangeEnd; None uses its default.
+            active_range_start: Native activeRangeStart; None uses its default.
+            colors: Native colors; None uses its default.
+            enabled: Native enabled; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_value_change_finished: Native onValueChangeFinished; None uses its
+                default.
+            steps: Native steps; None uses its default.
+            value_range: Required native valueRange.
+        """
+        props: dict[str, PropValue] = {}
+        if active_range_end is not None:
+            props["active_range_end"] = active_range_end
+        if active_range_start is not None:
+            props["active_range_start"] = active_range_start
+        if colors is not None:
+            props["colors"] = colors
+        if enabled is not None:
+            props["enabled"] = enabled
+        if on_value_change_finished is not None:
+            props["on_value_change_finished"] = on_value_change_finished
+        if steps is not None:
+            props["steps"] = steps
+        props["value_range"] = value_range
+        super().__init__(id=id, children=(), modifier=modifier, **props)
+
+
 class RichTooltip(Component):
     """Native RichTooltip; props and defaults follow the component manifest."""
 
@@ -7815,6 +7870,7 @@ class _Slider(Component):
             "on_hover",
             "on_press",
             "on_value_change_finished",
+            "should_auto_snap",
             "steps",
             "value",
             "value_range",
@@ -7832,6 +7888,7 @@ class _Slider(Component):
         on_hover: ActionTarget | None = None,
         on_press: ActionTarget | None = None,
         on_value_change_finished: ActionTarget | None = None,
+        should_auto_snap: bool | None = None,
         steps: int | None = None,
         value: int | float | Expression | None = None,
         value_range: JsonValue,
@@ -7848,6 +7905,7 @@ class _Slider(Component):
             on_press: Native onPress; None uses its default.
             on_value_change_finished: Native onValueChangeFinished; None uses its
                 default.
+            should_auto_snap: Native shouldAutoSnap; None uses its default.
             steps: Native steps; None uses its default.
             value: Native value; None uses its default.
             value_range: Required native valueRange.
@@ -7865,6 +7923,8 @@ class _Slider(Component):
             props["on_press"] = on_press
         if on_value_change_finished is not None:
             props["on_value_change_finished"] = on_value_change_finished
+        if should_auto_snap is not None:
+            props["should_auto_snap"] = should_auto_snap
         if steps is not None:
             props["steps"] = steps
         if value is not None:
@@ -7890,6 +7950,7 @@ class Slider(_Slider):
         on_hover: ActionTarget | None = None,
         on_press: ActionTarget | None = None,
         on_value_change_finished: ActionTarget | None = None,
+        should_auto_snap: bool | None = None,
         steps: int | None = None,
         value: int | float | Expression | None = None,
         value_range: JsonValue,

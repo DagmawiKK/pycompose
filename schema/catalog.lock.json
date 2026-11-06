@@ -1511,6 +1511,12 @@
           "valueType": "SelectableDates",
           "since": "1.23.0"
         },
+        "initialDisplayMode": {
+          "type": "value",
+          "valueType": "DisplayMode",
+          "nativeDefault": "androidx.compose.material3.DisplayMode.Companion.Picker",
+          "since": "1.23.0"
+        },
         "displayedMonthMillis": {
           "type": "integer"
         },
@@ -1562,10 +1568,18 @@
             "valueType": "SelectableDates",
             "default": "androidx.compose.material3.DatePickerDefaults.AllDates"
           }
+        },
+        "construct": {
+          "initialDisplayMode": {
+            "type": "value",
+            "valueType": "DisplayMode",
+            "nativeDefault": "androidx.compose.material3.DisplayMode.Companion.Picker"
+          }
         }
       },
       "reshaped": [
         "selectableDates",
+        "initialDisplayMode",
         "displayedMonthMillis",
         "onDisplayedMonthMillisChange",
         "selectedDateMillis",
@@ -7659,6 +7673,106 @@
         "onHover"
       ]
     },
+    "RangeSlider": {
+      "package": "androidx.compose.material3",
+      "category": "input",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/RangeSliderState;Landroidx/compose/ui/Modifier;ZLandroidx/compose/material3/SliderColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "RangeSlider",
+        "name": "RangeSlider",
+        "owner": "androidx.compose.material3.SliderKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "SliderColors",
+          "nativeDefault": "androidx.compose.material3.SliderDefaults.colors()"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "steps": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 2147483645,
+          "description": "Tick marks between the range's ends; the holder refuses a negative count, which the pin does not state."
+        },
+        "valueRange": {
+          "type": "value",
+          "valueType": "Range",
+          "required": true
+        },
+        "activeRangeEnd": {
+          "type": "number"
+        },
+        "activeRangeStart": {
+          "type": "number"
+        },
+        "onValueChangeFinished": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "activeRangeEnd",
+              "type": "number"
+            },
+            {
+              "name": "activeRangeStart",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "state": {
+        "native": "state",
+        "kind": "properties",
+        "holder": "androidx.compose.material3.RangeSliderState",
+        "factory": "androidx.compose.material3.rememberRangeSliderState",
+        "properties": {
+          "activeRangeEnd": {
+            "type": "number",
+            "nativeType": "Float"
+          },
+          "activeRangeStart": {
+            "type": "number",
+            "nativeType": "Float"
+          }
+        },
+        "construct": {
+          "steps": {
+            "type": "integer",
+            "nativeType": "Int",
+            "default": 0
+          },
+          "valueRange": {
+            "type": "value",
+            "valueType": "Range",
+            "required": true
+          }
+        },
+        "settles": "onValueChangeFinished"
+      },
+      "reshaped": [
+        "steps",
+        "valueRange",
+        "activeRangeEnd",
+        "activeRangeStart",
+        "onValueChangeFinished"
+      ]
+    },
     "RichTooltip": {
       "package": "androidx.compose.material3",
       "category": "overlays",
@@ -8715,6 +8829,22 @@
             }
           ]
         },
+        "steps": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 2147483645,
+          "description": "Tick marks between the range's ends; the holder refuses a negative count, which the pin does not state."
+        },
+        "valueRange": {
+          "type": "value",
+          "valueType": "Range",
+          "required": true
+        },
+        "shouldAutoSnap": {
+          "type": "boolean",
+          "since": "1.23.0"
+        },
         "value": {
           "type": "number"
         },
@@ -8722,21 +8852,14 @@
           "type": "actionId",
           "payload": [
             {
+              "name": "shouldAutoSnap",
+              "type": "boolean"
+            },
+            {
               "name": "value",
               "type": "number"
             }
           ]
-        },
-        "valueRange": {
-          "type": "value",
-          "valueType": "Range",
-          "required": true
-        },
-        "steps": {
-          "type": "integer",
-          "default": 0,
-          "minimum": 0,
-          "maximum": 2147483645
         }
       },
       "children": {
@@ -8752,18 +8875,42 @@
       },
       "state": {
         "native": "state",
-        "kind": "slider",
-        "value": "value",
-        "report": "onValueChangeFinished"
+        "kind": "properties",
+        "holder": "androidx.compose.material3.SliderState",
+        "factory": "androidx.compose.material3.rememberSliderState",
+        "properties": {
+          "shouldAutoSnap": {
+            "type": "boolean",
+            "nativeType": "Boolean"
+          },
+          "value": {
+            "type": "number",
+            "nativeType": "Float"
+          }
+        },
+        "construct": {
+          "steps": {
+            "type": "integer",
+            "nativeType": "Int",
+            "default": 0
+          },
+          "valueRange": {
+            "type": "value",
+            "valueType": "Range",
+            "required": true
+          }
+        },
+        "settles": "onValueChangeFinished"
       },
       "reshaped": [
         "onPress",
         "onFocus",
         "onHover",
-        "value",
-        "onValueChangeFinished",
+        "steps",
         "valueRange",
-        "steps"
+        "shouldAutoSnap",
+        "value",
+        "onValueChangeFinished"
       ]
     },
     "SliderValue": {

@@ -128,6 +128,24 @@ internal class ObservationSink(
         observe(kind, actionId, JsonObject(mapOf(field to value)))
     }
 
+    /**
+     * Report the fields the action asks for out of everything that settled: a slider settles
+     * its value and its snapping together, and an app that takes only the value hears that.
+     *
+     * @param kind What settled, for the message.
+     * @param actionId The action observing it.
+     * @param values Every value that settled, by field.
+     */
+    fun observeAsked(
+        kind: String,
+        actionId: String,
+        values: JsonObject,
+    ) {
+        val fields =
+            bindings()[actionId]?.eventFields ?: IrContract.actionPayloads[actionId].orEmpty()
+        observe(kind, actionId, JsonObject(values.filterKeys { it in fields }))
+    }
+
     /** Every report ends here: a record of the declared fields, validated before dispatch. */
     fun observe(
         kind: String,

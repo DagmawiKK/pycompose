@@ -346,6 +346,7 @@ object IrContract {
             props = mapOf(
                 "colors" to PropertyRule("value", required = false, valueType = "DatePickerColors"),
                 "displayedMonthMillis" to PropertyRule("integer", required = false),
+                "initialDisplayMode" to PropertyRule("value", required = false, since = "1.23.0", valueType = "DisplayMode"),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onDisplayedMonthMillisChange" to PropertyRule("actionId", required = false),
                 "onSelectedDateMillisChange" to PropertyRule("actionId", required = false),
@@ -1591,6 +1592,22 @@ object IrContract {
                 "selected" to PropertyRule("boolean", required = true),
             ),
         ),
+        "RangeSlider" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "activeRangeEnd" to PropertyRule("number", required = false),
+                "activeRangeStart" to PropertyRule("number", required = false),
+                "colors" to PropertyRule("value", required = false, valueType = "SliderColors"),
+                "enabled" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onValueChangeFinished" to PropertyRule("actionId", required = false),
+                "steps" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483645.0),
+                "valueRange" to PropertyRule("value", required = true, valueType = "Range"),
+            ),
+        ),
         "RichTooltip" to ComponentRule(
             slots = setOf("action", "text", "title"),
             childrenAllowed = false,
@@ -1809,6 +1826,7 @@ object IrContract {
                 "onHover" to PropertyRule("actionId", required = false),
                 "onPress" to PropertyRule("actionId", required = false),
                 "onValueChangeFinished" to PropertyRule("actionId", required = false),
+                "shouldAutoSnap" to PropertyRule("boolean", required = false, since = "1.23.0"),
                 "steps" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483645.0),
                 "value" to PropertyRule("number", required = false),
                 "valueRange" to PropertyRule("value", required = true, valueType = "Range"),

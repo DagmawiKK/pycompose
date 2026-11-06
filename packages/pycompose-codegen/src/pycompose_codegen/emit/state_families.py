@@ -4,7 +4,7 @@ A family is one host implementation (see ``STATE_KINDS``); it decides what the
 app states and what it hears back, whatever component binds it. A drawer's
 desired state is ``open`` and its settled report ``onOpenChange``, in
 ``ModalNavigationDrawer`` and ``DismissibleNavigationDrawer`` alike. A family
-may also hold props its holder is built from (a slider's range and steps);
+may also hold props its holder is built from (a tooltip's persistence);
 the adapter passes those to the holder, never to the component.
 
 The compiler projects these props onto every component the pin binds to a
@@ -95,19 +95,6 @@ STATE_FAMILIES: dict[str, Family] = {
             "skipPartiallyExpanded": {"type": "boolean", "default": False},
         },
     ),
-    "slider": Family(
-        ("value", {"type": "number"}),
-        "onValueChangeFinished",
-        held={
-            "valueRange": {"type": "value", "valueType": "Range", "required": True},
-            "steps": {
-                "type": "integer",
-                "default": 0,
-                "minimum": 0,
-                "maximum": _INT - 2,
-            },
-        },
-    ),
     "tooltip": Family(
         ("visible", {"type": "boolean"}),
         "onVisibilityChange",
@@ -155,7 +142,10 @@ def property_props(state: dict[str, Any]) -> dict[str, dict[str, Any]]:
 
     A ``properties`` state names its holder's settable scalar properties
     (``pycompose_codegen.derive.property_holders``); each is a prop the app states and
-    an ``on<Property>Change`` action the host reports its settled value to.
+    an ``on<Property>Change`` action the host reports its settled value to. A
+    holder that settles through a callback reports them all at once to an
+    action named after it. What fixes the holder as it is created is a prop
+    too.
 
     Args:
         state: A component's ``state`` block of kind ``properties``.
@@ -167,12 +157,24 @@ def property_props(state: dict[str, Any]) -> dict[str, dict[str, Any]]:
         name: {"type": "value", "valueType": spec["valueType"]}
         for name, spec in state.get("arguments", {}).items()
     }
+    for name, spec in state.get("construct", {}).items():
+        projected[name] = {k: v for k, v in spec.items() if k != "nativeType"}
+    settles = state.get("settles")
     for name, spec in state["properties"].items():
         nullable = {"nullable": True} if spec.get("nullable") else {}
         projected[name] = {"type": spec["type"], **nullable}
-        projected[report_name(name)] = {
+        if settles is None:
+            projected[report_name(name)] = {
+                "type": "actionId",
+                "payload": [{"name": name, "type": spec["type"], **nullable}],
+            }
+    if settles is not None:
+        projected[settles] = {
             "type": "actionId",
-            "payload": [{"name": name, "type": spec["type"], **nullable}],
+            "payload": [
+                {"name": name, "type": spec["type"]}
+                for name, spec in state["properties"].items()
+            ],
         }
     return projected
 
@@ -194,11 +196,11 @@ STATE_CONSTRUCTOR_PROPS = {
 }
 """Props each family's holder needs at construction, beyond its primary projection.
 
-A ``SliderState`` is built from the range and the steps and owns them for as
-long as it lives; a tooltip holder is built with its persistence policy. A
-sheet carries a second projection beside its boolean presence -- the anchor and
-its report -- because one node states both. They flow into the renderer call
-that creates the holder rather than into the component's own arguments. Every
+A ``TooltipState`` is built with its persistence policy and owns it for as
+long as it lives. A sheet carries a second projection beside its boolean
+presence -- the anchor and its report -- because one node states both. They
+flow into the renderer call that creates the holder rather than into the
+component's own arguments. Every
 prop named here is held exactly as the primary value and report are: the app
 states it, the adapter passes it to the holder, and it never reaches the
 component.

@@ -59,18 +59,26 @@ def properties_locals(state: dict[str, Any]) -> list[str]:
             f"?: {spec['default']}"
         )
         keys.append(wire)
+    for name, spec in state.get("construct", {}).items():
+        # What fixes the holder as it is created; a different one re-creates it.
+        wire = f"model.props.{camel(name)}"
+        seeded.append(f"{name} = {_constructed(wire, spec)}")
+        keys.append(wire)
     for name, spec in state["properties"].items():
         prop = f"model.props.{camel(name)}"
         narrow = NATIVE.get(spec["nativeType"], "")
         if spec.get("nullable"):
             desired = f"{prop}.wanted {{ it.{DECODE[spec['type']]}{narrow} }}"
+        elif spec["type"] == "number":
+            # A number may be an expression over holder streams.
+            desired = f"{prop}?.let {{ Wanted(context.number(it){narrow}) }}"
         else:
             desired = f"{prop}?.let {{ Wanted(it{narrow}) }}"
-        lines.append(f"val {native}{pascal(name)} = {desired}")
+        lines.append(f"val {native}{pascal(name)}Wanted = {desired}")
         if "seed" in spec:
             # Absent from the app, a re-created holder keeps what the last had.
             seeded.append(
-                f"{spec['seed']['parameter']} = {native}{pascal(name)}?.value"
+                f"{spec['seed']['parameter']} = {native}{pascal(name)}Wanted?.value"
                 f" ?: {seeds}.previous?.{name}"
                 f" ?: {_literal(spec['seed']['default'], spec['nativeType'])}"
             )
@@ -87,18 +95,47 @@ def properties_locals(state: dict[str, Any]) -> list[str]:
         ]
     else:
         lines.append(f"val {held} = {state['factory']}()")
+    settles = state.get("settles")
+    if settles:
+        # Values report where the holder says they settle, and where a drive
+        # leaves them when the holder made something else of it (a tick).
+        fields = ", ".join(
+            f'"{name}" to JsonPrimitive({held}.{name})' for name in state["properties"]
+        )
+        lines.append(
+            f"val {native}Settled = context.reportSettled({held}, "
+            f"model.props.{camel(settles)}, {{ {held}.{settles} = it }}) "
+            f"{{ JsonObject(mapOf({fields})) }}"
+        )
     for name, spec in state["properties"].items():
+        after = f"; {native}Settled()" if settles else ""
         write = (
             f"{{ {seeds}.from({held}) }}, seeded = true"
             if "seed" in spec
-            else f"{{ {held}.{name} = it }}"
+            else f"{{ {held}.{name} = it{after} }}"
         )
+        # A holder that settles through a callback reports there, not per change.
+        report = "null" if settles else f"model.props.{report_name(name)}"
+        answering = f", answering = model.props.{camel(settles)}" if settles else ""
+        wanted = f"{native}{pascal(name)}Wanted"
         lines.append(
-            f'context.reconcileProperty({held}, "{name}", {native}{pascal(name)}, '
-            f"model.props.{report_name(name)}, {{ {held}.{name} }}, "
-            f"{write}) {{ JsonPrimitive(it) }}"
+            f'context.reconcileProperty({held}, "{name}", {wanted}, '
+            f"{report}, {{ {held}.{name} }}, "
+            f"{write}{answering}) {{ JsonPrimitive(it) }}"
         )
     return lines
+
+
+def _constructed(wire: str, spec: dict[str, Any]) -> str:
+    """A creation-time prop as the factory takes it."""
+    if spec["type"] == "value":
+        resolved = resolver_call(spec["valueType"], "it")
+        if "nativeDefault" in spec:
+            return (
+                f"{wire}?.let {{ {resolved}.getOrThrow() }} ?: {spec['nativeDefault']}"
+            )
+        return f"{wire}.let {{ {resolved}.getOrThrow() }}"
+    return f"{wire}{NATIVE.get(spec['nativeType'], '')}"
 
 
 def _literal(value: Any, native: str) -> str:
@@ -130,11 +167,13 @@ def validate_properties(
             "factory",
             "properties",
             "arguments",
+            "construct",
+            "settles",
         }
     ):
         die(
             f"{where}: a derived family has native, kind, holder, factory, "
-            "properties and optionally arguments"
+            "properties and optionally arguments, construct and settles"
         )
     for key in ("holder", "factory"):
         if not isinstance(state[key], str) or not DOTTED_NAME.fullmatch(state[key]):
@@ -144,11 +183,13 @@ def validate_properties(
         die(f"{where}: 'properties' must name the holder's properties")
     for prop, spec in property_props(state).items():
         # A prop newer than its component carries the version it entered at,
-        # and the wire may annotate the type it animates as.
+        # the wire may annotate the type it animates as, and policy may narrow
+        # its range where the holder refuses what the pin does not say.
         stated = {
             k: v
             for k, v in (props.get(prop) or {}).items()
-            if k not in {"since", "animation"}
+            if k
+            not in {"since", "animation", "phase", "minimum", "maximum", "description"}
         }
         if stated != spec:
             die(f"{where}: prop {prop!r} must project the holder as {spec}")
@@ -173,8 +214,15 @@ def property_imports(state: dict[str, Any]) -> set[str]:
             "androidx.compose.runtime.remember",
             "com.pycompose.renderer.Reseed",
         }
-    if state.get("arguments"):
+    if state.get("arguments") or state.get("construct"):
         qualified.add("androidx.compose.runtime.key")
+    if state.get("settles"):
+        qualified |= {
+            "com.pycompose.renderer.reportSettled",
+            "kotlinx.serialization.json.JsonObject",
+        }
+    if any(spec["type"] == "number" for spec in state["properties"].values()):
+        qualified.add("com.pycompose.renderer.number")
     for spec in state["properties"].values():
         if spec.get("nullable"):
             qualified.add("com.pycompose.renderer.wanted")

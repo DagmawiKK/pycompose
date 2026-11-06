@@ -2147,6 +2147,9 @@
             "displayedMonthMillis": {
               "type": "integer"
             },
+            "initialDisplayMode": {
+              "$ref": "#/definitions/Family_DisplayMode"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -8484,6 +8487,74 @@
       },
       "type": "object"
     },
+    "C_RangeSlider": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "activeRangeEnd": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "activeRangeStart": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_SliderColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onValueChangeFinished": {
+              "$ref": "#/definitions/Action"
+            },
+            "steps": {
+              "default": 0,
+              "maximum": 2147483645,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "valueRange": {
+              "$ref": "#/definitions/Family_Range"
+            }
+          },
+          "required": [
+            "valueRange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "RangeSlider"
+        }
+      },
+      "type": "object"
+    },
     "C_RichTooltip": {
       "properties": {
         "children": {
@@ -9659,6 +9730,9 @@
             },
             "onValueChangeFinished": {
               "$ref": "#/definitions/Action"
+            },
+            "shouldAutoSnap": {
+              "type": "boolean"
             },
             "steps": {
               "default": 0,
@@ -15900,6 +15974,9 @@
             },
             {
               "$ref": "#/definitions/C_RadioButton"
+            },
+            {
+              "$ref": "#/definitions/C_RangeSlider"
             },
             {
               "$ref": "#/definitions/C_RichTooltip"
@@ -34210,6 +34287,9 @@
             "displayedMonthMillis": {
               "type": "integer"
             },
+            "initialDisplayMode": {
+              "$ref": "#/definitions/Family_DisplayMode"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -42579,6 +42659,9 @@
               "$ref": "#/definitions/V_1_23_0_RadioButton"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_RangeSlider"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_RichTooltip"
             },
             {
@@ -43896,6 +43979,74 @@
       },
       "type": "object"
     },
+    "V_1_23_0_RangeSlider": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "activeRangeEnd": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "activeRangeStart": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "colors": {
+              "$ref": "#/definitions/Family_SliderColors"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onValueChangeFinished": {
+              "$ref": "#/definitions/Action"
+            },
+            "steps": {
+              "default": 0,
+              "maximum": 2147483645,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "valueRange": {
+              "$ref": "#/definitions/Family_Range"
+            }
+          },
+          "required": [
+            "valueRange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "RangeSlider"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_RichTooltip": {
       "properties": {
         "children": {
@@ -45071,6 +45222,9 @@
             },
             "onValueChangeFinished": {
               "$ref": "#/definitions/Action"
+            },
+            "shouldAutoSnap": {
+              "type": "boolean"
             },
             "steps": {
               "default": 0,
