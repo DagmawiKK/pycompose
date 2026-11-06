@@ -99,10 +99,15 @@ def ancestors(found: Inventory) -> dict[str, set[str]]:
 
 
 def assignable(found: Inventory, family: dict[str, str], source: str) -> bool:
-    """Report whether ``source`` is the family's type or one of its subtypes."""
-    if source_name(source) == family["kotlinType"]:
+    """Report whether ``source`` is the family's type or one of its subtypes.
+
+    A constructor's result may spell its nested class the JVM way
+    (``GridCells$Fixed``), which is the class Kotlin source spells with a dot.
+    """
+    named = source_name(source).replace("$", ".")
+    if named == family["kotlinType"]:
         return True
-    return family["kotlinType"] in ancestors(found).get(source_name(source), set())
+    return family["kotlinType"] in ancestors(found).get(named, set())
 
 
 def value_families(registry: dict[str, Any]) -> dict[str, str]:

@@ -28,6 +28,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.text.BasicSecureTextField
@@ -236,7 +240,11 @@ import com.pycompose.ir.generated.LargeFloatingActionButton as LargeFloatingActi
 import com.pycompose.ir.generated.LargeTopAppBar as LargeTopAppBarNode
 import com.pycompose.ir.generated.Layout as LayoutNode
 import com.pycompose.ir.generated.LazyColumn as LazyColumnNode
+import com.pycompose.ir.generated.LazyHorizontalGrid as LazyHorizontalGridNode
+import com.pycompose.ir.generated.LazyHorizontalStaggeredGrid as LazyHorizontalStaggeredGridNode
 import com.pycompose.ir.generated.LazyRow as LazyRowNode
+import com.pycompose.ir.generated.LazyVerticalGrid as LazyVerticalGridNode
+import com.pycompose.ir.generated.LazyVerticalStaggeredGrid as LazyVerticalStaggeredGridNode
 import com.pycompose.ir.generated.LeadingIconTab as LeadingIconTabNode
 import com.pycompose.ir.generated.LinearProgressIndicator as LinearProgressIndicatorNode
 import com.pycompose.ir.generated.LinearProgressIndicatorWithoutProgress as LinearProgressIndicatorWithoutProgressNode
@@ -1748,6 +1756,44 @@ object GeneratedAdapters {
                     content = { windowedItems(context, model.children.unslotted(), model.props.itemCount, model.props.itemOffset) },
                 )
             }
+            .register("LazyHorizontalGrid") { node, modifier, context ->
+                val model = node as LazyHorizontalGridNode
+                val rowsValue = com.pycompose.renderer.generated.ValueResolver.gridCells(model.props.rows).getOrThrow()
+                val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() }
+                    ?: androidx.compose.foundation.layout.Arrangement.Top
+                val stateValue = context.positional(
+                    model.props.firstVisibleItemIndex?.let(::JsonPrimitive), model.props.onFirstVisibleItemIndexSettled,
+                    model.children.unslotted().size,
+                    com.pycompose.renderer.Positional(
+                        { initial, _ -> androidx.compose.foundation.lazy.grid.rememberLazyGridState(initialFirstVisibleItemIndex = initial) },
+                        { it.firstVisibleItemIndex },
+                        null,
+                    ) { holder, target, _ -> holder.animateScrollToItem(target) },
+                )
+                context.RequestWindows(stateValue, model.props.window, model.props.itemOffset, model.children.unslotted().size)
+                LazyHorizontalGrid(
+                    modifier = modifier,
+                    reverseLayout = model.props.reverseLayout,
+                    rows = rowsValue,
+                    userScrollEnabled = model.props.userScrollEnabled,
+                    verticalArrangement = verticalArrangementValue,
+                    state = stateValue,
+                    content = { windowedItems(context, model.children.unslotted(), model.props.itemCount, model.props.itemOffset) },
+                )
+            }
+            .register("LazyHorizontalStaggeredGrid") { node, modifier, context ->
+                val model = node as LazyHorizontalStaggeredGridNode
+                val horizontalItemSpacingValue = context.boundDp(model.props.horizontalItemSpacing, Dp.VectorConverter, (0).dp)
+                val rowsValue = com.pycompose.renderer.generated.ValueResolver.staggeredGridCells(model.props.rows).getOrThrow()
+                LazyHorizontalStaggeredGrid(
+                    modifier = modifier,
+                    horizontalItemSpacing = horizontalItemSpacingValue,
+                    reverseLayout = model.props.reverseLayout,
+                    rows = rowsValue,
+                    userScrollEnabled = model.props.userScrollEnabled,
+                    content = { windowedItems(context, model.children.unslotted(), model.props.itemCount, model.props.itemOffset) },
+                )
+            }
             .register("LazyRow") { node, modifier, context ->
                 val model = node as LazyRowNode
                 val verticalAlignmentValue = model.props.verticalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentVertical(it).getOrThrow() }
@@ -1768,6 +1814,41 @@ object GeneratedAdapters {
                     userScrollEnabled = model.props.userScrollEnabled,
                     verticalAlignment = verticalAlignmentValue,
                     state = stateValue,
+                    content = { windowedItems(context, model.children.unslotted(), model.props.itemCount, model.props.itemOffset) },
+                )
+            }
+            .register("LazyVerticalGrid") { node, modifier, context ->
+                val model = node as LazyVerticalGridNode
+                val columnsValue = com.pycompose.renderer.generated.ValueResolver.gridCells(model.props.columns).getOrThrow()
+                val stateValue = context.positional(
+                    model.props.firstVisibleItemIndex?.let(::JsonPrimitive), model.props.onFirstVisibleItemIndexSettled,
+                    model.children.unslotted().size,
+                    com.pycompose.renderer.Positional(
+                        { initial, _ -> androidx.compose.foundation.lazy.grid.rememberLazyGridState(initialFirstVisibleItemIndex = initial) },
+                        { it.firstVisibleItemIndex },
+                        null,
+                    ) { holder, target, _ -> holder.animateScrollToItem(target) },
+                )
+                context.RequestWindows(stateValue, model.props.window, model.props.itemOffset, model.children.unslotted().size)
+                LazyVerticalGrid(
+                    modifier = modifier,
+                    columns = columnsValue,
+                    reverseLayout = model.props.reverseLayout,
+                    userScrollEnabled = model.props.userScrollEnabled,
+                    state = stateValue,
+                    content = { windowedItems(context, model.children.unslotted(), model.props.itemCount, model.props.itemOffset) },
+                )
+            }
+            .register("LazyVerticalStaggeredGrid") { node, modifier, context ->
+                val model = node as LazyVerticalStaggeredGridNode
+                val columnsValue = com.pycompose.renderer.generated.ValueResolver.staggeredGridCells(model.props.columns).getOrThrow()
+                val verticalItemSpacingValue = context.boundDp(model.props.verticalItemSpacing, Dp.VectorConverter, (0).dp)
+                LazyVerticalStaggeredGrid(
+                    modifier = modifier,
+                    columns = columnsValue,
+                    reverseLayout = model.props.reverseLayout,
+                    userScrollEnabled = model.props.userScrollEnabled,
+                    verticalItemSpacing = verticalItemSpacingValue,
                     content = { windowedItems(context, model.children.unslotted(), model.props.itemCount, model.props.itemOffset) },
                 )
             }

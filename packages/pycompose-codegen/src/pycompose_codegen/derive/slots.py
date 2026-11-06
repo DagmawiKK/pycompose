@@ -12,7 +12,7 @@ from collections.abc import Callable, Iterable
 from typing import Any
 
 from pycompose_codegen.derive.classpath_dump import Declaration
-from pycompose_codegen.derive.classpath_types import Kind, KotlinType
+from pycompose_codegen.derive.classpath_types import BUILDERS, Kind, KotlinType
 from pycompose_codegen.derive.keyed import keyed_arguments
 from pycompose_codegen.derive.propose import SCALARS
 
@@ -73,9 +73,13 @@ def slot_rule(value: KotlinType) -> dict[str, Any]:
 
 
 def builder_rule(value: KotlinType) -> dict[str, Any]:
-    """A lazy list's builder lambda: the children are the items it lists."""
+    """A lazy container's builder lambda: the children are the items it lists.
+
+    A list, a grid and a staggered grid build alike, one item per child, so
+    the host lists them through the same protocol in each scope.
+    """
     receiver = value.arguments[0][1]
-    if receiver is None or receiver.classifier != LAZY_LIST or receiver.nullable:
+    if receiver is None or receiver.classifier not in BUILDERS or receiver.nullable:
         named = receiver.classifier if receiver is not None else "unresolved"
         raise ValueError(f"builder scope needs a native protocol: {named}")
     return {"policy": "slot", "receiver": None, "kind": "items"}

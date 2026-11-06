@@ -1,11 +1,15 @@
 package com.pycompose.renderer
 
+import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberUpdatedState
@@ -66,7 +70,7 @@ fun LazyListScope.windowedItems(
  */
 @Composable
 internal fun RenderContext.requestWindows(
-    state: LazyListState,
+    state: ScrollableState,
     window: String?,
     offset: Long?,
     size: Int,
@@ -75,14 +79,9 @@ internal fun RenderContext.requestWindows(
     val start = (offset ?: 0L).toInt()
     val held = rememberUpdatedState(start until start + size)
     LaunchedEffect(state, window) {
-        snapshotFlow {
-            state.layoutInfo.visibleItemsInfo.let {
-                it.firstOrNull()?.index to
-                    it.lastOrNull()?.index
-            }
-        }.collect { (first, last) ->
+        snapshotFlow { visible(state) }.collect { (first, last) ->
             if (first == null || last == null) return@collect
-            val total = state.layoutInfo.totalItemsCount
+            val total = itemCount(state)
             val wanted = maxOf(0, first - PREFETCH)..minOf(total - 1, last + PREFETCH)
             if (wanted.first < held.value.first || wanted.last > held.value.last) {
                 requestWindow(window, wanted.first, wanted.last)
@@ -90,3 +89,54 @@ internal fun RenderContext.requestWindows(
         }
     }
 }
+
+/** The first and last item a lazy list or grid shows, by index. */
+private fun visible(state: ScrollableState): Pair<Int?, Int?> {
+    val shown =
+        when (state) {
+            is LazyListState -> state.layoutInfo.visibleItemsInfo.map { it.index }
+            is LazyGridState -> state.layoutInfo.visibleItemsInfo.map { it.index }
+            else -> emptyList()
+        }
+    return shown.minOrNull() to shown.maxOrNull()
+}
+
+/** How many items a lazy list or grid lists. */
+private fun itemCount(state: ScrollableState): Int =
+    when (state) {
+        is LazyListState -> state.layoutInfo.totalItemsCount
+        is LazyGridState -> state.layoutInfo.totalItemsCount
+        else -> 0
+    }
+
+/** List a lazy grid's children, a window of a longer grid or whole (see the list's). */
+fun LazyGridScope.windowedItems(
+    context: RenderContext,
+    nodes: List<UiNode>,
+    count: Long?,
+    offset: Long?,
+) {
+    val first = (offset ?: 0L).toInt()
+    items(
+        count?.toInt() ?: nodes.size,
+        key = { index -> nodes.getOrNull(index - first)?.id ?: "pycompose.pending.$index" },
+    ) { index -> nodes.getOrNull(index - first)?.let { context.node(it) } ?: Placeholder() }
+}
+
+/** List a staggered grid's children, a window of a longer grid or whole (see the list's). */
+fun LazyStaggeredGridScope.windowedItems(
+    context: RenderContext,
+    nodes: List<UiNode>,
+    count: Long?,
+    offset: Long?,
+) {
+    val first = (offset ?: 0L).toInt()
+    items(
+        count?.toInt() ?: nodes.size,
+        key = { index -> nodes.getOrNull(index - first)?.id ?: "pycompose.pending.$index" },
+    ) { index -> nodes.getOrNull(index - first)?.let { context.node(it) } ?: Placeholder() }
+}
+
+/** What an item not yet composed by the app shows while its window is on the way. */
+@Composable
+private fun Placeholder() = Spacer(Modifier.fillMaxWidth().height(PLACEHOLDER))

@@ -292,3 +292,19 @@ def test_a_theme_states_its_scheme_shapes_and_type_by_family() -> None:
     )
     snapshot = emit_ir(Snapshot(root=theme), SCHEMA_VERSION)
     assert validate_ir(snapshot).snapshot is snapshot
+
+
+def test_a_grid_states_its_cells_by_family_and_lists_its_children() -> None:
+    from pycompose.host.wire import emit_ir, validate_ir
+    from pycompose.model.catalog.lock import SCHEMA_VERSION
+    from pycompose.model.snapshot import Snapshot
+    from pycompose.ui import LazyVerticalGrid, Text
+    from pycompose.ui._generated.values import GridCellsFixed
+
+    grid = LazyVerticalGrid(
+        columns=GridCellsFixed(count=2),
+        children=[Text(text=f"Cell {i}") for i in range(4)],
+    )
+    snapshot = emit_ir(Snapshot(root=grid), SCHEMA_VERSION)
+    assert validate_ir(snapshot).snapshot is snapshot
+    assert len(snapshot.root.children) == 4

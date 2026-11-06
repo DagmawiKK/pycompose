@@ -5824,6 +5824,161 @@
       },
       "type": "object"
     },
+    "C_LazyHorizontalGrid": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "firstVisibleItemIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "itemCount": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "itemOffset": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onFirstVisibleItemIndexSettled": {
+              "$ref": "#/definitions/Action"
+            },
+            "reverseLayout": {
+              "default": false,
+              "type": "boolean"
+            },
+            "rows": {
+              "$ref": "#/definitions/Family_GridCells"
+            },
+            "userScrollEnabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
+            },
+            "window": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "rows"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "LazyHorizontalGrid"
+        }
+      },
+      "type": "object"
+    },
+    "C_LazyHorizontalStaggeredGrid": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "horizontalItemSpacing": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "itemCount": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "itemOffset": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "reverseLayout": {
+              "default": false,
+              "type": "boolean"
+            },
+            "rows": {
+              "$ref": "#/definitions/Family_StaggeredGridCells"
+            },
+            "userScrollEnabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "window": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "rows"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "LazyHorizontalStaggeredGrid"
+        }
+      },
+      "type": "object"
+    },
     "C_LazyRow": {
       "properties": {
         "children": {
@@ -5881,6 +6036,158 @@
         },
         "type": {
           "const": "LazyRow"
+        }
+      },
+      "type": "object"
+    },
+    "C_LazyVerticalGrid": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "columns": {
+              "$ref": "#/definitions/Family_GridCells"
+            },
+            "firstVisibleItemIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "itemCount": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "itemOffset": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onFirstVisibleItemIndexSettled": {
+              "$ref": "#/definitions/Action"
+            },
+            "reverseLayout": {
+              "default": false,
+              "type": "boolean"
+            },
+            "userScrollEnabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "window": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "columns"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "LazyVerticalGrid"
+        }
+      },
+      "type": "object"
+    },
+    "C_LazyVerticalStaggeredGrid": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "columns": {
+              "$ref": "#/definitions/Family_StaggeredGridCells"
+            },
+            "itemCount": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "itemOffset": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "reverseLayout": {
+              "default": false,
+              "type": "boolean"
+            },
+            "userScrollEnabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "verticalItemSpacing": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "window": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "columns"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "LazyVerticalStaggeredGrid"
         }
       },
       "type": "object"
@@ -12970,6 +13277,19 @@
         }
       ]
     },
+    "Family_GridCells": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_GridCellsAdaptive"
+        },
+        {
+          "$ref": "#/definitions/Value_GridCellsFixed"
+        },
+        {
+          "$ref": "#/definitions/Value_GridCellsFixedSize"
+        }
+      ]
+    },
     "Family_IconButtonColors": {
       "oneOf": [
         {
@@ -13177,6 +13497,19 @@
       "oneOf": [
         {
           "$ref": "#/definitions/Value_SnapPosition"
+        }
+      ]
+    },
+    "Family_StaggeredGridCells": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_StaggeredGridCellsAdaptive"
+        },
+        {
+          "$ref": "#/definitions/Value_StaggeredGridCellsFixed"
+        },
+        {
+          "$ref": "#/definitions/Value_StaggeredGridCellsFixedSize"
         }
       ]
     },
@@ -16413,7 +16746,19 @@
               "$ref": "#/definitions/C_LazyColumn"
             },
             {
+              "$ref": "#/definitions/C_LazyHorizontalGrid"
+            },
+            {
+              "$ref": "#/definitions/C_LazyHorizontalStaggeredGrid"
+            },
+            {
               "$ref": "#/definitions/C_LazyRow"
+            },
+            {
+              "$ref": "#/definitions/C_LazyVerticalGrid"
+            },
+            {
+              "$ref": "#/definitions/C_LazyVerticalStaggeredGrid"
             },
             {
               "$ref": "#/definitions/C_LeadingIconTab"
@@ -38533,6 +38878,161 @@
       },
       "type": "object"
     },
+    "V_1_23_0_LazyHorizontalGrid": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "firstVisibleItemIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "itemCount": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "itemOffset": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onFirstVisibleItemIndexSettled": {
+              "$ref": "#/definitions/Action"
+            },
+            "reverseLayout": {
+              "default": false,
+              "type": "boolean"
+            },
+            "rows": {
+              "$ref": "#/definitions/Family_GridCells"
+            },
+            "userScrollEnabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "verticalArrangement": {
+              "$ref": "#/definitions/Family_ArrangementVertical"
+            },
+            "window": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "rows"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "LazyHorizontalGrid"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_LazyHorizontalStaggeredGrid": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "horizontalItemSpacing": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "itemCount": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "itemOffset": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "reverseLayout": {
+              "default": false,
+              "type": "boolean"
+            },
+            "rows": {
+              "$ref": "#/definitions/Family_StaggeredGridCells"
+            },
+            "userScrollEnabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "window": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "rows"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "LazyHorizontalStaggeredGrid"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_LazyRow": {
       "properties": {
         "children": {
@@ -38590,6 +39090,158 @@
         },
         "type": {
           "const": "LazyRow"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_LazyVerticalGrid": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "columns": {
+              "$ref": "#/definitions/Family_GridCells"
+            },
+            "firstVisibleItemIndex": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "itemCount": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "itemOffset": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onFirstVisibleItemIndexSettled": {
+              "$ref": "#/definitions/Action"
+            },
+            "reverseLayout": {
+              "default": false,
+              "type": "boolean"
+            },
+            "userScrollEnabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "window": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "columns"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "LazyVerticalGrid"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_LazyVerticalStaggeredGrid": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "columns": {
+              "$ref": "#/definitions/Family_StaggeredGridCells"
+            },
+            "itemCount": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "itemOffset": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "reverseLayout": {
+              "default": false,
+              "type": "boolean"
+            },
+            "userScrollEnabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "verticalItemSpacing": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "window": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "columns"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "LazyVerticalStaggeredGrid"
         }
       },
       "type": "object"
@@ -43323,7 +43975,19 @@
               "$ref": "#/definitions/V_1_23_0_LazyColumn"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_LazyHorizontalGrid"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_LazyHorizontalStaggeredGrid"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_LazyRow"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_LazyVerticalGrid"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_LazyVerticalStaggeredGrid"
             },
             {
               "$ref": "#/definitions/V_1_23_0_LeadingIconTab"
@@ -56908,6 +57572,78 @@
       ],
       "type": "object"
     },
+    "Value_GridCellsAdaptive": {
+      "additionalProperties": false,
+      "properties": {
+        "minSize": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 1
+                }
+              }
+            }
+          ]
+        },
+        "type": {
+          "const": "GridCellsAdaptive"
+        }
+      },
+      "required": [
+        "type",
+        "minSize"
+      ],
+      "type": "object"
+    },
+    "Value_GridCellsFixed": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "type": {
+          "const": "GridCellsFixed"
+        }
+      },
+      "required": [
+        "type",
+        "count"
+      ],
+      "type": "object"
+    },
+    "Value_GridCellsFixedSize": {
+      "additionalProperties": false,
+      "properties": {
+        "size": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 1
+                }
+              }
+            }
+          ]
+        },
+        "type": {
+          "const": "GridCellsFixedSize"
+        }
+      },
+      "required": [
+        "type",
+        "size"
+      ],
+      "type": "object"
+    },
     "Value_IntOffset": {
       "additionalProperties": false,
       "properties": {
@@ -57596,6 +58332,78 @@
       "required": [
         "type",
         "value"
+      ],
+      "type": "object"
+    },
+    "Value_StaggeredGridCellsAdaptive": {
+      "additionalProperties": false,
+      "properties": {
+        "minSize": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 1
+                }
+              }
+            }
+          ]
+        },
+        "type": {
+          "const": "StaggeredGridCellsAdaptive"
+        }
+      },
+      "required": [
+        "type",
+        "minSize"
+      ],
+      "type": "object"
+    },
+    "Value_StaggeredGridCellsFixed": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "type": {
+          "const": "StaggeredGridCellsFixed"
+        }
+      },
+      "required": [
+        "type",
+        "count"
+      ],
+      "type": "object"
+    },
+    "Value_StaggeredGridCellsFixedSize": {
+      "additionalProperties": false,
+      "properties": {
+        "size": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 1
+                }
+              }
+            }
+          ]
+        },
+        "type": {
+          "const": "StaggeredGridCellsFixedSize"
+        }
+      },
+      "required": [
+        "type",
+        "size"
       ],
       "type": "object"
     },

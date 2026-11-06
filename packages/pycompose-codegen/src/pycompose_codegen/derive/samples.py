@@ -68,7 +68,16 @@ def _structured(where: str, spec: dict[str, Any], values: dict[str, Any]) -> Any
     if kind == "resource":
         return f"@{spec['values'][0]}/preview"
     if kind == "value":
-        return _family(where, spec["valueType"], values)
+        sample = _family(where, spec["valueType"], values)
+        if "minimum" in spec and isinstance(sample, dict):
+            # A bounded Dp is bounded on its number, as the wire checks it.
+            sample = {
+                k: max(v, spec["minimum"])
+                if isinstance(v, int | float) and not isinstance(v, bool)
+                else v
+                for k, v in sample.items()
+            }
+        return sample
     if kind == "draw":
         return _drawing()
     if kind == "layout":

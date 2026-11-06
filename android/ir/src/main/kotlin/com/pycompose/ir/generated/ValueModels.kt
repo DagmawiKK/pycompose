@@ -76,6 +76,8 @@ sealed interface FontStyleValue
 
 sealed interface FontWeightValue
 
+sealed interface GridCellsValue
+
 sealed interface IconButtonColorsValue
 
 sealed interface IconToggleButtonColorsValue
@@ -123,6 +125,8 @@ sealed interface SliderColorsValue
 sealed interface SnapLayoutInfoProviderValue
 
 sealed interface SnapPositionValue
+
+sealed interface StaggeredGridCellsValue
 
 sealed interface StrokeCapValue
 
@@ -323,6 +327,21 @@ data class WireFontWeight(
     val weight: Int,
 ) : FontWeightValue
 
+data class WireGridCellsAdaptive(
+    val supplied: Set<String>,
+    val minSize: DpValue,
+) : GridCellsValue
+
+data class WireGridCellsFixed(
+    val supplied: Set<String>,
+    val count: Int,
+) : GridCellsValue
+
+data class WireGridCellsFixedSize(
+    val supplied: Set<String>,
+    val size: DpValue,
+) : GridCellsValue
+
 data class WireIntOffset(
     val supplied: Set<String>,
     val name: String,
@@ -471,6 +490,21 @@ data class WireSp(
     val supplied: Set<String>,
     val value: Double,
 ) : TextUnitValue
+
+data class WireStaggeredGridCellsAdaptive(
+    val supplied: Set<String>,
+    val minSize: DpValue,
+) : StaggeredGridCellsValue
+
+data class WireStaggeredGridCellsFixed(
+    val supplied: Set<String>,
+    val count: Int,
+) : StaggeredGridCellsValue
+
+data class WireStaggeredGridCellsFixedSize(
+    val supplied: Set<String>,
+    val size: DpValue,
+) : StaggeredGridCellsValue
 
 data class WireStrokeCap(
     val supplied: Set<String>,
@@ -1286,8 +1320,16 @@ object ValueContract {
             "\"values\":[\"Italic\",\"Normal\"]}},\"since\":\"1.13.0\"},\"FontWeight\":{\"",
             "family\":\"FontWeight\",\"parameters\":{\"weight\":{\"maximum\":1000,\"min",
             "imum\":1,\"required\":true,\"type\":\"int\"}},",
-            "\"since\":\"1.11.0\"},\"IntOffset\":{\"family\":\"IntOffset\",\"parameters\"",
-            ":{\"name\":{\"required\":true,\"type\":\"string\",",
+            "\"since\":\"1.11.0\"},\"GridCellsAdaptive\":{\"family\":\"GridCells\",\"par",
+            "ameters\":{\"minSize\":{\"minimum\":1,\"required\":true,\"type\":\"value\",",
+            "\"valueType\":\"Dp\"}},\"since\":\"1.23.0\"},",
+            "\"GridCellsFixed\":{\"family\":\"GridCells\",\"parameters\":{\"count\":{\"m",
+            "inimum\":1,\"required\":true,\"type\":\"int\"}},",
+            "\"since\":\"1.23.0\"},\"GridCellsFixedSize\":{\"family\":\"GridCells\",\"pa",
+            "rameters\":{\"size\":{\"minimum\":1,\"required\":true,\"type\":\"value\",\"v",
+            "alueType\":\"Dp\"}},\"since\":\"1.23.0\"},",
+            "\"IntOffset\":{\"family\":\"IntOffset\",\"parameters\":{\"name\":{\"require",
+            "d\":true,\"type\":\"string\",",
             "\"values\":[\"Max\",\"Zero\"]}},",
             "\"since\":\"1.23.0\"},\"LightColorScheme\":{\"family\":\"ColorScheme\",\"pa",
             "rameters\":{\"background\":{\"type\":\"value\",",
@@ -1401,8 +1443,16 @@ object ValueContract {
             "\"parameters\":{\"value\":{\"required\":true,\"type\":\"value\",\"valueType",
             "\":\"Color\"}},\"since\":\"1.11.0\"},\"Sp\":{\"family\":\"TextUnit\",\"paramet",
             "ers\":{\"value\":{\"required\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"",
-            "},\"StrokeCap\":{\"family\":\"StrokeCap\",\"parameters\":{\"name\":{\"requi",
-            "red\":true,\"type\":\"string\",",
+            "},\"StaggeredGridCellsAdaptive\":{\"family\":\"StaggeredGridCells\",\"p",
+            "arameters\":{\"minSize\":{\"minimum\":1,\"required\":true,\"type\":\"value",
+            "\",\"valueType\":\"Dp\"}},\"since\":\"1.23.0\"},",
+            "\"StaggeredGridCellsFixed\":{\"family\":\"StaggeredGridCells\",\"parame",
+            "ters\":{\"count\":{\"minimum\":1,\"required\":true,\"type\":\"int\"}},",
+            "\"since\":\"1.23.0\"},\"StaggeredGridCellsFixedSize\":{\"family\":\"Stagg",
+            "eredGridCells\",\"parameters\":{\"size\":{\"minimum\":1,\"required\":true",
+            ",\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.23.0\"},",
+            "\"StrokeCap\":{\"family\":\"StrokeCap\",\"parameters\":{\"name\":{\"require",
+            "d\":true,\"type\":\"string\",",
             "\"values\":[\"Butt\",\"Round\",\"Square\"]}},\"since\":\"1.13.0\"},\"TextAlig",
             "n\":{\"family\":\"TextAlign\",",
             "\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\",",
@@ -2708,6 +2758,26 @@ object ValueContract {
         }
     }
 
+    fun readGridCells(value: JsonElement): GridCellsValue {
+        ValueParser.validate(value, "GridCells", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "GridCellsAdaptive" -> WireGridCellsAdaptive(
+                supplied = data.keys,
+                minSize = readDp(data.getValue("minSize")),
+            )
+            "GridCellsFixed" -> WireGridCellsFixed(
+                supplied = data.keys,
+                count = data.getValue("count").jsonPrimitive.int,
+            )
+            "GridCellsFixedSize" -> WireGridCellsFixedSize(
+                supplied = data.keys,
+                size = readDp(data.getValue("size")),
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
     fun readIconButtonColors(value: JsonElement): IconButtonColorsValue {
         ValueParser.validate(value, "IconButtonColors", specs).getOrThrow()
         val data = value.jsonObject
@@ -3162,6 +3232,26 @@ object ValueContract {
             "SnapPosition" -> WireSnapPosition(
                 supplied = data.keys,
                 position = com.pycompose.program.Functions.read(data.getValue("position").jsonObject, com.pycompose.ir.FUNCTIONS),
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readStaggeredGridCells(value: JsonElement): StaggeredGridCellsValue {
+        ValueParser.validate(value, "StaggeredGridCells", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "StaggeredGridCellsAdaptive" -> WireStaggeredGridCellsAdaptive(
+                supplied = data.keys,
+                minSize = readDp(data.getValue("minSize")),
+            )
+            "StaggeredGridCellsFixed" -> WireStaggeredGridCellsFixed(
+                supplied = data.keys,
+                count = data.getValue("count").jsonPrimitive.int,
+            )
+            "StaggeredGridCellsFixedSize" -> WireStaggeredGridCellsFixedSize(
+                supplied = data.keys,
+                size = readDp(data.getValue("size")),
             )
             else -> error("Unknown value constructor")
         }

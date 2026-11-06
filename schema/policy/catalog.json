@@ -1489,6 +1489,108 @@
           "minimum": 0
         }
       }
+    },
+    "GridCellsAdaptive": {
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android",
+        "owner": "androidx.compose.foundation.lazy.grid.GridCells$Adaptive",
+        "name": "<init>",
+        "jvmName": "<init>",
+        "descriptor": "(FLkotlin/jvm/internal/DefaultConstructorMarker;)V"
+      },
+      "kind": "record",
+      "family": "GridCells",
+      "kotlinType": "androidx.compose.foundation.lazy.grid.GridCells",
+      "parameters": {
+        "minSize": {
+          "minimum": 1
+        }
+      }
+    },
+    "GridCellsFixed": {
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android",
+        "owner": "androidx.compose.foundation.lazy.grid.GridCells$Fixed",
+        "name": "<init>",
+        "jvmName": "<init>",
+        "descriptor": "(I)V"
+      },
+      "kind": "record",
+      "family": "GridCells",
+      "kotlinType": "androidx.compose.foundation.lazy.grid.GridCells",
+      "parameters": {
+        "count": {
+          "minimum": 1
+        }
+      }
+    },
+    "GridCellsFixedSize": {
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android",
+        "owner": "androidx.compose.foundation.lazy.grid.GridCells$FixedSize",
+        "name": "<init>",
+        "jvmName": "<init>",
+        "descriptor": "(FLkotlin/jvm/internal/DefaultConstructorMarker;)V"
+      },
+      "kind": "record",
+      "family": "GridCells",
+      "kotlinType": "androidx.compose.foundation.lazy.grid.GridCells",
+      "parameters": {
+        "size": {
+          "minimum": 1
+        }
+      }
+    },
+    "StaggeredGridCellsAdaptive": {
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android",
+        "owner": "androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells$Adaptive",
+        "name": "<init>",
+        "jvmName": "<init>",
+        "descriptor": "(FLkotlin/jvm/internal/DefaultConstructorMarker;)V"
+      },
+      "kind": "record",
+      "family": "StaggeredGridCells",
+      "kotlinType": "androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells",
+      "parameters": {
+        "minSize": {
+          "minimum": 1
+        }
+      }
+    },
+    "StaggeredGridCellsFixed": {
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android",
+        "owner": "androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells$Fixed",
+        "name": "<init>",
+        "jvmName": "<init>",
+        "descriptor": "(I)V"
+      },
+      "kind": "record",
+      "family": "StaggeredGridCells",
+      "kotlinType": "androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells",
+      "parameters": {
+        "count": {
+          "minimum": 1
+        }
+      }
+    },
+    "StaggeredGridCellsFixedSize": {
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android",
+        "owner": "androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells$FixedSize",
+        "name": "<init>",
+        "jvmName": "<init>",
+        "descriptor": "(FLkotlin/jvm/internal/DefaultConstructorMarker;)V"
+      },
+      "kind": "record",
+      "family": "StaggeredGridCells",
+      "kotlinType": "androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells",
+      "parameters": {
+        "size": {
+          "minimum": 1
+        }
+      }
     }
   }
 }

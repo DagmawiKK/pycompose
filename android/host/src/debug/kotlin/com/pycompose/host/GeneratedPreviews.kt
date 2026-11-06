@@ -463,10 +463,34 @@ private fun LazyColumnPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "LazyColumn"}, "type": "Text"}], "id": "preview", "props": {}, "type": "LazyColumn"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "LazyHorizontalGrid", showBackground = true)
+@Composable
+private fun LazyHorizontalGridPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "LazyHorizontalGrid"}, "type": "Text"}], "id": "preview", "props": {"rows": {"minSize": {"type": "Dp", "value": 1}, "type": "GridCellsAdaptive"}}, "type": "LazyHorizontalGrid"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "LazyHorizontalStaggeredGrid", showBackground = true)
+@Composable
+private fun LazyHorizontalStaggeredGridPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "LazyHorizontalStaggeredGrid"}, "type": "Text"}], "id": "preview", "props": {"rows": {"minSize": {"type": "Dp", "value": 1}, "type": "StaggeredGridCellsAdaptive"}}, "type": "LazyHorizontalStaggeredGrid"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "LazyRow", showBackground = true)
 @Composable
 private fun LazyRowPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "LazyRow"}, "type": "Text"}], "id": "preview", "props": {}, "type": "LazyRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "LazyVerticalGrid", showBackground = true)
+@Composable
+private fun LazyVerticalGridPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "LazyVerticalGrid"}, "type": "Text"}], "id": "preview", "props": {"columns": {"minSize": {"type": "Dp", "value": 1}, "type": "GridCellsAdaptive"}}, "type": "LazyVerticalGrid"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "LazyVerticalStaggeredGrid", showBackground = true)
+@Composable
+private fun LazyVerticalStaggeredGridPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "LazyVerticalStaggeredGrid"}, "type": "Text"}], "id": "preview", "props": {"columns": {"minSize": {"type": "Dp", "value": 1}, "type": "StaggeredGridCellsAdaptive"}}, "type": "LazyVerticalStaggeredGrid"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "LeadingIconTab", showBackground = true)

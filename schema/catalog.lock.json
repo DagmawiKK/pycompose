@@ -5284,6 +5284,124 @@
         "onFirstVisibleItemIndexSettled"
       ]
     },
+    "LazyHorizontalGrid": {
+      "package": "androidx.compose.foundation.lazy.grid",
+      "category": "foundation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "descriptor": "(Landroidx/compose/foundation/lazy/grid/GridCells;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/lazy/grid/LazyGridState;Landroidx/compose/foundation/layout/PaddingValues;ZLandroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/foundation/gestures/FlingBehavior;ZLandroidx/compose/foundation/OverscrollEffect;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "LazyHorizontalGrid",
+        "name": "LazyHorizontalGrid",
+        "owner": "androidx.compose.foundation.lazy.grid.LazyGridDslKt"
+      },
+      "props": {
+        "reverseLayout": {
+          "type": "boolean",
+          "default": false
+        },
+        "rows": {
+          "type": "value",
+          "valueType": "GridCells",
+          "required": true
+        },
+        "userScrollEnabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "verticalArrangement": {
+          "type": "enum",
+          "valueType": "ArrangementVertical",
+          "values": [
+            "bottom",
+            "center",
+            "spaceAround",
+            "spaceBetween",
+            "spaceEvenly",
+            "top"
+          ],
+          "default": "top",
+          "nativeDefault": "androidx.compose.foundation.layout.Arrangement.Top"
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "firstVisibleItemIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "onFirstVisibleItemIndexSettled": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "firstVisibleItemIndex",
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "items"
+      },
+      "state": {
+        "native": "state",
+        "kind": "positional",
+        "holder": "androidx.compose.foundation.lazy.grid.LazyGridState",
+        "factory": "androidx.compose.foundation.lazy.grid.rememberLazyGridState",
+        "initial": "initialFirstVisibleItemIndex",
+        "position": "firstVisibleItemIndex",
+        "drive": "animateScrollToItem"
+      },
+      "reshaped": [
+        "firstVisibleItemIndex",
+        "onFirstVisibleItemIndexSettled"
+      ]
+    },
+    "LazyHorizontalStaggeredGrid": {
+      "package": "androidx.compose.foundation.lazy.staggeredgrid",
+      "category": "foundation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "descriptor": "(Landroidx/compose/foundation/lazy/staggeredgrid/StaggeredGridCells;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/lazy/staggeredgrid/LazyStaggeredGridState;Landroidx/compose/foundation/layout/PaddingValues;ZLandroidx/compose/foundation/layout/Arrangement$Vertical;FLandroidx/compose/foundation/gestures/FlingBehavior;ZLandroidx/compose/foundation/OverscrollEffect;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "LazyHorizontalStaggeredGrid-121YqSk",
+        "name": "LazyHorizontalStaggeredGrid",
+        "owner": "androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridDslKt"
+      },
+      "props": {
+        "horizontalItemSpacing": {
+          "type": "dp",
+          "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "reverseLayout": {
+          "type": "boolean",
+          "default": false
+        },
+        "rows": {
+          "type": "value",
+          "valueType": "StaggeredGridCells",
+          "required": true
+        },
+        "userScrollEnabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "items"
+      }
+    },
     "LazyRow": {
       "package": "androidx.compose.foundation.lazy",
       "category": "lists",
@@ -5356,6 +5474,110 @@
         "firstVisibleItemIndex",
         "onFirstVisibleItemIndexSettled"
       ]
+    },
+    "LazyVerticalGrid": {
+      "package": "androidx.compose.foundation.lazy.grid",
+      "category": "foundation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "descriptor": "(Landroidx/compose/foundation/lazy/grid/GridCells;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/lazy/grid/LazyGridState;Landroidx/compose/foundation/layout/PaddingValues;ZLandroidx/compose/foundation/layout/Arrangement$Vertical;Landroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/foundation/gestures/FlingBehavior;ZLandroidx/compose/foundation/OverscrollEffect;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "LazyVerticalGrid",
+        "name": "LazyVerticalGrid",
+        "owner": "androidx.compose.foundation.lazy.grid.LazyGridDslKt"
+      },
+      "props": {
+        "columns": {
+          "type": "value",
+          "valueType": "GridCells",
+          "required": true
+        },
+        "reverseLayout": {
+          "type": "boolean",
+          "default": false
+        },
+        "userScrollEnabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "firstVisibleItemIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "onFirstVisibleItemIndexSettled": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "firstVisibleItemIndex",
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "items"
+      },
+      "state": {
+        "native": "state",
+        "kind": "positional",
+        "holder": "androidx.compose.foundation.lazy.grid.LazyGridState",
+        "factory": "androidx.compose.foundation.lazy.grid.rememberLazyGridState",
+        "initial": "initialFirstVisibleItemIndex",
+        "position": "firstVisibleItemIndex",
+        "drive": "animateScrollToItem"
+      },
+      "reshaped": [
+        "firstVisibleItemIndex",
+        "onFirstVisibleItemIndexSettled"
+      ]
+    },
+    "LazyVerticalStaggeredGrid": {
+      "package": "androidx.compose.foundation.lazy.staggeredgrid",
+      "category": "foundation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "descriptor": "(Landroidx/compose/foundation/lazy/staggeredgrid/StaggeredGridCells;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/lazy/staggeredgrid/LazyStaggeredGridState;Landroidx/compose/foundation/layout/PaddingValues;ZFLandroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/foundation/gestures/FlingBehavior;ZLandroidx/compose/foundation/OverscrollEffect;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V",
+        "jvmName": "LazyVerticalStaggeredGrid-6qCrX9Q",
+        "name": "LazyVerticalStaggeredGrid",
+        "owner": "androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridDslKt"
+      },
+      "props": {
+        "columns": {
+          "type": "value",
+          "valueType": "StaggeredGridCells",
+          "required": true
+        },
+        "reverseLayout": {
+          "type": "boolean",
+          "default": false
+        },
+        "userScrollEnabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "verticalItemSpacing": {
+          "type": "dp",
+          "nativeDefault": "(0).dp",
+          "nativeValue": 0.0,
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "items"
+      }
     },
     "LeadingIconTab": {
       "package": "androidx.compose.material3",
@@ -22726,6 +22948,148 @@
       },
       "native": {
         "call": "androidx.compose.foundation.shape.CutCornerShape"
+      }
+    },
+    "GridCellsAdaptive": {
+      "family": "GridCells",
+      "kind": "record",
+      "kotlinType": "androidx.compose.foundation.lazy.grid.GridCells",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "owner": "androidx.compose.foundation.lazy.grid.GridCells$Adaptive",
+        "name": "<init>",
+        "jvmName": "<init>",
+        "descriptor": "(FLkotlin/jvm/internal/DefaultConstructorMarker;)V"
+      },
+      "parameters": {
+        "minSize": {
+          "type": "value",
+          "valueType": "Dp",
+          "required": true,
+          "minimum": 1
+        }
+      },
+      "native": {
+        "call": "androidx.compose.foundation.lazy.grid.GridCells.Adaptive"
+      }
+    },
+    "GridCellsFixed": {
+      "family": "GridCells",
+      "kind": "record",
+      "kotlinType": "androidx.compose.foundation.lazy.grid.GridCells",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "owner": "androidx.compose.foundation.lazy.grid.GridCells$Fixed",
+        "name": "<init>",
+        "jvmName": "<init>",
+        "descriptor": "(I)V"
+      },
+      "parameters": {
+        "count": {
+          "type": "int",
+          "required": true,
+          "minimum": 1
+        }
+      },
+      "native": {
+        "call": "androidx.compose.foundation.lazy.grid.GridCells.Fixed"
+      }
+    },
+    "GridCellsFixedSize": {
+      "family": "GridCells",
+      "kind": "record",
+      "kotlinType": "androidx.compose.foundation.lazy.grid.GridCells",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "owner": "androidx.compose.foundation.lazy.grid.GridCells$FixedSize",
+        "name": "<init>",
+        "jvmName": "<init>",
+        "descriptor": "(FLkotlin/jvm/internal/DefaultConstructorMarker;)V"
+      },
+      "parameters": {
+        "size": {
+          "type": "value",
+          "valueType": "Dp",
+          "required": true,
+          "minimum": 1
+        }
+      },
+      "native": {
+        "call": "androidx.compose.foundation.lazy.grid.GridCells.FixedSize"
+      }
+    },
+    "StaggeredGridCellsAdaptive": {
+      "family": "StaggeredGridCells",
+      "kind": "record",
+      "kotlinType": "androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "owner": "androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells$Adaptive",
+        "name": "<init>",
+        "jvmName": "<init>",
+        "descriptor": "(FLkotlin/jvm/internal/DefaultConstructorMarker;)V"
+      },
+      "parameters": {
+        "minSize": {
+          "type": "value",
+          "valueType": "Dp",
+          "required": true,
+          "minimum": 1
+        }
+      },
+      "native": {
+        "call": "androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells.Adaptive"
+      }
+    },
+    "StaggeredGridCellsFixed": {
+      "family": "StaggeredGridCells",
+      "kind": "record",
+      "kotlinType": "androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "owner": "androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells$Fixed",
+        "name": "<init>",
+        "jvmName": "<init>",
+        "descriptor": "(I)V"
+      },
+      "parameters": {
+        "count": {
+          "type": "int",
+          "required": true,
+          "minimum": 1
+        }
+      },
+      "native": {
+        "call": "androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells.Fixed"
+      }
+    },
+    "StaggeredGridCellsFixedSize": {
+      "family": "StaggeredGridCells",
+      "kind": "record",
+      "kotlinType": "androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "owner": "androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells$FixedSize",
+        "name": "<init>",
+        "jvmName": "<init>",
+        "descriptor": "(FLkotlin/jvm/internal/DefaultConstructorMarker;)V"
+      },
+      "parameters": {
+        "size": {
+          "type": "value",
+          "valueType": "Dp",
+          "required": true,
+          "minimum": 1
+        }
+      },
+      "native": {
+        "call": "androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells.FixedSize"
       }
     },
     "AndroidExternalSurfaceZOrder": {

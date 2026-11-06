@@ -96,7 +96,8 @@ def propose_value(
         ValueError: The declaration needs a policy a proposal must not invent.
     """
     _validate_callable(source)
-    native_type = source.return_type.classifier.replace("/", ".")
+    # A constructor's nested class is named as source names it: GridCells.Fixed.
+    native_type = source_name(source.return_type.classifier).replace("$", ".")
     if native_type.startswith("kotlin."):
         raise ValueError("not a native value family")
     family = families.get(native_type, native_type.rsplit(".", 1)[-1])

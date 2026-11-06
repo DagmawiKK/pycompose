@@ -94,7 +94,11 @@ __all__ = [
     "LargeTopAppBar",
     "Layout",
     "LazyColumn",
+    "LazyHorizontalGrid",
+    "LazyHorizontalStaggeredGrid",
     "LazyRow",
+    "LazyVerticalGrid",
+    "LazyVerticalStaggeredGrid",
     "LeadingIconTab",
     "LinearProgressIndicator",
     "LinearProgressIndicatorWithoutProgress",
@@ -4753,6 +4757,148 @@ class LazyColumn(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
+class LazyHorizontalGrid(Component):
+    """Native LazyHorizontalGrid; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "LazyHorizontalGrid"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        first_visible_item_index: int | None = None,
+        modifier: Modifier | None = None,
+        on_first_visible_item_index_settled: ActionTarget | None = None,
+        reverse_layout: bool | None = None,
+        rows: JsonValue,
+        user_scroll_enabled: bool | None = None,
+        vertical_arrangement: _ArrangementVertical | None = None,
+        children: Content = (),
+        items: Content | Sequence[Any] | None = None,
+        key: Callable[[Any], str | int] | None = None,
+        item: Callable[[Any], Node] | None = None,
+    ) -> None:
+        """Construct a registered LazyHorizontalGrid.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            first_visible_item_index: Native firstVisibleItemIndex; None uses its
+                default.
+            modifier: Native modifier; None uses its default.
+            on_first_visible_item_index_settled: Native
+                onFirstVisibleItemIndexSettled; None uses its default.
+            reverse_layout: Native reverseLayout; None uses its default.
+            rows: Required native rows.
+            user_scroll_enabled: Native userScrollEnabled; None uses its default.
+            vertical_arrangement: Native verticalArrangement; None uses its default.
+            children: Ordered child nodes with stable keys.
+            items: The children, or with item the data whose window the host
+                composes.
+            key: Each item's stable key, required with item.
+            item: Builds one item's node; the host asks for which.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if first_visible_item_index is not None:
+            props["first_visible_item_index"] = first_visible_item_index
+        if on_first_visible_item_index_settled is not None:
+            props["on_first_visible_item_index_settled"] = (
+                on_first_visible_item_index_settled
+            )
+        if reverse_layout is not None:
+            props["reverse_layout"] = reverse_layout
+        props["rows"] = rows
+        if user_scroll_enabled is not None:
+            props["user_scroll_enabled"] = user_scroll_enabled
+        if vertical_arrangement is not None:
+            props["vertical_arrangement"] = vertical_arrangement
+        if key is not None or item is not None:
+            raise IrValidationError("key= needs item=", node_id=id)
+        if items is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(cast(Content, items), key="items")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class LazyHorizontalStaggeredGrid(Component):
+    """Native LazyHorizontalStaggeredGrid;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "LazyHorizontalStaggeredGrid"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        horizontal_item_spacing: int | float | Expression | Binding | None = None,
+        modifier: Modifier | None = None,
+        reverse_layout: bool | None = None,
+        rows: JsonValue,
+        user_scroll_enabled: bool | None = None,
+        children: Content = (),
+        items: Content | Sequence[Any] | None = None,
+        key: Callable[[Any], str | int] | None = None,
+        item: Callable[[Any], Node] | None = None,
+    ) -> None:
+        """Construct a registered LazyHorizontalStaggeredGrid.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            horizontal_item_spacing: Native horizontalItemSpacing; None uses its
+                default.
+            modifier: Native modifier; None uses its default.
+            reverse_layout: Native reverseLayout; None uses its default.
+            rows: Required native rows.
+            user_scroll_enabled: Native userScrollEnabled; None uses its default.
+            children: Ordered child nodes with stable keys.
+            items: The children, or with item the data whose window the host
+                composes.
+            key: Each item's stable key, required with item.
+            item: Builds one item's node; the host asks for which.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if horizontal_item_spacing is not None:
+            props["horizontal_item_spacing"] = lower_binding(
+                horizontal_item_spacing, "composition"
+            )
+        if reverse_layout is not None:
+            props["reverse_layout"] = reverse_layout
+        props["rows"] = rows
+        if user_scroll_enabled is not None:
+            props["user_scroll_enabled"] = user_scroll_enabled
+        if key is not None or item is not None:
+            raise IrValidationError("key= needs item=", node_id=id)
+        if items is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(cast(Content, items), key="items")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
 class LazyRow(Component):
     """Native LazyRow; props and defaults follow the component manifest."""
 
@@ -4809,6 +4955,144 @@ class LazyRow(Component):
             props["user_scroll_enabled"] = user_scroll_enabled
         if vertical_alignment is not None:
             props["vertical_alignment"] = vertical_alignment
+        if key is not None or item is not None:
+            raise IrValidationError("key= needs item=", node_id=id)
+        if items is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(cast(Content, items), key="items")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class LazyVerticalGrid(Component):
+    """Native LazyVerticalGrid; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "LazyVerticalGrid"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        columns: JsonValue,
+        first_visible_item_index: int | None = None,
+        modifier: Modifier | None = None,
+        on_first_visible_item_index_settled: ActionTarget | None = None,
+        reverse_layout: bool | None = None,
+        user_scroll_enabled: bool | None = None,
+        children: Content = (),
+        items: Content | Sequence[Any] | None = None,
+        key: Callable[[Any], str | int] | None = None,
+        item: Callable[[Any], Node] | None = None,
+    ) -> None:
+        """Construct a registered LazyVerticalGrid.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            columns: Required native columns.
+            first_visible_item_index: Native firstVisibleItemIndex; None uses its
+                default.
+            modifier: Native modifier; None uses its default.
+            on_first_visible_item_index_settled: Native
+                onFirstVisibleItemIndexSettled; None uses its default.
+            reverse_layout: Native reverseLayout; None uses its default.
+            user_scroll_enabled: Native userScrollEnabled; None uses its default.
+            children: Ordered child nodes with stable keys.
+            items: The children, or with item the data whose window the host
+                composes.
+            key: Each item's stable key, required with item.
+            item: Builds one item's node; the host asks for which.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        props["columns"] = columns
+        if first_visible_item_index is not None:
+            props["first_visible_item_index"] = first_visible_item_index
+        if on_first_visible_item_index_settled is not None:
+            props["on_first_visible_item_index_settled"] = (
+                on_first_visible_item_index_settled
+            )
+        if reverse_layout is not None:
+            props["reverse_layout"] = reverse_layout
+        if user_scroll_enabled is not None:
+            props["user_scroll_enabled"] = user_scroll_enabled
+        if key is not None or item is not None:
+            raise IrValidationError("key= needs item=", node_id=id)
+        if items is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(cast(Content, items), key="items")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class LazyVerticalStaggeredGrid(Component):
+    """Native LazyVerticalStaggeredGrid;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "LazyVerticalStaggeredGrid"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        columns: JsonValue,
+        modifier: Modifier | None = None,
+        reverse_layout: bool | None = None,
+        user_scroll_enabled: bool | None = None,
+        vertical_item_spacing: int | float | Expression | Binding | None = None,
+        children: Content = (),
+        items: Content | Sequence[Any] | None = None,
+        key: Callable[[Any], str | int] | None = None,
+        item: Callable[[Any], Node] | None = None,
+    ) -> None:
+        """Construct a registered LazyVerticalStaggeredGrid.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            columns: Required native columns.
+            modifier: Native modifier; None uses its default.
+            reverse_layout: Native reverseLayout; None uses its default.
+            user_scroll_enabled: Native userScrollEnabled; None uses its default.
+            vertical_item_spacing: Native verticalItemSpacing; None uses its
+                default.
+            children: Ordered child nodes with stable keys.
+            items: The children, or with item the data whose window the host
+                composes.
+            key: Each item's stable key, required with item.
+            item: Builds one item's node; the host asks for which.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        props["columns"] = columns
+        if reverse_layout is not None:
+            props["reverse_layout"] = reverse_layout
+        if user_scroll_enabled is not None:
+            props["user_scroll_enabled"] = user_scroll_enabled
+        if vertical_item_spacing is not None:
+            props["vertical_item_spacing"] = lower_binding(
+                vertical_item_spacing, "composition"
+            )
         if key is not None or item is not None:
             raise IrValidationError("key= needs item=", node_id=id)
         if items is not None:

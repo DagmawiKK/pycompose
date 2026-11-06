@@ -35,6 +35,9 @@ __all__ = [
     "FontFamily",
     "FontStyle",
     "FontWeight",
+    "GridCellsAdaptive",
+    "GridCellsFixed",
+    "GridCellsFixedSize",
     "IntOffset",
     "LightColorScheme",
     "NamedShape",
@@ -53,6 +56,9 @@ __all__ = [
     "SnapPosition",
     "SolidColor",
     "Sp",
+    "StaggeredGridCellsAdaptive",
+    "StaggeredGridCellsFixed",
+    "StaggeredGridCellsFixedSize",
     "StrokeCap",
     "TextAlign",
     "TextDecoration",
@@ -241,8 +247,16 @@ DEFINITIONS: dict[str, dict[str, object]] = json.loads(
     '"values":["Italic","Normal"]}},"since":"1.13.0"},"FontWeight":{"'
     'family":"FontWeight","parameters":{"weight":{"maximum":1000,"min'
     'imum":1,"required":true,"type":"int"}},'
-    '"since":"1.11.0"},"IntOffset":{"family":"IntOffset","parameters"'
-    ':{"name":{"required":true,"type":"string",'
+    '"since":"1.11.0"},"GridCellsAdaptive":{"family":"GridCells","par'
+    'ameters":{"minSize":{"minimum":1,"required":true,"type":"value",'
+    '"valueType":"Dp"}},"since":"1.23.0"},'
+    '"GridCellsFixed":{"family":"GridCells","parameters":{"count":{"m'
+    'inimum":1,"required":true,"type":"int"}},'
+    '"since":"1.23.0"},"GridCellsFixedSize":{"family":"GridCells","pa'
+    'rameters":{"size":{"minimum":1,"required":true,"type":"value","v'
+    'alueType":"Dp"}},"since":"1.23.0"},'
+    '"IntOffset":{"family":"IntOffset","parameters":{"name":{"require'
+    'd":true,"type":"string",'
     '"values":["Max","Zero"]}},'
     '"since":"1.23.0"},"LightColorScheme":{"family":"ColorScheme","pa'
     'rameters":{"background":{"type":"value",'
@@ -356,8 +370,16 @@ DEFINITIONS: dict[str, dict[str, object]] = json.loads(
     '"parameters":{"value":{"required":true,"type":"value","valueType'
     '":"Color"}},"since":"1.11.0"},"Sp":{"family":"TextUnit","paramet'
     'ers":{"value":{"required":true,"type":"float"}},"since":"1.11.0"'
-    '},"StrokeCap":{"family":"StrokeCap","parameters":{"name":{"requi'
-    'red":true,"type":"string",'
+    '},"StaggeredGridCellsAdaptive":{"family":"StaggeredGridCells","p'
+    'arameters":{"minSize":{"minimum":1,"required":true,"type":"value'
+    '","valueType":"Dp"}},"since":"1.23.0"},'
+    '"StaggeredGridCellsFixed":{"family":"StaggeredGridCells","parame'
+    'ters":{"count":{"minimum":1,"required":true,"type":"int"}},'
+    '"since":"1.23.0"},"StaggeredGridCellsFixedSize":{"family":"Stagg'
+    'eredGridCells","parameters":{"size":{"minimum":1,"required":true'
+    ',"type":"value","valueType":"Dp"}},"since":"1.23.0"},'
+    '"StrokeCap":{"family":"StrokeCap","parameters":{"name":{"require'
+    'd":true,"type":"string",'
     '"values":["Butt","Round","Square"]}},"since":"1.13.0"},"TextAlig'
     'n":{"family":"TextAlign",'
     '"parameters":{"name":{"required":true,"type":"string",'
@@ -2173,6 +2195,66 @@ def FontWeight(
     )
 
 
+def GridCellsAdaptive(
+    min_size: JsonValue,
+) -> dict[str, JsonValue]:
+    """Construct GridCells data for native evaluation.
+
+    Args:
+        min_size: Native minSize argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "GridCellsAdaptive",
+        {
+            "minSize": min_size,
+        },
+        DEFINITIONS,
+    )
+
+
+def GridCellsFixed(
+    count: int,
+) -> dict[str, JsonValue]:
+    """Construct GridCells data for native evaluation.
+
+    Args:
+        count: Native count argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "GridCellsFixed",
+        {
+            "count": count,
+        },
+        DEFINITIONS,
+    )
+
+
+def GridCellsFixedSize(
+    size: JsonValue,
+) -> dict[str, JsonValue]:
+    """Construct GridCells data for native evaluation.
+
+    Args:
+        size: Native size argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "GridCellsFixedSize",
+        {
+            "size": size,
+        },
+        DEFINITIONS,
+    )
+
+
 def IntOffset(
     name: _IntOffsetName,
 ) -> dict[str, JsonValue]:
@@ -2705,6 +2787,66 @@ def Sp(
         "Sp",
         {
             "value": value,
+        },
+        DEFINITIONS,
+    )
+
+
+def StaggeredGridCellsAdaptive(
+    min_size: JsonValue,
+) -> dict[str, JsonValue]:
+    """Construct StaggeredGridCells data for native evaluation.
+
+    Args:
+        min_size: Native minSize argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "StaggeredGridCellsAdaptive",
+        {
+            "minSize": min_size,
+        },
+        DEFINITIONS,
+    )
+
+
+def StaggeredGridCellsFixed(
+    count: int,
+) -> dict[str, JsonValue]:
+    """Construct StaggeredGridCells data for native evaluation.
+
+    Args:
+        count: Native count argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "StaggeredGridCellsFixed",
+        {
+            "count": count,
+        },
+        DEFINITIONS,
+    )
+
+
+def StaggeredGridCellsFixedSize(
+    size: JsonValue,
+) -> dict[str, JsonValue]:
+    """Construct StaggeredGridCells data for native evaluation.
+
+    Args:
+        size: Native size argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "StaggeredGridCellsFixedSize",
+        {
+            "size": size,
         },
         DEFINITIONS,
     )

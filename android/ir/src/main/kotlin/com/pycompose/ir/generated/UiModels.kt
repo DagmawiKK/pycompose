@@ -1702,6 +1702,56 @@ data class LazyColumn(
 }
 
 @Serializable
+data class LazyHorizontalGridProps(
+    val `firstVisibleItemIndex`: Long? = null,
+    val `itemCount`: Long? = null,
+    val `itemOffset`: Long? = null,
+    override val `modifier`: JsonObject? = null,
+    val `onFirstVisibleItemIndexSettled`: String? = null,
+    val `reverseLayout`: Boolean = false,
+    val `rows`: JsonElement,
+    val `userScrollEnabled`: Boolean = true,
+    val `verticalArrangement`: JsonElement? = null,
+    val `window`: String? = null,
+) : UiProps
+
+@Serializable
+@SerialName("LazyHorizontalGrid")
+data class LazyHorizontalGrid(
+    override val id: String,
+    override val props: LazyHorizontalGridProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "LazyHorizontalGrid"
+}
+
+@Serializable
+data class LazyHorizontalStaggeredGridProps(
+    val `horizontalItemSpacing`: JsonElement? = null,
+    val `itemCount`: Long? = null,
+    val `itemOffset`: Long? = null,
+    override val `modifier`: JsonObject? = null,
+    val `reverseLayout`: Boolean = false,
+    val `rows`: JsonElement,
+    val `userScrollEnabled`: Boolean = true,
+    val `window`: String? = null,
+) : UiProps
+
+@Serializable
+@SerialName("LazyHorizontalStaggeredGrid")
+data class LazyHorizontalStaggeredGrid(
+    override val id: String,
+    override val props: LazyHorizontalStaggeredGridProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "LazyHorizontalStaggeredGrid"
+}
+
+@Serializable
 data class LazyRowProps(
     val `firstVisibleItemIndex`: Long? = null,
     val `itemCount`: Long? = null,
@@ -1724,6 +1774,55 @@ data class LazyRow(
 ) : UiNode {
     override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "LazyRow"
+}
+
+@Serializable
+data class LazyVerticalGridProps(
+    val `columns`: JsonElement,
+    val `firstVisibleItemIndex`: Long? = null,
+    val `itemCount`: Long? = null,
+    val `itemOffset`: Long? = null,
+    override val `modifier`: JsonObject? = null,
+    val `onFirstVisibleItemIndexSettled`: String? = null,
+    val `reverseLayout`: Boolean = false,
+    val `userScrollEnabled`: Boolean = true,
+    val `window`: String? = null,
+) : UiProps
+
+@Serializable
+@SerialName("LazyVerticalGrid")
+data class LazyVerticalGrid(
+    override val id: String,
+    override val props: LazyVerticalGridProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "LazyVerticalGrid"
+}
+
+@Serializable
+data class LazyVerticalStaggeredGridProps(
+    val `columns`: JsonElement,
+    val `itemCount`: Long? = null,
+    val `itemOffset`: Long? = null,
+    override val `modifier`: JsonObject? = null,
+    val `reverseLayout`: Boolean = false,
+    val `userScrollEnabled`: Boolean = true,
+    val `verticalItemSpacing`: JsonElement? = null,
+    val `window`: String? = null,
+) : UiProps
+
+@Serializable
+@SerialName("LazyVerticalStaggeredGrid")
+data class LazyVerticalStaggeredGrid(
+    override val id: String,
+    override val props: LazyVerticalStaggeredGridProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "LazyVerticalStaggeredGrid"
 }
 
 @Serializable

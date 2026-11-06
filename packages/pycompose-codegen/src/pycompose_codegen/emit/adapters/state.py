@@ -37,8 +37,13 @@ def state_call(kind: str) -> str:
     return f"{kind}State"
 
 
-LAZY_LIST = "androidx.compose.foundation.lazy.LazyListState"
-"""The holder whose list asks for the window of items it shows."""
+LAZY_HOLDERS = frozenset(
+    {
+        "androidx.compose.foundation.lazy.LazyListState",
+        "androidx.compose.foundation.lazy.grid.LazyGridState",
+    }
+)
+"""Holders whose list or grid asks for the window of items it shows."""
 
 GATED_STATES = frozenset({"sheet"})
 """State families whose native component must be composed conditionally.
@@ -85,7 +90,7 @@ def host_locals(entry: dict[str, Any], out: Fragments) -> str | None:
             # Expressions anywhere in the snapshot may read this holder's streams.
             out.locals.append(f"context.publish(model.id, {state['native']}Value)")
         if (
-            state.get("holder") == LAZY_LIST
+            state.get("holder") in LAZY_HOLDERS
             and entry.get("children", {}).get("kind") == "items"
         ):
             # The list asks for the window it shows as the user scrolls.

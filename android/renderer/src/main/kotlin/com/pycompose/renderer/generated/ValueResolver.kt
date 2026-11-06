@@ -47,6 +47,7 @@ import com.pycompose.ir.generated.FloatingActionButtonElevationValue
 import com.pycompose.ir.generated.FontFamilyValue
 import com.pycompose.ir.generated.FontStyleValue
 import com.pycompose.ir.generated.FontWeightValue
+import com.pycompose.ir.generated.GridCellsValue
 import com.pycompose.ir.generated.IconButtonColorsValue
 import com.pycompose.ir.generated.IconToggleButtonColorsValue
 import com.pycompose.ir.generated.ImageVectorValue
@@ -71,6 +72,7 @@ import com.pycompose.ir.generated.SizeValue
 import com.pycompose.ir.generated.SliderColorsValue
 import com.pycompose.ir.generated.SnapLayoutInfoProviderValue
 import com.pycompose.ir.generated.SnapPositionValue
+import com.pycompose.ir.generated.StaggeredGridCellsValue
 import com.pycompose.ir.generated.StrokeCapValue
 import com.pycompose.ir.generated.SwitchColorsValue
 import com.pycompose.ir.generated.TextAlignValue
@@ -112,6 +114,9 @@ import com.pycompose.ir.generated.WireFilterQuality
 import com.pycompose.ir.generated.WireFontFamily
 import com.pycompose.ir.generated.WireFontStyle
 import com.pycompose.ir.generated.WireFontWeight
+import com.pycompose.ir.generated.WireGridCellsAdaptive
+import com.pycompose.ir.generated.WireGridCellsFixed
+import com.pycompose.ir.generated.WireGridCellsFixedSize
 import com.pycompose.ir.generated.WireIntOffset
 import com.pycompose.ir.generated.WireLightColorScheme
 import com.pycompose.ir.generated.WireNamedShape
@@ -130,6 +135,9 @@ import com.pycompose.ir.generated.WireSnapLayoutInfoProvider
 import com.pycompose.ir.generated.WireSnapPosition
 import com.pycompose.ir.generated.WireSolidColor
 import com.pycompose.ir.generated.WireSp
+import com.pycompose.ir.generated.WireStaggeredGridCellsAdaptive
+import com.pycompose.ir.generated.WireStaggeredGridCellsFixed
+import com.pycompose.ir.generated.WireStaggeredGridCellsFixedSize
 import com.pycompose.ir.generated.WireStrokeCap
 import com.pycompose.ir.generated.WireTextAlign
 import com.pycompose.ir.generated.WireTextDecoration
@@ -1201,6 +1209,32 @@ object ValueResolver {
         }
 
     @Composable
+    fun gridCells(value: JsonElement): Result<androidx.compose.foundation.lazy.grid.GridCells> {
+        val parsed = runCatching { ValueContract.readGridCells(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(gridCells(parsed))
+    }
+
+    @Composable
+    fun gridCells(value: GridCellsValue): androidx.compose.foundation.lazy.grid.GridCells =
+        when (value) {
+            is WireGridCellsAdaptive -> {
+                androidx.compose.foundation.lazy.grid.GridCells.Adaptive(
+                    minSize = dp(value.minSize),
+                )
+            }
+            is WireGridCellsFixed -> {
+                androidx.compose.foundation.lazy.grid.GridCells.Fixed(
+                    count = value.count,
+                )
+            }
+            is WireGridCellsFixedSize -> {
+                androidx.compose.foundation.lazy.grid.GridCells.FixedSize(
+                    size = dp(value.size),
+                )
+            }
+        }
+
+    @Composable
     fun iconButtonColors(value: JsonElement): Result<androidx.compose.material3.IconButtonColors> {
         val parsed = runCatching { ValueContract.readIconButtonColors(value) }.getOrElse { return Result.failure(it) }
         return Result.success(iconButtonColors(parsed))
@@ -2041,6 +2075,32 @@ object ValueResolver {
                     override fun position(layoutSize: Int, itemSize: Int, beforeContentPadding: Int, afterContentPadding: Int, itemIndex: Int, itemCount: Int): Int =
                         value.position.call(layoutSize.toLong(), itemSize.toLong(), beforeContentPadding.toLong(), afterContentPadding.toLong(), itemIndex.toLong(), itemCount.toLong()).let { (it as Long).toInt() }
                 }
+            }
+        }
+
+    @Composable
+    fun staggeredGridCells(value: JsonElement): Result<androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells> {
+        val parsed = runCatching { ValueContract.readStaggeredGridCells(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(staggeredGridCells(parsed))
+    }
+
+    @Composable
+    fun staggeredGridCells(value: StaggeredGridCellsValue): androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells =
+        when (value) {
+            is WireStaggeredGridCellsAdaptive -> {
+                androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells.Adaptive(
+                    minSize = dp(value.minSize),
+                )
+            }
+            is WireStaggeredGridCellsFixed -> {
+                androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells.Fixed(
+                    count = value.count,
+                )
+            }
+            is WireStaggeredGridCellsFixedSize -> {
+                androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells.FixedSize(
+                    size = dp(value.size),
+                )
             }
         }
 

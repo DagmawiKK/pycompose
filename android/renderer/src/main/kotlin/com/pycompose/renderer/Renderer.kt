@@ -99,16 +99,16 @@ class RenderContext internal constructor(
     }
 
     /**
-     * Ask the app for the window of a lazy list as the user scrolls it (ADR-0043).
+     * Ask the app for the window of a lazy list or grid as the user scrolls it (ADR-0043).
      *
-     * @param state The list's native state, which knows what is visible.
+     * @param state The list's or grid's native state, which knows what is visible.
      * @param window The list's window key, or null for a list stated whole.
      * @param offset The index of the first item the app composed.
      * @param size How many items the app composed.
      */
     @Composable
     fun RequestWindows(
-        state: androidx.compose.foundation.lazy.LazyListState,
+        state: androidx.compose.foundation.gestures.ScrollableState,
         window: String?,
         offset: Long?,
         size: Int,
