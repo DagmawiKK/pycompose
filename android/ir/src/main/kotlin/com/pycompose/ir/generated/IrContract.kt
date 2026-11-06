@@ -1120,7 +1120,10 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
+                "colorScheme" to PropertyRule("value", required = false, since = "1.23.0", valueType = "ColorScheme"),
                 "modifier" to PropertyRule("modifier", required = false),
+                "shapes" to PropertyRule("value", required = false, since = "1.23.0", valueType = "Shapes"),
+                "typography" to PropertyRule("value", required = false, since = "1.23.0", valueType = "Typography"),
             ),
         ),
         "MediumTopAppBar" to ComponentRule(

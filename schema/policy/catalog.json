@@ -1407,6 +1407,88 @@
       },
       "family": "Shape",
       "kotlinType": "androidx.compose.ui.graphics.Shape"
+    },
+    "LightColorScheme": {
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android",
+        "owner": "androidx.compose.material3.ColorSchemeKt",
+        "name": "lightColorScheme",
+        "jvmName": "lightColorScheme-_VG5OTI",
+        "descriptor": "(JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ)Landroidx/compose/material3/ColorScheme;"
+      },
+      "kind": "factory",
+      "family": "ColorScheme",
+      "kotlinType": "androidx.compose.material3.ColorScheme"
+    },
+    "DarkColorScheme": {
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android",
+        "owner": "androidx.compose.material3.ColorSchemeKt",
+        "name": "darkColorScheme",
+        "jvmName": "darkColorScheme-_VG5OTI",
+        "descriptor": "(JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ)Landroidx/compose/material3/ColorScheme;"
+      },
+      "kind": "factory",
+      "family": "ColorScheme",
+      "kotlinType": "androidx.compose.material3.ColorScheme"
+    },
+    "Shapes": {
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android",
+        "owner": "androidx.compose.material3.Shapes",
+        "name": "<init>",
+        "jvmName": "<init>",
+        "descriptor": "(Landroidx/compose/foundation/shape/CornerBasedShape;Landroidx/compose/foundation/shape/CornerBasedShape;Landroidx/compose/foundation/shape/CornerBasedShape;Landroidx/compose/foundation/shape/CornerBasedShape;Landroidx/compose/foundation/shape/CornerBasedShape;)V"
+      },
+      "kind": "record",
+      "family": "Shapes",
+      "kotlinType": "androidx.compose.material3.Shapes"
+    },
+    "Typography": {
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android",
+        "owner": "androidx.compose.material3.Typography",
+        "name": "<init>",
+        "jvmName": "<init>",
+        "descriptor": "(Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;)V"
+      },
+      "kind": "record",
+      "family": "Typography",
+      "kotlinType": "androidx.compose.material3.Typography"
+    },
+    "RoundedCorners": {
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android",
+        "owner": "androidx.compose.foundation.shape.RoundedCornerShapeKt",
+        "name": "RoundedCornerShape",
+        "jvmName": "RoundedCornerShape-0680j_4",
+        "descriptor": "(F)Landroidx/compose/foundation/shape/RoundedCornerShape;"
+      },
+      "kind": "factory",
+      "family": "CornerBasedShape",
+      "kotlinType": "androidx.compose.foundation.shape.CornerBasedShape",
+      "parameters": {
+        "size": {
+          "minimum": 0
+        }
+      }
+    },
+    "CutCorners": {
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android",
+        "owner": "androidx.compose.foundation.shape.CutCornerShapeKt",
+        "name": "CutCornerShape",
+        "jvmName": "CutCornerShape-0680j_4",
+        "descriptor": "(F)Landroidx/compose/foundation/shape/CutCornerShape;"
+      },
+      "kind": "factory",
+      "family": "CornerBasedShape",
+      "kotlinType": "androidx.compose.foundation.shape.CornerBasedShape",
+      "parameters": {
+        "size": {
+          "minimum": 0
+        }
+      }
     }
   }
 }

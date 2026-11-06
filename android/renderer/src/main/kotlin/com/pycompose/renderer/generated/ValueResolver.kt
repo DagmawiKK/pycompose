@@ -32,7 +32,9 @@ import com.pycompose.ir.generated.CheckboxColorsValue
 import com.pycompose.ir.generated.ChipColorsValue
 import com.pycompose.ir.generated.ChipElevationValue
 import com.pycompose.ir.generated.ColorValue
+import com.pycompose.ir.generated.ColorSchemeValue
 import com.pycompose.ir.generated.ContentScaleValue
+import com.pycompose.ir.generated.CornerBasedShapeValue
 import com.pycompose.ir.generated.DatePickerColorsValue
 import com.pycompose.ir.generated.DisplayModeValue
 import com.pycompose.ir.generated.DpValue
@@ -63,6 +65,7 @@ import com.pycompose.ir.generated.SelectableChipColorsValue
 import com.pycompose.ir.generated.SelectableChipElevationValue
 import com.pycompose.ir.generated.SelectableDatesValue
 import com.pycompose.ir.generated.ShapeValue
+import com.pycompose.ir.generated.ShapesValue
 import com.pycompose.ir.generated.ShortNavigationBarArrangementValue
 import com.pycompose.ir.generated.SizeValue
 import com.pycompose.ir.generated.SliderColorsValue
@@ -83,6 +86,7 @@ import com.pycompose.ir.generated.TimePickerLayoutTypeValue
 import com.pycompose.ir.generated.ToggleableStateValue
 import com.pycompose.ir.generated.TooltipAnchorPositionValue
 import com.pycompose.ir.generated.TopAppBarColorsValue
+import com.pycompose.ir.generated.TypographyValue
 import com.pycompose.ir.generated.WindowInsetsValue
 import com.pycompose.ir.generated.ValueContract
 import com.pycompose.ir.generated.WireAlignment
@@ -95,6 +99,8 @@ import com.pycompose.ir.generated.WireBorderStroke
 import com.pycompose.ir.generated.WireColor
 import com.pycompose.ir.generated.WireContentScale
 import com.pycompose.ir.generated.WireCutCornerShape
+import com.pycompose.ir.generated.WireCutCorners
+import com.pycompose.ir.generated.WireDarkColorScheme
 import com.pycompose.ir.generated.WireDisplayMode
 import com.pycompose.ir.generated.WireDp
 import com.pycompose.ir.generated.WireDpOffset
@@ -107,6 +113,7 @@ import com.pycompose.ir.generated.WireFontFamily
 import com.pycompose.ir.generated.WireFontStyle
 import com.pycompose.ir.generated.WireFontWeight
 import com.pycompose.ir.generated.WireIntOffset
+import com.pycompose.ir.generated.WireLightColorScheme
 import com.pycompose.ir.generated.WireNamedShape
 import com.pycompose.ir.generated.WireNavigationItemIconPosition
 import com.pycompose.ir.generated.WireNavigationSuiteType
@@ -114,7 +121,9 @@ import com.pycompose.ir.generated.WireOffset
 import com.pycompose.ir.generated.WirePaddingValues
 import com.pycompose.ir.generated.WireRange
 import com.pycompose.ir.generated.WireRoundedCornerShape
+import com.pycompose.ir.generated.WireRoundedCorners
 import com.pycompose.ir.generated.WireSelectableDates
+import com.pycompose.ir.generated.WireShapes
 import com.pycompose.ir.generated.WireShortNavigationBarArrangement
 import com.pycompose.ir.generated.WireSize
 import com.pycompose.ir.generated.WireSnapLayoutInfoProvider
@@ -134,6 +143,7 @@ import com.pycompose.ir.generated.WireTimePickerDisplayMode
 import com.pycompose.ir.generated.WireTimePickerLayoutType
 import com.pycompose.ir.generated.WireToggleableState
 import com.pycompose.ir.generated.WireTooltipAnchorPosition
+import com.pycompose.ir.generated.WireTypography
 import com.pycompose.ir.generated.WireWindowInsets
 import com.pycompose.ir.generated.WireassistChipColors
 import com.pycompose.ir.generated.WireassistChipElevation
@@ -677,6 +687,219 @@ object ValueResolver {
         }
 
     @Composable
+    fun colorScheme(value: JsonElement): Result<androidx.compose.material3.ColorScheme> {
+        val parsed = runCatching { ValueContract.readColorScheme(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(colorScheme(parsed))
+    }
+
+    @Composable
+    fun colorScheme(value: ColorSchemeValue): androidx.compose.material3.ColorScheme =
+        when (value) {
+            is WireDarkColorScheme -> {
+                val base = androidx.compose.material3.darkColorScheme()
+                val primary = if ("primary" in value.supplied) value.primary?.let { item -> color(item) }!! else base.primary
+                val onPrimary = if ("onPrimary" in value.supplied) value.onPrimary?.let { item -> color(item) }!! else base.onPrimary
+                val primaryContainer = if ("primaryContainer" in value.supplied) value.primaryContainer?.let { item -> color(item) }!! else base.primaryContainer
+                val onPrimaryContainer = if ("onPrimaryContainer" in value.supplied) value.onPrimaryContainer?.let { item -> color(item) }!! else base.onPrimaryContainer
+                val inversePrimary = if ("inversePrimary" in value.supplied) value.inversePrimary?.let { item -> color(item) }!! else base.inversePrimary
+                val secondary = if ("secondary" in value.supplied) value.secondary?.let { item -> color(item) }!! else base.secondary
+                val onSecondary = if ("onSecondary" in value.supplied) value.onSecondary?.let { item -> color(item) }!! else base.onSecondary
+                val secondaryContainer = if ("secondaryContainer" in value.supplied) value.secondaryContainer?.let { item -> color(item) }!! else base.secondaryContainer
+                val onSecondaryContainer = if ("onSecondaryContainer" in value.supplied) value.onSecondaryContainer?.let { item -> color(item) }!! else base.onSecondaryContainer
+                val tertiary = if ("tertiary" in value.supplied) value.tertiary?.let { item -> color(item) }!! else base.tertiary
+                val onTertiary = if ("onTertiary" in value.supplied) value.onTertiary?.let { item -> color(item) }!! else base.onTertiary
+                val tertiaryContainer = if ("tertiaryContainer" in value.supplied) value.tertiaryContainer?.let { item -> color(item) }!! else base.tertiaryContainer
+                val onTertiaryContainer = if ("onTertiaryContainer" in value.supplied) value.onTertiaryContainer?.let { item -> color(item) }!! else base.onTertiaryContainer
+                val background = if ("background" in value.supplied) value.background?.let { item -> color(item) }!! else base.background
+                val onBackground = if ("onBackground" in value.supplied) value.onBackground?.let { item -> color(item) }!! else base.onBackground
+                val surface = if ("surface" in value.supplied) value.surface?.let { item -> color(item) }!! else base.surface
+                val onSurface = if ("onSurface" in value.supplied) value.onSurface?.let { item -> color(item) }!! else base.onSurface
+                val surfaceVariant = if ("surfaceVariant" in value.supplied) value.surfaceVariant?.let { item -> color(item) }!! else base.surfaceVariant
+                val onSurfaceVariant = if ("onSurfaceVariant" in value.supplied) value.onSurfaceVariant?.let { item -> color(item) }!! else base.onSurfaceVariant
+                val surfaceTint = if ("surfaceTint" in value.supplied) value.surfaceTint?.let { item -> color(item) }!! else primary
+                val inverseSurface = if ("inverseSurface" in value.supplied) value.inverseSurface?.let { item -> color(item) }!! else base.inverseSurface
+                val inverseOnSurface = if ("inverseOnSurface" in value.supplied) value.inverseOnSurface?.let { item -> color(item) }!! else base.inverseOnSurface
+                val error = if ("error" in value.supplied) value.error?.let { item -> color(item) }!! else base.error
+                val onError = if ("onError" in value.supplied) value.onError?.let { item -> color(item) }!! else base.onError
+                val errorContainer = if ("errorContainer" in value.supplied) value.errorContainer?.let { item -> color(item) }!! else base.errorContainer
+                val onErrorContainer = if ("onErrorContainer" in value.supplied) value.onErrorContainer?.let { item -> color(item) }!! else base.onErrorContainer
+                val outline = if ("outline" in value.supplied) value.outline?.let { item -> color(item) }!! else base.outline
+                val outlineVariant = if ("outlineVariant" in value.supplied) value.outlineVariant?.let { item -> color(item) }!! else base.outlineVariant
+                val scrim = if ("scrim" in value.supplied) value.scrim?.let { item -> color(item) }!! else base.scrim
+                val surfaceBright = if ("surfaceBright" in value.supplied) value.surfaceBright?.let { item -> color(item) }!! else base.surfaceBright
+                val surfaceContainer = if ("surfaceContainer" in value.supplied) value.surfaceContainer?.let { item -> color(item) }!! else base.surfaceContainer
+                val surfaceContainerHigh = if ("surfaceContainerHigh" in value.supplied) value.surfaceContainerHigh?.let { item -> color(item) }!! else base.surfaceContainerHigh
+                val surfaceContainerHighest = if ("surfaceContainerHighest" in value.supplied) value.surfaceContainerHighest?.let { item -> color(item) }!! else base.surfaceContainerHighest
+                val surfaceContainerLow = if ("surfaceContainerLow" in value.supplied) value.surfaceContainerLow?.let { item -> color(item) }!! else base.surfaceContainerLow
+                val surfaceContainerLowest = if ("surfaceContainerLowest" in value.supplied) value.surfaceContainerLowest?.let { item -> color(item) }!! else base.surfaceContainerLowest
+                val surfaceDim = if ("surfaceDim" in value.supplied) value.surfaceDim?.let { item -> color(item) }!! else base.surfaceDim
+                val primaryFixed = if ("primaryFixed" in value.supplied) value.primaryFixed?.let { item -> color(item) }!! else base.primaryFixed
+                val primaryFixedDim = if ("primaryFixedDim" in value.supplied) value.primaryFixedDim?.let { item -> color(item) }!! else base.primaryFixedDim
+                val onPrimaryFixed = if ("onPrimaryFixed" in value.supplied) value.onPrimaryFixed?.let { item -> color(item) }!! else base.onPrimaryFixed
+                val onPrimaryFixedVariant = if ("onPrimaryFixedVariant" in value.supplied) value.onPrimaryFixedVariant?.let { item -> color(item) }!! else base.onPrimaryFixedVariant
+                val secondaryFixed = if ("secondaryFixed" in value.supplied) value.secondaryFixed?.let { item -> color(item) }!! else base.secondaryFixed
+                val secondaryFixedDim = if ("secondaryFixedDim" in value.supplied) value.secondaryFixedDim?.let { item -> color(item) }!! else base.secondaryFixedDim
+                val onSecondaryFixed = if ("onSecondaryFixed" in value.supplied) value.onSecondaryFixed?.let { item -> color(item) }!! else base.onSecondaryFixed
+                val onSecondaryFixedVariant = if ("onSecondaryFixedVariant" in value.supplied) value.onSecondaryFixedVariant?.let { item -> color(item) }!! else base.onSecondaryFixedVariant
+                val tertiaryFixed = if ("tertiaryFixed" in value.supplied) value.tertiaryFixed?.let { item -> color(item) }!! else base.tertiaryFixed
+                val tertiaryFixedDim = if ("tertiaryFixedDim" in value.supplied) value.tertiaryFixedDim?.let { item -> color(item) }!! else base.tertiaryFixedDim
+                val onTertiaryFixed = if ("onTertiaryFixed" in value.supplied) value.onTertiaryFixed?.let { item -> color(item) }!! else base.onTertiaryFixed
+                val onTertiaryFixedVariant = if ("onTertiaryFixedVariant" in value.supplied) value.onTertiaryFixedVariant?.let { item -> color(item) }!! else base.onTertiaryFixedVariant
+                androidx.compose.material3.darkColorScheme(
+                    primary = primary,
+                    onPrimary = onPrimary,
+                    primaryContainer = primaryContainer,
+                    onPrimaryContainer = onPrimaryContainer,
+                    inversePrimary = inversePrimary,
+                    secondary = secondary,
+                    onSecondary = onSecondary,
+                    secondaryContainer = secondaryContainer,
+                    onSecondaryContainer = onSecondaryContainer,
+                    tertiary = tertiary,
+                    onTertiary = onTertiary,
+                    tertiaryContainer = tertiaryContainer,
+                    onTertiaryContainer = onTertiaryContainer,
+                    background = background,
+                    onBackground = onBackground,
+                    surface = surface,
+                    onSurface = onSurface,
+                    surfaceVariant = surfaceVariant,
+                    onSurfaceVariant = onSurfaceVariant,
+                    surfaceTint = surfaceTint,
+                    inverseSurface = inverseSurface,
+                    inverseOnSurface = inverseOnSurface,
+                    error = error,
+                    onError = onError,
+                    errorContainer = errorContainer,
+                    onErrorContainer = onErrorContainer,
+                    outline = outline,
+                    outlineVariant = outlineVariant,
+                    scrim = scrim,
+                    surfaceBright = surfaceBright,
+                    surfaceContainer = surfaceContainer,
+                    surfaceContainerHigh = surfaceContainerHigh,
+                    surfaceContainerHighest = surfaceContainerHighest,
+                    surfaceContainerLow = surfaceContainerLow,
+                    surfaceContainerLowest = surfaceContainerLowest,
+                    surfaceDim = surfaceDim,
+                    primaryFixed = primaryFixed,
+                    primaryFixedDim = primaryFixedDim,
+                    onPrimaryFixed = onPrimaryFixed,
+                    onPrimaryFixedVariant = onPrimaryFixedVariant,
+                    secondaryFixed = secondaryFixed,
+                    secondaryFixedDim = secondaryFixedDim,
+                    onSecondaryFixed = onSecondaryFixed,
+                    onSecondaryFixedVariant = onSecondaryFixedVariant,
+                    tertiaryFixed = tertiaryFixed,
+                    tertiaryFixedDim = tertiaryFixedDim,
+                    onTertiaryFixed = onTertiaryFixed,
+                    onTertiaryFixedVariant = onTertiaryFixedVariant,
+                )
+            }
+            is WireLightColorScheme -> {
+                val base = androidx.compose.material3.lightColorScheme()
+                val primary = if ("primary" in value.supplied) value.primary?.let { item -> color(item) }!! else base.primary
+                val onPrimary = if ("onPrimary" in value.supplied) value.onPrimary?.let { item -> color(item) }!! else base.onPrimary
+                val primaryContainer = if ("primaryContainer" in value.supplied) value.primaryContainer?.let { item -> color(item) }!! else base.primaryContainer
+                val onPrimaryContainer = if ("onPrimaryContainer" in value.supplied) value.onPrimaryContainer?.let { item -> color(item) }!! else base.onPrimaryContainer
+                val inversePrimary = if ("inversePrimary" in value.supplied) value.inversePrimary?.let { item -> color(item) }!! else base.inversePrimary
+                val secondary = if ("secondary" in value.supplied) value.secondary?.let { item -> color(item) }!! else base.secondary
+                val onSecondary = if ("onSecondary" in value.supplied) value.onSecondary?.let { item -> color(item) }!! else base.onSecondary
+                val secondaryContainer = if ("secondaryContainer" in value.supplied) value.secondaryContainer?.let { item -> color(item) }!! else base.secondaryContainer
+                val onSecondaryContainer = if ("onSecondaryContainer" in value.supplied) value.onSecondaryContainer?.let { item -> color(item) }!! else base.onSecondaryContainer
+                val tertiary = if ("tertiary" in value.supplied) value.tertiary?.let { item -> color(item) }!! else base.tertiary
+                val onTertiary = if ("onTertiary" in value.supplied) value.onTertiary?.let { item -> color(item) }!! else base.onTertiary
+                val tertiaryContainer = if ("tertiaryContainer" in value.supplied) value.tertiaryContainer?.let { item -> color(item) }!! else base.tertiaryContainer
+                val onTertiaryContainer = if ("onTertiaryContainer" in value.supplied) value.onTertiaryContainer?.let { item -> color(item) }!! else base.onTertiaryContainer
+                val background = if ("background" in value.supplied) value.background?.let { item -> color(item) }!! else base.background
+                val onBackground = if ("onBackground" in value.supplied) value.onBackground?.let { item -> color(item) }!! else base.onBackground
+                val surface = if ("surface" in value.supplied) value.surface?.let { item -> color(item) }!! else base.surface
+                val onSurface = if ("onSurface" in value.supplied) value.onSurface?.let { item -> color(item) }!! else base.onSurface
+                val surfaceVariant = if ("surfaceVariant" in value.supplied) value.surfaceVariant?.let { item -> color(item) }!! else base.surfaceVariant
+                val onSurfaceVariant = if ("onSurfaceVariant" in value.supplied) value.onSurfaceVariant?.let { item -> color(item) }!! else base.onSurfaceVariant
+                val surfaceTint = if ("surfaceTint" in value.supplied) value.surfaceTint?.let { item -> color(item) }!! else primary
+                val inverseSurface = if ("inverseSurface" in value.supplied) value.inverseSurface?.let { item -> color(item) }!! else base.inverseSurface
+                val inverseOnSurface = if ("inverseOnSurface" in value.supplied) value.inverseOnSurface?.let { item -> color(item) }!! else base.inverseOnSurface
+                val error = if ("error" in value.supplied) value.error?.let { item -> color(item) }!! else base.error
+                val onError = if ("onError" in value.supplied) value.onError?.let { item -> color(item) }!! else base.onError
+                val errorContainer = if ("errorContainer" in value.supplied) value.errorContainer?.let { item -> color(item) }!! else base.errorContainer
+                val onErrorContainer = if ("onErrorContainer" in value.supplied) value.onErrorContainer?.let { item -> color(item) }!! else base.onErrorContainer
+                val outline = if ("outline" in value.supplied) value.outline?.let { item -> color(item) }!! else base.outline
+                val outlineVariant = if ("outlineVariant" in value.supplied) value.outlineVariant?.let { item -> color(item) }!! else base.outlineVariant
+                val scrim = if ("scrim" in value.supplied) value.scrim?.let { item -> color(item) }!! else base.scrim
+                val surfaceBright = if ("surfaceBright" in value.supplied) value.surfaceBright?.let { item -> color(item) }!! else base.surfaceBright
+                val surfaceContainer = if ("surfaceContainer" in value.supplied) value.surfaceContainer?.let { item -> color(item) }!! else base.surfaceContainer
+                val surfaceContainerHigh = if ("surfaceContainerHigh" in value.supplied) value.surfaceContainerHigh?.let { item -> color(item) }!! else base.surfaceContainerHigh
+                val surfaceContainerHighest = if ("surfaceContainerHighest" in value.supplied) value.surfaceContainerHighest?.let { item -> color(item) }!! else base.surfaceContainerHighest
+                val surfaceContainerLow = if ("surfaceContainerLow" in value.supplied) value.surfaceContainerLow?.let { item -> color(item) }!! else base.surfaceContainerLow
+                val surfaceContainerLowest = if ("surfaceContainerLowest" in value.supplied) value.surfaceContainerLowest?.let { item -> color(item) }!! else base.surfaceContainerLowest
+                val surfaceDim = if ("surfaceDim" in value.supplied) value.surfaceDim?.let { item -> color(item) }!! else base.surfaceDim
+                val primaryFixed = if ("primaryFixed" in value.supplied) value.primaryFixed?.let { item -> color(item) }!! else base.primaryFixed
+                val primaryFixedDim = if ("primaryFixedDim" in value.supplied) value.primaryFixedDim?.let { item -> color(item) }!! else base.primaryFixedDim
+                val onPrimaryFixed = if ("onPrimaryFixed" in value.supplied) value.onPrimaryFixed?.let { item -> color(item) }!! else base.onPrimaryFixed
+                val onPrimaryFixedVariant = if ("onPrimaryFixedVariant" in value.supplied) value.onPrimaryFixedVariant?.let { item -> color(item) }!! else base.onPrimaryFixedVariant
+                val secondaryFixed = if ("secondaryFixed" in value.supplied) value.secondaryFixed?.let { item -> color(item) }!! else base.secondaryFixed
+                val secondaryFixedDim = if ("secondaryFixedDim" in value.supplied) value.secondaryFixedDim?.let { item -> color(item) }!! else base.secondaryFixedDim
+                val onSecondaryFixed = if ("onSecondaryFixed" in value.supplied) value.onSecondaryFixed?.let { item -> color(item) }!! else base.onSecondaryFixed
+                val onSecondaryFixedVariant = if ("onSecondaryFixedVariant" in value.supplied) value.onSecondaryFixedVariant?.let { item -> color(item) }!! else base.onSecondaryFixedVariant
+                val tertiaryFixed = if ("tertiaryFixed" in value.supplied) value.tertiaryFixed?.let { item -> color(item) }!! else base.tertiaryFixed
+                val tertiaryFixedDim = if ("tertiaryFixedDim" in value.supplied) value.tertiaryFixedDim?.let { item -> color(item) }!! else base.tertiaryFixedDim
+                val onTertiaryFixed = if ("onTertiaryFixed" in value.supplied) value.onTertiaryFixed?.let { item -> color(item) }!! else base.onTertiaryFixed
+                val onTertiaryFixedVariant = if ("onTertiaryFixedVariant" in value.supplied) value.onTertiaryFixedVariant?.let { item -> color(item) }!! else base.onTertiaryFixedVariant
+                androidx.compose.material3.lightColorScheme(
+                    primary = primary,
+                    onPrimary = onPrimary,
+                    primaryContainer = primaryContainer,
+                    onPrimaryContainer = onPrimaryContainer,
+                    inversePrimary = inversePrimary,
+                    secondary = secondary,
+                    onSecondary = onSecondary,
+                    secondaryContainer = secondaryContainer,
+                    onSecondaryContainer = onSecondaryContainer,
+                    tertiary = tertiary,
+                    onTertiary = onTertiary,
+                    tertiaryContainer = tertiaryContainer,
+                    onTertiaryContainer = onTertiaryContainer,
+                    background = background,
+                    onBackground = onBackground,
+                    surface = surface,
+                    onSurface = onSurface,
+                    surfaceVariant = surfaceVariant,
+                    onSurfaceVariant = onSurfaceVariant,
+                    surfaceTint = surfaceTint,
+                    inverseSurface = inverseSurface,
+                    inverseOnSurface = inverseOnSurface,
+                    error = error,
+                    onError = onError,
+                    errorContainer = errorContainer,
+                    onErrorContainer = onErrorContainer,
+                    outline = outline,
+                    outlineVariant = outlineVariant,
+                    scrim = scrim,
+                    surfaceBright = surfaceBright,
+                    surfaceContainer = surfaceContainer,
+                    surfaceContainerHigh = surfaceContainerHigh,
+                    surfaceContainerHighest = surfaceContainerHighest,
+                    surfaceContainerLow = surfaceContainerLow,
+                    surfaceContainerLowest = surfaceContainerLowest,
+                    surfaceDim = surfaceDim,
+                    primaryFixed = primaryFixed,
+                    primaryFixedDim = primaryFixedDim,
+                    onPrimaryFixed = onPrimaryFixed,
+                    onPrimaryFixedVariant = onPrimaryFixedVariant,
+                    secondaryFixed = secondaryFixed,
+                    secondaryFixedDim = secondaryFixedDim,
+                    onSecondaryFixed = onSecondaryFixed,
+                    onSecondaryFixedVariant = onSecondaryFixedVariant,
+                    tertiaryFixed = tertiaryFixed,
+                    tertiaryFixedDim = tertiaryFixedDim,
+                    onTertiaryFixed = onTertiaryFixed,
+                    onTertiaryFixedVariant = onTertiaryFixedVariant,
+                )
+            }
+        }
+
+    @Composable
     fun contentScale(value: JsonElement): Result<androidx.compose.ui.layout.ContentScale> {
         val parsed = runCatching { ValueContract.readContentScale(value) }.getOrElse { return Result.failure(it) }
         return Result.success(contentScale(parsed))
@@ -696,6 +919,27 @@ object ValueResolver {
                     "None" -> androidx.compose.ui.layout.ContentScale.None
                     else -> error("Unknown native constant")
                 }
+            }
+        }
+
+    @Composable
+    fun cornerBasedShape(value: JsonElement): Result<androidx.compose.foundation.shape.CornerBasedShape> {
+        val parsed = runCatching { ValueContract.readCornerBasedShape(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(cornerBasedShape(parsed))
+    }
+
+    @Composable
+    fun cornerBasedShape(value: CornerBasedShapeValue): androidx.compose.foundation.shape.CornerBasedShape =
+        when (value) {
+            is WireCutCorners -> {
+                androidx.compose.foundation.shape.CutCornerShape(
+                    size = dp(value.size),
+                )
+            }
+            is WireRoundedCorners -> {
+                androidx.compose.foundation.shape.RoundedCornerShape(
+                    size = dp(value.size),
+                )
             }
         }
 
@@ -1684,6 +1928,26 @@ object ValueResolver {
         }
 
     @Composable
+    fun shapes(value: JsonElement): Result<androidx.compose.material3.Shapes> {
+        val parsed = runCatching { ValueContract.readShapes(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(shapes(parsed))
+    }
+
+    @Composable
+    fun shapes(value: ShapesValue): androidx.compose.material3.Shapes =
+        when (value) {
+            is WireShapes -> {
+                androidx.compose.material3.Shapes(
+                    extraSmall = if ("extraSmall" in value.supplied) value.extraSmall?.let { item -> cornerBasedShape(item) }!! else androidx.compose.material3.ShapeDefaults.ExtraSmall,
+                    small = if ("small" in value.supplied) value.small?.let { item -> cornerBasedShape(item) }!! else androidx.compose.material3.ShapeDefaults.Small,
+                    medium = if ("medium" in value.supplied) value.medium?.let { item -> cornerBasedShape(item) }!! else androidx.compose.material3.ShapeDefaults.Medium,
+                    large = if ("large" in value.supplied) value.large?.let { item -> cornerBasedShape(item) }!! else androidx.compose.material3.ShapeDefaults.Large,
+                    extraLarge = if ("extraLarge" in value.supplied) value.extraLarge?.let { item -> cornerBasedShape(item) }!! else androidx.compose.material3.ShapeDefaults.ExtraLarge,
+                )
+            }
+        }
+
+    @Composable
     fun shortNavigationBarArrangement(value: JsonElement): Result<androidx.compose.material3.ShortNavigationBarArrangement> {
         val parsed = runCatching { ValueContract.readShortNavigationBarArrangement(value) }.getOrElse { return Result.failure(it) }
         return Result.success(shortNavigationBarArrangement(parsed))
@@ -2225,6 +2489,52 @@ object ValueResolver {
                     titleContentColor = if ("titleContentColor" in value.supplied) value.titleContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                     actionIconContentColor = if ("actionIconContentColor" in value.supplied) value.actionIconContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
                     subtitleContentColor = if ("subtitleContentColor" in value.supplied) value.subtitleContentColor?.let { item -> color(item) }!! else androidx.compose.ui.graphics.Color.Companion.Unspecified,
+                )
+            }
+        }
+
+    @Composable
+    fun typography(value: JsonElement): Result<androidx.compose.material3.Typography> {
+        val parsed = runCatching { ValueContract.readTypography(value) }.getOrElse { return Result.failure(it) }
+        return Result.success(typography(parsed))
+    }
+
+    @Composable
+    fun typography(value: TypographyValue): androidx.compose.material3.Typography =
+        when (value) {
+            is WireTypography -> {
+                val base = androidx.compose.material3.Typography()
+                val displayLarge = if ("displayLarge" in value.supplied) value.displayLarge?.let { item -> textStyle(item) }!! else base.displayLarge
+                val displayMedium = if ("displayMedium" in value.supplied) value.displayMedium?.let { item -> textStyle(item) }!! else base.displayMedium
+                val displaySmall = if ("displaySmall" in value.supplied) value.displaySmall?.let { item -> textStyle(item) }!! else base.displaySmall
+                val headlineLarge = if ("headlineLarge" in value.supplied) value.headlineLarge?.let { item -> textStyle(item) }!! else base.headlineLarge
+                val headlineMedium = if ("headlineMedium" in value.supplied) value.headlineMedium?.let { item -> textStyle(item) }!! else base.headlineMedium
+                val headlineSmall = if ("headlineSmall" in value.supplied) value.headlineSmall?.let { item -> textStyle(item) }!! else base.headlineSmall
+                val titleLarge = if ("titleLarge" in value.supplied) value.titleLarge?.let { item -> textStyle(item) }!! else base.titleLarge
+                val titleMedium = if ("titleMedium" in value.supplied) value.titleMedium?.let { item -> textStyle(item) }!! else base.titleMedium
+                val titleSmall = if ("titleSmall" in value.supplied) value.titleSmall?.let { item -> textStyle(item) }!! else base.titleSmall
+                val bodyLarge = if ("bodyLarge" in value.supplied) value.bodyLarge?.let { item -> textStyle(item) }!! else base.bodyLarge
+                val bodyMedium = if ("bodyMedium" in value.supplied) value.bodyMedium?.let { item -> textStyle(item) }!! else base.bodyMedium
+                val bodySmall = if ("bodySmall" in value.supplied) value.bodySmall?.let { item -> textStyle(item) }!! else base.bodySmall
+                val labelLarge = if ("labelLarge" in value.supplied) value.labelLarge?.let { item -> textStyle(item) }!! else base.labelLarge
+                val labelMedium = if ("labelMedium" in value.supplied) value.labelMedium?.let { item -> textStyle(item) }!! else base.labelMedium
+                val labelSmall = if ("labelSmall" in value.supplied) value.labelSmall?.let { item -> textStyle(item) }!! else base.labelSmall
+                androidx.compose.material3.Typography(
+                    displayLarge = displayLarge,
+                    displayMedium = displayMedium,
+                    displaySmall = displaySmall,
+                    headlineLarge = headlineLarge,
+                    headlineMedium = headlineMedium,
+                    headlineSmall = headlineSmall,
+                    titleLarge = titleLarge,
+                    titleMedium = titleMedium,
+                    titleSmall = titleSmall,
+                    bodyLarge = bodyLarge,
+                    bodyMedium = bodyMedium,
+                    bodySmall = bodySmall,
+                    labelLarge = labelLarge,
+                    labelMedium = labelMedium,
+                    labelSmall = labelSmall,
                 )
             }
         }

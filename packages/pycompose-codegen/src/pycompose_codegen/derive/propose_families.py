@@ -15,7 +15,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycompose_codegen.derive.classpath_dump import Declaration, Inventory, Parameter
+from pycompose_codegen.derive.classpath_dump import Declaration, Inventory
+from pycompose_codegen.derive.family_defaults import parameter_rule, readable
 from pycompose_codegen.derive.implementations import implementation_families
 from pycompose_codegen.derive.opt_ins import OptInIndex, opt_in_index, required_opt_ins
 from pycompose_codegen.derive.propose_icons import propose_icons
@@ -27,7 +28,6 @@ from pycompose_codegen.derive.propose_lookup import (
     SCALARS,
     _preserve_constraints,
     _role,
-    _rule,
     ancestors,
     assignable,
     identity,
@@ -70,6 +70,7 @@ def propose_value(
     approved_family: str | None = None,
     surface: tuple[str, ...] | None = None,
     opt_ins: OptInIndex = EMPTY_OPT_INS,
+    base: frozenset[str] = frozenset(),
 ) -> dict[str, Any]:
     """Derive an ordinary constructor/factory using reusable type/default policies.
 
@@ -84,6 +85,9 @@ def propose_value(
         surface: Approved parameter names. Other optional arguments remain native.
         opt_ins: The pin's opt-in index; the entry carries the markers this
             declaration requires, so a generated call site can opt in exactly.
+        base: Parameters a default the vocabulary cannot render may be read
+            back for, from the same call made with no arguments: the result's
+            public properties of the same name and type.
 
     Returns:
         A value descriptor that is a drop-in candidate for ``valueTypes``.
@@ -110,7 +114,7 @@ def propose_value(
                 "hasDefault": parameter.has_default,
             }
             continue
-        parameters[parameter.name] = _parameter_rule(parameter, families, defaults)
+        parameters[parameter.name] = parameter_rule(parameter, families, defaults, base)
     if surface is not None:
         if set(surface) != set(parameters):
             raise ValueError("approved parameter is missing from the native signature")
@@ -135,25 +139,6 @@ def propose_value(
     if omitted:
         result["omitted"] = omitted
     return result
-
-
-def _parameter_rule(
-    parameter: Parameter, families: dict[str, str], defaults: dict[str, Any] | None
-) -> dict[str, Any]:
-    """One bound parameter's wire rule, with its compiler-resolved default."""
-    if parameter.vararg_type:
-        raise ValueError(f"{parameter.name}: varargs need a collection policy")
-    rule = _rule(parameter.type, families)
-    if not parameter.has_default:
-        rule["required"] = True
-        return rule
-    if defaults is None or parameter.name not in defaults:
-        raise ValueError(f"{parameter.name}: missing compiler-resolved default")
-    expression = defaults[parameter.name]
-    if expression.get("kind") == "unsupported":
-        raise ValueError(f"{parameter.name}: {expression['reason']}")
-    rule["default"] = expression
-    return rule
 
 
 def _validate_callable(source: Declaration) -> None:
@@ -451,6 +436,7 @@ def bind(
                 if "parameters" in approved
                 else None,
                 opt_ins=index,
+                base=readable(found, source),
             )
             if "kotlinType" in approved:
                 if not assignable(found, approved, source.return_type.classifier):

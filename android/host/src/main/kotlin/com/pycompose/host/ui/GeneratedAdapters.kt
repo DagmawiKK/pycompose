@@ -1778,8 +1778,17 @@ object GeneratedAdapters {
             }
             .register("MaterialTheme") { node, modifier, context ->
                 val model = node as MaterialThemeNode
+                val colorSchemeWire = model.props.colorScheme
+                val colorSchemeValue = if (colorSchemeWire != null) com.pycompose.renderer.generated.ValueResolver.colorScheme(colorSchemeWire).getOrThrow() else androidx.compose.material3.MaterialTheme.colorScheme
+                val shapesWire = model.props.shapes
+                val shapesValue = if (shapesWire != null) com.pycompose.renderer.generated.ValueResolver.shapes(shapesWire).getOrThrow() else androidx.compose.material3.MaterialTheme.shapes
+                val typographyWire = model.props.typography
+                val typographyValue = if (typographyWire != null) com.pycompose.renderer.generated.ValueResolver.typography(typographyWire).getOrThrow() else androidx.compose.material3.MaterialTheme.typography
                 Box(modifier = modifier) {
                 MaterialTheme(
+                    colorScheme = colorSchemeValue,
+                    shapes = shapesValue,
+                    typography = typographyValue,
                     content = { context.children(model.children) },
                 )
                 }

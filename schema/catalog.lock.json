@@ -5332,6 +5332,24 @@
         "owner": "androidx.compose.material3.MaterialThemeKt"
       },
       "props": {
+        "colorScheme": {
+          "type": "value",
+          "valueType": "ColorScheme",
+          "nativeDefault": "androidx.compose.material3.MaterialTheme.colorScheme",
+          "since": "1.23.0"
+        },
+        "shapes": {
+          "type": "value",
+          "valueType": "Shapes",
+          "nativeDefault": "androidx.compose.material3.MaterialTheme.shapes",
+          "since": "1.23.0"
+        },
+        "typography": {
+          "type": "value",
+          "valueType": "Typography",
+          "nativeDefault": "androidx.compose.material3.MaterialTheme.typography",
+          "since": "1.23.0"
+        },
         "modifier": {
           "type": "modifier"
         }
@@ -20921,6 +20939,945 @@
         "owners": {
           "CircleShape": "androidx.compose.foundation.shape"
         }
+      }
+    },
+    "LightColorScheme": {
+      "family": "ColorScheme",
+      "kind": "factory",
+      "kotlinType": "androidx.compose.material3.ColorScheme",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "owner": "androidx.compose.material3.ColorSchemeKt",
+        "name": "lightColorScheme",
+        "jvmName": "lightColorScheme-_VG5OTI",
+        "descriptor": "(JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ)Landroidx/compose/material3/ColorScheme;"
+      },
+      "parameters": {
+        "primary": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onPrimary": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "primaryContainer": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onPrimaryContainer": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "inversePrimary": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "secondary": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onSecondary": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "secondaryContainer": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onSecondaryContainer": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "tertiary": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onTertiary": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "tertiaryContainer": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onTertiaryContainer": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "background": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onBackground": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surface": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onSurface": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surfaceVariant": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onSurfaceVariant": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surfaceTint": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "parameter",
+            "name": "primary"
+          }
+        },
+        "inverseSurface": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "inverseOnSurface": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "error": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onError": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "errorContainer": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onErrorContainer": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "outline": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "outlineVariant": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "scrim": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surfaceBright": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surfaceContainer": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surfaceContainerHigh": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surfaceContainerHighest": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surfaceContainerLow": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surfaceContainerLowest": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surfaceDim": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "primaryFixed": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "primaryFixedDim": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onPrimaryFixed": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onPrimaryFixedVariant": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "secondaryFixed": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "secondaryFixedDim": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onSecondaryFixed": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onSecondaryFixedVariant": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "tertiaryFixed": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "tertiaryFixedDim": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onTertiaryFixed": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onTertiaryFixedVariant": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        }
+      },
+      "native": {
+        "call": "androidx.compose.material3.lightColorScheme"
+      }
+    },
+    "DarkColorScheme": {
+      "family": "ColorScheme",
+      "kind": "factory",
+      "kotlinType": "androidx.compose.material3.ColorScheme",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "owner": "androidx.compose.material3.ColorSchemeKt",
+        "name": "darkColorScheme",
+        "jvmName": "darkColorScheme-_VG5OTI",
+        "descriptor": "(JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ)Landroidx/compose/material3/ColorScheme;"
+      },
+      "parameters": {
+        "primary": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onPrimary": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "primaryContainer": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onPrimaryContainer": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "inversePrimary": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "secondary": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onSecondary": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "secondaryContainer": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onSecondaryContainer": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "tertiary": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onTertiary": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "tertiaryContainer": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onTertiaryContainer": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "background": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onBackground": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surface": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onSurface": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surfaceVariant": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onSurfaceVariant": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surfaceTint": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "parameter",
+            "name": "primary"
+          }
+        },
+        "inverseSurface": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "inverseOnSurface": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "error": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onError": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "errorContainer": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onErrorContainer": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "outline": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "outlineVariant": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "scrim": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surfaceBright": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surfaceContainer": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surfaceContainerHigh": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surfaceContainerHighest": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surfaceContainerLow": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surfaceContainerLowest": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "surfaceDim": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "primaryFixed": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "primaryFixedDim": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onPrimaryFixed": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onPrimaryFixedVariant": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "secondaryFixed": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "secondaryFixedDim": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onSecondaryFixed": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onSecondaryFixedVariant": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "tertiaryFixed": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "tertiaryFixedDim": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onTertiaryFixed": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "onTertiaryFixedVariant": {
+          "type": "value",
+          "valueType": "Color",
+          "default": {
+            "kind": "base"
+          }
+        }
+      },
+      "native": {
+        "call": "androidx.compose.material3.darkColorScheme"
+      }
+    },
+    "Shapes": {
+      "family": "Shapes",
+      "kind": "record",
+      "kotlinType": "androidx.compose.material3.Shapes",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "owner": "androidx.compose.material3.Shapes",
+        "name": "<init>",
+        "jvmName": "<init>",
+        "descriptor": "(Landroidx/compose/foundation/shape/CornerBasedShape;Landroidx/compose/foundation/shape/CornerBasedShape;Landroidx/compose/foundation/shape/CornerBasedShape;Landroidx/compose/foundation/shape/CornerBasedShape;Landroidx/compose/foundation/shape/CornerBasedShape;)V"
+      },
+      "parameters": {
+        "extraSmall": {
+          "type": "value",
+          "valueType": "CornerBasedShape",
+          "default": {
+            "kind": "property",
+            "symbol": "androidx.compose.material3.ShapeDefaults.ExtraSmall"
+          }
+        },
+        "small": {
+          "type": "value",
+          "valueType": "CornerBasedShape",
+          "default": {
+            "kind": "property",
+            "symbol": "androidx.compose.material3.ShapeDefaults.Small"
+          }
+        },
+        "medium": {
+          "type": "value",
+          "valueType": "CornerBasedShape",
+          "default": {
+            "kind": "property",
+            "symbol": "androidx.compose.material3.ShapeDefaults.Medium"
+          }
+        },
+        "large": {
+          "type": "value",
+          "valueType": "CornerBasedShape",
+          "default": {
+            "kind": "property",
+            "symbol": "androidx.compose.material3.ShapeDefaults.Large"
+          }
+        },
+        "extraLarge": {
+          "type": "value",
+          "valueType": "CornerBasedShape",
+          "default": {
+            "kind": "property",
+            "symbol": "androidx.compose.material3.ShapeDefaults.ExtraLarge"
+          }
+        }
+      },
+      "native": {
+        "call": "androidx.compose.material3.Shapes"
+      }
+    },
+    "Typography": {
+      "family": "Typography",
+      "kind": "record",
+      "kotlinType": "androidx.compose.material3.Typography",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "owner": "androidx.compose.material3.Typography",
+        "name": "<init>",
+        "jvmName": "<init>",
+        "descriptor": "(Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;)V"
+      },
+      "parameters": {
+        "displayLarge": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "displayMedium": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "displaySmall": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "headlineLarge": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "headlineMedium": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "headlineSmall": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "titleLarge": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "titleMedium": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "titleSmall": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "bodyLarge": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "bodyMedium": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "bodySmall": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "labelLarge": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "labelMedium": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "default": {
+            "kind": "base"
+          }
+        },
+        "labelSmall": {
+          "type": "value",
+          "valueType": "TextStyle",
+          "default": {
+            "kind": "base"
+          }
+        }
+      },
+      "native": {
+        "call": "androidx.compose.material3.Typography"
+      }
+    },
+    "RoundedCorners": {
+      "family": "CornerBasedShape",
+      "kind": "factory",
+      "kotlinType": "androidx.compose.foundation.shape.CornerBasedShape",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "owner": "androidx.compose.foundation.shape.RoundedCornerShapeKt",
+        "name": "RoundedCornerShape",
+        "jvmName": "RoundedCornerShape-0680j_4",
+        "descriptor": "(F)Landroidx/compose/foundation/shape/RoundedCornerShape;"
+      },
+      "parameters": {
+        "size": {
+          "type": "value",
+          "valueType": "Dp",
+          "required": true,
+          "minimum": 0
+        }
+      },
+      "native": {
+        "call": "androidx.compose.foundation.shape.RoundedCornerShape"
+      }
+    },
+    "CutCorners": {
+      "family": "CornerBasedShape",
+      "kind": "factory",
+      "kotlinType": "androidx.compose.foundation.shape.CornerBasedShape",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-android:1.12.1",
+        "owner": "androidx.compose.foundation.shape.CutCornerShapeKt",
+        "name": "CutCornerShape",
+        "jvmName": "CutCornerShape-0680j_4",
+        "descriptor": "(F)Landroidx/compose/foundation/shape/CutCornerShape;"
+      },
+      "parameters": {
+        "size": {
+          "type": "value",
+          "valueType": "Dp",
+          "required": true,
+          "minimum": 0
+        }
+      },
+      "native": {
+        "call": "androidx.compose.foundation.shape.CutCornerShape"
       }
     },
     "AndroidExternalSurfaceZOrder": {

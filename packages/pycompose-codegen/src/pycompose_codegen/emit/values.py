@@ -127,6 +127,8 @@ def _validate_default(name: str, field: str, rule: dict[str, Any]) -> None:
     from pycompose_codegen.emit.rules import die
 
     if "default" in rule:
+        if rule["default"].get("kind") in {"base", "parameter"}:
+            return  # A base or another argument is read where the call is made.
         try:
             render_default(rule["default"], set())
         except ValueError as exc:

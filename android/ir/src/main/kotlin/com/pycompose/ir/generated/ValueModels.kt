@@ -46,7 +46,11 @@ sealed interface ChipElevationValue
 
 sealed interface ColorValue
 
+sealed interface ColorSchemeValue
+
 sealed interface ContentScaleValue
+
+sealed interface CornerBasedShapeValue
 
 sealed interface DatePickerColorsValue
 
@@ -108,6 +112,8 @@ sealed interface SelectableDatesValue
 
 sealed interface ShapeValue
 
+sealed interface ShapesValue
+
 sealed interface ShortNavigationBarArrangementValue
 
 sealed interface SizeValue
@@ -147,6 +153,8 @@ sealed interface ToggleableStateValue
 sealed interface TooltipAnchorPositionValue
 
 sealed interface TopAppBarColorsValue
+
+sealed interface TypographyValue
 
 sealed interface WindowInsetsValue
 
@@ -200,6 +208,63 @@ data class WireCutCornerShape(
     val supplied: Set<String>,
     val size: DpValue,
 ) : ShapeValue
+
+data class WireCutCorners(
+    val supplied: Set<String>,
+    val size: DpValue,
+) : CornerBasedShapeValue
+
+data class WireDarkColorScheme(
+    val supplied: Set<String>,
+    val primary: ColorValue? = null,
+    val onPrimary: ColorValue? = null,
+    val primaryContainer: ColorValue? = null,
+    val onPrimaryContainer: ColorValue? = null,
+    val inversePrimary: ColorValue? = null,
+    val secondary: ColorValue? = null,
+    val onSecondary: ColorValue? = null,
+    val secondaryContainer: ColorValue? = null,
+    val onSecondaryContainer: ColorValue? = null,
+    val tertiary: ColorValue? = null,
+    val onTertiary: ColorValue? = null,
+    val tertiaryContainer: ColorValue? = null,
+    val onTertiaryContainer: ColorValue? = null,
+    val background: ColorValue? = null,
+    val onBackground: ColorValue? = null,
+    val surface: ColorValue? = null,
+    val onSurface: ColorValue? = null,
+    val surfaceVariant: ColorValue? = null,
+    val onSurfaceVariant: ColorValue? = null,
+    val surfaceTint: ColorValue? = null,
+    val inverseSurface: ColorValue? = null,
+    val inverseOnSurface: ColorValue? = null,
+    val error: ColorValue? = null,
+    val onError: ColorValue? = null,
+    val errorContainer: ColorValue? = null,
+    val onErrorContainer: ColorValue? = null,
+    val outline: ColorValue? = null,
+    val outlineVariant: ColorValue? = null,
+    val scrim: ColorValue? = null,
+    val surfaceBright: ColorValue? = null,
+    val surfaceContainer: ColorValue? = null,
+    val surfaceContainerHigh: ColorValue? = null,
+    val surfaceContainerHighest: ColorValue? = null,
+    val surfaceContainerLow: ColorValue? = null,
+    val surfaceContainerLowest: ColorValue? = null,
+    val surfaceDim: ColorValue? = null,
+    val primaryFixed: ColorValue? = null,
+    val primaryFixedDim: ColorValue? = null,
+    val onPrimaryFixed: ColorValue? = null,
+    val onPrimaryFixedVariant: ColorValue? = null,
+    val secondaryFixed: ColorValue? = null,
+    val secondaryFixedDim: ColorValue? = null,
+    val onSecondaryFixed: ColorValue? = null,
+    val onSecondaryFixedVariant: ColorValue? = null,
+    val tertiaryFixed: ColorValue? = null,
+    val tertiaryFixedDim: ColorValue? = null,
+    val onTertiaryFixed: ColorValue? = null,
+    val onTertiaryFixedVariant: ColorValue? = null,
+) : ColorSchemeValue
 
 data class WireDisplayMode(
     val supplied: Set<String>,
@@ -263,6 +328,58 @@ data class WireIntOffset(
     val name: String,
 ) : IntOffsetValue
 
+data class WireLightColorScheme(
+    val supplied: Set<String>,
+    val primary: ColorValue? = null,
+    val onPrimary: ColorValue? = null,
+    val primaryContainer: ColorValue? = null,
+    val onPrimaryContainer: ColorValue? = null,
+    val inversePrimary: ColorValue? = null,
+    val secondary: ColorValue? = null,
+    val onSecondary: ColorValue? = null,
+    val secondaryContainer: ColorValue? = null,
+    val onSecondaryContainer: ColorValue? = null,
+    val tertiary: ColorValue? = null,
+    val onTertiary: ColorValue? = null,
+    val tertiaryContainer: ColorValue? = null,
+    val onTertiaryContainer: ColorValue? = null,
+    val background: ColorValue? = null,
+    val onBackground: ColorValue? = null,
+    val surface: ColorValue? = null,
+    val onSurface: ColorValue? = null,
+    val surfaceVariant: ColorValue? = null,
+    val onSurfaceVariant: ColorValue? = null,
+    val surfaceTint: ColorValue? = null,
+    val inverseSurface: ColorValue? = null,
+    val inverseOnSurface: ColorValue? = null,
+    val error: ColorValue? = null,
+    val onError: ColorValue? = null,
+    val errorContainer: ColorValue? = null,
+    val onErrorContainer: ColorValue? = null,
+    val outline: ColorValue? = null,
+    val outlineVariant: ColorValue? = null,
+    val scrim: ColorValue? = null,
+    val surfaceBright: ColorValue? = null,
+    val surfaceContainer: ColorValue? = null,
+    val surfaceContainerHigh: ColorValue? = null,
+    val surfaceContainerHighest: ColorValue? = null,
+    val surfaceContainerLow: ColorValue? = null,
+    val surfaceContainerLowest: ColorValue? = null,
+    val surfaceDim: ColorValue? = null,
+    val primaryFixed: ColorValue? = null,
+    val primaryFixedDim: ColorValue? = null,
+    val onPrimaryFixed: ColorValue? = null,
+    val onPrimaryFixedVariant: ColorValue? = null,
+    val secondaryFixed: ColorValue? = null,
+    val secondaryFixedDim: ColorValue? = null,
+    val onSecondaryFixed: ColorValue? = null,
+    val onSecondaryFixedVariant: ColorValue? = null,
+    val tertiaryFixed: ColorValue? = null,
+    val tertiaryFixedDim: ColorValue? = null,
+    val onTertiaryFixed: ColorValue? = null,
+    val onTertiaryFixedVariant: ColorValue? = null,
+) : ColorSchemeValue
+
 data class WireNamedShape(
     val supplied: Set<String>,
     val name: String,
@@ -303,11 +420,25 @@ data class WireRoundedCornerShape(
     val size: DpValue,
 ) : ShapeValue
 
+data class WireRoundedCorners(
+    val supplied: Set<String>,
+    val size: DpValue,
+) : CornerBasedShapeValue
+
 data class WireSelectableDates(
     val supplied: Set<String>,
     val isSelectableDate: com.pycompose.program.Function? = null,
     val isSelectableYear: com.pycompose.program.Function? = null,
 ) : SelectableDatesValue
+
+data class WireShapes(
+    val supplied: Set<String>,
+    val extraSmall: CornerBasedShapeValue? = null,
+    val small: CornerBasedShapeValue? = null,
+    val medium: CornerBasedShapeValue? = null,
+    val large: CornerBasedShapeValue? = null,
+    val extraLarge: CornerBasedShapeValue? = null,
+) : ShapesValue
 
 data class WireShortNavigationBarArrangement(
     val supplied: Set<String>,
@@ -409,6 +540,25 @@ data class WireTooltipAnchorPosition(
     val supplied: Set<String>,
     val name: String,
 ) : TooltipAnchorPositionValue
+
+data class WireTypography(
+    val supplied: Set<String>,
+    val displayLarge: TextStyleValue? = null,
+    val displayMedium: TextStyleValue? = null,
+    val displaySmall: TextStyleValue? = null,
+    val headlineLarge: TextStyleValue? = null,
+    val headlineMedium: TextStyleValue? = null,
+    val headlineSmall: TextStyleValue? = null,
+    val titleLarge: TextStyleValue? = null,
+    val titleMedium: TextStyleValue? = null,
+    val titleSmall: TextStyleValue? = null,
+    val bodyLarge: TextStyleValue? = null,
+    val bodyMedium: TextStyleValue? = null,
+    val bodySmall: TextStyleValue? = null,
+    val labelLarge: TextStyleValue? = null,
+    val labelMedium: TextStyleValue? = null,
+    val labelSmall: TextStyleValue? = null,
+) : TypographyValue
 
 data class WireWindowInsets(
     val supplied: Set<String>,
@@ -1053,11 +1203,64 @@ object ValueContract {
             "Width\",\"Fit\",\"Inside\",\"None\"]}},",
             "\"since\":\"1.23.0\"},\"CutCornerShape\":{\"family\":\"Shape\",",
             "\"parameters\":{\"size\":{\"minimum\":0,\"required\":true,\"type\":\"value\"",
-            ",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"DisplayMode\":{\"family\":\"D",
-            "isplayMode\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"string",
-            "\",\"values\":[\"Input\",\"Picker\"]}},\"since\":\"1.14.0\"},\"Dp\":{\"family\"",
-            ":\"Dp\",\"parameters\":{\"value\":{\"required\":true,\"type\":\"float\"}},\"s",
-            "ince\":\"1.11.0\"},\"DpOffset\":{\"family\":\"DpOffset\",",
+            ",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"CutCorners\":{\"family\":\"Co",
+            "rnerBasedShape\",\"parameters\":{\"size\":{\"minimum\":0,\"required\":tru",
+            "e,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.23.0\"},",
+            "\"DarkColorScheme\":{\"family\":\"ColorScheme\",\"parameters\":{\"backgro",
+            "und\":{\"type\":\"value\",\"valueType\":\"Color\"},",
+            "\"error\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"errorContainer\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"inverseOnSurface\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"inversePrimary\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"inverseSurface\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onBackground\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onError\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onErrorContainer\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onPrimary\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onPrimaryContainer\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onPrimaryFixed\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onPrimaryFixedVariant\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onSecondary\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onSecondaryContainer\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onSecondaryFixed\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onSecondaryFixedVariant\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onSurface\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onSurfaceVariant\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onTertiary\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onTertiaryContainer\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onTertiaryFixed\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onTertiaryFixedVariant\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"outline\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"outlineVariant\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"primary\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"primaryContainer\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"primaryFixed\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"primaryFixedDim\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"scrim\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"secondary\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"secondaryContainer\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"secondaryFixed\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"secondaryFixedDim\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surface\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surfaceBright\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surfaceContainer\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surfaceContainerHigh\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surfaceContainerHighest\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surfaceContainerLow\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surfaceContainerLowest\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surfaceDim\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surfaceTint\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surfaceVariant\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"tertiary\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"tertiaryContainer\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"tertiaryFixed\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"tertiaryFixedDim\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"}},\"since\":\"1.23.0\"},",
+            "\"DisplayMode\":{\"family\":\"DisplayMode\",",
+            "\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\",",
+            "\"values\":[\"Input\",\"Picker\"]}},\"since\":\"1.14.0\"},\"Dp\":{\"family\":\"",
+            "Dp\",\"parameters\":{\"value\":{\"required\":true,\"type\":\"float\"}},\"sin",
+            "ce\":\"1.11.0\"},\"DpOffset\":{\"family\":\"DpOffset\",",
             "\"parameters\":{\"x\":{\"required\":true,\"type\":\"value\",\"valueType\":\"D",
             "p\"},\"y\":{\"required\":true,\"type\":\"value\",\"valueType\":\"Dp\"}},\"sinc",
             "e\":\"1.13.0\"},\"DpSize\":{\"family\":\"DpSize\",\"parameters\":{\"height\":",
@@ -1086,7 +1289,57 @@ object ValueContract {
             "\"since\":\"1.11.0\"},\"IntOffset\":{\"family\":\"IntOffset\",\"parameters\"",
             ":{\"name\":{\"required\":true,\"type\":\"string\",",
             "\"values\":[\"Max\",\"Zero\"]}},",
-            "\"since\":\"1.23.0\"},\"NamedShape\":{\"family\":\"Shape\",",
+            "\"since\":\"1.23.0\"},\"LightColorScheme\":{\"family\":\"ColorScheme\",\"pa",
+            "rameters\":{\"background\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"error\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"errorContainer\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"inverseOnSurface\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"inversePrimary\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"inverseSurface\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onBackground\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onError\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onErrorContainer\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onPrimary\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onPrimaryContainer\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onPrimaryFixed\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onPrimaryFixedVariant\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onSecondary\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onSecondaryContainer\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onSecondaryFixed\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onSecondaryFixedVariant\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onSurface\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onSurfaceVariant\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onTertiary\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onTertiaryContainer\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onTertiaryFixed\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"onTertiaryFixedVariant\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"outline\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"outlineVariant\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"primary\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"primaryContainer\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"primaryFixed\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"primaryFixedDim\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"scrim\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"secondary\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"secondaryContainer\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"secondaryFixed\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"secondaryFixedDim\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surface\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surfaceBright\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surfaceContainer\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surfaceContainerHigh\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surfaceContainerHighest\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surfaceContainerLow\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surfaceContainerLowest\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surfaceDim\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surfaceTint\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"surfaceVariant\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"tertiary\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"tertiaryContainer\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"tertiaryFixed\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"},\"tertiaryFixedDim\":{\"type\":\"value\",",
+            "\"valueType\":\"Color\"}},\"since\":\"1.23.0\"},",
+            "\"NamedShape\":{\"family\":\"Shape\",",
             "\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\",",
             "\"values\":[\"CircleShape\",\"RectangleShape\"]}},",
             "\"since\":\"1.23.0\"},\"NavigationItemIconPosition\":{\"family\":\"Naviga",
@@ -1111,21 +1364,34 @@ object ValueContract {
             "equired\":true,\"type\":\"float\"}},\"since\":\"1.23.0\"},",
             "\"RoundedCornerShape\":{\"family\":\"Shape\",",
             "\"parameters\":{\"size\":{\"minimum\":0,\"required\":true,\"type\":\"value\"",
-            ",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"SelectableDates\":{\"family",
-            "\":\"SelectableDates\",\"parameters\":{\"isSelectableDate\":{\"signature",
-            "\":{\"params\":[\"integer\"],\"result\":\"boolean\"},\"type\":\"program\"},\"i",
-            "sSelectableYear\":{\"signature\":{\"params\":[\"integer\"],\"result\":\"bo",
-            "olean\"},\"type\":\"program\"}},\"since\":\"1.23.0\"},",
-            "\"ShortNavigationBarArrangement\":{\"family\":\"ShortNavigationBarArr",
-            "angement\",\"parameters\":{\"name\":{\"required\":true,\"type\":\"string\",",
-            "\"values\":[\"Centered\",\"EqualWeight\"]}},",
-            "\"since\":\"1.23.0\"},\"Size\":{\"family\":\"Size\",\"parameters\":{\"height\"",
-            ":{\"minimum\":0,\"required\":true,\"type\":\"float\"},\"width\":{\"minimum\"",
-            ":0,\"required\":true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"SnapLayou",
-            "tInfoProvider\":{\"family\":\"SnapLayoutInfoProvider\",\"parameters\":{",
-            "\"calculateApproachOffset\":{\"signature\":{\"params\":[\"number\",\"numb",
-            "er\"],\"result\":\"number\"},\"type\":\"program\"},\"calculateSnapOffset\":",
-            "{\"required\":true,\"signature\":{\"params\":[\"number\"],",
+            ",\"valueType\":\"Dp\"}},\"since\":\"1.11.0\"},\"RoundedCorners\":{\"family\"",
+            ":\"CornerBasedShape\",\"parameters\":{\"size\":{\"minimum\":0,\"required\"",
+            ":true,\"type\":\"value\",\"valueType\":\"Dp\"}},\"since\":\"1.23.0\"},",
+            "\"SelectableDates\":{\"family\":\"SelectableDates\",\"parameters\":{\"isS",
+            "electableDate\":{\"signature\":{\"params\":[\"integer\"],\"result\":\"bool",
+            "ean\"},\"type\":\"program\"},\"isSelectableYear\":{\"signature\":{\"params",
+            "\":[\"integer\"],\"result\":\"boolean\"},\"type\":\"program\"}},\"since\":\"1.",
+            "23.0\"},\"Shapes\":{\"family\":\"Shapes\",\"parameters\":{\"extraLarge\":{\"",
+            "type\":\"value\",\"valueType\":\"CornerBasedShape\"},",
+            "\"extraSmall\":{\"type\":\"value\",",
+            "\"valueType\":\"CornerBasedShape\"},",
+            "\"large\":{\"type\":\"value\",",
+            "\"valueType\":\"CornerBasedShape\"},",
+            "\"medium\":{\"type\":\"value\",",
+            "\"valueType\":\"CornerBasedShape\"},",
+            "\"small\":{\"type\":\"value\",",
+            "\"valueType\":\"CornerBasedShape\"}},",
+            "\"since\":\"1.23.0\"},\"ShortNavigationBarArrangement\":{\"family\":\"Sho",
+            "rtNavigationBarArrangement\",\"parameters\":{\"name\":{\"required\":tru",
+            "e,\"type\":\"string\",\"values\":[\"Centered\",",
+            "\"EqualWeight\"]}},\"since\":\"1.23.0\"},",
+            "\"Size\":{\"family\":\"Size\",\"parameters\":{\"height\":{\"minimum\":0,",
+            "\"required\":true,\"type\":\"float\"},\"width\":{\"minimum\":0,\"required\":",
+            "true,\"type\":\"float\"}},\"since\":\"1.11.0\"},\"SnapLayoutInfoProvider\"",
+            ":{\"family\":\"SnapLayoutInfoProvider\",\"parameters\":{\"calculateAppr",
+            "oachOffset\":{\"signature\":{\"params\":[\"number\",\"number\"],",
+            "\"result\":\"number\"},\"type\":\"program\"},\"calculateSnapOffset\":{\"req",
+            "uired\":true,\"signature\":{\"params\":[\"number\"],",
             "\"result\":\"number\"},\"type\":\"program\"}},\"since\":\"1.23.0\"},",
             "\"SnapPosition\":{\"family\":\"SnapPosition\",\"parameters\":{\"position\"",
             ":{\"required\":true,\"signature\":{\"params\":[\"integer\",\"integer\",\"in",
@@ -1201,6 +1467,23 @@ object ValueContract {
             "eters\":{\"name\":{\"required\":true,\"type\":\"string\",",
             "\"values\":[\"Above\",\"Below\",",
             "\"End\",\"Left\",\"Right\",\"Start\"]}},\"since\":\"1.23.0\"},",
+            "\"Typography\":{\"family\":\"Typography\",",
+            "\"parameters\":{\"bodyLarge\":{\"type\":\"value\",",
+            "\"valueType\":\"TextStyle\"},\"bodyMedium\":{\"type\":\"value\",",
+            "\"valueType\":\"TextStyle\"},\"bodySmall\":{\"type\":\"value\",",
+            "\"valueType\":\"TextStyle\"},\"displayLarge\":{\"type\":\"value\",",
+            "\"valueType\":\"TextStyle\"},\"displayMedium\":{\"type\":\"value\",",
+            "\"valueType\":\"TextStyle\"},\"displaySmall\":{\"type\":\"value\",",
+            "\"valueType\":\"TextStyle\"},\"headlineLarge\":{\"type\":\"value\",",
+            "\"valueType\":\"TextStyle\"},\"headlineMedium\":{\"type\":\"value\",",
+            "\"valueType\":\"TextStyle\"},\"headlineSmall\":{\"type\":\"value\",",
+            "\"valueType\":\"TextStyle\"},\"labelLarge\":{\"type\":\"value\",",
+            "\"valueType\":\"TextStyle\"},\"labelMedium\":{\"type\":\"value\",",
+            "\"valueType\":\"TextStyle\"},\"labelSmall\":{\"type\":\"value\",",
+            "\"valueType\":\"TextStyle\"},\"titleLarge\":{\"type\":\"value\",",
+            "\"valueType\":\"TextStyle\"},\"titleMedium\":{\"type\":\"value\",",
+            "\"valueType\":\"TextStyle\"},\"titleSmall\":{\"type\":\"value\",",
+            "\"valueType\":\"TextStyle\"}},\"since\":\"1.23.0\"},",
             "\"WindowInsets\":{\"family\":\"WindowInsets\",\"parameters\":{\"bottom\":{",
             "\"minimum\":0,\"type\":\"value\",\"valueType\":\"Dp\"},\"left\":{\"minimum\":0",
             ",\"type\":\"value\",\"valueType\":\"Dp\"},\"right\":{\"minimum\":0,",
@@ -2100,6 +2383,116 @@ object ValueContract {
         }
     }
 
+    fun readColorScheme(value: JsonElement): ColorSchemeValue {
+        ValueParser.validate(value, "ColorScheme", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "DarkColorScheme" -> WireDarkColorScheme(
+                supplied = data.keys,
+                primary = data["primary"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onPrimary = data["onPrimary"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                primaryContainer = data["primaryContainer"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onPrimaryContainer = data["onPrimaryContainer"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                inversePrimary = data["inversePrimary"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                secondary = data["secondary"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onSecondary = data["onSecondary"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                secondaryContainer = data["secondaryContainer"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onSecondaryContainer = data["onSecondaryContainer"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                tertiary = data["tertiary"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onTertiary = data["onTertiary"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                tertiaryContainer = data["tertiaryContainer"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onTertiaryContainer = data["onTertiaryContainer"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                background = data["background"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onBackground = data["onBackground"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surface = data["surface"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onSurface = data["onSurface"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surfaceVariant = data["surfaceVariant"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onSurfaceVariant = data["onSurfaceVariant"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surfaceTint = data["surfaceTint"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                inverseSurface = data["inverseSurface"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                inverseOnSurface = data["inverseOnSurface"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                error = data["error"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onError = data["onError"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorContainer = data["errorContainer"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onErrorContainer = data["onErrorContainer"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                outline = data["outline"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                outlineVariant = data["outlineVariant"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                scrim = data["scrim"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surfaceBright = data["surfaceBright"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surfaceContainer = data["surfaceContainer"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surfaceContainerHigh = data["surfaceContainerHigh"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surfaceContainerHighest = data["surfaceContainerHighest"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surfaceContainerLow = data["surfaceContainerLow"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surfaceContainerLowest = data["surfaceContainerLowest"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surfaceDim = data["surfaceDim"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                primaryFixed = data["primaryFixed"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                primaryFixedDim = data["primaryFixedDim"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onPrimaryFixed = data["onPrimaryFixed"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onPrimaryFixedVariant = data["onPrimaryFixedVariant"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                secondaryFixed = data["secondaryFixed"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                secondaryFixedDim = data["secondaryFixedDim"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onSecondaryFixed = data["onSecondaryFixed"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onSecondaryFixedVariant = data["onSecondaryFixedVariant"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                tertiaryFixed = data["tertiaryFixed"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                tertiaryFixedDim = data["tertiaryFixedDim"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onTertiaryFixed = data["onTertiaryFixed"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onTertiaryFixedVariant = data["onTertiaryFixedVariant"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            "LightColorScheme" -> WireLightColorScheme(
+                supplied = data.keys,
+                primary = data["primary"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onPrimary = data["onPrimary"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                primaryContainer = data["primaryContainer"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onPrimaryContainer = data["onPrimaryContainer"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                inversePrimary = data["inversePrimary"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                secondary = data["secondary"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onSecondary = data["onSecondary"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                secondaryContainer = data["secondaryContainer"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onSecondaryContainer = data["onSecondaryContainer"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                tertiary = data["tertiary"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onTertiary = data["onTertiary"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                tertiaryContainer = data["tertiaryContainer"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onTertiaryContainer = data["onTertiaryContainer"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                background = data["background"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onBackground = data["onBackground"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surface = data["surface"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onSurface = data["onSurface"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surfaceVariant = data["surfaceVariant"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onSurfaceVariant = data["onSurfaceVariant"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surfaceTint = data["surfaceTint"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                inverseSurface = data["inverseSurface"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                inverseOnSurface = data["inverseOnSurface"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                error = data["error"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onError = data["onError"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                errorContainer = data["errorContainer"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onErrorContainer = data["onErrorContainer"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                outline = data["outline"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                outlineVariant = data["outlineVariant"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                scrim = data["scrim"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surfaceBright = data["surfaceBright"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surfaceContainer = data["surfaceContainer"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surfaceContainerHigh = data["surfaceContainerHigh"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surfaceContainerHighest = data["surfaceContainerHighest"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surfaceContainerLow = data["surfaceContainerLow"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surfaceContainerLowest = data["surfaceContainerLowest"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                surfaceDim = data["surfaceDim"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                primaryFixed = data["primaryFixed"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                primaryFixedDim = data["primaryFixedDim"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onPrimaryFixed = data["onPrimaryFixed"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onPrimaryFixedVariant = data["onPrimaryFixedVariant"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                secondaryFixed = data["secondaryFixed"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                secondaryFixedDim = data["secondaryFixedDim"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onSecondaryFixed = data["onSecondaryFixed"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onSecondaryFixedVariant = data["onSecondaryFixedVariant"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                tertiaryFixed = data["tertiaryFixed"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                tertiaryFixedDim = data["tertiaryFixedDim"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onTertiaryFixed = data["onTertiaryFixed"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+                onTertiaryFixedVariant = data["onTertiaryFixedVariant"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
     fun readContentScale(value: JsonElement): ContentScaleValue {
         ValueParser.validate(value, "ContentScale", specs).getOrThrow()
         val data = value.jsonObject
@@ -2107,6 +2500,22 @@ object ValueContract {
             "ContentScale" -> WireContentScale(
                 supplied = data.keys,
                 name = data.getValue("name").jsonPrimitive.content,
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readCornerBasedShape(value: JsonElement): CornerBasedShapeValue {
+        ValueParser.validate(value, "CornerBasedShape", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "CutCorners" -> WireCutCorners(
+                supplied = data.keys,
+                size = readDp(data.getValue("size")),
+            )
+            "RoundedCorners" -> WireRoundedCorners(
+                supplied = data.keys,
+                size = readDp(data.getValue("size")),
             )
             else -> error("Unknown value constructor")
         }
@@ -2671,6 +3080,22 @@ object ValueContract {
         }
     }
 
+    fun readShapes(value: JsonElement): ShapesValue {
+        ValueParser.validate(value, "Shapes", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "Shapes" -> WireShapes(
+                supplied = data.keys,
+                extraSmall = data["extraSmall"]?.takeUnless { it == JsonNull }?.let { item -> readCornerBasedShape(item) },
+                small = data["small"]?.takeUnless { it == JsonNull }?.let { item -> readCornerBasedShape(item) },
+                medium = data["medium"]?.takeUnless { it == JsonNull }?.let { item -> readCornerBasedShape(item) },
+                large = data["large"]?.takeUnless { it == JsonNull }?.let { item -> readCornerBasedShape(item) },
+                extraLarge = data["extraLarge"]?.takeUnless { it == JsonNull }?.let { item -> readCornerBasedShape(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
     fun readShortNavigationBarArrangement(value: JsonElement): ShortNavigationBarArrangementValue {
         ValueParser.validate(value, "ShortNavigationBarArrangement", specs).getOrThrow()
         val data = value.jsonObject
@@ -3065,6 +3490,32 @@ object ValueContract {
                 titleContentColor = data["titleContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
                 actionIconContentColor = data["actionIconContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
                 subtitleContentColor = data["subtitleContentColor"]?.takeUnless { it == JsonNull }?.let { item -> readColor(item) },
+            )
+            else -> error("Unknown value constructor")
+        }
+    }
+
+    fun readTypography(value: JsonElement): TypographyValue {
+        ValueParser.validate(value, "Typography", specs).getOrThrow()
+        val data = value.jsonObject
+        return when (data.getValue("type").jsonPrimitive.content) {
+            "Typography" -> WireTypography(
+                supplied = data.keys,
+                displayLarge = data["displayLarge"]?.takeUnless { it == JsonNull }?.let { item -> readTextStyle(item) },
+                displayMedium = data["displayMedium"]?.takeUnless { it == JsonNull }?.let { item -> readTextStyle(item) },
+                displaySmall = data["displaySmall"]?.takeUnless { it == JsonNull }?.let { item -> readTextStyle(item) },
+                headlineLarge = data["headlineLarge"]?.takeUnless { it == JsonNull }?.let { item -> readTextStyle(item) },
+                headlineMedium = data["headlineMedium"]?.takeUnless { it == JsonNull }?.let { item -> readTextStyle(item) },
+                headlineSmall = data["headlineSmall"]?.takeUnless { it == JsonNull }?.let { item -> readTextStyle(item) },
+                titleLarge = data["titleLarge"]?.takeUnless { it == JsonNull }?.let { item -> readTextStyle(item) },
+                titleMedium = data["titleMedium"]?.takeUnless { it == JsonNull }?.let { item -> readTextStyle(item) },
+                titleSmall = data["titleSmall"]?.takeUnless { it == JsonNull }?.let { item -> readTextStyle(item) },
+                bodyLarge = data["bodyLarge"]?.takeUnless { it == JsonNull }?.let { item -> readTextStyle(item) },
+                bodyMedium = data["bodyMedium"]?.takeUnless { it == JsonNull }?.let { item -> readTextStyle(item) },
+                bodySmall = data["bodySmall"]?.takeUnless { it == JsonNull }?.let { item -> readTextStyle(item) },
+                labelLarge = data["labelLarge"]?.takeUnless { it == JsonNull }?.let { item -> readTextStyle(item) },
+                labelMedium = data["labelMedium"]?.takeUnless { it == JsonNull }?.let { item -> readTextStyle(item) },
+                labelSmall = data["labelSmall"]?.takeUnless { it == JsonNull }?.let { item -> readTextStyle(item) },
             )
             else -> error("Unknown value constructor")
         }

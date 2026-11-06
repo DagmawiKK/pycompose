@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtConstantExpression
@@ -111,24 +112,34 @@ internal class Defaults(private val context: BindingContext) {
         type: KotlinType,
     ): Map<String, Any?> {
         val target = context[BindingContext.REFERENCE_TARGET, reference]
-        if (target is ClassDescriptor && target.kind == ClassKind.OBJECT) {
-            check(resolving.isEmpty() && target.exported()) { "non-public/token object default" }
-            staticQualifier(node)
-            return mapOf("kind" to "object", "symbol" to target.symbol())
+        return when {
+            // Another parameter of the same call (`surfaceTint: Color = primary`): kept as the
+            // dependency it is, so a value stated for the one carries to the other.
+            target is ValueParameterDescriptor && node === reference && resolving.isEmpty() ->
+                mapOf("kind" to "parameter", "name" to target.name.asString())
+            target is ClassDescriptor && target.kind == ClassKind.OBJECT -> {
+                check(resolving.isEmpty() && target.exported()) {
+                    "non-public/token object default"
+                }
+                staticQualifier(node)
+                mapOf("kind" to "object", "symbol" to target.symbol())
+            }
+            else -> {
+                val property = target as? PropertyDescriptor
+                    ?: error("default is not a resolved property")
+                check(!property.isVar) { "mutable default reference" }
+                val receiver = (node as? KtDotQualifiedExpression)?.receiverExpression
+                val qualifier =
+                    receiver != null && context[BindingContext.QUALIFIER, receiver] != null
+                requireStaticQualifier(property, receiver, qualifier, node)
+                // A property reference is only safe when it really is the value the
+                // parameter declares; anything else is a protocol, not a default.
+                check(KotlinTypeChecker.DEFAULT.equalTypes(property.type, type)) {
+                    "default ${property.symbol()} is not a ${type.classifier()}"
+                }
+                memberValue(property, receiver, qualifier, node, type)
+            }
         }
-        val property = target as? PropertyDescriptor
-            ?: error("default is not a resolved property")
-        check(!property.isVar) { "mutable default reference" }
-        val receiver = (node as? KtDotQualifiedExpression)?.receiverExpression
-        val qualifier =
-            receiver != null && context[BindingContext.QUALIFIER, receiver] != null
-        requireStaticQualifier(property, receiver, qualifier, node)
-        // A property reference is only safe when it really is the value the
-        // parameter declares; anything else is a protocol, not a default.
-        check(KotlinTypeChecker.DEFAULT.equalTypes(property.type, type)) {
-            "default ${property.symbol()} is not a ${type.classifier()}"
-        }
-        return memberValue(property, receiver, qualifier, node, type)
     }
 
     /**

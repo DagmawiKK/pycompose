@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from pycompose_codegen.emit.contextual import CONTEXTUAL, contextual
 from pycompose_codegen.emit.defaults import render_default
 from pycompose_codegen.emit.implementations_kotlin import implementation
 from pycompose_codegen.emit.themed import THEME, themed
@@ -209,7 +210,7 @@ def render_native(registry: dict[str, Any]) -> str:
         (name, field): render_default(rule["default"], imports)
         for name, spec in specs.items()
         for field, rule in spec["parameters"].items()
-        if "default" in rule
+        if "default" in rule and rule["default"]["kind"] not in CONTEXTUAL
     }
     imports.update(vocabulary_imports(specs))
     lines = [
@@ -322,6 +323,11 @@ def _constructor(
         ]
         expression = native["operator"].join(operands)
         lines.append(f"                {expression}")
+    elif any(
+        rule.get("default", {}).get("kind") in CONTEXTUAL
+        for rule in spec["parameters"].values()
+    ):
+        lines.extend(contextual(name, spec, defaults, _decode_parameter))
     else:
         lines.append(f"                {native['call']}(")
         for field, rule in spec["parameters"].items():

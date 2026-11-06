@@ -268,3 +268,27 @@ def test_enum_border_and_annotated_families_validate_before_native_code() -> Non
         )
     with pytest.raises(IrValidationError, match="wrong value family"):
         BorderStroke(width=Color(0xFF000000), brush=SolidColor(value=Color(0xFFFFFFFF)))
+
+
+def test_a_theme_states_its_scheme_shapes_and_type_by_family() -> None:
+    from pycompose.host.wire import emit_ir, validate_ir
+    from pycompose.model.catalog.lock import SCHEMA_VERSION
+    from pycompose.model.snapshot import Snapshot
+    from pycompose.ui import MaterialTheme, Text
+    from pycompose.ui._generated.values import (
+        Color,
+        LightColorScheme,
+        RoundedCorners,
+        Shapes,
+        Typography,
+    )
+    from pycompose.ui._generated.values import Dp as DpValue
+
+    theme = MaterialTheme(
+        Text(text="Themed"),
+        color_scheme=LightColorScheme(primary=Color(0xFFFF0000)),
+        shapes=Shapes(small=RoundedCorners(size=DpValue(8))),
+        typography=Typography(),
+    )
+    snapshot = emit_ir(Snapshot(root=theme), SCHEMA_VERSION)
+    assert validate_ir(snapshot).snapshot is snapshot

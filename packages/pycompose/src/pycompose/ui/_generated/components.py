@@ -4906,7 +4906,10 @@ class MaterialTheme(Component):
         self,
         *contents: Node,
         id: str | None = None,
+        color_scheme: JsonValue | None = None,
         modifier: Modifier | None = None,
+        shapes: JsonValue | None = None,
+        typography: JsonValue | None = None,
         children: Content = (),
     ) -> None:
         """Construct a registered MaterialTheme.
@@ -4914,13 +4917,22 @@ class MaterialTheme(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            color_scheme: Native colorScheme; None uses its default.
             modifier: Native modifier; None uses its default.
+            shapes: Native shapes; None uses its default.
+            typography: Native typography; None uses its default.
             children: Ordered child nodes with stable keys.
 
         Raises:
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        if color_scheme is not None:
+            props["color_scheme"] = color_scheme
+        if shapes is not None:
+            props["shapes"] = shapes
+        if typography is not None:
+            props["typography"] = typography
         if contents and children:
             raise IrValidationError(
                 "children given positionally and by name", node_id=id

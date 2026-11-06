@@ -22,6 +22,8 @@ __all__ = [
     "Color",
     "ContentScale",
     "CutCornerShape",
+    "CutCorners",
+    "DarkColorScheme",
     "DisplayMode",
     "Dp",
     "DpOffset",
@@ -34,6 +36,7 @@ __all__ = [
     "FontStyle",
     "FontWeight",
     "IntOffset",
+    "LightColorScheme",
     "NamedShape",
     "NavigationItemIconPosition",
     "NavigationSuiteType",
@@ -41,7 +44,9 @@ __all__ = [
     "PaddingValues",
     "Range",
     "RoundedCornerShape",
+    "RoundedCorners",
     "SelectableDates",
+    "Shapes",
     "ShortNavigationBarArrangement",
     "Size",
     "SnapLayoutInfoProvider",
@@ -61,6 +66,7 @@ __all__ = [
     "TimePickerLayoutType",
     "ToggleableState",
     "TooltipAnchorPosition",
+    "Typography",
     "WindowInsets",
     "assistChipColors",
     "assistChipElevation",
@@ -152,11 +158,64 @@ DEFINITIONS: dict[str, dict[str, object]] = json.loads(
     'Width","Fit","Inside","None"]}},'
     '"since":"1.23.0"},"CutCornerShape":{"family":"Shape",'
     '"parameters":{"size":{"minimum":0,"required":true,"type":"value"'
-    ',"valueType":"Dp"}},"since":"1.11.0"},"DisplayMode":{"family":"D'
-    'isplayMode","parameters":{"name":{"required":true,"type":"string'
-    '","values":["Input","Picker"]}},"since":"1.14.0"},"Dp":{"family"'
-    ':"Dp","parameters":{"value":{"required":true,"type":"float"}},"s'
-    'ince":"1.11.0"},"DpOffset":{"family":"DpOffset",'
+    ',"valueType":"Dp"}},"since":"1.11.0"},"CutCorners":{"family":"Co'
+    'rnerBasedShape","parameters":{"size":{"minimum":0,"required":tru'
+    'e,"type":"value","valueType":"Dp"}},"since":"1.23.0"},'
+    '"DarkColorScheme":{"family":"ColorScheme","parameters":{"backgro'
+    'und":{"type":"value","valueType":"Color"},'
+    '"error":{"type":"value",'
+    '"valueType":"Color"},"errorContainer":{"type":"value",'
+    '"valueType":"Color"},"inverseOnSurface":{"type":"value",'
+    '"valueType":"Color"},"inversePrimary":{"type":"value",'
+    '"valueType":"Color"},"inverseSurface":{"type":"value",'
+    '"valueType":"Color"},"onBackground":{"type":"value",'
+    '"valueType":"Color"},"onError":{"type":"value",'
+    '"valueType":"Color"},"onErrorContainer":{"type":"value",'
+    '"valueType":"Color"},"onPrimary":{"type":"value",'
+    '"valueType":"Color"},"onPrimaryContainer":{"type":"value",'
+    '"valueType":"Color"},"onPrimaryFixed":{"type":"value",'
+    '"valueType":"Color"},"onPrimaryFixedVariant":{"type":"value",'
+    '"valueType":"Color"},"onSecondary":{"type":"value",'
+    '"valueType":"Color"},"onSecondaryContainer":{"type":"value",'
+    '"valueType":"Color"},"onSecondaryFixed":{"type":"value",'
+    '"valueType":"Color"},"onSecondaryFixedVariant":{"type":"value",'
+    '"valueType":"Color"},"onSurface":{"type":"value",'
+    '"valueType":"Color"},"onSurfaceVariant":{"type":"value",'
+    '"valueType":"Color"},"onTertiary":{"type":"value",'
+    '"valueType":"Color"},"onTertiaryContainer":{"type":"value",'
+    '"valueType":"Color"},"onTertiaryFixed":{"type":"value",'
+    '"valueType":"Color"},"onTertiaryFixedVariant":{"type":"value",'
+    '"valueType":"Color"},"outline":{"type":"value",'
+    '"valueType":"Color"},"outlineVariant":{"type":"value",'
+    '"valueType":"Color"},"primary":{"type":"value",'
+    '"valueType":"Color"},"primaryContainer":{"type":"value",'
+    '"valueType":"Color"},"primaryFixed":{"type":"value",'
+    '"valueType":"Color"},"primaryFixedDim":{"type":"value",'
+    '"valueType":"Color"},"scrim":{"type":"value",'
+    '"valueType":"Color"},"secondary":{"type":"value",'
+    '"valueType":"Color"},"secondaryContainer":{"type":"value",'
+    '"valueType":"Color"},"secondaryFixed":{"type":"value",'
+    '"valueType":"Color"},"secondaryFixedDim":{"type":"value",'
+    '"valueType":"Color"},"surface":{"type":"value",'
+    '"valueType":"Color"},"surfaceBright":{"type":"value",'
+    '"valueType":"Color"},"surfaceContainer":{"type":"value",'
+    '"valueType":"Color"},"surfaceContainerHigh":{"type":"value",'
+    '"valueType":"Color"},"surfaceContainerHighest":{"type":"value",'
+    '"valueType":"Color"},"surfaceContainerLow":{"type":"value",'
+    '"valueType":"Color"},"surfaceContainerLowest":{"type":"value",'
+    '"valueType":"Color"},"surfaceDim":{"type":"value",'
+    '"valueType":"Color"},"surfaceTint":{"type":"value",'
+    '"valueType":"Color"},"surfaceVariant":{"type":"value",'
+    '"valueType":"Color"},"tertiary":{"type":"value",'
+    '"valueType":"Color"},"tertiaryContainer":{"type":"value",'
+    '"valueType":"Color"},"tertiaryFixed":{"type":"value",'
+    '"valueType":"Color"},"tertiaryFixedDim":{"type":"value",'
+    '"valueType":"Color"}},"since":"1.23.0"},'
+    '"DisplayMode":{"family":"DisplayMode",'
+    '"parameters":{"name":{"required":true,"type":"string",'
+    '"values":["Input","Picker"]}},"since":"1.14.0"},"Dp":{"family":"'
+    'Dp","parameters":{"value":{"required":true,"type":"float"}},"sin'
+    'ce":"1.11.0"},"DpOffset":{"family":"DpOffset",'
     '"parameters":{"x":{"required":true,"type":"value","valueType":"D'
     'p"},"y":{"required":true,"type":"value","valueType":"Dp"}},"sinc'
     'e":"1.13.0"},"DpSize":{"family":"DpSize","parameters":{"height":'
@@ -185,7 +244,57 @@ DEFINITIONS: dict[str, dict[str, object]] = json.loads(
     '"since":"1.11.0"},"IntOffset":{"family":"IntOffset","parameters"'
     ':{"name":{"required":true,"type":"string",'
     '"values":["Max","Zero"]}},'
-    '"since":"1.23.0"},"NamedShape":{"family":"Shape",'
+    '"since":"1.23.0"},"LightColorScheme":{"family":"ColorScheme","pa'
+    'rameters":{"background":{"type":"value",'
+    '"valueType":"Color"},"error":{"type":"value",'
+    '"valueType":"Color"},"errorContainer":{"type":"value",'
+    '"valueType":"Color"},"inverseOnSurface":{"type":"value",'
+    '"valueType":"Color"},"inversePrimary":{"type":"value",'
+    '"valueType":"Color"},"inverseSurface":{"type":"value",'
+    '"valueType":"Color"},"onBackground":{"type":"value",'
+    '"valueType":"Color"},"onError":{"type":"value",'
+    '"valueType":"Color"},"onErrorContainer":{"type":"value",'
+    '"valueType":"Color"},"onPrimary":{"type":"value",'
+    '"valueType":"Color"},"onPrimaryContainer":{"type":"value",'
+    '"valueType":"Color"},"onPrimaryFixed":{"type":"value",'
+    '"valueType":"Color"},"onPrimaryFixedVariant":{"type":"value",'
+    '"valueType":"Color"},"onSecondary":{"type":"value",'
+    '"valueType":"Color"},"onSecondaryContainer":{"type":"value",'
+    '"valueType":"Color"},"onSecondaryFixed":{"type":"value",'
+    '"valueType":"Color"},"onSecondaryFixedVariant":{"type":"value",'
+    '"valueType":"Color"},"onSurface":{"type":"value",'
+    '"valueType":"Color"},"onSurfaceVariant":{"type":"value",'
+    '"valueType":"Color"},"onTertiary":{"type":"value",'
+    '"valueType":"Color"},"onTertiaryContainer":{"type":"value",'
+    '"valueType":"Color"},"onTertiaryFixed":{"type":"value",'
+    '"valueType":"Color"},"onTertiaryFixedVariant":{"type":"value",'
+    '"valueType":"Color"},"outline":{"type":"value",'
+    '"valueType":"Color"},"outlineVariant":{"type":"value",'
+    '"valueType":"Color"},"primary":{"type":"value",'
+    '"valueType":"Color"},"primaryContainer":{"type":"value",'
+    '"valueType":"Color"},"primaryFixed":{"type":"value",'
+    '"valueType":"Color"},"primaryFixedDim":{"type":"value",'
+    '"valueType":"Color"},"scrim":{"type":"value",'
+    '"valueType":"Color"},"secondary":{"type":"value",'
+    '"valueType":"Color"},"secondaryContainer":{"type":"value",'
+    '"valueType":"Color"},"secondaryFixed":{"type":"value",'
+    '"valueType":"Color"},"secondaryFixedDim":{"type":"value",'
+    '"valueType":"Color"},"surface":{"type":"value",'
+    '"valueType":"Color"},"surfaceBright":{"type":"value",'
+    '"valueType":"Color"},"surfaceContainer":{"type":"value",'
+    '"valueType":"Color"},"surfaceContainerHigh":{"type":"value",'
+    '"valueType":"Color"},"surfaceContainerHighest":{"type":"value",'
+    '"valueType":"Color"},"surfaceContainerLow":{"type":"value",'
+    '"valueType":"Color"},"surfaceContainerLowest":{"type":"value",'
+    '"valueType":"Color"},"surfaceDim":{"type":"value",'
+    '"valueType":"Color"},"surfaceTint":{"type":"value",'
+    '"valueType":"Color"},"surfaceVariant":{"type":"value",'
+    '"valueType":"Color"},"tertiary":{"type":"value",'
+    '"valueType":"Color"},"tertiaryContainer":{"type":"value",'
+    '"valueType":"Color"},"tertiaryFixed":{"type":"value",'
+    '"valueType":"Color"},"tertiaryFixedDim":{"type":"value",'
+    '"valueType":"Color"}},"since":"1.23.0"},'
+    '"NamedShape":{"family":"Shape",'
     '"parameters":{"name":{"required":true,"type":"string",'
     '"values":["CircleShape","RectangleShape"]}},'
     '"since":"1.23.0"},"NavigationItemIconPosition":{"family":"Naviga'
@@ -210,21 +319,34 @@ DEFINITIONS: dict[str, dict[str, object]] = json.loads(
     'equired":true,"type":"float"}},"since":"1.23.0"},'
     '"RoundedCornerShape":{"family":"Shape",'
     '"parameters":{"size":{"minimum":0,"required":true,"type":"value"'
-    ',"valueType":"Dp"}},"since":"1.11.0"},"SelectableDates":{"family'
-    '":"SelectableDates","parameters":{"isSelectableDate":{"signature'
-    '":{"params":["integer"],"result":"boolean"},"type":"program"},"i'
-    'sSelectableYear":{"signature":{"params":["integer"],"result":"bo'
-    'olean"},"type":"program"}},"since":"1.23.0"},'
-    '"ShortNavigationBarArrangement":{"family":"ShortNavigationBarArr'
-    'angement","parameters":{"name":{"required":true,"type":"string",'
-    '"values":["Centered","EqualWeight"]}},'
-    '"since":"1.23.0"},"Size":{"family":"Size","parameters":{"height"'
-    ':{"minimum":0,"required":true,"type":"float"},"width":{"minimum"'
-    ':0,"required":true,"type":"float"}},"since":"1.11.0"},"SnapLayou'
-    'tInfoProvider":{"family":"SnapLayoutInfoProvider","parameters":{'
-    '"calculateApproachOffset":{"signature":{"params":["number","numb'
-    'er"],"result":"number"},"type":"program"},"calculateSnapOffset":'
-    '{"required":true,"signature":{"params":["number"],'
+    ',"valueType":"Dp"}},"since":"1.11.0"},"RoundedCorners":{"family"'
+    ':"CornerBasedShape","parameters":{"size":{"minimum":0,"required"'
+    ':true,"type":"value","valueType":"Dp"}},"since":"1.23.0"},'
+    '"SelectableDates":{"family":"SelectableDates","parameters":{"isS'
+    'electableDate":{"signature":{"params":["integer"],"result":"bool'
+    'ean"},"type":"program"},"isSelectableYear":{"signature":{"params'
+    '":["integer"],"result":"boolean"},"type":"program"}},"since":"1.'
+    '23.0"},"Shapes":{"family":"Shapes","parameters":{"extraLarge":{"'
+    'type":"value","valueType":"CornerBasedShape"},'
+    '"extraSmall":{"type":"value",'
+    '"valueType":"CornerBasedShape"},'
+    '"large":{"type":"value",'
+    '"valueType":"CornerBasedShape"},'
+    '"medium":{"type":"value",'
+    '"valueType":"CornerBasedShape"},'
+    '"small":{"type":"value",'
+    '"valueType":"CornerBasedShape"}},'
+    '"since":"1.23.0"},"ShortNavigationBarArrangement":{"family":"Sho'
+    'rtNavigationBarArrangement","parameters":{"name":{"required":tru'
+    'e,"type":"string","values":["Centered",'
+    '"EqualWeight"]}},"since":"1.23.0"},'
+    '"Size":{"family":"Size","parameters":{"height":{"minimum":0,'
+    '"required":true,"type":"float"},"width":{"minimum":0,"required":'
+    'true,"type":"float"}},"since":"1.11.0"},"SnapLayoutInfoProvider"'
+    ':{"family":"SnapLayoutInfoProvider","parameters":{"calculateAppr'
+    'oachOffset":{"signature":{"params":["number","number"],'
+    '"result":"number"},"type":"program"},"calculateSnapOffset":{"req'
+    'uired":true,"signature":{"params":["number"],'
     '"result":"number"},"type":"program"}},"since":"1.23.0"},'
     '"SnapPosition":{"family":"SnapPosition","parameters":{"position"'
     ':{"required":true,"signature":{"params":["integer","integer","in'
@@ -300,6 +422,23 @@ DEFINITIONS: dict[str, dict[str, object]] = json.loads(
     'eters":{"name":{"required":true,"type":"string",'
     '"values":["Above","Below",'
     '"End","Left","Right","Start"]}},"since":"1.23.0"},'
+    '"Typography":{"family":"Typography",'
+    '"parameters":{"bodyLarge":{"type":"value",'
+    '"valueType":"TextStyle"},"bodyMedium":{"type":"value",'
+    '"valueType":"TextStyle"},"bodySmall":{"type":"value",'
+    '"valueType":"TextStyle"},"displayLarge":{"type":"value",'
+    '"valueType":"TextStyle"},"displayMedium":{"type":"value",'
+    '"valueType":"TextStyle"},"displaySmall":{"type":"value",'
+    '"valueType":"TextStyle"},"headlineLarge":{"type":"value",'
+    '"valueType":"TextStyle"},"headlineMedium":{"type":"value",'
+    '"valueType":"TextStyle"},"headlineSmall":{"type":"value",'
+    '"valueType":"TextStyle"},"labelLarge":{"type":"value",'
+    '"valueType":"TextStyle"},"labelMedium":{"type":"value",'
+    '"valueType":"TextStyle"},"labelSmall":{"type":"value",'
+    '"valueType":"TextStyle"},"titleLarge":{"type":"value",'
+    '"valueType":"TextStyle"},"titleMedium":{"type":"value",'
+    '"valueType":"TextStyle"},"titleSmall":{"type":"value",'
+    '"valueType":"TextStyle"}},"since":"1.23.0"},'
     '"WindowInsets":{"family":"WindowInsets","parameters":{"bottom":{'
     '"minimum":0,"type":"value","valueType":"Dp"},"left":{"minimum":0'
     ',"type":"value","valueType":"Dp"},"right":{"minimum":0,'
@@ -1627,6 +1766,187 @@ def CutCornerShape(
     )
 
 
+def CutCorners(
+    size: JsonValue,
+) -> dict[str, JsonValue]:
+    """Construct CornerBasedShape data for native evaluation.
+
+    Args:
+        size: Native size argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "CutCorners",
+        {
+            "size": size,
+        },
+        DEFINITIONS,
+    )
+
+
+def DarkColorScheme(
+    primary: JsonValue | _Unset = UNSET,
+    on_primary: JsonValue | _Unset = UNSET,
+    primary_container: JsonValue | _Unset = UNSET,
+    on_primary_container: JsonValue | _Unset = UNSET,
+    inverse_primary: JsonValue | _Unset = UNSET,
+    secondary: JsonValue | _Unset = UNSET,
+    on_secondary: JsonValue | _Unset = UNSET,
+    secondary_container: JsonValue | _Unset = UNSET,
+    on_secondary_container: JsonValue | _Unset = UNSET,
+    tertiary: JsonValue | _Unset = UNSET,
+    on_tertiary: JsonValue | _Unset = UNSET,
+    tertiary_container: JsonValue | _Unset = UNSET,
+    on_tertiary_container: JsonValue | _Unset = UNSET,
+    background: JsonValue | _Unset = UNSET,
+    on_background: JsonValue | _Unset = UNSET,
+    surface: JsonValue | _Unset = UNSET,
+    on_surface: JsonValue | _Unset = UNSET,
+    surface_variant: JsonValue | _Unset = UNSET,
+    on_surface_variant: JsonValue | _Unset = UNSET,
+    surface_tint: JsonValue | _Unset = UNSET,
+    inverse_surface: JsonValue | _Unset = UNSET,
+    inverse_on_surface: JsonValue | _Unset = UNSET,
+    error: JsonValue | _Unset = UNSET,
+    on_error: JsonValue | _Unset = UNSET,
+    error_container: JsonValue | _Unset = UNSET,
+    on_error_container: JsonValue | _Unset = UNSET,
+    outline: JsonValue | _Unset = UNSET,
+    outline_variant: JsonValue | _Unset = UNSET,
+    scrim: JsonValue | _Unset = UNSET,
+    surface_bright: JsonValue | _Unset = UNSET,
+    surface_container: JsonValue | _Unset = UNSET,
+    surface_container_high: JsonValue | _Unset = UNSET,
+    surface_container_highest: JsonValue | _Unset = UNSET,
+    surface_container_low: JsonValue | _Unset = UNSET,
+    surface_container_lowest: JsonValue | _Unset = UNSET,
+    surface_dim: JsonValue | _Unset = UNSET,
+    primary_fixed: JsonValue | _Unset = UNSET,
+    primary_fixed_dim: JsonValue | _Unset = UNSET,
+    on_primary_fixed: JsonValue | _Unset = UNSET,
+    on_primary_fixed_variant: JsonValue | _Unset = UNSET,
+    secondary_fixed: JsonValue | _Unset = UNSET,
+    secondary_fixed_dim: JsonValue | _Unset = UNSET,
+    on_secondary_fixed: JsonValue | _Unset = UNSET,
+    on_secondary_fixed_variant: JsonValue | _Unset = UNSET,
+    tertiary_fixed: JsonValue | _Unset = UNSET,
+    tertiary_fixed_dim: JsonValue | _Unset = UNSET,
+    on_tertiary_fixed: JsonValue | _Unset = UNSET,
+    on_tertiary_fixed_variant: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct ColorScheme data for native evaluation.
+
+    Args:
+        primary: Native primary argument.
+        on_primary: Native onPrimary argument.
+        primary_container: Native primaryContainer argument.
+        on_primary_container: Native onPrimaryContainer argument.
+        inverse_primary: Native inversePrimary argument.
+        secondary: Native secondary argument.
+        on_secondary: Native onSecondary argument.
+        secondary_container: Native secondaryContainer argument.
+        on_secondary_container: Native onSecondaryContainer argument.
+        tertiary: Native tertiary argument.
+        on_tertiary: Native onTertiary argument.
+        tertiary_container: Native tertiaryContainer argument.
+        on_tertiary_container: Native onTertiaryContainer argument.
+        background: Native background argument.
+        on_background: Native onBackground argument.
+        surface: Native surface argument.
+        on_surface: Native onSurface argument.
+        surface_variant: Native surfaceVariant argument.
+        on_surface_variant: Native onSurfaceVariant argument.
+        surface_tint: Native surfaceTint argument.
+        inverse_surface: Native inverseSurface argument.
+        inverse_on_surface: Native inverseOnSurface argument.
+        error: Native error argument.
+        on_error: Native onError argument.
+        error_container: Native errorContainer argument.
+        on_error_container: Native onErrorContainer argument.
+        outline: Native outline argument.
+        outline_variant: Native outlineVariant argument.
+        scrim: Native scrim argument.
+        surface_bright: Native surfaceBright argument.
+        surface_container: Native surfaceContainer argument.
+        surface_container_high: Native surfaceContainerHigh argument.
+        surface_container_highest: Native surfaceContainerHighest argument.
+        surface_container_low: Native surfaceContainerLow argument.
+        surface_container_lowest: Native surfaceContainerLowest argument.
+        surface_dim: Native surfaceDim argument.
+        primary_fixed: Native primaryFixed argument.
+        primary_fixed_dim: Native primaryFixedDim argument.
+        on_primary_fixed: Native onPrimaryFixed argument.
+        on_primary_fixed_variant: Native onPrimaryFixedVariant argument.
+        secondary_fixed: Native secondaryFixed argument.
+        secondary_fixed_dim: Native secondaryFixedDim argument.
+        on_secondary_fixed: Native onSecondaryFixed argument.
+        on_secondary_fixed_variant: Native onSecondaryFixedVariant argument.
+        tertiary_fixed: Native tertiaryFixed argument.
+        tertiary_fixed_dim: Native tertiaryFixedDim argument.
+        on_tertiary_fixed: Native onTertiaryFixed argument.
+        on_tertiary_fixed_variant: Native onTertiaryFixedVariant argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "DarkColorScheme",
+        {
+            "primary": primary,
+            "onPrimary": on_primary,
+            "primaryContainer": primary_container,
+            "onPrimaryContainer": on_primary_container,
+            "inversePrimary": inverse_primary,
+            "secondary": secondary,
+            "onSecondary": on_secondary,
+            "secondaryContainer": secondary_container,
+            "onSecondaryContainer": on_secondary_container,
+            "tertiary": tertiary,
+            "onTertiary": on_tertiary,
+            "tertiaryContainer": tertiary_container,
+            "onTertiaryContainer": on_tertiary_container,
+            "background": background,
+            "onBackground": on_background,
+            "surface": surface,
+            "onSurface": on_surface,
+            "surfaceVariant": surface_variant,
+            "onSurfaceVariant": on_surface_variant,
+            "surfaceTint": surface_tint,
+            "inverseSurface": inverse_surface,
+            "inverseOnSurface": inverse_on_surface,
+            "error": error,
+            "onError": on_error,
+            "errorContainer": error_container,
+            "onErrorContainer": on_error_container,
+            "outline": outline,
+            "outlineVariant": outline_variant,
+            "scrim": scrim,
+            "surfaceBright": surface_bright,
+            "surfaceContainer": surface_container,
+            "surfaceContainerHigh": surface_container_high,
+            "surfaceContainerHighest": surface_container_highest,
+            "surfaceContainerLow": surface_container_low,
+            "surfaceContainerLowest": surface_container_lowest,
+            "surfaceDim": surface_dim,
+            "primaryFixed": primary_fixed,
+            "primaryFixedDim": primary_fixed_dim,
+            "onPrimaryFixed": on_primary_fixed,
+            "onPrimaryFixedVariant": on_primary_fixed_variant,
+            "secondaryFixed": secondary_fixed,
+            "secondaryFixedDim": secondary_fixed_dim,
+            "onSecondaryFixed": on_secondary_fixed,
+            "onSecondaryFixedVariant": on_secondary_fixed_variant,
+            "tertiaryFixed": tertiary_fixed,
+            "tertiaryFixedDim": tertiary_fixed_dim,
+            "onTertiaryFixed": on_tertiary_fixed,
+            "onTertiaryFixedVariant": on_tertiary_fixed_variant,
+        },
+        DEFINITIONS,
+    )
+
+
 def DisplayMode(
     name: _DisplayModeName,
 ) -> dict[str, JsonValue]:
@@ -1873,6 +2193,167 @@ def IntOffset(
     )
 
 
+def LightColorScheme(
+    primary: JsonValue | _Unset = UNSET,
+    on_primary: JsonValue | _Unset = UNSET,
+    primary_container: JsonValue | _Unset = UNSET,
+    on_primary_container: JsonValue | _Unset = UNSET,
+    inverse_primary: JsonValue | _Unset = UNSET,
+    secondary: JsonValue | _Unset = UNSET,
+    on_secondary: JsonValue | _Unset = UNSET,
+    secondary_container: JsonValue | _Unset = UNSET,
+    on_secondary_container: JsonValue | _Unset = UNSET,
+    tertiary: JsonValue | _Unset = UNSET,
+    on_tertiary: JsonValue | _Unset = UNSET,
+    tertiary_container: JsonValue | _Unset = UNSET,
+    on_tertiary_container: JsonValue | _Unset = UNSET,
+    background: JsonValue | _Unset = UNSET,
+    on_background: JsonValue | _Unset = UNSET,
+    surface: JsonValue | _Unset = UNSET,
+    on_surface: JsonValue | _Unset = UNSET,
+    surface_variant: JsonValue | _Unset = UNSET,
+    on_surface_variant: JsonValue | _Unset = UNSET,
+    surface_tint: JsonValue | _Unset = UNSET,
+    inverse_surface: JsonValue | _Unset = UNSET,
+    inverse_on_surface: JsonValue | _Unset = UNSET,
+    error: JsonValue | _Unset = UNSET,
+    on_error: JsonValue | _Unset = UNSET,
+    error_container: JsonValue | _Unset = UNSET,
+    on_error_container: JsonValue | _Unset = UNSET,
+    outline: JsonValue | _Unset = UNSET,
+    outline_variant: JsonValue | _Unset = UNSET,
+    scrim: JsonValue | _Unset = UNSET,
+    surface_bright: JsonValue | _Unset = UNSET,
+    surface_container: JsonValue | _Unset = UNSET,
+    surface_container_high: JsonValue | _Unset = UNSET,
+    surface_container_highest: JsonValue | _Unset = UNSET,
+    surface_container_low: JsonValue | _Unset = UNSET,
+    surface_container_lowest: JsonValue | _Unset = UNSET,
+    surface_dim: JsonValue | _Unset = UNSET,
+    primary_fixed: JsonValue | _Unset = UNSET,
+    primary_fixed_dim: JsonValue | _Unset = UNSET,
+    on_primary_fixed: JsonValue | _Unset = UNSET,
+    on_primary_fixed_variant: JsonValue | _Unset = UNSET,
+    secondary_fixed: JsonValue | _Unset = UNSET,
+    secondary_fixed_dim: JsonValue | _Unset = UNSET,
+    on_secondary_fixed: JsonValue | _Unset = UNSET,
+    on_secondary_fixed_variant: JsonValue | _Unset = UNSET,
+    tertiary_fixed: JsonValue | _Unset = UNSET,
+    tertiary_fixed_dim: JsonValue | _Unset = UNSET,
+    on_tertiary_fixed: JsonValue | _Unset = UNSET,
+    on_tertiary_fixed_variant: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct ColorScheme data for native evaluation.
+
+    Args:
+        primary: Native primary argument.
+        on_primary: Native onPrimary argument.
+        primary_container: Native primaryContainer argument.
+        on_primary_container: Native onPrimaryContainer argument.
+        inverse_primary: Native inversePrimary argument.
+        secondary: Native secondary argument.
+        on_secondary: Native onSecondary argument.
+        secondary_container: Native secondaryContainer argument.
+        on_secondary_container: Native onSecondaryContainer argument.
+        tertiary: Native tertiary argument.
+        on_tertiary: Native onTertiary argument.
+        tertiary_container: Native tertiaryContainer argument.
+        on_tertiary_container: Native onTertiaryContainer argument.
+        background: Native background argument.
+        on_background: Native onBackground argument.
+        surface: Native surface argument.
+        on_surface: Native onSurface argument.
+        surface_variant: Native surfaceVariant argument.
+        on_surface_variant: Native onSurfaceVariant argument.
+        surface_tint: Native surfaceTint argument.
+        inverse_surface: Native inverseSurface argument.
+        inverse_on_surface: Native inverseOnSurface argument.
+        error: Native error argument.
+        on_error: Native onError argument.
+        error_container: Native errorContainer argument.
+        on_error_container: Native onErrorContainer argument.
+        outline: Native outline argument.
+        outline_variant: Native outlineVariant argument.
+        scrim: Native scrim argument.
+        surface_bright: Native surfaceBright argument.
+        surface_container: Native surfaceContainer argument.
+        surface_container_high: Native surfaceContainerHigh argument.
+        surface_container_highest: Native surfaceContainerHighest argument.
+        surface_container_low: Native surfaceContainerLow argument.
+        surface_container_lowest: Native surfaceContainerLowest argument.
+        surface_dim: Native surfaceDim argument.
+        primary_fixed: Native primaryFixed argument.
+        primary_fixed_dim: Native primaryFixedDim argument.
+        on_primary_fixed: Native onPrimaryFixed argument.
+        on_primary_fixed_variant: Native onPrimaryFixedVariant argument.
+        secondary_fixed: Native secondaryFixed argument.
+        secondary_fixed_dim: Native secondaryFixedDim argument.
+        on_secondary_fixed: Native onSecondaryFixed argument.
+        on_secondary_fixed_variant: Native onSecondaryFixedVariant argument.
+        tertiary_fixed: Native tertiaryFixed argument.
+        tertiary_fixed_dim: Native tertiaryFixedDim argument.
+        on_tertiary_fixed: Native onTertiaryFixed argument.
+        on_tertiary_fixed_variant: Native onTertiaryFixedVariant argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "LightColorScheme",
+        {
+            "primary": primary,
+            "onPrimary": on_primary,
+            "primaryContainer": primary_container,
+            "onPrimaryContainer": on_primary_container,
+            "inversePrimary": inverse_primary,
+            "secondary": secondary,
+            "onSecondary": on_secondary,
+            "secondaryContainer": secondary_container,
+            "onSecondaryContainer": on_secondary_container,
+            "tertiary": tertiary,
+            "onTertiary": on_tertiary,
+            "tertiaryContainer": tertiary_container,
+            "onTertiaryContainer": on_tertiary_container,
+            "background": background,
+            "onBackground": on_background,
+            "surface": surface,
+            "onSurface": on_surface,
+            "surfaceVariant": surface_variant,
+            "onSurfaceVariant": on_surface_variant,
+            "surfaceTint": surface_tint,
+            "inverseSurface": inverse_surface,
+            "inverseOnSurface": inverse_on_surface,
+            "error": error,
+            "onError": on_error,
+            "errorContainer": error_container,
+            "onErrorContainer": on_error_container,
+            "outline": outline,
+            "outlineVariant": outline_variant,
+            "scrim": scrim,
+            "surfaceBright": surface_bright,
+            "surfaceContainer": surface_container,
+            "surfaceContainerHigh": surface_container_high,
+            "surfaceContainerHighest": surface_container_highest,
+            "surfaceContainerLow": surface_container_low,
+            "surfaceContainerLowest": surface_container_lowest,
+            "surfaceDim": surface_dim,
+            "primaryFixed": primary_fixed,
+            "primaryFixedDim": primary_fixed_dim,
+            "onPrimaryFixed": on_primary_fixed,
+            "onPrimaryFixedVariant": on_primary_fixed_variant,
+            "secondaryFixed": secondary_fixed,
+            "secondaryFixedDim": secondary_fixed_dim,
+            "onSecondaryFixed": on_secondary_fixed,
+            "onSecondaryFixedVariant": on_secondary_fixed_variant,
+            "tertiaryFixed": tertiary_fixed,
+            "tertiaryFixedDim": tertiary_fixed_dim,
+            "onTertiaryFixed": on_tertiary_fixed,
+            "onTertiaryFixedVariant": on_tertiary_fixed_variant,
+        },
+        DEFINITIONS,
+    )
+
+
 def NamedShape(
     name: _NamedShapeName,
 ) -> dict[str, JsonValue]:
@@ -2028,6 +2509,26 @@ def RoundedCornerShape(
     )
 
 
+def RoundedCorners(
+    size: JsonValue,
+) -> dict[str, JsonValue]:
+    """Construct CornerBasedShape data for native evaluation.
+
+    Args:
+        size: Native size argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "RoundedCorners",
+        {
+            "size": size,
+        },
+        DEFINITIONS,
+    )
+
+
 def SelectableDates(
     is_selectable_date: HostFunction | _Unset = UNSET,
     is_selectable_year: HostFunction | _Unset = UNSET,
@@ -2046,6 +2547,38 @@ def SelectableDates(
         {
             "isSelectableDate": is_selectable_date,
             "isSelectableYear": is_selectable_year,
+        },
+        DEFINITIONS,
+    )
+
+
+def Shapes(
+    extra_small: JsonValue | _Unset = UNSET,
+    small: JsonValue | _Unset = UNSET,
+    medium: JsonValue | _Unset = UNSET,
+    large: JsonValue | _Unset = UNSET,
+    extra_large: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct Shapes data for native evaluation.
+
+    Args:
+        extra_small: Native extraSmall argument.
+        small: Native small argument.
+        medium: Native medium argument.
+        large: Native large argument.
+        extra_large: Native extraLarge argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "Shapes",
+        {
+            "extraSmall": extra_small,
+            "small": small,
+            "medium": medium,
+            "large": large,
+            "extraLarge": extra_large,
         },
         DEFINITIONS,
     )
@@ -2444,6 +2977,68 @@ def TooltipAnchorPosition(
         "TooltipAnchorPosition",
         {
             "name": name,
+        },
+        DEFINITIONS,
+    )
+
+
+def Typography(
+    display_large: JsonValue | _Unset = UNSET,
+    display_medium: JsonValue | _Unset = UNSET,
+    display_small: JsonValue | _Unset = UNSET,
+    headline_large: JsonValue | _Unset = UNSET,
+    headline_medium: JsonValue | _Unset = UNSET,
+    headline_small: JsonValue | _Unset = UNSET,
+    title_large: JsonValue | _Unset = UNSET,
+    title_medium: JsonValue | _Unset = UNSET,
+    title_small: JsonValue | _Unset = UNSET,
+    body_large: JsonValue | _Unset = UNSET,
+    body_medium: JsonValue | _Unset = UNSET,
+    body_small: JsonValue | _Unset = UNSET,
+    label_large: JsonValue | _Unset = UNSET,
+    label_medium: JsonValue | _Unset = UNSET,
+    label_small: JsonValue | _Unset = UNSET,
+) -> dict[str, JsonValue]:
+    """Construct Typography data for native evaluation.
+
+    Args:
+        display_large: Native displayLarge argument.
+        display_medium: Native displayMedium argument.
+        display_small: Native displaySmall argument.
+        headline_large: Native headlineLarge argument.
+        headline_medium: Native headlineMedium argument.
+        headline_small: Native headlineSmall argument.
+        title_large: Native titleLarge argument.
+        title_medium: Native titleMedium argument.
+        title_small: Native titleSmall argument.
+        body_large: Native bodyLarge argument.
+        body_medium: Native bodyMedium argument.
+        body_small: Native bodySmall argument.
+        label_large: Native labelLarge argument.
+        label_medium: Native labelMedium argument.
+        label_small: Native labelSmall argument.
+
+    Returns:
+        Validated, detached JSON data.
+    """
+    return construct(
+        "Typography",
+        {
+            "displayLarge": display_large,
+            "displayMedium": display_medium,
+            "displaySmall": display_small,
+            "headlineLarge": headline_large,
+            "headlineMedium": headline_medium,
+            "headlineSmall": headline_small,
+            "titleLarge": title_large,
+            "titleMedium": title_medium,
+            "titleSmall": title_small,
+            "bodyLarge": body_large,
+            "bodyMedium": body_medium,
+            "bodySmall": body_small,
+            "labelLarge": label_large,
+            "labelMedium": label_medium,
+            "labelSmall": label_small,
         },
         DEFINITIONS,
     )

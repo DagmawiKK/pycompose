@@ -1755,7 +1755,10 @@ data class LookaheadScope(
 
 @Serializable
 data class MaterialThemeProps(
+    val `colorScheme`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
+    val `shapes`: JsonElement? = null,
+    val `typography`: JsonElement? = null,
 ) : UiProps
 
 @Serializable

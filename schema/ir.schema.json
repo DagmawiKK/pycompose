@@ -6101,6 +6101,9 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "colorScheme": {
+              "$ref": "#/definitions/Family_ColorScheme"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -6111,6 +6114,12 @@
                 }
               },
               "type": "object"
+            },
+            "shapes": {
+              "$ref": "#/definitions/Family_Shapes"
+            },
+            "typography": {
+              "$ref": "#/definitions/Family_Typography"
             }
           },
           "type": "object"
@@ -12339,10 +12348,30 @@
         }
       ]
     },
+    "Family_ColorScheme": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_DarkColorScheme"
+        },
+        {
+          "$ref": "#/definitions/Value_LightColorScheme"
+        }
+      ]
+    },
     "Family_ContentScale": {
       "oneOf": [
         {
           "$ref": "#/definitions/Value_ContentScale"
+        }
+      ]
+    },
+    "Family_CornerBasedShape": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_CutCorners"
+        },
+        {
+          "$ref": "#/definitions/Value_RoundedCorners"
         }
       ]
     },
@@ -12604,6 +12633,13 @@
         }
       ]
     },
+    "Family_Shapes": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_Shapes"
+        }
+      ]
+    },
     "Family_ShortNavigationBarArrangement": {
       "oneOf": [
         {
@@ -12762,6 +12798,13 @@
         },
         {
           "$ref": "#/definitions/Value_topAppBarColors"
+        }
+      ]
+    },
+    "Family_Typography": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/Value_Typography"
         }
       ]
     },
@@ -38241,6 +38284,9 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "colorScheme": {
+              "$ref": "#/definitions/Family_ColorScheme"
+            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -38251,6 +38297,12 @@
                 }
               },
               "type": "object"
+            },
+            "shapes": {
+              "$ref": "#/definitions/Family_Shapes"
+            },
+            "typography": {
+              "$ref": "#/definitions/Family_Typography"
             }
           },
           "type": "object"
@@ -55365,6 +55417,189 @@
       ],
       "type": "object"
     },
+    "Value_CutCorners": {
+      "additionalProperties": false,
+      "properties": {
+        "size": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "type": {
+          "const": "CutCorners"
+        }
+      },
+      "required": [
+        "type",
+        "size"
+      ],
+      "type": "object"
+    },
+    "Value_DarkColorScheme": {
+      "additionalProperties": false,
+      "properties": {
+        "background": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "error": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorContainer": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "inverseOnSurface": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "inversePrimary": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "inverseSurface": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onBackground": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onError": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onErrorContainer": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onPrimary": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onPrimaryContainer": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onPrimaryFixed": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onPrimaryFixedVariant": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onSecondary": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onSecondaryContainer": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onSecondaryFixed": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onSecondaryFixedVariant": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onSurface": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onSurfaceVariant": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onTertiary": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onTertiaryContainer": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onTertiaryFixed": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onTertiaryFixedVariant": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "outline": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "outlineVariant": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "primary": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "primaryContainer": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "primaryFixed": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "primaryFixedDim": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "scrim": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "secondary": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "secondaryContainer": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "secondaryFixed": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "secondaryFixedDim": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surface": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surfaceBright": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surfaceContainer": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surfaceContainerHigh": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surfaceContainerHighest": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surfaceContainerLow": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surfaceContainerLowest": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surfaceDim": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surfaceTint": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surfaceVariant": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "tertiary": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "tertiaryContainer": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "tertiaryFixed": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "tertiaryFixedDim": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "DarkColorScheme"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
     "Value_DisplayMode": {
       "additionalProperties": false,
       "properties": {
@@ -55638,6 +55873,162 @@
       "required": [
         "type",
         "name"
+      ],
+      "type": "object"
+    },
+    "Value_LightColorScheme": {
+      "additionalProperties": false,
+      "properties": {
+        "background": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "error": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "errorContainer": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "inverseOnSurface": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "inversePrimary": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "inverseSurface": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onBackground": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onError": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onErrorContainer": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onPrimary": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onPrimaryContainer": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onPrimaryFixed": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onPrimaryFixedVariant": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onSecondary": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onSecondaryContainer": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onSecondaryFixed": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onSecondaryFixedVariant": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onSurface": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onSurfaceVariant": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onTertiary": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onTertiaryContainer": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onTertiaryFixed": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "onTertiaryFixedVariant": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "outline": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "outlineVariant": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "primary": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "primaryContainer": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "primaryFixed": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "primaryFixedDim": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "scrim": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "secondary": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "secondaryContainer": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "secondaryFixed": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "secondaryFixedDim": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surface": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surfaceBright": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surfaceContainer": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surfaceContainerHigh": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surfaceContainerHighest": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surfaceContainerLow": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surfaceContainerLowest": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surfaceDim": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surfaceTint": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "surfaceVariant": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "tertiary": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "tertiaryContainer": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "tertiaryFixed": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "tertiaryFixedDim": {
+          "$ref": "#/definitions/Family_Color"
+        },
+        "type": {
+          "const": "LightColorScheme"
+        }
+      },
+      "required": [
+        "type"
       ],
       "type": "object"
     },
@@ -55918,6 +56309,33 @@
       ],
       "type": "object"
     },
+    "Value_RoundedCorners": {
+      "additionalProperties": false,
+      "properties": {
+        "size": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Family_Dp"
+            },
+            {
+              "properties": {
+                "value": {
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "type": {
+          "const": "RoundedCorners"
+        }
+      },
+      "required": [
+        "type",
+        "size"
+      ],
+      "type": "object"
+    },
     "Value_SelectableDates": {
       "additionalProperties": false,
       "properties": {
@@ -55929,6 +56347,33 @@
         },
         "type": {
           "const": "SelectableDates"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Value_Shapes": {
+      "additionalProperties": false,
+      "properties": {
+        "extraLarge": {
+          "$ref": "#/definitions/Family_CornerBasedShape"
+        },
+        "extraSmall": {
+          "$ref": "#/definitions/Family_CornerBasedShape"
+        },
+        "large": {
+          "$ref": "#/definitions/Family_CornerBasedShape"
+        },
+        "medium": {
+          "$ref": "#/definitions/Family_CornerBasedShape"
+        },
+        "small": {
+          "$ref": "#/definitions/Family_CornerBasedShape"
+        },
+        "type": {
+          "const": "Shapes"
         }
       },
       "required": [
@@ -56470,6 +56915,63 @@
       "required": [
         "type",
         "name"
+      ],
+      "type": "object"
+    },
+    "Value_Typography": {
+      "additionalProperties": false,
+      "properties": {
+        "bodyLarge": {
+          "$ref": "#/definitions/Family_TextStyle"
+        },
+        "bodyMedium": {
+          "$ref": "#/definitions/Family_TextStyle"
+        },
+        "bodySmall": {
+          "$ref": "#/definitions/Family_TextStyle"
+        },
+        "displayLarge": {
+          "$ref": "#/definitions/Family_TextStyle"
+        },
+        "displayMedium": {
+          "$ref": "#/definitions/Family_TextStyle"
+        },
+        "displaySmall": {
+          "$ref": "#/definitions/Family_TextStyle"
+        },
+        "headlineLarge": {
+          "$ref": "#/definitions/Family_TextStyle"
+        },
+        "headlineMedium": {
+          "$ref": "#/definitions/Family_TextStyle"
+        },
+        "headlineSmall": {
+          "$ref": "#/definitions/Family_TextStyle"
+        },
+        "labelLarge": {
+          "$ref": "#/definitions/Family_TextStyle"
+        },
+        "labelMedium": {
+          "$ref": "#/definitions/Family_TextStyle"
+        },
+        "labelSmall": {
+          "$ref": "#/definitions/Family_TextStyle"
+        },
+        "titleLarge": {
+          "$ref": "#/definitions/Family_TextStyle"
+        },
+        "titleMedium": {
+          "$ref": "#/definitions/Family_TextStyle"
+        },
+        "titleSmall": {
+          "$ref": "#/definitions/Family_TextStyle"
+        },
+        "type": {
+          "const": "Typography"
+        }
+      },
+      "required": [
+        "type"
       ],
       "type": "object"
     },

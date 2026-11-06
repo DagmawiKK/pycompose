@@ -312,7 +312,14 @@ tasks.register("dumpComposeDefaults") {
         rootProject.file(
             providers.gradleProperty("pycomposeCatalog").getOrElse("../schema/catalog.lock.json"),
         )
-    val bound = providers.provider { approvedBindings(schema) }
+    // Policy names families the lock cannot hold until their defaults resolve.
+    val policy = rootProject.file("../schema/policy/catalog.json")
+    val bound =
+        providers.provider {
+            listOf(schema, policy).filter { it.isFile }.map(::approvedBindings).reduce { a, b ->
+                (a.first + b.first).distinct() to (a.second + b.second).distinct()
+            }
+        }
     val names =
         providers.provider {
             providers.gradleProperty("composeValueNames").orNull
@@ -326,6 +333,7 @@ tasks.register("dumpComposeDefaults") {
     inputs.property("names", names)
     inputs.property("sources", sources)
     inputs.file(schema)
+    inputs.file(policy)
     inputs.files(toolClasspath)
 
     // Artifact, source and compiler inputs are revalidated on every invocation.
