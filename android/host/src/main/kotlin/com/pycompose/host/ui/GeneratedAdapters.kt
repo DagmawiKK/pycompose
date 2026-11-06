@@ -756,7 +756,8 @@ object GeneratedAdapters {
                     com.pycompose.renderer.Positional(
                         { initial, _ -> androidx.compose.foundation.rememberScrollState(initial = initial) },
                         { it.value },
-                    ) { holder, target -> holder.animateScrollTo(target) },
+                        { holder, target -> holder.scrollTo(target) },
+                    ) { holder, target, spec -> if (spec == null) holder.animateScrollTo(target) else holder.animateScrollTo(target, animationSpec = spec) },
                 )
                 context.publish(model.id, scrollStateValue)
                 Column(
@@ -1123,7 +1124,8 @@ object GeneratedAdapters {
                     com.pycompose.renderer.Positional(
                         { initial, _ -> androidx.compose.foundation.rememberScrollState(initial = initial) },
                         { it.value },
-                    ) { holder, target -> holder.animateScrollTo(target) },
+                        { holder, target -> holder.scrollTo(target) },
+                    ) { holder, target, spec -> if (spec == null) holder.animateScrollTo(target) else holder.animateScrollTo(target, animationSpec = spec) },
                 )
                 context.publish(model.id, scrollStateValue)
                 ExposedDropdownMenu(
@@ -1385,7 +1387,8 @@ object GeneratedAdapters {
                     com.pycompose.renderer.Positional(
                         { initial, count -> androidx.compose.material3.carousel.rememberCarouselState(initialItem = initial, itemCount = count) },
                         { it.currentItem },
-                    ) { holder, target -> holder.animateScrollToItem(target) },
+                        { holder, target -> holder.scrollToItem(target) },
+                    ) { holder, target, spec -> if (spec == null) holder.animateScrollToItem(target) else holder.animateScrollToItem(target, animationSpec = spec) },
                 )
                 HorizontalCenteredHeroCarousel(
                     modifier = modifier,
@@ -1420,7 +1423,8 @@ object GeneratedAdapters {
                     com.pycompose.renderer.Positional(
                         { initial, count -> androidx.compose.material3.carousel.rememberCarouselState(initialItem = initial, itemCount = count) },
                         { it.currentItem },
-                    ) { holder, target -> holder.animateScrollToItem(target) },
+                        { holder, target -> holder.scrollToItem(target) },
+                    ) { holder, target, spec -> if (spec == null) holder.animateScrollToItem(target) else holder.animateScrollToItem(target, animationSpec = spec) },
                 )
                 HorizontalMultiBrowseCarousel(
                     modifier = modifier,
@@ -1446,7 +1450,8 @@ object GeneratedAdapters {
                     com.pycompose.renderer.Positional(
                         { initial, count -> androidx.compose.foundation.pager.rememberPagerState(initialPage = initial, pageCount = count) },
                         { it.currentPage },
-                    ) { holder, target -> holder.animateScrollToPage(target) },
+                        { holder, target -> holder.scrollToPage(target) },
+                    ) { holder, target, spec -> if (spec == null) holder.animateScrollToPage(target) else holder.animateScrollToPage(target, animationSpec = spec) },
                 )
                 HorizontalPager(
                     modifier = modifier,
@@ -1469,7 +1474,8 @@ object GeneratedAdapters {
                     com.pycompose.renderer.Positional(
                         { initial, count -> androidx.compose.material3.carousel.rememberCarouselState(initialItem = initial, itemCount = count) },
                         { it.currentItem },
-                    ) { holder, target -> holder.animateScrollToItem(target) },
+                        { holder, target -> holder.scrollToItem(target) },
+                    ) { holder, target, spec -> if (spec == null) holder.animateScrollToItem(target) else holder.animateScrollToItem(target, animationSpec = spec) },
                 )
                 HorizontalUncontainedCarousel(
                     modifier = modifier,
@@ -1649,12 +1655,13 @@ object GeneratedAdapters {
                 val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() }
                     ?: androidx.compose.foundation.layout.Arrangement.Top
                 val stateValue = context.positional(
-                    model.props.firstVisibleItemIndex, model.props.onFirstVisibleItemIndexSettled,
+                    model.props.firstVisibleItemIndex?.let(::JsonPrimitive), model.props.onFirstVisibleItemIndexSettled,
                     model.children.unslotted().size,
                     com.pycompose.renderer.Positional(
                         { initial, _ -> androidx.compose.foundation.lazy.rememberLazyListState(initialFirstVisibleItemIndex = initial) },
                         { it.firstVisibleItemIndex },
-                    ) { holder, target -> holder.animateScrollToItem(target) },
+                        null,
+                    ) { holder, target, _ -> holder.animateScrollToItem(target) },
                 )
                 context.RequestWindows(stateValue, model.props.window, model.props.itemOffset, model.children.unslotted().size)
                 LazyColumn(
@@ -1672,12 +1679,13 @@ object GeneratedAdapters {
                 val verticalAlignmentValue = model.props.verticalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentVertical(it).getOrThrow() }
                     ?: androidx.compose.ui.Alignment.Companion.Top
                 val stateValue = context.positional(
-                    model.props.firstVisibleItemIndex, model.props.onFirstVisibleItemIndexSettled,
+                    model.props.firstVisibleItemIndex?.let(::JsonPrimitive), model.props.onFirstVisibleItemIndexSettled,
                     model.children.unslotted().size,
                     com.pycompose.renderer.Positional(
                         { initial, _ -> androidx.compose.foundation.lazy.rememberLazyListState(initialFirstVisibleItemIndex = initial) },
                         { it.firstVisibleItemIndex },
-                    ) { holder, target -> holder.animateScrollToItem(target) },
+                        null,
+                    ) { holder, target, _ -> holder.animateScrollToItem(target) },
                 )
                 context.RequestWindows(stateValue, model.props.window, model.props.itemOffset, model.children.unslotted().size)
                 LazyRow(
@@ -3138,7 +3146,8 @@ object GeneratedAdapters {
                     com.pycompose.renderer.Positional(
                         { initial, count -> androidx.compose.foundation.pager.rememberPagerState(initialPage = initial, pageCount = count) },
                         { it.currentPage },
-                    ) { holder, target -> holder.animateScrollToPage(target) },
+                        { holder, target -> holder.scrollToPage(target) },
+                    ) { holder, target, spec -> if (spec == null) holder.animateScrollToPage(target) else holder.animateScrollToPage(target, animationSpec = spec) },
                 )
                 VerticalPager(
                     modifier = modifier,

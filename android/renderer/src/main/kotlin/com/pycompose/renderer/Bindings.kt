@@ -182,12 +182,12 @@ fun <T, V : AnimationVector> deferredState(
 }
 
 /** The binding a prop value carries, or null for a plain value. */
-private fun bound(wire: JsonElement): Binding? {
+internal fun bound(wire: JsonElement): Binding? {
     if (!Bindings.isBinding(wire)) return null
     return Bindings.read(wire as JsonObject)
 }
 
-private fun <T> spec(travel: Travel): AnimationSpec<T> =
+internal fun <T> spec(travel: Travel): AnimationSpec<T> =
     when (travel) {
         is Travel.Spring -> spring(dampingRatio = travel.dampingRatio, stiffness = travel.stiffness)
         is Travel.Tween ->

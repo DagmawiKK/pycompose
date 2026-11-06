@@ -2073,9 +2073,16 @@
               "type": "boolean"
             },
             "value": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
+              "anyOf": [
+                {
+                  "maximum": 2147483647,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "verticalArrangement": {
               "$ref": "#/definitions/Family_ArrangementVertical"
@@ -3543,9 +3550,16 @@
               ]
             },
             "value": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
+              "anyOf": [
+                {
+                  "maximum": 2147483647,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             }
           },
           "required": [
@@ -4324,9 +4338,16 @@
           "additionalProperties": false,
           "properties": {
             "currentItem": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
+              "anyOf": [
+                {
+                  "maximum": 2147483647,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "itemSpacing": {
               "anyOf": [
@@ -4564,9 +4585,16 @@
           "additionalProperties": false,
           "properties": {
             "currentItem": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
+              "anyOf": [
+                {
+                  "maximum": 2147483647,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "itemSpacing": {
               "anyOf": [
@@ -4736,9 +4764,16 @@
           "additionalProperties": false,
           "properties": {
             "currentPage": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
+              "anyOf": [
+                {
+                  "maximum": 2147483647,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "modifier": {
               "properties": {
@@ -4819,9 +4854,16 @@
           "additionalProperties": false,
           "properties": {
             "currentItem": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
+              "anyOf": [
+                {
+                  "maximum": 2147483647,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "itemSpacing": {
               "anyOf": [
@@ -11867,9 +11909,16 @@
           "additionalProperties": false,
           "properties": {
             "currentPage": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
+              "anyOf": [
+                {
+                  "maximum": 2147483647,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "horizontalAlignment": {
               "$ref": "#/definitions/Family_AlignmentHorizontal"
@@ -34087,9 +34136,16 @@
               "type": "boolean"
             },
             "value": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
+              "anyOf": [
+                {
+                  "maximum": 2147483647,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "verticalArrangement": {
               "$ref": "#/definitions/Family_ArrangementVertical"
@@ -35557,9 +35613,16 @@
               ]
             },
             "value": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
+              "anyOf": [
+                {
+                  "maximum": 2147483647,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             }
           },
           "required": [
@@ -36338,9 +36401,16 @@
           "additionalProperties": false,
           "properties": {
             "currentItem": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
+              "anyOf": [
+                {
+                  "maximum": 2147483647,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "itemSpacing": {
               "anyOf": [
@@ -36578,9 +36648,16 @@
           "additionalProperties": false,
           "properties": {
             "currentItem": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
+              "anyOf": [
+                {
+                  "maximum": 2147483647,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "itemSpacing": {
               "anyOf": [
@@ -36750,9 +36827,16 @@
           "additionalProperties": false,
           "properties": {
             "currentPage": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
+              "anyOf": [
+                {
+                  "maximum": 2147483647,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "modifier": {
               "properties": {
@@ -36833,9 +36917,16 @@
           "additionalProperties": false,
           "properties": {
             "currentItem": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
+              "anyOf": [
+                {
+                  "maximum": 2147483647,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "itemSpacing": {
               "anyOf": [
@@ -47230,9 +47321,16 @@
           "additionalProperties": false,
           "properties": {
             "currentPage": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
+              "anyOf": [
+                {
+                  "maximum": 2147483647,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
             },
             "horizontalAlignment": {
               "$ref": "#/definitions/Family_AlignmentHorizontal"

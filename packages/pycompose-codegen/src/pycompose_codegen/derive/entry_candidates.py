@@ -352,6 +352,8 @@ DERIVED = (
     "count",
     "position",
     "drive",
+    "spec",
+    "snap",
     "valueClass",
     "anchors",
     "settled",

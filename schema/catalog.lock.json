@@ -1413,7 +1413,9 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 2147483647,
-          "since": "1.23.0"
+          "since": "1.23.0",
+          "animation": "kotlin.Int",
+          "phase": "composition"
         },
         "onValueSettled": {
           "type": "actionId",
@@ -1438,7 +1440,9 @@
         "factory": "androidx.compose.foundation.rememberScrollState",
         "initial": "initial",
         "position": "value",
-        "drive": "animateScrollTo"
+        "drive": "animateScrollTo",
+        "spec": "animationSpec",
+        "snap": "scrollTo"
       },
       "reshaped": [
         "value",
@@ -2738,7 +2742,9 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 2147483647,
-          "since": "1.23.0"
+          "since": "1.23.0",
+          "animation": "kotlin.Int",
+          "phase": "composition"
         },
         "onValueSettled": {
           "type": "actionId",
@@ -2764,7 +2770,9 @@
         "factory": "androidx.compose.foundation.rememberScrollState",
         "initial": "initial",
         "position": "value",
-        "drive": "animateScrollTo"
+        "drive": "animateScrollTo",
+        "spec": "animationSpec",
+        "snap": "scrollTo"
       },
       "reshaped": [
         "value",
@@ -3811,7 +3819,9 @@
         "currentItem": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 2147483647
+          "maximum": 2147483647,
+          "animation": "kotlin.Int",
+          "phase": "composition"
         },
         "onCurrentItemSettled": {
           "type": "actionId",
@@ -3837,7 +3847,9 @@
         "initial": "initialItem",
         "count": "itemCount",
         "position": "currentItem",
-        "drive": "animateScrollToItem"
+        "drive": "animateScrollToItem",
+        "spec": "animationSpec",
+        "snap": "scrollToItem"
       },
       "reshaped": [
         "currentItem",
@@ -3932,7 +3944,9 @@
         "currentItem": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 2147483647
+          "maximum": 2147483647,
+          "animation": "kotlin.Int",
+          "phase": "composition"
         },
         "onCurrentItemSettled": {
           "type": "actionId",
@@ -3958,7 +3972,9 @@
         "initial": "initialItem",
         "count": "itemCount",
         "position": "currentItem",
-        "drive": "animateScrollToItem"
+        "drive": "animateScrollToItem",
+        "spec": "animationSpec",
+        "snap": "scrollToItem"
       },
       "reshaped": [
         "currentItem",
@@ -4016,7 +4032,9 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 2147483647,
-          "since": "1.23.0"
+          "since": "1.23.0",
+          "animation": "kotlin.Int",
+          "phase": "composition"
         },
         "onCurrentPageSettled": {
           "type": "actionId",
@@ -4043,7 +4061,9 @@
         "initial": "initialPage",
         "count": "pageCount",
         "position": "currentPage",
-        "drive": "animateScrollToPage"
+        "drive": "animateScrollToPage",
+        "spec": "animationSpec",
+        "snap": "scrollToPage"
       },
       "reshaped": [
         "currentPage",
@@ -4089,7 +4109,9 @@
         "currentItem": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 2147483647
+          "maximum": 2147483647,
+          "animation": "kotlin.Int",
+          "phase": "composition"
         },
         "onCurrentItemSettled": {
           "type": "actionId",
@@ -4115,7 +4137,9 @@
         "initial": "initialItem",
         "count": "itemCount",
         "position": "currentItem",
-        "drive": "animateScrollToItem"
+        "drive": "animateScrollToItem",
+        "spec": "animationSpec",
+        "snap": "scrollToItem"
       },
       "reshaped": [
         "currentItem",
@@ -11239,7 +11263,9 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 2147483647,
-          "since": "1.23.0"
+          "since": "1.23.0",
+          "animation": "kotlin.Int",
+          "phase": "composition"
         },
         "onCurrentPageSettled": {
           "type": "actionId",
@@ -11266,7 +11292,9 @@
         "initial": "initialPage",
         "count": "pageCount",
         "position": "currentPage",
-        "drive": "animateScrollToPage"
+        "drive": "animateScrollToPage",
+        "spec": "animationSpec",
+        "snap": "scrollToPage"
       },
       "reshaped": [
         "currentPage",

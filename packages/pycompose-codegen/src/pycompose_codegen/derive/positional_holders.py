@@ -14,6 +14,11 @@ whenever a holder states it in its types:
   (``() -> Int``) where it has one, which the host fills with the children;
   of several, the one needing no opt-in.
 
+Where its drive takes an ``AnimationSpec`` and it has the other member, the
+one that moves without animating (``scrollToPage`` beside
+``animateScrollToPage``), the app may bind the position: ``animate`` travels
+through the drive with its spec, ``follow`` tracks through the other.
+
 The host's one positional runtime drives every such holder. A holder the types
 leave ambiguous is not one.
 """
@@ -29,6 +34,7 @@ from pycompose_codegen.derive.opt_ins import OptInIndex, opt_in_index, required_
 SCROLLABLE = "androidx/compose/foundation/gestures/ScrollableState"
 INT = "kotlin/Int"
 COUNT = "kotlin/Function0"
+SPEC = "androidx/compose/animation/core/AnimationSpec"
 
 
 def positional_holders(found: Inventory) -> dict[str, dict[str, Any]]:
@@ -39,7 +45,8 @@ def positional_holders(found: Inventory) -> dict[str, dict[str, Any]]:
 
     Returns:
         Per holder: its class, factory, the factory's start and count
-        parameters, its position property and its drive.
+        parameters, its position property and its drive, and where it can
+        travel, the drive's spec parameter and the member that snaps.
     """
     members: dict[str, list[Declaration]] = {}
     for declaration in found.declarations:
@@ -52,7 +59,8 @@ def positional_holders(found: Inventory) -> dict[str, dict[str, Any]]:
         supertypes = own[0].document.get("classSupertypes") or []
         if SCROLLABLE not in {t.get("classifier") for t in supertypes}:
             continue
-        drive = _drive(own)
+        drives = _drives(own)
+        drive = _drive(drives)
         position = _position(own, drive) if drive is not None else None
         factory = _factory(found, classifier, index)
         if position is None or drive is None or factory is None:
@@ -66,6 +74,7 @@ def positional_holders(found: Inventory) -> dict[str, dict[str, Any]]:
             **({"count": count[0].name} if count else {}),
             "position": position,
             "drive": drive.name,
+            **_travel(drives, drive),
         }
     return holders
 
@@ -101,18 +110,31 @@ def _position(own: list[Declaration], drive: Declaration) -> str | None:
     return found[0] if len(found) == 1 else None
 
 
-def _drive(own: list[Declaration]) -> Declaration | None:
-    """The suspend member taking just a position, the animating one of several."""
-    drives = [
+def _drives(own: list[Declaration]) -> list[Declaration]:
+    """The suspend members taking just a position."""
+    return [
         d
         for d in own
         if d.document.get("declarationKind") == "function"
         and d.document.get("suspend")
         and [p.type.classifier for p in d.parameters if p.required] == [INT]
     ]
+
+
+def _drive(drives: list[Declaration]) -> Declaration | None:
+    """The drive, the animating one of several."""
     if len(drives) > 1:
         drives = [d for d in drives if d.name.startswith("animate")]
     return drives[0] if len(drives) == 1 else None
+
+
+def _travel(drives: list[Declaration], drive: Declaration) -> dict[str, str]:
+    """The drive's spec parameter and the one member beside it, when it has both."""
+    spec = [p.name for p in drive.parameters if p.type.classifier == SPEC]
+    snaps = [d.name for d in drives if d is not drive]
+    if len(spec) != 1 or len(snaps) != 1:
+        return {}
+    return {"spec": spec[0], "snap": snaps[0]}
 
 
 def _count(value: Any) -> bool:

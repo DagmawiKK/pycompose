@@ -22,7 +22,18 @@ from pycompose_codegen.emit.state_families import (
 )
 
 POSITIONAL_KEYS = frozenset(
-    {"native", "kind", "holder", "factory", "initial", "count", "position", "drive"}
+    {
+        "native",
+        "kind",
+        "holder",
+        "factory",
+        "initial",
+        "count",
+        "position",
+        "drive",
+        "spec",
+        "snap",
+    }
 )
 
 
@@ -39,7 +50,7 @@ def validate_positional(
     unknown = sorted(set(state) - POSITIONAL_KEYS)
     if unknown:
         die(f"{where} has unknown keys: {', '.join(unknown)}")
-    for key in POSITIONAL_KEYS - {"count"}:
+    for key in POSITIONAL_KEYS - {"count", "spec", "snap"}:
         if not isinstance(state.get(key), str) or not state[key]:
             die(f"{where}: positional needs {key!r}")
     if positional_props(state).keys() - props.keys():
@@ -96,18 +107,31 @@ def positional_locals(state: dict[str, Any]) -> list[str]:
     Returns:
         The Kotlin locals.
     """
-    native, position = state["native"], state["position"]
+    native, position, drive = state["native"], state["position"], state["drive"]
     count = f", {state['count']} = count" if "count" in state else ""
     create = f"{state['factory']}({state['initial']} = initial{count})"
     report = camel(settled_name(position))
+    if "snap" in state:
+        # A bound position: it follows through the snap, travels with its spec.
+        desired = f"model.props.{camel(position)}"
+        snap = f"{{ holder, target -> holder.{state['snap']}(target) }}"
+        driven = (
+            f"if (spec == null) holder.{drive}(target) "
+            f"else holder.{drive}(target, {state['spec']} = spec)"
+        )
+        arguments = "holder, target, spec"
+    else:
+        desired = f"model.props.{camel(position)}?.let(::JsonPrimitive)"
+        snap, driven, arguments = "null", f"holder.{drive}(target)", "holder, target, _"
     return [
         f"val {native}Value = context.positional(",
-        f"    model.props.{camel(position)}, model.props.{report},",
+        f"    {desired}, model.props.{report},",
         "    model.children.unslotted().size,",
         "    com.pycompose.renderer.Positional(",
         f"        {{ initial, {'count' if count else '_'} -> {create} }},",
         f"        {{ it.{position} }},",
-        f"    ) {{ holder, target -> holder.{state['drive']}(target) }},",
+        f"        {snap},",
+        f"    ) {{ {arguments} -> {driven} }},",
         ")",
     ]
 

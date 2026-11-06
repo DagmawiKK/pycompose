@@ -483,7 +483,7 @@
     },
     "positionalState": {
       "type": "object",
-      "description": "A holder with one scrollable position the pin implies: its factory, the parameters it starts at and counts with, its position property and the member that drives it.",
+      "description": "A holder with one scrollable position the pin implies: its factory, the parameters it starts at and counts with, its position property, the member that drives it, and where it can travel, its spec parameter and the member that snaps.",
       "required": ["native", "kind", "holder", "factory", "initial", "position", "drive"],
       "additionalProperties": false,
       "properties": {
@@ -494,7 +494,9 @@
         "initial": { "$ref": "#/$defs/identifier" },
         "count": { "$ref": "#/$defs/identifier" },
         "position": { "$ref": "#/$defs/identifier" },
-        "drive": { "$ref": "#/$defs/identifier" }
+        "drive": { "$ref": "#/$defs/identifier" },
+        "spec": { "$ref": "#/$defs/identifier", "description": "The drive's AnimationSpec parameter, which a bound position travels through." },
+        "snap": { "$ref": "#/$defs/identifier", "description": "The member beside the drive that moves without animating, which a followed position tracks through." }
       }
     },
     "derivedState": {

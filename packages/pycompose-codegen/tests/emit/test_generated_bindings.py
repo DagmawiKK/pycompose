@@ -95,6 +95,14 @@ def test_every_bindable_prop_of_a_generated_component_reads_through_it() -> None
     assert len(pairs) >= DISCOVERY_FLOOR, f"only {len(pairs)} generated pairs found"
     for name, prop, spec in pairs:
         block = render(name, lock()["components"][name])
+        state = lock()["components"][name].get("state") or {}
+        if prop == state.get("position"):
+            # A held position travels through its holder, not a converter.
+            assert (
+                f"context.positional(\n                    model.props.{camel(prop)},"
+                in block
+            )
+            continue
         expression = converters[spec["animation"]]["expression"]
         if "provider" in spec or "indexOf" in spec:
             assert f"val {camel(prop)}State =" in block, f"{name}.{prop} keeps no state"

@@ -518,7 +518,7 @@ data class ColumnProps(
     override val `modifier`: JsonObject? = null,
     val `onValueSettled`: String? = null,
     val `scrollable`: Boolean? = null,
-    val `value`: Long? = null,
+    val `value`: JsonElement? = null,
     val `verticalArrangement`: JsonElement? = null,
 ) : UiProps
 
@@ -948,7 +948,7 @@ data class ExposedDropdownMenuProps(
     val `shadowElevation`: JsonElement? = null,
     val `shape`: JsonElement? = null,
     val `tonalElevation`: JsonElement? = null,
-    val `value`: Long? = null,
+    val `value`: JsonElement? = null,
 ) : UiProps
 
 @Serializable
@@ -1266,7 +1266,7 @@ data class FlowRow(
 
 @Serializable
 data class HorizontalCenteredHeroCarouselProps(
-    val `currentItem`: Long? = null,
+    val `currentItem`: JsonElement? = null,
     val `itemSpacing`: JsonElement? = null,
     val `maxItemWidth`: JsonElement? = null,
     val `maxSmallItemWidth`: JsonElement? = null,
@@ -1309,7 +1309,7 @@ data class HorizontalDivider(
 
 @Serializable
 data class HorizontalMultiBrowseCarouselProps(
-    val `currentItem`: Long? = null,
+    val `currentItem`: JsonElement? = null,
     val `itemSpacing`: JsonElement? = null,
     val `maxSmallItemWidth`: JsonElement? = null,
     val `minSmallItemWidth`: JsonElement? = null,
@@ -1333,7 +1333,7 @@ data class HorizontalMultiBrowseCarousel(
 
 @Serializable
 data class HorizontalPagerProps(
-    val `currentPage`: Long? = null,
+    val `currentPage`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `onCurrentPageSettled`: String? = null,
     val `pageSpacing`: JsonElement? = null,
@@ -1357,7 +1357,7 @@ data class HorizontalPager(
 
 @Serializable
 data class HorizontalUncontainedCarouselProps(
-    val `currentItem`: Long? = null,
+    val `currentItem`: JsonElement? = null,
     val `itemSpacing`: JsonElement? = null,
     val `itemWidth`: JsonElement,
     override val `modifier`: JsonObject? = null,
@@ -3532,7 +3532,7 @@ data class VerticalDragHandle(
 
 @Serializable
 data class VerticalPagerProps(
-    val `currentPage`: Long? = null,
+    val `currentPage`: JsonElement? = null,
     val `horizontalAlignment`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `onCurrentPageSettled`: String? = null,

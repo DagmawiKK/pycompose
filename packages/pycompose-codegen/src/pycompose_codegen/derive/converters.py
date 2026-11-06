@@ -43,6 +43,10 @@ NATIVE_TYPES = {
 """A prop whose wire type is wider than its parameter names the parameter."""
 
 
+INT = "kotlin.Int"
+"""The type a holder's position travels as."""
+
+
 def animated_type(declaration: Declaration) -> str | None:
     """The Kotlin type this declaration's converter animates, if it is one.
 
@@ -210,9 +214,10 @@ def annotate(lock: dict[str, Any]) -> None:
 
     Two gates decide whether it is offered at all. Capability: the pin must
     declare a converter for the prop's type. Authority: Python must be the sole
-    author of the value; a prop a state holder fills is the user's, and
-    reconciling the two is a later protocol, so it is left unannotated rather
-    than offered.
+    author of the value, or the holder must travel for it: a position whose
+    holder drives with a spec and snaps beside it is bound through the holder,
+    a gesture interrupting the travel as it interrupts any drive. Any other
+    prop a holder fills is the user's, and is left unannotated.
 
     Args:
         lock: The assembled lock; its props gain ``animation`` and ``phase``.
@@ -224,6 +229,9 @@ def annotate(lock: dict[str, Any]) -> None:
         for prop, spec in entry.get("props", {}).items():
             if prop not in held:
                 _mark(prop, spec, entry, families, table)
+        state = entry.get("state") or {}
+        if state.get("kind") == "positional" and "snap" in state and INT in table:
+            entry["props"][state["position"]].update(animation=INT, phase="composition")
     for entry in lock.get("modifiers", {}).values():
         for prop, spec in entry.get("props", {}).items():
             _mark(prop, spec, entry, families, table)

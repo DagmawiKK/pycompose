@@ -1612,7 +1612,7 @@ class Column(Component):
         modifier: Modifier | None = None,
         on_value_settled: ActionTarget | None = None,
         scrollable: bool | None = None,
-        value: int | None = None,
+        value: int | Binding | None = None,
         vertical_arrangement: _ArrangementVertical | None = None,
         children: Content = (),
     ) -> None:
@@ -1640,7 +1640,7 @@ class Column(Component):
         if scrollable is not None:
             props["scrollable"] = scrollable
         if value is not None:
-            props["value"] = value
+            props["value"] = lower_binding(value, "composition")
         if vertical_arrangement is not None:
             props["vertical_arrangement"] = vertical_arrangement
         if contents and children:
@@ -2793,7 +2793,7 @@ class ExposedDropdownMenu(Component):
         shadow_elevation: int | float | Expression | Binding | None = None,
         shape: JsonValue | None = None,
         tonal_elevation: int | float | Expression | Binding | None = None,
-        value: int | None = None,
+        value: int | Binding | None = None,
         children: Content = (),
         content: Content | None = None,
     ) -> None:
@@ -2837,7 +2837,7 @@ class ExposedDropdownMenu(Component):
         if tonal_elevation is not None:
             props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if value is not None:
-            props["value"] = value
+            props["value"] = lower_binding(value, "composition")
         if content is not None:
             if children:
                 raise IrValidationError(
@@ -3666,7 +3666,7 @@ class HorizontalCenteredHeroCarousel(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        current_item: int | None = None,
+        current_item: int | Binding | None = None,
         item_spacing: int | float | Expression | Binding | None = None,
         max_item_width: int | float | Expression | Binding | None = None,
         max_small_item_width: int | float | Expression | Binding | None = None,
@@ -3697,7 +3697,7 @@ class HorizontalCenteredHeroCarousel(Component):
         """
         props: dict[str, PropValue] = {}
         if current_item is not None:
-            props["current_item"] = current_item
+            props["current_item"] = lower_binding(current_item, "composition")
         if item_spacing is not None:
             props["item_spacing"] = lower_binding(item_spacing, "composition")
         if max_item_width is not None:
@@ -3763,7 +3763,7 @@ class HorizontalMultiBrowseCarousel(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        current_item: int | None = None,
+        current_item: int | Binding | None = None,
         item_spacing: int | float | Expression | Binding | None = None,
         max_small_item_width: int | float | Expression | Binding | None = None,
         min_small_item_width: int | float | Expression | Binding | None = None,
@@ -3794,7 +3794,7 @@ class HorizontalMultiBrowseCarousel(Component):
         """
         props: dict[str, PropValue] = {}
         if current_item is not None:
-            props["current_item"] = current_item
+            props["current_item"] = lower_binding(current_item, "composition")
         if item_spacing is not None:
             props["item_spacing"] = lower_binding(item_spacing, "composition")
         if max_small_item_width is not None:
@@ -3830,7 +3830,7 @@ class HorizontalPager(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        current_page: int | None = None,
+        current_page: int | Binding | None = None,
         modifier: Modifier | None = None,
         on_current_page_settled: ActionTarget | None = None,
         page_spacing: int | float | Expression | Binding | None = None,
@@ -3861,7 +3861,7 @@ class HorizontalPager(Component):
         """
         props: dict[str, PropValue] = {}
         if current_page is not None:
-            props["current_page"] = current_page
+            props["current_page"] = lower_binding(current_page, "composition")
         if on_current_page_settled is not None:
             props["on_current_page_settled"] = on_current_page_settled
         if page_spacing is not None:
@@ -3893,7 +3893,7 @@ class HorizontalUncontainedCarousel(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        current_item: int | None = None,
+        current_item: int | Binding | None = None,
         item_spacing: int | float | Expression | Binding | None = None,
         item_width: int | float | Expression | Binding,
         modifier: Modifier | None = None,
@@ -3920,7 +3920,7 @@ class HorizontalUncontainedCarousel(Component):
         """
         props: dict[str, PropValue] = {}
         if current_item is not None:
-            props["current_item"] = current_item
+            props["current_item"] = lower_binding(current_item, "composition")
         if item_spacing is not None:
             props["item_spacing"] = lower_binding(item_spacing, "composition")
         props["item_width"] = lower_binding(item_width, "composition")
@@ -9479,7 +9479,7 @@ class VerticalPager(Component):
         self,
         *contents: Node,
         id: str | None = None,
-        current_page: int | None = None,
+        current_page: int | Binding | None = None,
         horizontal_alignment: _AlignmentHorizontal | None = None,
         modifier: Modifier | None = None,
         on_current_page_settled: ActionTarget | None = None,
@@ -9510,7 +9510,7 @@ class VerticalPager(Component):
         """
         props: dict[str, PropValue] = {}
         if current_page is not None:
-            props["current_page"] = current_page
+            props["current_page"] = lower_binding(current_page, "composition")
         if horizontal_alignment is not None:
             props["horizontal_alignment"] = horizontal_alignment
         if on_current_page_settled is not None:

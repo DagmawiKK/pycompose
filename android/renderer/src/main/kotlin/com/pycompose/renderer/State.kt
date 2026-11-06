@@ -226,7 +226,15 @@ fun ScrollState.attachTo(
     scrollable: Boolean?,
 ): Modifier = if (scrollable == true) modifier.verticalScroll(this) else modifier
 
-/** One idle policy for every native scroll holder, including drag-to-fling hand-off. */
+/**
+ * One idle policy for every native scroll holder, including drag-to-fling hand-off.
+ *
+ * A position at rest is reported when it moved since the last report, or when it rests short
+ * of where the app last asked: a gesture that cut a drive off, even back to where it began,
+ * is news to an app that believes its target was reached. A reported rest becomes what was
+ * asked, so the app's echo of it drives nothing and a restoration reports it no second time.
+ */
+@Suppress("LongParameterList")
 @Composable
 internal fun ObserveIdlePosition(
     state: ScrollableState,
@@ -234,6 +242,7 @@ internal fun ObserveIdlePosition(
     kind: String,
     report: String?,
     observation: Observation,
+    asked: MutableState<Long?>? = null,
 ) {
     val currentPosition = rememberUpdatedState(position)
     val currentObservation = rememberUpdatedState(observation)
@@ -247,12 +256,11 @@ internal fun ObserveIdlePosition(
                 if (inProgress) return@collectLatest
                 // Native drag release may precede the fling in the same frame.
                 withFrameNanos { }
-                if (
-                    !state.isScrollInProgress &&
-                    value == currentPosition.value() &&
-                    value != settled.value
-                ) {
+                val short = asked?.value.let { it != null && it.toInt() != value }
+                val news = value != settled.value || short
+                if (!state.isScrollInProgress && value == currentPosition.value() && news) {
                     settled.value = value
+                    asked?.value = value.toLong()
                     channel.value?.let {
                         currentObservation.value(kind, it, JsonPrimitive(value))
                     }

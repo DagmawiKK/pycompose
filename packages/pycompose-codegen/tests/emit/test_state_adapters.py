@@ -146,7 +146,10 @@ def test_a_scroll_holder_rides_the_modifier_behind_a_boolean() -> None:
     """The scroll attaches through the modifier, gated by the app's prop."""
     adapter = render("Column", SCROLL)
     assert "val scrollStateValue = context.positional(" in adapter
-    assert "model.props.value, model.props.onValueSettled," in adapter
+    assert (
+        "model.props.value?.let(::JsonPrimitive), model.props.onValueSettled,"
+        in adapter
+    )
     assert (
         "modifier = scrollStateValue.attachTo(modifier, model.props.scrollable)"
         in adapter
@@ -162,8 +165,8 @@ def test_a_lazy_list_fills_the_state_parameter() -> None:
     adapter = render("LazyColumn", LAZY)
     assert "val stateValue = context.positional(" in adapter
     assert (
-        "model.props.firstVisibleItemIndex, model.props.onFirstVisibleItemIndexSettled,"
-        in adapter
+        "model.props.firstVisibleItemIndex?.let(::JsonPrimitive), "
+        "model.props.onFirstVisibleItemIndexSettled," in adapter
     )
     assert "state = stateValue" in adapter
     assert "firstVisibleItemIndex =" not in adapter

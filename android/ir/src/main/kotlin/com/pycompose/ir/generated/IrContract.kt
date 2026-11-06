@@ -323,7 +323,7 @@ object IrContract {
                 "modifier" to PropertyRule("modifier", required = false),
                 "onValueSettled" to PropertyRule("actionId", required = false, since = "1.23.0"),
                 "scrollable" to PropertyRule("boolean", required = false),
-                "value" to PropertyRule("integer", required = false, since = "1.23.0", minimum = 0.0, maximum = 2147483647.0),
+                "value" to PropertyRule("integer", required = false, since = "1.23.0", animation = true, minimum = 0.0, maximum = 2147483647.0),
                 "verticalArrangement" to PropertyRule("enum", required = false, valueType = "ArrangementVertical"),
             ),
         ),
@@ -601,7 +601,7 @@ object IrContract {
                 "shadowElevation" to PropertyRule("dp", required = false, animation = true),
                 "shape" to PropertyRule("value", required = false, valueType = "Shape"),
                 "tonalElevation" to PropertyRule("dp", required = false, animation = true),
-                "value" to PropertyRule("integer", required = false, since = "1.23.0", minimum = 0.0, maximum = 2147483647.0),
+                "value" to PropertyRule("integer", required = false, since = "1.23.0", animation = true, minimum = 0.0, maximum = 2147483647.0),
             ),
         ),
         "ExposedDropdownMenuBox" to ComponentRule(
@@ -807,7 +807,7 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
-                "currentItem" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483647.0),
+                "currentItem" to PropertyRule("integer", required = false, animation = true, minimum = 0.0, maximum = 2147483647.0),
                 "itemSpacing" to PropertyRule("dp", required = false, animation = true),
                 "maxItemWidth" to PropertyRule("dp", required = false, animation = true),
                 "maxSmallItemWidth" to PropertyRule("dp", required = false, animation = true),
@@ -834,7 +834,7 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
-                "currentItem" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483647.0),
+                "currentItem" to PropertyRule("integer", required = false, animation = true, minimum = 0.0, maximum = 2147483647.0),
                 "itemSpacing" to PropertyRule("dp", required = false, animation = true),
                 "maxSmallItemWidth" to PropertyRule("dp", required = false, animation = true),
                 "minSmallItemWidth" to PropertyRule("dp", required = false, animation = true),
@@ -850,7 +850,7 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
-                "currentPage" to PropertyRule("integer", required = false, since = "1.23.0", minimum = 0.0, maximum = 2147483647.0),
+                "currentPage" to PropertyRule("integer", required = false, since = "1.23.0", animation = true, minimum = 0.0, maximum = 2147483647.0),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onCurrentPageSettled" to PropertyRule("actionId", required = false, since = "1.23.0"),
                 "pageSpacing" to PropertyRule("dp", required = false, animation = true),
@@ -866,7 +866,7 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
-                "currentItem" to PropertyRule("integer", required = false, minimum = 0.0, maximum = 2147483647.0),
+                "currentItem" to PropertyRule("integer", required = false, animation = true, minimum = 0.0, maximum = 2147483647.0),
                 "itemSpacing" to PropertyRule("dp", required = false, animation = true),
                 "itemWidth" to PropertyRule("dp", required = true, animation = true),
                 "modifier" to PropertyRule("modifier", required = false),
@@ -2273,7 +2273,7 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
-                "currentPage" to PropertyRule("integer", required = false, since = "1.23.0", minimum = 0.0, maximum = 2147483647.0),
+                "currentPage" to PropertyRule("integer", required = false, since = "1.23.0", animation = true, minimum = 0.0, maximum = 2147483647.0),
                 "horizontalAlignment" to PropertyRule("enum", required = false, valueType = "AlignmentHorizontal"),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onCurrentPageSettled" to PropertyRule("actionId", required = false, since = "1.23.0"),
