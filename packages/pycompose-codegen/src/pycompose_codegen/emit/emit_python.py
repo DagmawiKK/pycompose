@@ -271,7 +271,8 @@ def _python_constructor(
         children = "normalized"
     slot_lines, children = _python_slot_body(spec, children)
     lines.extend(slot_lines)
-    modifier = ", modifier=modifier" if "modifier" in props else ""
+    # An item wears none; naming it keeps **props from reading as the modifier.
+    modifier = ", modifier=" + ("modifier" if "modifier" in props else "None")
     invocation = f"id=id, children={children}{modifier}, **props"
     # An overload subclasses its primary for its type, not its construction.
     call = "super().__init__" if base == "Component" else "Component.__init__"

@@ -143,8 +143,9 @@ def test_each_component_is_registered_exactly_once_across_both_files() -> None:
     registry = components()
     # No leading dot: TextField's adapter opens a helper, so its register call
     # starts a statement rather than continuing a chain. A scoped component
-    # registers through its scope's method, which the same pattern catches.
-    pattern = r'register(?:Scoped<\w+>)?\("(\w+)"'
+    # registers through its scope's method, an item through its builder's: the
+    # same pattern catches both.
+    pattern = r'register(?:(?:Scoped|Item)<\w+>)?\("(\w+)"'
     generated_names = re.findall(pattern, GENERATED.read_text())
     manual_names = re.findall(pattern, manual_sources())
 
@@ -163,7 +164,7 @@ def test_each_component_is_registered_exactly_once_across_both_files() -> None:
     scoped = {
         name: scope
         for scope, name in re.findall(
-            r'registerScoped<(\w+)>\("(\w+)"\)',
+            r'register(?:Scoped|Item)<(\w+)>\("(\w+)"\)',
             GENERATED.read_text() + manual_sources(),
         )
     }
@@ -174,7 +175,7 @@ def test_each_component_is_registered_exactly_once_across_both_files() -> None:
     }
     assert scoped == declared, (
         f"registered through {scoped}, declared {declared}; a scoped component "
-        "registers through its own scope's method"
+        "or an item registers through its own scope's method"
     )
 
 

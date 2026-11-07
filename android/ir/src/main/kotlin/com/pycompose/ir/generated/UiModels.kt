@@ -98,6 +98,101 @@ data class AnimatedVisibility(
 }
 
 @Serializable
+data class AppBarClickableItemProps(
+    val `enabled`: Boolean = true,
+    val `label`: String,
+    val `onClick`: String,
+) : UiProps
+
+@Serializable
+@SerialName("AppBarClickableItem")
+data class AppBarClickableItem(
+    override val id: String,
+    override val props: AppBarClickableItemProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "AppBarClickableItem"
+}
+
+@Serializable
+data class AppBarColumnProps(
+    val `isExpanded`: Boolean? = null,
+    override val `modifier`: JsonObject? = null,
+    val `onIsExpandedChange`: String? = null,
+) : UiProps
+
+@Serializable
+@SerialName("AppBarColumn")
+data class AppBarColumn(
+    override val id: String,
+    override val props: AppBarColumnProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "AppBarColumn"
+}
+
+@Serializable
+data class AppBarCustomItemProps(
+    val `isExpanded`: Boolean? = null,
+    val `onIsExpandedChange`: String? = null,
+) : UiProps
+
+@Serializable
+@SerialName("AppBarCustomItem")
+data class AppBarCustomItem(
+    override val id: String,
+    override val props: AppBarCustomItemProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "AppBarCustomItem"
+}
+
+@Serializable
+data class AppBarRowProps(
+    val `isExpanded`: Boolean? = null,
+    override val `modifier`: JsonObject? = null,
+    val `onIsExpandedChange`: String? = null,
+) : UiProps
+
+@Serializable
+@SerialName("AppBarRow")
+data class AppBarRow(
+    override val id: String,
+    override val props: AppBarRowProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "AppBarRow"
+}
+
+@Serializable
+data class AppBarToggleableItemProps(
+    val `checked`: Boolean,
+    val `enabled`: Boolean = true,
+    val `label`: String,
+    val `onCheckedChange`: String,
+) : UiProps
+
+@Serializable
+@SerialName("AppBarToggleableItem")
+data class AppBarToggleableItem(
+    override val id: String,
+    override val props: AppBarToggleableItemProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "AppBarToggleableItem"
+}
+
+@Serializable
 data class AssistChipProps(
     val `colors`: JsonElement? = null,
     val `elevation`: OptionalValue = OptionalValue.Absent,
@@ -1363,6 +1458,109 @@ data class FlowRow(
 ) : UiNode {
     override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "FlowRow"
+}
+
+@Serializable
+data class GridProps(
+    override val `modifier`: JsonObject? = null,
+) : UiProps
+
+@Serializable
+@SerialName("Grid")
+data class Grid(
+    override val id: String,
+    override val props: GridProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "Grid"
+}
+
+@Serializable
+data class GridConfigurationColumnProps(
+    val `size`: JsonElement,
+) : UiProps
+
+@Serializable
+@SerialName("GridConfigurationColumn")
+data class GridConfigurationColumn(
+    override val id: String,
+    override val props: GridConfigurationColumnProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
+    override val componentType: String get() = "GridConfigurationColumn"
+}
+
+@Serializable
+data class GridConfigurationColumnGapProps(
+    val `gap`: JsonElement,
+) : UiProps
+
+@Serializable
+@SerialName("GridConfigurationColumnGap")
+data class GridConfigurationColumnGap(
+    override val id: String,
+    override val props: GridConfigurationColumnGapProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
+    override val componentType: String get() = "GridConfigurationColumnGap"
+}
+
+@Serializable
+data class GridConfigurationGapProps(
+    val `column`: JsonElement,
+    val `row`: JsonElement,
+) : UiProps
+
+@Serializable
+@SerialName("GridConfigurationGap")
+data class GridConfigurationGap(
+    override val id: String,
+    override val props: GridConfigurationGapProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
+    override val componentType: String get() = "GridConfigurationGap"
+}
+
+@Serializable
+data class GridConfigurationRowProps(
+    val `size`: JsonElement,
+) : UiProps
+
+@Serializable
+@SerialName("GridConfigurationRow")
+data class GridConfigurationRow(
+    override val id: String,
+    override val props: GridConfigurationRowProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
+    override val componentType: String get() = "GridConfigurationRow"
+}
+
+@Serializable
+data class GridConfigurationRowGapProps(
+    val `gap`: JsonElement,
+) : UiProps
+
+@Serializable
+@SerialName("GridConfigurationRowGap")
+data class GridConfigurationRowGap(
+    override val id: String,
+    override val props: GridConfigurationRowGapProps,
+    override val slot: String? = null,
+) : UiNode {
+    override val children: List<UiNode> get() = emptyList()
+    override fun withChildren(children: List<UiNode>): UiNode = this
+    override val componentType: String get() = "GridConfigurationRowGap"
 }
 
 @Serializable

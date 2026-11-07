@@ -1,10 +1,9 @@
 """Assemble the catalog lock from the pinned evidence and the policy overlay.
 
 The stages run in order, each a function of the ones before it: read the pinned
-inventory (S1, S2), classify and plan every UI overload (S3), derive each
-component the policy names from its call plan (S4), apply the policy (S5), and
-derive the holders section from the components and the pinned sources. The
-lock is the result: generated, committed, never edited.
+inventory (S1, S2), plan every UI overload (S3), derive each component policy
+names from its call plan (S4), apply the policy (S5), and derive the holders
+from the components and the pinned sources. The lock is generated, never edited.
 """
 
 from __future__ import annotations
@@ -36,6 +35,7 @@ from pycompose_codegen.derive.families import bound_families
 from pycompose_codegen.derive.gestures import gestures
 from pycompose_codegen.derive.holders import derive as derive_holders
 from pycompose_codegen.derive.implementations import implementation_families
+from pycompose_codegen.derive.members import drop_itemless
 from pycompose_codegen.derive.overloads import extras
 from pycompose_codegen.derive.plain_modifiers import plain_modifiers
 from pycompose_codegen.derive.policy import (
@@ -402,7 +402,8 @@ def compile_components(
         lambda name, decision: planned(name, decision, plans, found, sections),
     )
     components.update(added)
-    report.overloads = sorted(added)
+    report.refused.update(drop_itemless(components))
+    report.overloads = sorted(name for name in added if name in components)
     report.coverage = _coverage(plans, components)
     return components, report
 

@@ -201,6 +201,240 @@
         "min": 0
       }
     },
+    "AppBarClickableItem": {
+      "package": "androidx.compose.material3",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Ljava/lang/String;Z)V",
+        "jvmName": "clickableItem",
+        "name": "clickableItem",
+        "owner": "androidx.compose.material3.AppBarScope"
+      },
+      "props": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "label": {
+          "type": "string",
+          "required": true
+        },
+        "onClick": {
+          "type": "actionId",
+          "required": true
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "item": true,
+      "slots": {
+        "icon": {
+          "native": "icon"
+        }
+      },
+      "scope": "androidx.compose.material3.AppBarScope"
+    },
+    "AppBarColumn": {
+      "package": "androidx.compose.material3",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function3;Landroidx/compose/ui/Modifier;ILkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "AppBarColumn",
+        "name": "AppBarColumn",
+        "owner": "androidx.compose.material3.AppBarColumnKt"
+      },
+      "props": {
+        "isExpanded": {
+          "type": "boolean"
+        },
+        "onIsExpandedChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "isExpanded",
+              "type": "boolean"
+            }
+          ]
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "members",
+        "provides": "androidx.compose.material3.AppBarColumnScope",
+        "applies": [
+          "androidx.compose.material3.AppBarScope"
+        ]
+      },
+      "slots": {
+        "overflowIndicator": {
+          "native": "overflowIndicator",
+          "handed": {
+            "holder": "androidx.compose.material3.AppBarMenuState",
+            "value": "isExpanded",
+            "drives": {
+              "false": "dismiss",
+              "true": "show"
+            }
+          }
+        }
+      }
+    },
+    "AppBarCustomItem": {
+      "package": "androidx.compose.material3",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;)V",
+        "jvmName": "customItem",
+        "name": "customItem",
+        "owner": "androidx.compose.material3.AppBarScope"
+      },
+      "props": {
+        "isExpanded": {
+          "type": "boolean"
+        },
+        "onIsExpandedChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "isExpanded",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "item": true,
+      "slots": {
+        "appbarContent": {
+          "native": "appbarContent"
+        },
+        "menuContent": {
+          "native": "menuContent",
+          "handed": {
+            "holder": "androidx.compose.material3.AppBarMenuState",
+            "value": "isExpanded",
+            "drives": {
+              "false": "dismiss",
+              "true": "show"
+            }
+          }
+        }
+      },
+      "scope": "androidx.compose.material3.AppBarScope"
+    },
+    "AppBarRow": {
+      "package": "androidx.compose.material3",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Lkotlin/jvm/functions/Function3;Landroidx/compose/ui/Modifier;ILkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "AppBarRow",
+        "name": "AppBarRow",
+        "owner": "androidx.compose.material3.AppBarRowKt"
+      },
+      "props": {
+        "isExpanded": {
+          "type": "boolean"
+        },
+        "onIsExpandedChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "isExpanded",
+              "type": "boolean"
+            }
+          ]
+        },
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "members",
+        "provides": "androidx.compose.material3.AppBarRowScope",
+        "applies": [
+          "androidx.compose.material3.AppBarScope"
+        ]
+      },
+      "slots": {
+        "overflowIndicator": {
+          "native": "overflowIndicator",
+          "handed": {
+            "holder": "androidx.compose.material3.AppBarMenuState",
+            "value": "isExpanded",
+            "drives": {
+              "false": "dismiss",
+              "true": "show"
+            }
+          }
+        }
+      }
+    },
+    "AppBarToggleableItem": {
+      "package": "androidx.compose.material3",
+      "category": "navigation",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Ljava/lang/String;Z)V",
+        "jvmName": "toggleableItem",
+        "name": "toggleableItem",
+        "owner": "androidx.compose.material3.AppBarScope"
+      },
+      "props": {
+        "checked": {
+          "type": "boolean",
+          "required": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "label": {
+          "type": "string",
+          "required": true
+        },
+        "onCheckedChange": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "value",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "item": true,
+      "slots": {
+        "icon": {
+          "native": "icon"
+        }
+      },
+      "scope": "androidx.compose.material3.AppBarScope"
+    },
     "AssistChip": {
       "package": "androidx.compose.material3",
       "category": "input",
@@ -4181,6 +4415,181 @@
         "provides": "androidx.compose.foundation.layout.FlowRowScope",
         "min": 0
       }
+    },
+    "Grid": {
+      "package": "androidx.compose.foundation.layout",
+      "category": "foundation",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "Grid",
+        "name": "Grid",
+        "owner": "androidx.compose.foundation.layout.GridKt"
+      },
+      "optIn": [
+        "androidx.compose.foundation.layout.ExperimentalGridApi"
+      ],
+      "props": {
+        "modifier": {
+          "type": "modifier"
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "androidx.compose.foundation.layout.GridScope"
+      },
+      "slots": {
+        "config": {
+          "native": "config",
+          "provides": "androidx.compose.foundation.layout.GridConfigurationScope",
+          "kind": "members",
+          "applies": [
+            "androidx.compose.foundation.layout.GridConfigurationScope"
+          ]
+        }
+      }
+    },
+    "GridConfigurationColumn": {
+      "package": "androidx.compose.foundation.layout",
+      "category": "foundation",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(F)V",
+        "jvmName": "column-0680j_4",
+        "name": "column",
+        "owner": "androidx.compose.foundation.layout.GridConfigurationScope"
+      },
+      "optIn": [
+        "androidx.compose.foundation.layout.ExperimentalGridApi"
+      ],
+      "props": {
+        "size": {
+          "type": "dp",
+          "required": true
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "item": true,
+      "scope": "androidx.compose.foundation.layout.GridConfigurationScope"
+    },
+    "GridConfigurationColumnGap": {
+      "package": "androidx.compose.foundation.layout",
+      "category": "foundation",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(F)V",
+        "jvmName": "columnGap-0680j_4",
+        "name": "columnGap",
+        "owner": "androidx.compose.foundation.layout.GridConfigurationScope"
+      },
+      "optIn": [
+        "androidx.compose.foundation.layout.ExperimentalGridApi"
+      ],
+      "props": {
+        "gap": {
+          "type": "dp",
+          "required": true
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "item": true,
+      "scope": "androidx.compose.foundation.layout.GridConfigurationScope"
+    },
+    "GridConfigurationGap": {
+      "package": "androidx.compose.foundation.layout",
+      "category": "foundation",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(FF)V",
+        "jvmName": "gap-YgX7TsA",
+        "name": "gap",
+        "owner": "androidx.compose.foundation.layout.GridConfigurationScope"
+      },
+      "optIn": [
+        "androidx.compose.foundation.layout.ExperimentalGridApi"
+      ],
+      "props": {
+        "column": {
+          "type": "dp",
+          "required": true
+        },
+        "row": {
+          "type": "dp",
+          "required": true
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "item": true,
+      "scope": "androidx.compose.foundation.layout.GridConfigurationScope"
+    },
+    "GridConfigurationRow": {
+      "package": "androidx.compose.foundation.layout",
+      "category": "foundation",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(F)V",
+        "jvmName": "row-0680j_4",
+        "name": "row",
+        "owner": "androidx.compose.foundation.layout.GridConfigurationScope"
+      },
+      "optIn": [
+        "androidx.compose.foundation.layout.ExperimentalGridApi"
+      ],
+      "props": {
+        "size": {
+          "type": "dp",
+          "required": true
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "item": true,
+      "scope": "androidx.compose.foundation.layout.GridConfigurationScope"
+    },
+    "GridConfigurationRowGap": {
+      "package": "androidx.compose.foundation.layout",
+      "category": "foundation",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.foundation:foundation-layout-android:1.12.1",
+        "descriptor": "(F)V",
+        "jvmName": "rowGap-0680j_4",
+        "name": "rowGap",
+        "owner": "androidx.compose.foundation.layout.GridConfigurationScope"
+      },
+      "optIn": [
+        "androidx.compose.foundation.layout.ExperimentalGridApi"
+      ],
+      "props": {
+        "gap": {
+          "type": "dp",
+          "required": true
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "item": true,
+      "scope": "androidx.compose.foundation.layout.GridConfigurationScope"
     },
     "HorizontalCenteredHeroCarousel": {
       "package": "androidx.compose.material3.carousel",

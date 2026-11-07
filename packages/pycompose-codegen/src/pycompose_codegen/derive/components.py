@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
-from collections import Counter, defaultdict
+from collections import Counter
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
@@ -35,7 +35,15 @@ from pycompose_codegen.derive.classpath_dump import (
 from pycompose_codegen.derive.classpath_types import KotlinType
 from pycompose_codegen.derive.holders import anchored_holders
 from pycompose_codegen.derive.keyed import KEY, is_keyed
+from pycompose_codegen.derive.members import (
+    handed_holders,
+    item_member,
+    item_name,
+    item_sources,
+    member_scopes,
+)
 from pycompose_codegen.derive.opt_ins import OptInIndex, opt_in_index
+from pycompose_codegen.derive.plan_report import surface_coverage, worklist
 from pycompose_codegen.derive.positional_holders import positional_holders
 from pycompose_codegen.derive.producers import producer_interfaces
 from pycompose_codegen.derive.property_holders import property_holders
@@ -78,7 +86,7 @@ def _binding_rule(
             raise ValueError("modifier default is not the native identity")
         return {"policy": "modifier"}
     if (lambda_rule := LAMBDA_RULES.get(parameter.kind)) is not None:
-        rule = lambda_rule(value)
+        rule = lambda_rule(value, holders)
     elif value.classifier in PROGRAM_INTERFACES and not value.nullable:
         rule = {"policy": PROGRAM_INTERFACES[value.classifier]}
     elif (typed := _host_filled(parameter, holders)) is not None:
@@ -235,6 +243,7 @@ def _plan(
     scopes: frozenset[str] = frozenset(),
     holders: dict[str, dict[str, Any]] | None = None,
     producers: dict[str, dict[str, Any]] | None = None,
+    taken: frozenset[str] = frozenset(),
 ) -> dict[str, Any]:
     """Plan one exact overload, recording every capability it would need.
 
@@ -297,8 +306,13 @@ def _plan(
                 ),
             }
         )
+    named = (
+        {"name": item_name(source, taken), "native": source.name}
+        if item_member(source)
+        else {"name": source.name}
+    )
     return {
-        "name": source.name,
+        **named,
         "surface": _surface(source, scope_providers),
         "source": identity(source),
         "call": (source.owner.replace("$", ".") if static else source.package)
@@ -307,6 +321,7 @@ def _plan(
         "annotations": source.annotations,
         "parameters": parameters,
         "receiver": receiver.document if receiver else None,
+        **({"item": True} if "native" in named else {}),
         "optIn": sorted(opt_ins),
         "dependencies": {
             "values": sorted(
@@ -338,48 +353,6 @@ def _plan(
     }
 
 
-def _worklist(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Group recorded gaps by the capability that would close them.
-
-    Each reason lists the components it blocks, the hooks it blocks (styling
-    hooks are parameter support, so their gaps never read as component
-    blockers), and the names it only limits — so capabilities can be added in
-    one deliberate batch instead of overload by overload.
-    """
-    blocking: dict[str, set[str]] = defaultdict(set)
-    hooks: dict[str, set[str]] = defaultdict(set)
-    limiting: dict[str, set[str]] = defaultdict(set)
-    for candidate in candidates:
-        for gap in candidate["gaps"]:
-            if not gap["required"]:
-                limiting[gap["reason"]].add(candidate["name"])
-            elif candidate["surface"] == "hook":
-                hooks[gap["reason"]].add(candidate["name"])
-            else:
-                blocking[gap["reason"]].add(candidate["name"])
-    return [
-        {
-            "reason": reason,
-            "blocks": sorted(blocking[reason]),
-            "hooks": sorted(hooks[reason]),
-            "limits": sorted(limiting[reason]),
-        }
-        for reason in sorted(blocking.keys() | hooks.keys() | limiting.keys())
-    ]
-
-
-def _surface_coverage(candidates: list[dict[str, Any]], surface: str) -> dict[str, int]:
-    """Count what one surface offers, keeping hooks out of the component tally."""
-    subset = [c for c in candidates if c["surface"] == surface]
-    statuses = Counter(c["status"] for c in subset)
-    return {
-        "names": len({c["name"] for c in subset}),
-        "overloads": len(subset),
-        "callPlan": statuses["call-plan"],
-        "blocked": statuses["blocked"],
-    }
-
-
 def propose_components(
     found: Inventory, defaults: dict[Any, Any], registry: dict[str, Any]
 ) -> dict[str, Any]:
@@ -398,7 +371,11 @@ def propose_components(
     # Every representable argument is passed explicitly, so the arguments a call
     # carries are what Kotlin resolves on; overloads those arguments cannot tell
     # apart are refused rather than silently bound to a sibling.
-    scopes = slot_scopes(found.declarations)
+    # A builder scope's members are items, planned beside the components.
+    items = item_sources(found)
+    scopes = slot_scopes(found.declarations) | {
+        d.dispatch_receiver.classifier for d in items if d.dispatch_receiver
+    }
     providers = scope_providers((d for d in found.declarations if d.composable), scopes)
     objects = frozenset(c.classifier for c in found.classes if c.class_kind == "OBJECT")
     # A positional holder's entry names its kind; a property holder's is implied.
@@ -406,6 +383,8 @@ def propose_components(
     # Later wins: a drive (LazyListState) beats re-creation, which beats building.
     holders = {
         **value_builders(found, defaults),
+        **member_scopes(found),
+        **handed_holders(found, drives),
         **property_holders(found, defaults, families),
         **{
             c: {"kind": "positional", **h} for c, h in positional_holders(found).items()
@@ -428,9 +407,10 @@ def propose_components(
             scopes,
             holders,
             producers,
+            frozenset(d.name for d in found.ui),
         )
         for source in sorted(
-            found.ui,
+            [*found.ui, *items],
             key=lambda d: (
                 d.name,
                 d.artifact,
@@ -450,13 +430,13 @@ def propose_components(
         "compiler": found.compiler,
         "status": "proposal-only",
         "coverage": {
-            "components": _surface_coverage(candidates, "component"),
-            "hooks": _surface_coverage(candidates, "hook"),
+            "components": surface_coverage(candidates, "component"),
+            "hooks": surface_coverage(candidates, "hook"),
             "enabled": 0,
             "compiled": 0,
         },
         "policies": dict(sorted(policies.items())),
-        "worklist": _worklist(candidates),
+        "worklist": worklist(candidates),
         "candidates": candidates,
     }
 

@@ -10,6 +10,8 @@ from __future__ import annotations
 from typing import Any
 
 from pycompose.model.catalog.registry import CONSUMERS, SLOT_KINDS
+from pycompose_codegen.emit.adapters.handed import handed_props
+from pycompose_codegen.emit.adapters.items import item_ready
 from pycompose_codegen.emit.adapters.policy import MECHANICAL
 from pycompose_codegen.emit.state_families import (
     STATE_CONSTRUCTOR_PROPS,
@@ -32,6 +34,8 @@ def is_mechanical(entry: dict[str, Any]) -> bool:
     if entry.get("adapter") == "manual":
         return False
     if not _declared_slots(entry):
+        return False
+    if entry.get("item") and not item_ready(entry):
         return False
     held = held_props(entry)
     return all(
@@ -56,7 +60,7 @@ def held_props(entry: dict[str, Any]) -> set[str]:
         for spec in entry.get("built", {}).values()
         for argument in spec["arguments"]
     }
-    return filled | _state_props(entry)
+    return filled | _state_props(entry) | set(handed_props(entry))
 
 
 def _state_props(entry: dict[str, Any]) -> set[str]:
@@ -105,7 +109,13 @@ def _declared_slots(entry: dict[str, Any]) -> bool:
             slot.get("kind", "content") in SLOT_KINDS
             and slot.get("consume") in {None, *CONSUMERS}
             and not (slot.get("provides") and slot.get("consume"))
-            and not (slot.get("provides") and slot.get("kind", "content") != "content")
+            and not (
+                slot.get("provides")
+                and slot.get("kind", "content") not in {"content", "members"}
+            )
+            and not (
+                slot.get("handed") and (slot.get("provides") or slot.get("consume"))
+            )
             for slot in entry.get("slots", {}).values()
         )
     )

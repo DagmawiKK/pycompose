@@ -190,6 +190,33 @@ class RenderContext internal constructor(
     }
 
     /**
+     * Apply each of a builder's children to the builder's receiver, through its item adapter.
+     *
+     * A builder lambda (`AppBarRowScope.() -> Unit`) is no composable: its children are
+     * item components, each calling the scope's member it stands for. A child that is no
+     * item of [scope] is reported, and the builder goes on without it.
+     *
+     * @param scope The receiver the parent's builder lambda carries.
+     * @param nodes The children the builder lists, in order.
+     */
+    fun applyItems(
+        scope: Any,
+        nodes: List<UiNode>,
+    ) {
+        nodes.forEach { child ->
+            val item = renderer.registry.item(child.componentType)
+            if (item != null && item.scope.isInstance(scope)) {
+                item.applyTo(scope, child, this)
+            } else {
+                renderer.report(
+                    "Cannot render ${child.id}: ${child.componentType}: " +
+                        "not an item of ${scope.javaClass.simpleName}",
+                )
+            }
+        }
+    }
+
+    /**
      * A named slot whose native lambda carries a receiver [S], or null when empty.
      *
      * The lambda hands that receiver to each child, as [childrenIn] does. Empty
@@ -228,7 +255,7 @@ class RenderContext internal constructor(
 
 /** Stateless registry-driven engine; only wire-validated snapshots enter this seam. */
 class Renderer(
-    private val registry: ComponentRegistry,
+    internal val registry: ComponentRegistry,
     private val actions: ActionDispatcher,
     private val debug: Boolean = false,
     internal val windows: (String, Int, Int) -> Unit = { _, _, _ -> },

@@ -37,6 +37,36 @@ private fun AnimatedVisibilityPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "AnimatedVisibility"}, "type": "Text"}], "id": "preview", "props": {"visible": true}, "type": "AnimatedVisibility"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "AppBarClickableItem", showBackground = true)
+@Composable
+private fun AppBarClickableItemPreview() {
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "provider.overflowIndicator", "props": {"text": "overflowIndicator"}, "slot": "overflowIndicator", "type": "Text"}, {"children": [{"id": "preview.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}], "id": "preview", "props": {"label": "Preview", "onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "AppBarClickableItem"}], "id": "provider", "props": {}, "type": "AppBarColumn"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "AppBarColumn", showBackground = true)
+@Composable
+private fun AppBarColumnPreview() {
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.overflowIndicator", "props": {"text": "overflowIndicator"}, "slot": "overflowIndicator", "type": "Text"}, {"children": [{"id": "preview.child.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}], "id": "preview.child", "props": {"label": "Preview", "onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "AppBarClickableItem"}], "id": "preview", "props": {}, "type": "AppBarColumn"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "AppBarCustomItem", showBackground = true)
+@Composable
+private fun AppBarCustomItemPreview() {
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "provider.overflowIndicator", "props": {"text": "overflowIndicator"}, "slot": "overflowIndicator", "type": "Text"}, {"children": [{"id": "preview.appbarContent", "props": {"text": "appbarContent"}, "slot": "appbarContent", "type": "Text"}, {"id": "preview.menuContent", "props": {"text": "menuContent"}, "slot": "menuContent", "type": "Text"}], "id": "preview", "props": {}, "type": "AppBarCustomItem"}], "id": "provider", "props": {}, "type": "AppBarColumn"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "AppBarRow", showBackground = true)
+@Composable
+private fun AppBarRowPreview() {
+    Sample("""{"metadata": {"intents": {"preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "preview.overflowIndicator", "props": {"text": "overflowIndicator"}, "slot": "overflowIndicator", "type": "Text"}, {"children": [{"id": "preview.child.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}], "id": "preview.child", "props": {"label": "Preview", "onClick": {"fields": {}, "intent": "preview.onClick"}}, "type": "AppBarClickableItem"}], "id": "preview", "props": {}, "type": "AppBarRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "AppBarToggleableItem", showBackground = true)
+@Composable
+private fun AppBarToggleableItemPreview() {
+    Sample("""{"metadata": {"intents": {"preview.onCheckedChange": {"payload": {"value": {"required": true, "type": "boolean"}}}, "preview.onClick": {"payload": {}}}}, "root": {"children": [{"id": "provider.overflowIndicator", "props": {"text": "overflowIndicator"}, "slot": "overflowIndicator", "type": "Text"}, {"children": [{"id": "preview.icon", "props": {"text": "icon"}, "slot": "icon", "type": "Text"}], "id": "preview", "props": {"checked": true, "label": "Preview", "onCheckedChange": {"fields": {}, "intent": "preview.onCheckedChange"}}, "type": "AppBarToggleableItem"}], "id": "provider", "props": {}, "type": "AppBarColumn"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "AssistChip", showBackground = true)
 @Composable
 private fun AssistChipPreview() {
@@ -371,6 +401,42 @@ private fun FlowColumnPreview() {
 @Composable
 private fun FlowRowPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "FlowRow"}, "type": "Text"}], "id": "preview", "props": {}, "type": "FlowRow"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "Grid", showBackground = true)
+@Composable
+private fun GridPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.config", "props": {"size": 8}, "slot": "config", "type": "GridConfigurationColumn"}, {"id": "preview.child", "props": {"text": "Grid"}, "type": "Text"}], "id": "preview", "props": {}, "type": "Grid"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "GridConfigurationColumn", showBackground = true)
+@Composable
+private fun GridConfigurationColumnPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "provider.child", "props": {"text": "Grid"}, "type": "Text"}, {"id": "preview", "props": {"size": 8}, "slot": "config", "type": "GridConfigurationColumn"}], "id": "provider", "props": {}, "type": "Grid"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "GridConfigurationColumnGap", showBackground = true)
+@Composable
+private fun GridConfigurationColumnGapPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "provider.child", "props": {"text": "Grid"}, "type": "Text"}, {"id": "preview", "props": {"gap": 8}, "slot": "config", "type": "GridConfigurationColumnGap"}], "id": "provider", "props": {}, "type": "Grid"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "GridConfigurationGap", showBackground = true)
+@Composable
+private fun GridConfigurationGapPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "provider.child", "props": {"text": "Grid"}, "type": "Text"}, {"id": "preview", "props": {"column": 8, "row": 8}, "slot": "config", "type": "GridConfigurationGap"}], "id": "provider", "props": {}, "type": "Grid"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "GridConfigurationRow", showBackground = true)
+@Composable
+private fun GridConfigurationRowPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "provider.child", "props": {"text": "Grid"}, "type": "Text"}, {"id": "preview", "props": {"size": 8}, "slot": "config", "type": "GridConfigurationRow"}], "id": "provider", "props": {}, "type": "Grid"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "GridConfigurationRowGap", showBackground = true)
+@Composable
+private fun GridConfigurationRowGapPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "provider.child", "props": {"text": "Grid"}, "type": "Text"}, {"id": "preview", "props": {"gap": 8}, "slot": "config", "type": "GridConfigurationRowGap"}], "id": "provider", "props": {}, "type": "Grid"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "HorizontalCenteredHeroCarousel", showBackground = true)

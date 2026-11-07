@@ -657,6 +657,218 @@
       },
       "type": "object"
     },
+    "C_AppBarClickableItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "icon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "label": {
+              "type": "string"
+            },
+            "onClick": {
+              "$ref": "#/definitions/Action"
+            }
+          },
+          "required": [
+            "label",
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "AppBarClickableItem"
+        }
+      },
+      "type": "object"
+    },
+    "C_AppBarColumn": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "overflowIndicator"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "isExpanded": {
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onIsExpandedChange": {
+              "$ref": "#/definitions/Action"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "AppBarColumn"
+        }
+      },
+      "type": "object"
+    },
+    "C_AppBarCustomItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "appbarContent",
+                  "menuContent"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "isExpanded": {
+              "type": "boolean"
+            },
+            "onIsExpandedChange": {
+              "$ref": "#/definitions/Action"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "AppBarCustomItem"
+        }
+      },
+      "type": "object"
+    },
+    "C_AppBarRow": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "overflowIndicator"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "isExpanded": {
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onIsExpandedChange": {
+              "$ref": "#/definitions/Action"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "AppBarRow"
+        }
+      },
+      "type": "object"
+    },
+    "C_AppBarToggleableItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "icon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "checked": {
+              "type": "boolean"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "label": {
+              "type": "string"
+            },
+            "onCheckedChange": {
+              "$ref": "#/definitions/Action"
+            }
+          },
+          "required": [
+            "checked",
+            "label",
+            "onCheckedChange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "AppBarToggleableItem"
+        }
+      },
+      "type": "object"
+    },
     "C_AssistChip": {
       "properties": {
         "children": {
@@ -4622,6 +4834,308 @@
         },
         "type": {
           "const": "FlowRow"
+        }
+      },
+      "type": "object"
+    },
+    "C_Grid": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "config"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Grid"
+        }
+      },
+      "type": "object"
+    },
+    "C_GridConfigurationColumn": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "size": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            }
+          },
+          "required": [
+            "size"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "GridConfigurationColumn"
+        }
+      },
+      "type": "object"
+    },
+    "C_GridConfigurationColumnGap": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "gap": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            }
+          },
+          "required": [
+            "gap"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "GridConfigurationColumnGap"
+        }
+      },
+      "type": "object"
+    },
+    "C_GridConfigurationGap": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "column": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "row": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            }
+          },
+          "required": [
+            "column",
+            "row"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "GridConfigurationGap"
+        }
+      },
+      "type": "object"
+    },
+    "C_GridConfigurationRow": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "size": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            }
+          },
+          "required": [
+            "size"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "GridConfigurationRow"
+        }
+      },
+      "type": "object"
+    },
+    "C_GridConfigurationRowGap": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "gap": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            }
+          },
+          "required": [
+            "gap"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "GridConfigurationRowGap"
         }
       },
       "type": "object"
@@ -16843,6 +17357,21 @@
               "$ref": "#/definitions/C_AnimatedVisibility"
             },
             {
+              "$ref": "#/definitions/C_AppBarClickableItem"
+            },
+            {
+              "$ref": "#/definitions/C_AppBarColumn"
+            },
+            {
+              "$ref": "#/definitions/C_AppBarCustomItem"
+            },
+            {
+              "$ref": "#/definitions/C_AppBarRow"
+            },
+            {
+              "$ref": "#/definitions/C_AppBarToggleableItem"
+            },
+            {
               "$ref": "#/definitions/C_AssistChip"
             },
             {
@@ -17009,6 +17538,24 @@
             },
             {
               "$ref": "#/definitions/C_FlowRow"
+            },
+            {
+              "$ref": "#/definitions/C_Grid"
+            },
+            {
+              "$ref": "#/definitions/C_GridConfigurationColumn"
+            },
+            {
+              "$ref": "#/definitions/C_GridConfigurationColumnGap"
+            },
+            {
+              "$ref": "#/definitions/C_GridConfigurationGap"
+            },
+            {
+              "$ref": "#/definitions/C_GridConfigurationRow"
+            },
+            {
+              "$ref": "#/definitions/C_GridConfigurationRowGap"
             },
             {
               "$ref": "#/definitions/C_HorizontalCenteredHeroCarousel"
@@ -34030,6 +34577,218 @@
       },
       "type": "object"
     },
+    "V_1_23_0_AppBarClickableItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "icon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "label": {
+              "type": "string"
+            },
+            "onClick": {
+              "$ref": "#/definitions/Action"
+            }
+          },
+          "required": [
+            "label",
+            "onClick"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "AppBarClickableItem"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_AppBarColumn": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "overflowIndicator"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "isExpanded": {
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onIsExpandedChange": {
+              "$ref": "#/definitions/Action"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "AppBarColumn"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_AppBarCustomItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "appbarContent",
+                  "menuContent"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "isExpanded": {
+              "type": "boolean"
+            },
+            "onIsExpandedChange": {
+              "$ref": "#/definitions/Action"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "AppBarCustomItem"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_AppBarRow": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "overflowIndicator"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "isExpanded": {
+              "type": "boolean"
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onIsExpandedChange": {
+              "$ref": "#/definitions/Action"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "AppBarRow"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_AppBarToggleableItem": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "icon"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "checked": {
+              "type": "boolean"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "label": {
+              "type": "string"
+            },
+            "onCheckedChange": {
+              "$ref": "#/definitions/Action"
+            }
+          },
+          "required": [
+            "checked",
+            "label",
+            "onCheckedChange"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "AppBarToggleableItem"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_AssistChip": {
       "properties": {
         "children": {
@@ -37995,6 +38754,308 @@
         },
         "type": {
           "const": "FlowRow"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_Grid": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "config"
+                ]
+              }
+            }
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "Grid"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_GridConfigurationColumn": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "size": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            }
+          },
+          "required": [
+            "size"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "GridConfigurationColumn"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_GridConfigurationColumnGap": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "gap": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            }
+          },
+          "required": [
+            "gap"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "GridConfigurationColumnGap"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_GridConfigurationGap": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "column": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            },
+            "row": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            }
+          },
+          "required": [
+            "column",
+            "row"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "GridConfigurationGap"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_GridConfigurationRow": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "size": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            }
+          },
+          "required": [
+            "size"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "GridConfigurationRow"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_GridConfigurationRowGap": {
+      "properties": {
+        "children": false,
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "gap": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                }
+              ]
+            }
+          },
+          "required": [
+            "gap"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "GridConfigurationRowGap"
         }
       },
       "type": "object"
@@ -44265,6 +45326,21 @@
               "$ref": "#/definitions/V_1_23_0_AnimatedVisibility"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_AppBarClickableItem"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_AppBarColumn"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_AppBarCustomItem"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_AppBarRow"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_AppBarToggleableItem"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_AssistChip"
             },
             {
@@ -44431,6 +45507,24 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_FlowRow"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_Grid"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_GridConfigurationColumn"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_GridConfigurationColumnGap"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_GridConfigurationGap"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_GridConfigurationRow"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_GridConfigurationRowGap"
             },
             {
               "$ref": "#/definitions/V_1_23_0_HorizontalCenteredHeroCarousel"

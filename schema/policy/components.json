@@ -20,6 +20,31 @@
       }
     }
   },
+  "AppBarClickableItem": {
+    "decision": {
+      "category": "navigation"
+    }
+  },
+  "AppBarColumn": {
+    "decision": {
+      "category": "navigation"
+    }
+  },
+  "AppBarCustomItem": {
+    "decision": {
+      "category": "navigation"
+    }
+  },
+  "AppBarRow": {
+    "decision": {
+      "category": "navigation"
+    }
+  },
+  "AppBarToggleableItem": {
+    "decision": {
+      "category": "navigation"
+    }
+  },
   "AssistChip": {
     "decision": {
       "category": "input"
@@ -592,7 +617,8 @@
   },
   "NavigationSuiteScaffold": {
     "decision": {
-      "category": "navigation"
+      "category": "navigation",
+      "identity": "androidx.compose.material3:material3-adaptive-navigation-suite-android androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldKt.NavigationSuiteScaffold-LDyHd3E(Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Ljava/lang/String;Landroidx/compose/material3/adaptive/navigationsuite/NavigationSuiteColors;JJLandroidx/compose/material3/adaptive/navigationsuite/NavigationSuiteScaffoldState;Landroidx/compose/foundation/layout/Arrangement$Vertical;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Alignment$Horizontal;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V"
     }
   },
   "OutlinedButton": {

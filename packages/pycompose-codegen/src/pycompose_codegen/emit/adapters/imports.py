@@ -13,6 +13,7 @@ from typing import Any
 from pycompose.model.catalog.vocabulary import holder_streams
 from pycompose.model.programs.bindings import animatable
 from pycompose_codegen.emit.adapters.bound import plain_imports
+from pycompose_codegen.emit.adapters.handed import HANDED_IMPORTS, handed_channels
 from pycompose_codegen.emit.adapters.state import state_call
 from pycompose_codegen.emit.adapters.text_echo import (
     CARET_IMPORTS,
@@ -89,6 +90,7 @@ def extra_imports(
         _prop_imports(entry.get("props", {}).values(), converters or {})
         | _state_imports(entry)
         | _sharing_imports(entry)
+        | (HANDED_IMPORTS if handed_channels(entry) else set())
     )
     if follows_caret(entry.get("props", {})):
         qualified |= CARET_IMPORTS

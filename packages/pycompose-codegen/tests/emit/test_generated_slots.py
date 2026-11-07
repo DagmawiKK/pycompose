@@ -260,7 +260,7 @@ def test_the_adapters_import_every_receiver_they_name() -> None:
                     }
                 }
             },
-            "needs the content kind",
+            "needs the content or members kind",
         ),
     ],
 )

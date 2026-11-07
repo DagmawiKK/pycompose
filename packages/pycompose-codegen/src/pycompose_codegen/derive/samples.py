@@ -171,28 +171,21 @@ class _Sample:
             elif spec.get("required"):
                 props[prop] = _value(f"{name}.{prop}", spec, self.values)
         children = [
-            {
-                "id": f"{id}.{slot}",
-                "type": "Text",
-                "slot": slot,
-                "props": {"text": slot},
-            }
+            {**self._filler(spec, f"{id}.{slot}", slot), "slot": slot}
             for slot, spec in sorted((entry.get("slots") or {}).items())
             if not spec.get("nullable") and not spec.get("host")
         ]
         if entry["children"].get("allowed"):
-            children.append(
-                {"id": f"{id}.child", "type": "Text", "props": {"text": name}}
-            )
+            children.append(self._filler(entry["children"], f"{id}.child", name))
         texts = [
             prop
             for prop in props
             if entry["props"][prop]["type"] in {"string", "resource"}
             or entry["props"][prop].get("valueType") == "AnnotatedString"
         ]
-        if not children and not texts:
+        if not children and not texts and "modifier" in entry["props"]:
             # Nothing in the sample names it (a Checkbox, a Slider): its label
-            # comes from semantics, as an app's must.
+            # comes from semantics, as an app's must. An item wears none.
             props["modifier"] = {
                 "operations": [{"type": "semantics", "contentDescription": name}]
             }
@@ -200,6 +193,17 @@ class _Sample:
         if children:
             node["children"] = children
         return node
+
+    def _filler(self, channel: dict[str, Any], id: str, text: str) -> dict[str, Any]:
+        """A channel's filler: a ``Text``, or a builder's first applied item."""
+        if channel.get("kind") != "members":
+            return {"id": id, "type": "Text", "props": {"text": text}}
+        item = next(
+            name
+            for name, entry in sorted(self.components.items())
+            if entry.get("item") and entry["scope"] in channel["applies"]
+        )
+        return self.node(item, id)
 
     def _binding(self, prop: str, spec: dict[str, Any]) -> dict[str, Any]:
         handler = f"preview.{prop}"
@@ -252,12 +256,18 @@ class _Sample:
         for name, entry in sorted(self.components.items()):
             if "scope" in entry:
                 continue
-            if entry["children"].get("provides") == scope:
+            # A builder's channel applies its scope's items, a supertype's too.
+            if scope in _provided(entry["children"]):
                 return name, None
             for slot, spec in sorted((entry.get("slots") or {}).items()):
-                if spec.get("provides") == scope:
+                if scope in _provided(spec):
                     return name, slot
         raise ValueError(f"no component provides {scope}")
+
+
+def _provided(channel: dict[str, Any]) -> set[str]:
+    """The scopes a channel's children may need: its receiver, and what it applies."""
+    return {channel.get("provides"), *channel.get("applies", ())} - {None}
 
 
 def sample(catalog: dict[str, Any], name: str) -> dict[str, Any]:

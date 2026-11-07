@@ -25,6 +25,7 @@ from pycompose.model.catalog.vocabulary import (
 from pycompose_codegen.derive.candidate_props import CandidateError
 from pycompose_codegen.derive.classpath_dump import Inventory
 from pycompose_codegen.derive.positional_holders import positional_holders
+from pycompose_codegen.emit.adapters.items import item_refusal
 from pycompose_codegen.emit.state_families import (
     STATE_ATTACH_GATES,
     STATE_FAMILIES,
@@ -51,8 +52,11 @@ def reshape(
         plan: The call plan the entry was derived from.
 
     Returns:
-        The reshaped entry; a shape the pin cannot carry raises
-        ``CandidateError``.
+        The reshaped entry.
+
+    Raises:
+        CandidateError: A shape the pin cannot carry, or an item that would
+            need composition.
     """
     entry = copy.deepcopy(entry)
     invented: list[str] = []
@@ -83,6 +87,8 @@ def reshape(
         # Props Compose's signature has no counterpart for, so the drift
         # checker reads them as deliberate.
         entry["reshaped"] = invented
+    if entry.get("item") and (refusal := item_refusal(entry)) is not None:
+        raise CandidateError(f"{name}: {refusal}")
     return entry
 
 

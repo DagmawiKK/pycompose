@@ -92,12 +92,15 @@ class KotlinType:
         return Kind.CALLBACK
 
     def _receiver_kind(self) -> Kind:
-        """A Unit lambda on a receiver: a builder's scope, or a canvas's."""
+        """A Unit lambda on a receiver: a canvas's, or a builder's scope.
+
+        Which builder scopes have a protocol is the builder rule's to decide.
+        """
         receiver = self.arguments[0][1]
         classifier = receiver.classifier if receiver is not None else None
         if classifier == DRAW_SCOPE and len(self.arguments) == 2:
             return Kind.DRAW
-        return Kind.BUILDER if classifier in BUILDERS else Kind.UNKNOWN
+        return Kind.BUILDER
 
 
 def _type(data: dict[str, Any] | None) -> KotlinType | None:

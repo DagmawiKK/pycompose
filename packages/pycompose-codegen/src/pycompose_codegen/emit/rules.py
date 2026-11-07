@@ -66,7 +66,9 @@ RESERVED_SLOTS = frozenset({"children", "id", "modifier", "props"})
 #: Keys a slot entry may carry. Anything else is a typo, not a convention.
 
 
-SLOT_KEYS = frozenset({"native", "kind", "nullable", "consume", "provides", "host"})
+SLOT_KEYS = frozenset(
+    {"native", "kind", "nullable", "consume", "provides", "host", "handed", "applies"}
+)
 
 #: Keys an interaction entry may carry. Anything else is a typo.
 

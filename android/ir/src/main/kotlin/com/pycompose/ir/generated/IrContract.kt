@@ -50,6 +50,61 @@ object IrContract {
                 "visible" to PropertyRule("boolean", required = true),
             ),
         ),
+        "AppBarClickableItem" to ComponentRule(
+            slots = setOf("icon"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "enabled" to PropertyRule("boolean", required = false),
+                "label" to PropertyRule("string", required = true),
+                "onClick" to PropertyRule("actionId", required = true),
+            ),
+        ),
+        "AppBarColumn" to ComponentRule(
+            slots = setOf("overflowIndicator"),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "isExpanded" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onIsExpandedChange" to PropertyRule("actionId", required = false),
+            ),
+        ),
+        "AppBarCustomItem" to ComponentRule(
+            slots = setOf("appbarContent", "menuContent"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "isExpanded" to PropertyRule("boolean", required = false),
+                "onIsExpandedChange" to PropertyRule("actionId", required = false),
+            ),
+        ),
+        "AppBarRow" to ComponentRule(
+            slots = setOf("overflowIndicator"),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "isExpanded" to PropertyRule("boolean", required = false),
+                "modifier" to PropertyRule("modifier", required = false),
+                "onIsExpandedChange" to PropertyRule("actionId", required = false),
+            ),
+        ),
+        "AppBarToggleableItem" to ComponentRule(
+            slots = setOf("icon"),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "checked" to PropertyRule("boolean", required = true),
+                "enabled" to PropertyRule("boolean", required = false),
+                "label" to PropertyRule("string", required = true),
+                "onCheckedChange" to PropertyRule("actionId", required = true),
+            ),
+        ),
         "AssistChip" to ComponentRule(
             slots = setOf("label", "leadingIcon", "trailingIcon"),
             childrenAllowed = false,
@@ -868,6 +923,61 @@ object IrContract {
                 "maxItemsInEachRow" to PropertyRule("integer", required = false, animation = true, minimum = 1.0, maximum = 2147483647.0),
                 "modifier" to PropertyRule("modifier", required = false),
                 "verticalArrangement" to PropertyRule("enum", required = false, valueType = "ArrangementVertical"),
+            ),
+        ),
+        "Grid" to ComponentRule(
+            slots = setOf("config"),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "modifier" to PropertyRule("modifier", required = false),
+            ),
+        ),
+        "GridConfigurationColumn" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "size" to PropertyRule("dp", required = true),
+            ),
+        ),
+        "GridConfigurationColumnGap" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "gap" to PropertyRule("dp", required = true),
+            ),
+        ),
+        "GridConfigurationGap" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "column" to PropertyRule("dp", required = true),
+                "row" to PropertyRule("dp", required = true),
+            ),
+        ),
+        "GridConfigurationRow" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "size" to PropertyRule("dp", required = true),
+            ),
+        ),
+        "GridConfigurationRowGap" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = false,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "gap" to PropertyRule("dp", required = true),
             ),
         ),
         "HorizontalCenteredHeroCarousel" to ComponentRule(

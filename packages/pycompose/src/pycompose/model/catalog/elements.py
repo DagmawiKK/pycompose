@@ -17,6 +17,8 @@ from dataclasses import dataclass
 from typing import cast
 
 from pycompose.errors import ComponentRegistryError
+from pycompose.model.catalog.channels import applies as _applies
+from pycompose.model.catalog.channels import handed as _handed
 from pycompose.model.catalog.vocabulary import CONSUMERS, SLOT_KINDS
 
 
@@ -190,6 +192,10 @@ class ChildrenRule:
             the receiver down so a scoped child composes under its provider.
         key: Keyed content's key prop: the children are the subtree drawn for
             its current value. Codegen-only.
+        handed: The holder the content lambda is handed, the property its
+            members set and which member sets each value. Codegen-only.
+        applies: For ``members`` children, the scopes whose item components
+            the builder applies.
     """
 
     allowed: bool
@@ -199,6 +205,8 @@ class ChildrenRule:
     consume: str | None = None
     provides: str | None = None
     key: str | None = None
+    handed: Mapping[str, object] | None = None
+    applies: tuple[str, ...] = ()
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object], *, where: str) -> ChildrenRule:
@@ -247,6 +255,8 @@ class ChildrenRule:
             consume=cast("str | None", consume),
             provides=provides,
             key=key,
+            handed=_handed(data, where),
+            applies=_applies(data, where),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -268,6 +278,10 @@ class ChildrenRule:
             out["provides"] = self.provides
         if self.key is not None:
             out["key"] = self.key
+        if self.handed is not None:
+            out["handed"] = dict(self.handed)
+        if self.applies:
+            out["applies"] = list(self.applies)
         return out
 
 
@@ -286,6 +300,10 @@ class SlotRule:
         host: Whether the host composes the slot with this node's native
             state instead of passing it to a native parameter. A host slot
             carries no native policy at all.
+        handed: The holder the slot lambda is handed, the property its
+            members set and which member sets each value. Codegen-only.
+        applies: For a ``members`` slot, the scopes whose item components the
+            builder applies.
     """
 
     native: str | None
@@ -294,6 +312,8 @@ class SlotRule:
     consume: str | None = None
     provides: str | None = None
     host: bool = False
+    handed: Mapping[str, object] | None = None
+    applies: tuple[str, ...] = ()
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, object], *, where: str) -> SlotRule:
@@ -340,6 +360,8 @@ class SlotRule:
             nullable=nullable,
             consume=cast("str | None", consume),
             provides=provides,
+            handed=_handed(data, where),
+            applies=_applies(data, where),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -359,4 +381,8 @@ class SlotRule:
             out["consume"] = self.consume
         if self.provides is not None:
             out["provides"] = self.provides
+        if self.handed is not None:
+            out["handed"] = dict(self.handed)
+        if self.applies:
+            out["applies"] = list(self.applies)
         return out

@@ -29,6 +29,7 @@ from pycompose_codegen.emit.adapters.built import built_arguments, shared_argume
 from pycompose_codegen.emit.adapters.eligibility import held_props, is_mechanical
 from pycompose_codegen.emit.adapters.fragments import Fragments
 from pycompose_codegen.emit.adapters.imports import extra_imports
+from pycompose_codegen.emit.adapters.items import indented, render_item
 from pycompose_codegen.emit.adapters.policy import simple
 from pycompose_codegen.emit.adapters.props import render_prop
 from pycompose_codegen.emit.adapters.resources import loaded_resources, stand_in
@@ -93,7 +94,9 @@ def render(
     animations = CATALOG_CONVERTERS if converters is None else converters
 
     out = Fragments()
-    out.arguments.append("modifier = modifier")
+    item = bool(entry.get("item"))
+    # An item is applied, never composed: it wears no modifier.
+    out.arguments.extend([] if item else ["modifier = modifier"])
     interaction = entry.get("interaction") or {}
     observed = set((interaction.get("observations") or {}).values())
     state = entry.get("state")
@@ -123,12 +126,9 @@ def render(
             return ""
     stand_in(fills, out)
     gate = " && ".join(filter(None, [host_locals(entry, out), *out.gates])) or None
-    for slot_name, slot in sorted(entry.get("slots", {}).items()):
-        out.arguments.append(named_slot(slot_name, slot))
-
-    children = entry.get("children", {})
-    if children.get("allowed"):
-        out.arguments.append(children_argument(children, out))
+    _channels(entry, out)
+    if item:
+        return render_item(name, entry, out, native_name(name, entry))
 
     indent = "                "
     if gate is not None:
@@ -154,10 +154,21 @@ def render(
     )
 
 
+def _channels(entry: dict[str, Any], out: Fragments) -> None:
+    """Pass the named slots, then the primary children, to their parameters."""
+    for slot_name, slot in sorted(entry.get("slots", {}).items()):
+        out.arguments.append(named_slot(slot_name, slot))
+    children = entry.get("children", {})
+    if children.get("allowed"):
+        out.arguments.append(children_argument(children, out))
+
+
 def _call(native: str, out: Fragments, indent: str, *, boxed: bool) -> str:
     """The native call; one taking no modifier sits in a Box wearing the node's."""
     arguments = out.arguments[1:] if boxed else out.arguments
-    body = "\n".join(f"{indent}    {argument}," for argument in arguments)
+    body = "\n".join(
+        f"{indent}    {indented(argument, indent)}," for argument in arguments
+    )
     tail = ""
     if out.trailing:
         head = " {"

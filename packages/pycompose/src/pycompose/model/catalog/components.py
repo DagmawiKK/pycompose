@@ -291,6 +291,8 @@ class ComponentSpec:
             pin's one builder for their type, with the props it names.
         shared: Native holder parameters the component does not own, by the
             holder class; each prop names the node whose holder it uses.
+        item: Codegen-only: a builder member (``AppBarScope.clickableItem``),
+            applied to its parent's scope as the builder runs, never composed.
     """
 
     name: str
@@ -313,6 +315,7 @@ class ComponentSpec:
     source: Mapping[str, str] | None = None
     built: Mapping[str, Mapping[str, object]] | None = None
     shared: Mapping[str, str] | None = None
+    item: bool = False
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "props", MappingProxyType(dict(self.props)))
@@ -378,6 +381,7 @@ class ComponentSpec:
             source=_source(name, data.get("source")),
             built=cast("Mapping[str, Mapping[str, object]] | None", data.get("built")),
             shared=cast("Mapping[str, str] | None", data.get("shared")),
+            item=data.get("item") is True,
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -418,6 +422,7 @@ class ComponentSpec:
             "boxed": self.boxed,
             "built": None if self.built is None else dict(self.built),
             "shared": None if self.shared is None else dict(self.shared),
+            "item": self.item,
         }
         result.update({key: value for key, value in optional.items() if value})
         if self.source is not None:

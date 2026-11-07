@@ -137,7 +137,8 @@ def _prop_face(
     host: list[str] = []
     problems: list[str] = []
     for prop, spec in entry.get("props", {}).items():
-        if prop in held or (spec["type"] == "modifier" and entry.get("boxed")):
+        unworn = entry.get("boxed") or entry.get("item")
+        if prop in held or (spec["type"] == "modifier" and unworn):
             continue
         if "provider" in spec and "interface" in spec["provider"]:
             # A producer interface is a value of that interface's type.
@@ -195,7 +196,7 @@ def _wiring_face(
             Argument(
                 name,
                 "function",
-                arity=1 if children.get("consume") else 0,
+                arity=_arity(children),
                 receiver=receiver,
             ),
         )
@@ -203,7 +204,8 @@ def _wiring_face(
         add(
             "slots",
             slot["native"],
-            Argument(slot["native"], "function", arity=1 if slot.get("consume") else 0),
+            # A consumed scope or a handed holder is the lambda's one argument.
+            Argument(slot["native"], "function", arity=_arity(slot)),
         )
     interaction = entry.get("interaction") or {}
     if interaction:
@@ -226,6 +228,11 @@ def _wiring_face(
     return named, problems
 
 
+def _arity(channel: dict[str, Any]) -> int:
+    """Arguments a slot's lambda takes: a consumed scope or a handed holder."""
+    return 1 if channel.get("consume") or channel.get("handed") else 0
+
+
 def face(
     entry: dict[str, Any], registry: dict[str, Any], pin_names: frozenset[str]
 ) -> Face:
@@ -246,7 +253,7 @@ def face(
     wiring_args, wiring_problems = _wiring_face(entry, pin_names)
     named: dict[str, Argument] = (
         {}
-        if entry.get("boxed")
+        if entry.get("boxed") or entry.get("item")
         else {"modifier": Argument("modifier", "modifier", MODIFIER)}
     )
     named.update(prop_args)

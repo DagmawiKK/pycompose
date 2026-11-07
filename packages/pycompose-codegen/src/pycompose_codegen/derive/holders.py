@@ -23,6 +23,10 @@ ANIMATING = frozenset({"androidx.compose.foundation.gestures.animateTo"})
 Key = tuple[str, str, str]
 
 
+ANCHOR_DRIVES = {"constant", "parameter"}
+"""Drive evidence naming an anchor; an assignment (``assigns``) drives no enum."""
+
+
 def derive(
     found: Inventory, drives: dict[Key, dict[str, Any]], registry: dict[str, Any]
 ) -> tuple[dict[str, Any], list[str]]:
@@ -49,7 +53,7 @@ def derive(
             for key, drive in drives.items()
             if key[0] == holder
             and key in members
-            and drive["kind"] != "unknown"
+            and drive["kind"] in ANCHOR_DRIVES
             and "kotlin/Deprecated" not in members[key].annotations
         ] or _named_drives(found, holder)
         if not evidence:
@@ -103,7 +107,7 @@ def anchored_holders(
             for key, drive in drives.items()
             if key[0] == holder
             and key in members
-            and drive["kind"] != "unknown"
+            and drive["kind"] in ANCHOR_DRIVES
             and "kotlin/Deprecated" not in members[key].annotations
         ] or _named_drives(found, holder)
         value, table, missing = (

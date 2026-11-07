@@ -63,7 +63,12 @@ def _validate_children(
         die(f"component {name!r} children.provides must name a receiver class")
     if children.get("consume") is not None:
         die(f"component {name!r} children cannot consume and provide a scope")
-    if children.get("kind", "content") not in {"content", "keyed", "indexed"}:
+    if children.get("kind", "content") not in {
+        "content",
+        "keyed",
+        "indexed",
+        "members",
+    }:
         die(f"component {name!r} children.provides needs the content kind")
 
 
@@ -208,10 +213,10 @@ def _validate_slot_provides(where: str, slot: dict[str, Any]) -> None:
         # Consuming a scope and providing one would need two nested lambdas;
         # the renderer has no such shape.
         die(f"{where}: cannot consume and provide a scope")
-    if slot.get("kind", "content") != "content":
+    if slot.get("kind", "content") not in {"content", "members"}:
         # Items are emitted as keyed eager calls, which cannot carry a
-        # composable receiver.
-        die(f"{where}: 'provides' needs the content kind")
+        # composable receiver; members are applied to the builder's own.
+        die(f"{where}: 'provides' needs the content or members kind")
 
 
 def _validate_prop(

@@ -36,13 +36,18 @@ CONSUMED = {"androidx/compose/foundation/layout/PaddingValues": "paddingValues"}
 
 LAZY_LIST = "androidx/compose/foundation/lazy/LazyListScope"
 
+Holders = dict[str, dict[str, Any]]
+"""What the pin derives per type: holder families, item scopes, handed holders."""
 
-def slot_rule(value: KotlinType) -> dict[str, Any]:
+
+def slot_rule(value: KotlinType, holders: Holders) -> dict[str, Any]:
     """Classify a composable lambda as a scoped, unscoped or consuming slot.
 
     A receiver the lambda carries is handed to the children, so a child that
     composes only inside it can (ADR-0016 decision 1); one that needs none
-    composes as it would anywhere.
+    composes as it would anywhere. A holder the lambda is handed, whose
+    members set a property (``members.handed_holders``), is projected onto
+    the slot's owner.
     """
     arguments = function_arguments(value)
     receiver = None
@@ -67,22 +72,39 @@ def slot_rule(value: KotlinType) -> dict[str, Any]:
     elif [(a.classifier, a.nullable) for a in arguments] == [("kotlin/Int", False)]:
         # A template over an index: Python sends one subtree per index, in order.
         rule["kind"] = "indexed"
+    elif (
+        len(arguments) == 1
+        and not arguments[0].nullable
+        and holders.get(arguments[0].classifier, {}).get("kind") == "handed"
+    ):
+        handed = holders[arguments[0].classifier]
+        rule["handed"] = {k: handed[k] for k in ("holder", "value", "drives")}
     elif arguments:
         raise ValueError("slot-supplied arguments need typed context references")
     return rule
 
 
-def builder_rule(value: KotlinType) -> dict[str, Any]:
-    """A lazy container's builder lambda: the children are the items it lists.
+def builder_rule(value: KotlinType, holders: Holders) -> dict[str, Any]:
+    """A builder lambda: the children are the items it lists, or the members it calls.
 
     A list, a grid and a staggered grid build alike, one item per child, so
-    the host lists them through the same protocol in each scope.
+    the host lists them through the same protocol in each scope. A scope whose
+    members are items (``members.member_scopes``) takes item components, each
+    applied to it as the builder runs.
     """
     receiver = value.arguments[0][1]
-    if receiver is None or receiver.classifier not in BUILDERS or receiver.nullable:
-        named = receiver.classifier if receiver is not None else "unresolved"
-        raise ValueError(f"builder scope needs a native protocol: {named}")
-    return {"policy": "slot", "receiver": None, "kind": "items"}
+    named = receiver.classifier if receiver is not None else "unresolved"
+    if receiver is not None and not receiver.nullable and named in BUILDERS:
+        return {"policy": "slot", "receiver": None, "kind": "items"}
+    if receiver is not None and holders.get(named, {}).get("kind") == "members":
+        applies = [s.replace("/", ".") for s in holders[named]["items"]]
+        return {
+            "policy": "slot",
+            "receiver": named,
+            "kind": "members",
+            "applies": applies,
+        }
+    raise ValueError(f"builder scope needs a native protocol: {named}")
 
 
 def scope_providers(
@@ -111,7 +133,7 @@ def slot_scopes(declarations: Iterable[Declaration]) -> frozenset[str]:
     )
 
 
-def event_rule(value: KotlinType) -> dict[str, Any]:
+def event_rule(value: KotlinType, _: Holders) -> dict[str, Any]:
     """A callback's binding: its arguments become the event's scalar payload."""
     arguments = function_arguments(value)
     if any(t.classifier not in SCALARS for t in arguments):
@@ -125,12 +147,12 @@ def event_rule(value: KotlinType) -> dict[str, Any]:
     }
 
 
-def draw_rule(_: KotlinType) -> dict[str, Any]:
+def draw_rule(_: KotlinType, __: Holders) -> dict[str, Any]:
     """A canvas's draw lambda: a draw program the host runs every frame."""
     return {"policy": "draw"}
 
 
-LAMBDA_RULES: dict[Kind, Callable[[KotlinType], dict[str, Any]]] = {
+LAMBDA_RULES: dict[Kind, Callable[[KotlinType, Holders], dict[str, Any]]] = {
     Kind.SLOT: slot_rule,
     Kind.BUILDER: builder_rule,
     Kind.CALLBACK: event_rule,

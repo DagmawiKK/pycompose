@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from pycompose_codegen.emit.adapters.fragments import Fragments
+from pycompose_codegen.emit.adapters.handed import handed_call
 from pycompose_codegen.emit.adapters.policy import camel, simple
 
 
@@ -17,6 +18,13 @@ def children_argument(children: dict[str, Any], out: Fragments) -> str:
     Indexed content draws, for each index, the child at that position.
     """
     native = children.get("native", "content")
+    if children.get("kind") == "members":
+        # Item components, applied to the builder's receiver as it runs.
+        return f"{native} = {{ context.applyItems(this, model.children.unslotted()) }}"
+    if children.get("handed"):
+        return _handed_lambda(
+            native, children["handed"], "context.children(model.children)"
+        )
     if children.get("kind") == "keyed":
         out.locals.append(
             "val keyed = context.keyedContent("
@@ -63,6 +71,12 @@ def named_slot(slot_name: str, slot: dict[str, Any]) -> str:
     kind = slot.get("kind", "content")
     consume = slot.get("consume")
     provides = slot.get("provides")
+    if kind == "members":
+        listed = f'model.children.inSlot("{slot_name}")'
+        return f"{native} = {{ context.applyItems(this, {listed}) }}"
+    if slot.get("handed"):
+        body = f'context.slot(model.children, "{slot_name}")?.invoke()'
+        return _handed_lambda(native, slot["handed"], body)
     if provides is not None:
         # The native lambda carries the receiver, so the slot renderer hands
         # that same receiver to scoped children.  A non-null parameter still
@@ -77,6 +91,11 @@ def named_slot(slot_name: str, slot: dict[str, Any]) -> str:
     body, parameter = _slot_body("model.children", slot_name, kind, consume)
     prefix = f"{parameter} -> " if parameter is not None else ""
     return f"{native} = {{ {prefix}{body} }}"
+
+
+def _handed_lambda(native: str, handed: dict[str, Any], body: str) -> str:
+    """A lambda handed a holder: reconcile it with the owner's props, then compose."""
+    return f"{native} = {{ holder ->\n    {handed_call(handed)}\n    {body}\n}}"
 
 
 def _slot_body(

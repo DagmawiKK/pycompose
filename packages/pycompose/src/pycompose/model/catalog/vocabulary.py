@@ -15,14 +15,15 @@ from __future__ import annotations
 OWNERS = ("python", "host")
 """Who may set a prop. Anything else is refused rather than ignored."""
 
-SLOT_KINDS = ("content", "items", "keyed", "indexed")
-"""How a subtree is composed: nodes in order, lazy list items, one per key, or one
-per index.
+SLOT_KINDS = ("content", "items", "keyed", "indexed", "members")
+"""How a subtree is composed: nodes in order, lazy list items, one per key, one
+per index, or item components a builder applies.
 
 ``keyed`` is the primary children's alone: keyed content draws the subtree Python
 sent for the current key, and keeps an outgoing key's while it animates out.
 ``indexed`` is a template over an index (a pager's ``page``): the i-th child is
-what the lambda draws for index i.
+what the lambda draws for index i. ``members`` children are item components
+(``AppBarClickableItem``), each applied to the builder's scope as it runs.
 """
 
 CONSUMERS = ("paddingValues",)

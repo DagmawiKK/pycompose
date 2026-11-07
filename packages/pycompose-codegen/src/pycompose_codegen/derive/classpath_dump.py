@@ -137,7 +137,11 @@ def source_defaults(
 def source_drives(
     directory: Path = DUMP_DIR, android: Path = ANDROID
 ) -> dict[tuple[str, str, str], dict[str, Any]]:
-    """Read the anchor each holder suspend member drives to, from the same evidence."""
+    """Read what each holder member drives, from the same evidence.
+
+    A suspend member drives to an anchor; a function taking nothing assigns a
+    constant to one of its holder's properties.
+    """
     return {
         key: declaration["drive"]
         for key, declaration in _source_evidence(directory, android).items()

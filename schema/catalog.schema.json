@@ -395,6 +395,10 @@
         "scope": { "type": "string" },
         "overloadOf": { "type": "string", "minLength": 1 },
         "boxed": { "const": true },
+        "item": {
+          "const": true,
+          "description": "A builder member (AppBarScope.clickableItem): applied to its parent's scope as the builder runs, never composed."
+        },
         "built": {
           "type": "object",
           "description": "Native parameters the host fills by calling the pin's one builder for their type, with the props it names.",
@@ -437,6 +441,31 @@
         "native": {
           "type": "string",
           "description": "The native parameter the children fill, when it is not content: a pager's pageContent."
+        },
+        "handed": { "$ref": "#/$defs/handed" },
+        "applies": {
+          "type": "array",
+          "description": "Builder members: the scopes whose item components the builder applies.",
+          "items": { "$ref": "#/$defs/dottedName" }
+        }
+      }
+    },
+    "handed": {
+      "type": "object",
+      "description": "A holder the lambda is handed: the property its members taking nothing set, and which member sets each value.",
+      "required": ["holder", "value", "drives"],
+      "additionalProperties": false,
+      "properties": {
+        "holder": { "$ref": "#/$defs/dottedName" },
+        "value": { "$ref": "#/$defs/identifier" },
+        "drives": {
+          "type": "object",
+          "required": ["true", "false"],
+          "additionalProperties": false,
+          "properties": {
+            "true": { "$ref": "#/$defs/identifier" },
+            "false": { "$ref": "#/$defs/identifier" }
+          }
         }
       }
     },
@@ -453,7 +482,13 @@
         "nullable": { "type": "boolean" },
         "consume": { "type": "string" },
         "provides": { "type": "string" },
-        "host": { "const": true }
+        "host": { "const": true },
+        "handed": { "$ref": "#/$defs/handed" },
+        "applies": {
+          "type": "array",
+          "description": "Builder members: the scopes whose item components the builder applies.",
+          "items": { "$ref": "#/$defs/dottedName" }
+        }
       }
     },
     "anchoredState": {

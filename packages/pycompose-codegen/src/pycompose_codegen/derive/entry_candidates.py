@@ -31,6 +31,7 @@ from pycompose_codegen.derive.candidate_props import (
 )
 from pycompose_codegen.derive.classpath_dump import Declaration, Inventory
 from pycompose_codegen.derive.component_binding import identity, resolutions, spell
+from pycompose_codegen.derive.item_shape import place_members
 
 
 @dataclass(frozen=True)
@@ -180,7 +181,7 @@ def _declaration(plan: dict[str, Any], found: Inventory) -> Declaration:
         raise CandidateError(
             f"{plan['name']}: source disposition is {declaration.disposition!r}"
         )
-    if declaration.name != plan["name"]:
+    if declaration.name != plan.get("native", plan["name"]):
         raise CandidateError(f"{plan['name']}: source names {declaration.name!r}")
     return declaration
 
@@ -279,6 +280,8 @@ def derive(
     name = schema_name or plan["name"]
     _check_decision(name, plan, decision)
     props, children, slots, review = wire_shape(name, plan, family_index(registry))
+    review += place_members(name, plan, props, children, slots)
+    props = dict(sorted(props.items(), key=lambda kv: (kv[0] == "modifier", kv[0])))
     entry: dict[str, Any] = {
         "package": declaration.package,
         "category": decision["category"],
@@ -292,7 +295,12 @@ def derive(
         entry["optIn"] = sorted(plan["optIn"])
     entry["props"] = props
     entry["children"] = children
-    if "modifier" not in plan["parameters"]:
+    if plan.get("item"):
+        # A builder member: applied to its parent's scope, never composed, so
+        # it wears no modifier.
+        entry["item"] = True
+        del props["modifier"]
+    elif "modifier" not in plan["parameters"]:
         # The wire carries a modifier for every node: a Box wears this one's.
         entry["boxed"] = True
         review.append("modifier: none native; a Box carries the node's")

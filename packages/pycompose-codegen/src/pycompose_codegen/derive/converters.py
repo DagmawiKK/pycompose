@@ -225,6 +225,8 @@ def annotate(lock: dict[str, Any]) -> None:
     table = lock["converters"]
     families = lock["valueTypes"]
     for entry in lock.get("components", {}).values():
+        if entry.get("item"):
+            continue  # Applied as its parent's builder runs: no binding reads there.
         held = held_props(entry)
         for prop, spec in entry.get("props", {}).items():
             if prop not in held:

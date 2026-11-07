@@ -23,6 +23,11 @@ __all__ = [
     "AlertDialog",
     "AnimatedContent",
     "AnimatedVisibility",
+    "AppBarClickableItem",
+    "AppBarColumn",
+    "AppBarCustomItem",
+    "AppBarRow",
+    "AppBarToggleableItem",
     "AssistChip",
     "Badge",
     "BadgedBox",
@@ -79,6 +84,12 @@ __all__ = [
     "FloatingActionButton",
     "FlowColumn",
     "FlowRow",
+    "Grid",
+    "GridConfigurationColumn",
+    "GridConfigurationColumnGap",
+    "GridConfigurationGap",
+    "GridConfigurationRow",
+    "GridConfigurationRowGap",
     "HorizontalCenteredHeroCarousel",
     "HorizontalDivider",
     "HorizontalMultiBrowseCarousel",
@@ -607,6 +618,224 @@ class AnimatedVisibility(Component):
             )
         normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class AppBarClickableItem(Component):
+    """Native clickableItem; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "AppBarClickableItem"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        enabled: bool | None = None,
+        label: str,
+        on_click: ActionTarget,
+        icon: Content | None = None,
+    ) -> None:
+        """Construct a registered AppBarClickableItem.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            enabled: Native enabled; None uses its default.
+            label: Required native label.
+            on_click: Required native onClick.
+            icon: Nodes for the native icon slot.
+        """
+        props: dict[str, PropValue] = {}
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["label"] = label
+        props["on_click"] = on_click
+        slotted: tuple[Node, ...] = ()
+        if icon is not None:
+            slotted += slot_nodes(icon, key="icon", slot="icon")
+        super().__init__(id=id, children=slotted, modifier=None, **props)
+
+
+class AppBarColumn(Component):
+    """Native AppBarColumn; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "AppBarColumn"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        is_expanded: bool | None = None,
+        modifier: Modifier | None = None,
+        on_is_expanded_change: ActionTarget | None = None,
+        children: Content = (),
+        overflow_indicator: Content | None = None,
+    ) -> None:
+        """Construct a registered AppBarColumn.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            is_expanded: Native isExpanded; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_is_expanded_change: Native onIsExpandedChange; None uses its default.
+            children: Ordered child nodes with stable keys.
+            overflow_indicator: Nodes for the native overflowIndicator slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if is_expanded is not None:
+            props["is_expanded"] = is_expanded
+        if on_is_expanded_change is not None:
+            props["on_is_expanded_change"] = on_is_expanded_change
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if overflow_indicator is not None:
+            slotted += slot_nodes(
+                overflow_indicator,
+                key="overflowIndicator",
+                slot="overflowIndicator",
+            )
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
+
+
+class AppBarCustomItem(Component):
+    """Native customItem; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "AppBarCustomItem"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        is_expanded: bool | None = None,
+        on_is_expanded_change: ActionTarget | None = None,
+        appbar_content: Content | None = None,
+        menu_content: Content | None = None,
+    ) -> None:
+        """Construct a registered AppBarCustomItem.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            is_expanded: Native isExpanded; None uses its default.
+            on_is_expanded_change: Native onIsExpandedChange; None uses its default.
+            appbar_content: Nodes for the native appbarContent slot.
+            menu_content: Nodes for the native menuContent slot.
+        """
+        props: dict[str, PropValue] = {}
+        if is_expanded is not None:
+            props["is_expanded"] = is_expanded
+        if on_is_expanded_change is not None:
+            props["on_is_expanded_change"] = on_is_expanded_change
+        slotted: tuple[Node, ...] = ()
+        if appbar_content is not None:
+            slotted += slot_nodes(
+                appbar_content,
+                key="appbarContent",
+                slot="appbarContent",
+            )
+        if menu_content is not None:
+            slotted += slot_nodes(menu_content, key="menuContent", slot="menuContent")
+        super().__init__(id=id, children=slotted, modifier=None, **props)
+
+
+class AppBarRow(Component):
+    """Native AppBarRow; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "AppBarRow"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        is_expanded: bool | None = None,
+        modifier: Modifier | None = None,
+        on_is_expanded_change: ActionTarget | None = None,
+        children: Content = (),
+        overflow_indicator: Content | None = None,
+    ) -> None:
+        """Construct a registered AppBarRow.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            is_expanded: Native isExpanded; None uses its default.
+            modifier: Native modifier; None uses its default.
+            on_is_expanded_change: Native onIsExpandedChange; None uses its default.
+            children: Ordered child nodes with stable keys.
+            overflow_indicator: Nodes for the native overflowIndicator slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if is_expanded is not None:
+            props["is_expanded"] = is_expanded
+        if on_is_expanded_change is not None:
+            props["on_is_expanded_change"] = on_is_expanded_change
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if overflow_indicator is not None:
+            slotted += slot_nodes(
+                overflow_indicator,
+                key="overflowIndicator",
+                slot="overflowIndicator",
+            )
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
+
+
+class AppBarToggleableItem(Component):
+    """Native toggleableItem; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "AppBarToggleableItem"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        checked: bool,
+        enabled: bool | None = None,
+        label: str,
+        on_checked_change: ActionTarget,
+        icon: Content | None = None,
+    ) -> None:
+        """Construct a registered AppBarToggleableItem.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            checked: Required native checked.
+            enabled: Native enabled; None uses its default.
+            label: Required native label.
+            on_checked_change: Required native onCheckedChange.
+            icon: Nodes for the native icon slot.
+        """
+        props: dict[str, PropValue] = {}
+        props["checked"] = checked
+        if enabled is not None:
+            props["enabled"] = enabled
+        props["label"] = label
+        props["on_checked_change"] = on_checked_change
+        slotted: tuple[Node, ...] = ()
+        if icon is not None:
+            slotted += slot_nodes(icon, key="icon", slot="icon")
+        super().__init__(id=id, children=slotted, modifier=None, **props)
 
 
 class AssistChip(Component):
@@ -3934,6 +4163,172 @@ class FlowRow(Component):
             )
         normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class Grid(Component):
+    """Native Grid; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "Grid"
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        children: Content = (),
+        content: Content | None = None,
+        config: Content | None = None,
+    ) -> None:
+        """Construct a registered Grid.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+            config: Nodes for the native config slot.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        slotted: tuple[Node, ...] = ()
+        if config is not None:
+            slotted += slot_nodes(config, key="config", slot="config")
+        super().__init__(
+            id=id, children=normalized + slotted, modifier=modifier, **props
+        )
+
+
+class GridConfigurationColumn(Component):
+    """Native column; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "GridConfigurationColumn"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        size: int | float | Expression,
+    ) -> None:
+        """Construct a registered GridConfigurationColumn.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            size: Required native size.
+        """
+        props: dict[str, PropValue] = {}
+        props["size"] = size
+        super().__init__(id=id, children=(), modifier=None, **props)
+
+
+class GridConfigurationColumnGap(Component):
+    """Native columnGap; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "GridConfigurationColumnGap"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        gap: int | float | Expression,
+    ) -> None:
+        """Construct a registered GridConfigurationColumnGap.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            gap: Required native gap.
+        """
+        props: dict[str, PropValue] = {}
+        props["gap"] = gap
+        super().__init__(id=id, children=(), modifier=None, **props)
+
+
+class GridConfigurationGap(Component):
+    """Native gap; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "GridConfigurationGap"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        column: int | float | Expression,
+        row: int | float | Expression,
+    ) -> None:
+        """Construct a registered GridConfigurationGap.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            column: Required native column.
+            row: Required native row.
+        """
+        props: dict[str, PropValue] = {}
+        props["column"] = column
+        props["row"] = row
+        super().__init__(id=id, children=(), modifier=None, **props)
+
+
+class GridConfigurationRow(Component):
+    """Native row; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "GridConfigurationRow"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        size: int | float | Expression,
+    ) -> None:
+        """Construct a registered GridConfigurationRow.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            size: Required native size.
+        """
+        props: dict[str, PropValue] = {}
+        props["size"] = size
+        super().__init__(id=id, children=(), modifier=None, **props)
+
+
+class GridConfigurationRowGap(Component):
+    """Native rowGap; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "GridConfigurationRowGap"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        gap: int | float | Expression,
+    ) -> None:
+        """Construct a registered GridConfigurationRowGap.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            gap: Required native gap.
+        """
+        props: dict[str, PropValue] = {}
+        props["gap"] = gap
+        super().__init__(id=id, children=(), modifier=None, **props)
 
 
 class HorizontalCenteredHeroCarousel(Component):

@@ -346,13 +346,49 @@ tasks.register("dumpComposeDefaults") {
         val records = inventory["declarations"] as List<Map<String, Any?>>
         val requested = names.get().split(',').toSet()
         val identities = sources.get().split(',').toSet()
-        // Classes a UI composable takes: their suspend members are drive evidence.
+        // Classes a UI composable takes, or hands a slot it takes: their suspend
+        // members, and their members taking nothing, are drive evidence.
         val holders =
             records
                 .filter { it["disposition"] == "ui" }
                 .flatMap { it["parameters"] as List<Map<String, Any?>> }
-                .map { (it["type"] as Map<*, *>)["classifier"] }
-                .toSet()
+                .flatMap { parameter ->
+                    val type = parameter["type"] as Map<*, *>
+                    val handed =
+                        (type["arguments"] as? List<*>).orEmpty().mapNotNull {
+                            ((it as? Map<*, *>)?.get("type") as? Map<*, *>)?.get("classifier")
+                        }
+                    listOf(type["classifier"]) + handed
+                }.toSet()
+
+        // Receivers a UI composable's builder lambda carries, with their supertypes:
+        // the members a builder calls (AppBarScope.clickableItem) are items.
+        @Suppress("UNCHECKED_CAST")
+        val supertypes =
+            (inventory["classes"] as List<Map<String, Any?>>).associate { type ->
+                type["classifier"].toString().replace('.', '/') to
+                    (type["classSupertypes"] as List<Map<String, Any?>>).map {
+                        it["classifier"].toString()
+                    }
+            }
+        val scopes = mutableSetOf<String>()
+        var pending =
+            records
+                .filter { it["disposition"] == "ui" }
+                .flatMap { it["parameters"] as List<Map<String, Any?>> }
+                .mapNotNull { parameter ->
+                    val type = parameter["type"] as Map<*, *>
+                    val extension =
+                        "kotlin/ExtensionFunctionType" in (type["annotations"] as List<*>)
+                    val first = (type["arguments"] as List<*>).firstOrNull() as? Map<*, *>
+                    (first?.get("type") as? Map<*, *>)
+                        ?.get("classifier")
+                        ?.toString()
+                        ?.takeIf { extension }
+                }
+        while (pending.isNotEmpty()) {
+            pending = pending.filter(scopes::add).flatMap { supertypes[it].orEmpty() }
+        }
         val targets =
             records.filter { record ->
                 val owner = record["owner"].toString().substringAfterLast('.')
@@ -364,7 +400,14 @@ tasks.register("dumpComposeDefaults") {
                 val named = requested.contains(record["name"].toString())
                 val constructed = record["name"] == "<init>" && requested.contains(owner)
                 val receiver = (record["dispatchReceiver"] as? Map<*, *>)?.get("classifier")
-                val drive = record["suspend"] == true && receiver in holders
+                val drive =
+                    receiver in holders &&
+                        (
+                            record["suspend"] == true ||
+                                record["declarationKind"] == "function" &&
+                                (record["parameters"] as List<*>).isEmpty()
+                        )
+                val item = receiver in scopes && record["declarationKind"] == "function"
                 // A modifier, plain (Modifier.alpha) or one a scope declares
                 // (RowScope.weight): its parameters' defaults become its props'.
                 val extended = (record["receiver"] as? Map<*, *>)?.get("classifier")
@@ -382,6 +425,7 @@ tasks.register("dumpComposeDefaults") {
                         named ||
                             constructed ||
                             drive ||
+                            item ||
                             modifier ||
                             factory ||
                             draw ||
