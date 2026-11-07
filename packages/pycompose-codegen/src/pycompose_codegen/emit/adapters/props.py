@@ -98,7 +98,7 @@ def _render_scalar(prop_name: str, spec: dict[str, Any], out: Fragments) -> bool
         out.arguments.append(f"{prop_name} = {scalar_wire(prop_name, spec)}")
     elif "nativeDefault" in spec:
         # Absent is the native default; a nullable native parameter's is null.
-        wire = scalar_wire(prop_name, spec)
+        wire = scalar_wire(prop_name, {**spec, "nullable": True})
         native = spec["nativeDefault"]
         out.arguments.append(
             f"{prop_name} = {wire}" + ("" if native == "null" else f" ?: {native}")
@@ -119,7 +119,9 @@ def scalar_wire(prop_name: str, spec: dict[str, Any]) -> str:
     Returns:
         Kotlin source for the value Compose receives.
     """
-    if spec["type"] == "number":
+    if spec["type"] == "number" and spec.get("nullable"):
+        wire = f"model.props.{prop_name}?.let {{ context.number(it) }}"
+    elif spec["type"] == "number":
         wire = f"context.number(model.props.{prop_name})"
     else:
         wire = f"model.props.{prop_name}"

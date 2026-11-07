@@ -464,8 +464,10 @@ object GeneratedAdapters {
             }
             .register("AppBarColumn") { node, modifier, context ->
                 val model = node as AppBarColumnNode
+                val maxItemCountValue = model.props.maxItemCount?.let { wire -> bound(wire, Int.VectorConverter) { plain -> plain.jsonPrimitive.long.toInt() } } ?: kotlin.Int.Companion.MAX_VALUE
                 AppBarColumn(
                     modifier = modifier,
+                    maxItemCount = maxItemCountValue,
                     overflowIndicator = { holder ->
                         context.reconcileProperty(holder, "isExpanded", model.props.isExpanded?.let(::Wanted), model.props.onIsExpandedChange, { holder.isExpanded }, { if (it) holder.show() else holder.dismiss() }) { JsonPrimitive(it) }
                         context.slot(model.children, "overflowIndicator")?.invoke()
@@ -485,8 +487,10 @@ object GeneratedAdapters {
             }
             .register("AppBarRow") { node, modifier, context ->
                 val model = node as AppBarRowNode
+                val maxItemCountValue = model.props.maxItemCount?.let { wire -> bound(wire, Int.VectorConverter) { plain -> plain.jsonPrimitive.long.toInt() } } ?: kotlin.Int.Companion.MAX_VALUE
                 AppBarRow(
                     modifier = modifier,
+                    maxItemCount = maxItemCountValue,
                     overflowIndicator = { holder ->
                         context.reconcileProperty(holder, "isExpanded", model.props.isExpanded?.let(::Wanted), model.props.onIsExpandedChange, { holder.isExpanded }, { if (it) holder.show() else holder.dismiss() }) { JsonPrimitive(it) }
                         context.slot(model.children, "overflowIndicator")?.invoke()
@@ -587,6 +591,7 @@ object GeneratedAdapters {
                             }
                         }
                     }
+                val maxLinesValue = model.props.maxLines?.let { wire -> bound(wire, Int.VectorConverter) { plain -> plain.jsonPrimitive.long.toInt() } } ?: kotlin.Int.Companion.MAX_VALUE
                 val minLinesValue = bound(model.props.minLines, Int.VectorConverter) { plain -> plain.jsonPrimitive.long.toInt() }
                 val overflowValue = model.props.overflow?.let { com.pycompose.renderer.generated.ValueResolver.textOverflow(it).getOrThrow() }
                     ?: androidx.compose.ui.text.style.TextOverflow.Companion.Clip
@@ -596,6 +601,7 @@ object GeneratedAdapters {
                 BasicText(
                     modifier = modifier,
                     color = colorState?.let { state -> object : androidx.compose.ui.graphics.ColorProducer { override fun invoke() = state.value } },
+                    maxLines = maxLinesValue,
                     minLines = minLinesValue,
                     overflow = overflowValue,
                     softWrap = model.props.softWrap,
@@ -1572,14 +1578,16 @@ object GeneratedAdapters {
                 val model = node as FlowColumnNode
                 val itemHorizontalAlignmentValue = model.props.itemHorizontalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentHorizontal(it).getOrThrow() }
                     ?: androidx.compose.ui.Alignment.Companion.Start
+                val maxItemsInEachColumnValue = model.props.maxItemsInEachColumn?.let { wire -> bound(wire, Int.VectorConverter) { plain -> plain.jsonPrimitive.long.toInt() } } ?: kotlin.Int.Companion.MAX_VALUE
+                val maxLinesValue = model.props.maxLines?.let { wire -> bound(wire, Int.VectorConverter) { plain -> plain.jsonPrimitive.long.toInt() } } ?: kotlin.Int.Companion.MAX_VALUE
                 val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() }
                     ?: androidx.compose.foundation.layout.Arrangement.Top
-                val maxItemsInEachColumnValue = bound(model.props.maxItemsInEachColumn, Int.VectorConverter) { plain -> plain.jsonPrimitive.long.toInt() }
                 FlowColumn(
                     modifier = modifier,
                     itemHorizontalAlignment = itemHorizontalAlignmentValue,
-                    verticalArrangement = verticalArrangementValue,
                     maxItemsInEachColumn = maxItemsInEachColumnValue,
+                    maxLines = maxLinesValue,
+                    verticalArrangement = verticalArrangementValue,
                     content = { context.childrenIn(this, model.children) },
                 )
             }
@@ -1587,14 +1595,16 @@ object GeneratedAdapters {
                 val model = node as FlowRowNode
                 val itemVerticalAlignmentValue = model.props.itemVerticalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentVertical(it).getOrThrow() }
                     ?: androidx.compose.ui.Alignment.Companion.Top
+                val maxItemsInEachRowValue = model.props.maxItemsInEachRow?.let { wire -> bound(wire, Int.VectorConverter) { plain -> plain.jsonPrimitive.long.toInt() } } ?: kotlin.Int.Companion.MAX_VALUE
+                val maxLinesValue = model.props.maxLines?.let { wire -> bound(wire, Int.VectorConverter) { plain -> plain.jsonPrimitive.long.toInt() } } ?: kotlin.Int.Companion.MAX_VALUE
                 val verticalArrangementValue = model.props.verticalArrangement?.let { com.pycompose.renderer.generated.ValueResolver.arrangementVertical(it).getOrThrow() }
                     ?: androidx.compose.foundation.layout.Arrangement.Top
-                val maxItemsInEachRowValue = bound(model.props.maxItemsInEachRow, Int.VectorConverter) { plain -> plain.jsonPrimitive.long.toInt() }
                 FlowRow(
                     modifier = modifier,
                     itemVerticalAlignment = itemVerticalAlignmentValue,
-                    verticalArrangement = verticalArrangementValue,
                     maxItemsInEachRow = maxItemsInEachRowValue,
+                    maxLines = maxLinesValue,
+                    verticalArrangement = verticalArrangementValue,
                     content = { context.childrenIn(this, model.children) },
                 )
             }
@@ -1703,6 +1713,7 @@ object GeneratedAdapters {
             }
             .register("HorizontalPager") { node, modifier, context ->
                 val model = node as HorizontalPagerNode
+                val beyondViewportPageCountValue = model.props.beyondViewportPageCount?.let { wire -> bound(wire, Int.VectorConverter) { plain -> plain.jsonPrimitive.long.toInt() } } ?: androidx.compose.foundation.pager.PagerDefaults.BeyondViewportPageCount
                 val pageSpacingValue = context.boundDp(model.props.pageSpacing, Dp.VectorConverter, (0).dp)
                 val snapPositionWire = model.props.snapPosition
                 val snapPositionValue = if (snapPositionWire != null) com.pycompose.renderer.generated.ValueResolver.snapPosition(snapPositionWire).getOrThrow() else androidx.compose.foundation.gestures.snapping.SnapPosition.Start
@@ -1720,6 +1731,7 @@ object GeneratedAdapters {
                 context.share(model.id, stateValue)
                 HorizontalPager(
                     modifier = modifier,
+                    beyondViewportPageCount = beyondViewportPageCountValue,
                     pageSpacing = pageSpacingValue,
                     reverseLayout = model.props.reverseLayout,
                     snapPosition = snapPositionValue,
@@ -1803,12 +1815,14 @@ object GeneratedAdapters {
                 val painterResource = resources.resourceImage(model.props.resource)
                 val alignmentValue = model.props.alignment?.let { com.pycompose.renderer.generated.ValueResolver.alignment(it).getOrThrow() }
                     ?: androidx.compose.ui.Alignment.Companion.Center
+                val alphaValue = model.props.alpha?.let { wire -> bound(wire, Float.VectorConverter) { plain -> context.number(plain).toFloat() } } ?: androidx.compose.ui.graphics.DefaultAlpha
                 val contentScaleValue = model.props.contentScale?.let { com.pycompose.renderer.generated.ValueResolver.contentScale(it).getOrThrow() }
                     ?: androidx.compose.ui.layout.ContentScale.Companion.Fit
                 if (painterResource != null) {
                     Image(
                         modifier = modifier,
                         alignment = alignmentValue,
+                        alpha = alphaValue,
                         contentDescription = model.props.contentDescription,
                         contentScale = contentScaleValue,
                         painter = painterResource,
@@ -1819,12 +1833,14 @@ object GeneratedAdapters {
                 val model = node as ImageImageVectorNode
                 val alignmentValue = model.props.alignment?.let { com.pycompose.renderer.generated.ValueResolver.alignment(it).getOrThrow() }
                     ?: androidx.compose.ui.Alignment.Companion.Center
+                val alphaValue = model.props.alpha?.let { wire -> bound(wire, Float.VectorConverter) { plain -> context.number(plain).toFloat() } } ?: androidx.compose.ui.graphics.DefaultAlpha
                 val contentScaleValue = model.props.contentScale?.let { com.pycompose.renderer.generated.ValueResolver.contentScale(it).getOrThrow() }
                     ?: androidx.compose.ui.layout.ContentScale.Companion.Fit
                 val imageVectorValue = com.pycompose.renderer.generated.ValueResolver.imageVector(model.props.imageVector).getOrThrow()
                 Image(
                     modifier = modifier,
                     alignment = alignmentValue,
+                    alpha = alphaValue,
                     contentDescription = model.props.contentDescription,
                     contentScale = contentScaleValue,
                     imageVector = imageVectorValue,
@@ -3521,6 +3537,7 @@ object GeneratedAdapters {
                 val letterSpacingValue = if (letterSpacingWire != null) com.pycompose.renderer.generated.ValueResolver.textUnit(letterSpacingWire).getOrThrow() else androidx.compose.ui.unit.TextUnit.Companion.Unspecified
                 val lineHeightWire = model.props.lineHeight
                 val lineHeightValue = if (lineHeightWire != null) com.pycompose.renderer.generated.ValueResolver.textUnit(lineHeightWire).getOrThrow() else androidx.compose.ui.unit.TextUnit.Companion.Unspecified
+                val maxLinesValue = model.props.maxLines?.let { wire -> bound(wire, Int.VectorConverter) { plain -> plain.jsonPrimitive.long.toInt() } } ?: kotlin.Int.Companion.MAX_VALUE
                 val minLinesValue = bound(model.props.minLines, Int.VectorConverter) { plain -> plain.jsonPrimitive.long.toInt() }
                 val overflowValue = model.props.overflow?.let { com.pycompose.renderer.generated.ValueResolver.textOverflow(it).getOrThrow() }
                     ?: androidx.compose.ui.text.style.TextOverflow.Companion.Clip
@@ -3539,6 +3556,7 @@ object GeneratedAdapters {
                     fontWeight = fontWeightValue,
                     letterSpacing = letterSpacingValue,
                     lineHeight = lineHeightValue,
+                    maxLines = maxLinesValue,
                     minLines = minLinesValue,
                     overflow = overflowValue,
                     softWrap = model.props.softWrap,
@@ -3778,6 +3796,7 @@ object GeneratedAdapters {
             }
             .register("VerticalPager") { node, modifier, context ->
                 val model = node as VerticalPagerNode
+                val beyondViewportPageCountValue = model.props.beyondViewportPageCount?.let { wire -> bound(wire, Int.VectorConverter) { plain -> plain.jsonPrimitive.long.toInt() } } ?: androidx.compose.foundation.pager.PagerDefaults.BeyondViewportPageCount
                 val horizontalAlignmentValue = model.props.horizontalAlignment?.let { com.pycompose.renderer.generated.ValueResolver.alignmentHorizontal(it).getOrThrow() }
                     ?: androidx.compose.ui.Alignment.Companion.CenterHorizontally
                 val pageSpacingValue = context.boundDp(model.props.pageSpacing, Dp.VectorConverter, (0).dp)
@@ -3795,6 +3814,7 @@ object GeneratedAdapters {
                 context.share(model.id, stateValue)
                 VerticalPager(
                     modifier = modifier,
+                    beyondViewportPageCount = beyondViewportPageCountValue,
                     horizontalAlignment = horizontalAlignmentValue,
                     pageSpacing = pageSpacingValue,
                     reverseLayout = model.props.reverseLayout,

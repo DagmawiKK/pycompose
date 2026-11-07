@@ -60,10 +60,10 @@ def test_a_dp_prop_that_is_always_present_wraps_at_the_call(spec: dict) -> None:
             "'nativeDefault' must be Kotlin source",
         ),
         (
-            lambda registry: registry["components"]["Text"]["props"]["text"].update(
-                {"nativeDefault": "androidx.compose.material3.LocalTextStyle.current"}
-            ),
-            "'nativeDefault' is read only for value, dp and named-constant props",
+            lambda registry: registry["components"]["Button"]["props"][
+                "onClick"
+            ].update({"nativeDefault": "androidx.compose.Foo.onClick"}),
+            "'nativeDefault' is read only for value, dp, scalar and named-constant",
         ),
     ],
 )

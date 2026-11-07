@@ -284,22 +284,22 @@ def _validate_defaults(
             die(f"prop {name}.{prop_name} 'nativeDefault' must be Kotlin source")
         from pycompose_codegen.emit.adapters.policy import SCALAR_KOTLIN
 
-        # A scalar's or a callback's only native default is null: the optional
-        # prop of a parameter that takes it, read as the parameter's own absence.
-        scalar_null = (ptype in SCALAR_KOTLIN or ptype == "actionId") and prop[
-            "nativeDefault"
-        ] == "null"
+        # A scalar's native default is a named constant (Int.MAX_VALUE) or null;
+        # a callback's only one is null, read as the parameter's own absence.
+        scalar = ptype in SCALAR_KOTLIN
+        callback_null = ptype == "actionId" and prop["nativeDefault"] == "null"
         if (
             ptype not in {"value", "dp"}
-            and not scalar_null
+            and not scalar
+            and not callback_null
             and not (ptype == "enum" and "valueType" in prop)
         ):
             # Anything else that carried one would never be read, and the
             # stated default would quietly differ from the pinned one.
             die(
                 f"prop {name}.{prop_name} 'nativeDefault' is read only for "
-                "value, dp and named-constant props, and as null for a scalar "
-                "or a callback"
+                "value, dp, scalar and named-constant props, and as null for "
+                "a callback"
             )
     if ptype == "dp" and not (
         prop.get("required") or "default" in prop or "nativeDefault" in prop

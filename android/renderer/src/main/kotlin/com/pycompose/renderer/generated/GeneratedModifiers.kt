@@ -166,6 +166,10 @@ object GeneratedModifiers {
                 )
             "basicMarquee" ->
                 Modifier.basicMarquee(
+                    iterations = if ("iterations" in op) op.getValue("iterations").let { wire -> com.pycompose.renderer.bound(wire, Int.VectorConverter) { value ->
+                        value.jsonPrimitive.long.toInt() } } else androidx.compose.foundation.MarqueeDefaults.Iterations,
+                    repeatDelayMillis = if ("repeatDelayMillis" in op) op.getValue("repeatDelayMillis").let { wire -> com.pycompose.renderer.bound(wire, Int.VectorConverter) { value ->
+                        value.jsonPrimitive.long.toInt() } } else androidx.compose.foundation.MarqueeDefaults.RepeatDelayMillis,
                     velocity = if ("velocity" in op) op.getValue("velocity").let { wire -> com.pycompose.renderer.bound(wire, Dp.VectorConverter) { value ->
                         if (Expressions.isExpression(value)) dpValue(value, streams) else com.pycompose.renderer.PropResolver.dp(value.jsonPrimitive.double).getOrThrow() } } else androidx.compose.foundation.MarqueeDefaults.Velocity,
                 )
@@ -259,6 +263,10 @@ object GeneratedModifiers {
                     com.pycompose.renderer.deferredState(
                         op["rotationZ"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
                     ) { value -> numberValue(value, streams).toFloat() }
+                val cameraDistanceState =
+                    com.pycompose.renderer.deferredState(
+                        op["cameraDistance"], Float.VectorConverter, com.pycompose.program.Phase.Draw,
+                    ) { value -> numberValue(value, streams).toFloat() }
                 val shapeValue = op["shape"]?.let { value -> com.pycompose.renderer.generated.ValueResolver.shape(value).getOrThrow() }
                 val clipValue = op["clip"]?.let { value -> value.jsonPrimitive.boolean }
                 val colorScheme = androidx.compose.material3.MaterialTheme.colorScheme
@@ -280,6 +288,7 @@ object GeneratedModifiers {
                     rotationX = rotationXState?.value ?: 0.0f
                     rotationY = rotationYState?.value ?: 0.0f
                     rotationZ = rotationZState?.value ?: 0.0f
+                    cameraDistance = cameraDistanceState?.value ?: androidx.compose.ui.graphics.DefaultCameraDistance
                     shapeValue?.let { shape = it }
                     clipValue?.let { clip = it }
                     ambientShadowColor = ambientShadowColorState?.value ?: androidx.compose.ui.graphics.DefaultShadowColor

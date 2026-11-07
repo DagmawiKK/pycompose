@@ -272,17 +272,25 @@ class GeneratedOperations:
     @_Operation
     def basic_marquee(
         self,
+        *,
+        iterations: int | Binding | None = None,
+        repeat_delay_millis: int | Binding | None = None,
         velocity: int | float | Expression | Binding | None = None,
     ) -> Modifier:
         """Native ``androidx.compose.foundation.basicMarquee``.
 
         Args:
+            iterations: Native iterations, omitted for its native default.
+            repeat_delay_millis: Native repeatDelayMillis, omitted for its native
+                default.
             velocity: Native velocity, omitted for its native default.
 
         Returns:
             A new modifier.
         """
         given: dict[str, JsonValue] = {
+            "iterations": lower_binding(iterations, "composition"),
+            "repeatDelayMillis": lower_binding(repeat_delay_millis, "composition"),
             "velocity": lower_binding(velocity, "composition"),
         }
         return self._append(
@@ -764,6 +772,7 @@ class GeneratedOperations:
         rotation_x: int | float | Expression | Binding = 0.0,
         rotation_y: int | float | Expression | Binding = 0.0,
         rotation_z: int | float | Expression | Binding = 0.0,
+        camera_distance: int | float | Expression | Binding | None = None,
         shape: JsonValue | None = None,
         clip: bool = False,
         ambient_shadow_color: JsonValue | Binding | None = None,
@@ -781,6 +790,7 @@ class GeneratedOperations:
             rotation_x: Native rotationX; 0.0 unless given.
             rotation_y: Native rotationY; 0.0 unless given.
             rotation_z: Native rotationZ; 0.0 unless given.
+            camera_distance: Native cameraDistance, omitted for its native default.
             shape: Native shape, omitted for its native default.
             clip: Native clip; false unless given.
             ambient_shadow_color: Native ambientShadowColor, omitted for its native
@@ -801,6 +811,7 @@ class GeneratedOperations:
             "rotationX": lower_binding(rotation_x, "draw"),
             "rotationY": lower_binding(rotation_y, "draw"),
             "rotationZ": lower_binding(rotation_z, "draw"),
+            "cameraDistance": lower_binding(camera_distance, "draw"),
             "shape": shape,
             "clip": clip,
             "ambientShadowColor": lower_binding(ambient_shadow_color, "draw"),

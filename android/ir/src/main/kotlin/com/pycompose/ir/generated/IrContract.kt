@@ -68,6 +68,7 @@ object IrContract {
             since = "1.23.0",
             props = mapOf(
                 "isExpanded" to PropertyRule("boolean", required = false),
+                "maxItemCount" to PropertyRule("integer", required = false, since = "1.23.0", animation = true, minimum = -2147483648.0, maximum = 2147483647.0),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onIsExpandedChange" to PropertyRule("actionId", required = false),
             ),
@@ -89,6 +90,7 @@ object IrContract {
             since = "1.23.0",
             props = mapOf(
                 "isExpanded" to PropertyRule("boolean", required = false),
+                "maxItemCount" to PropertyRule("integer", required = false, since = "1.23.0", animation = true, minimum = -2147483648.0, maximum = 2147483647.0),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onIsExpandedChange" to PropertyRule("actionId", required = false),
             ),
@@ -178,6 +180,7 @@ object IrContract {
             since = "1.23.0",
             props = mapOf(
                 "color" to PropertyRule("color", required = false, since = "1.23.0", valueType = "Color", animation = true),
+                "maxLines" to PropertyRule("integer", required = false, since = "1.23.0", animation = true, minimum = 1.0, maximum = 2147483647.0),
                 "minLines" to PropertyRule("integer", required = false, animation = true, minimum = -2147483648.0, maximum = 2147483647.0),
                 "modifier" to PropertyRule("modifier", required = false),
                 "overflow" to PropertyRule("enum", required = false, valueType = "TextOverflow"),
@@ -909,6 +912,7 @@ object IrContract {
             props = mapOf(
                 "itemHorizontalAlignment" to PropertyRule("enum", required = false, valueType = "AlignmentHorizontal"),
                 "maxItemsInEachColumn" to PropertyRule("integer", required = false, animation = true, minimum = 1.0, maximum = 2147483647.0),
+                "maxLines" to PropertyRule("integer", required = false, since = "1.23.0", animation = true, minimum = -2147483648.0, maximum = 2147483647.0),
                 "modifier" to PropertyRule("modifier", required = false),
                 "verticalArrangement" to PropertyRule("enum", required = false, valueType = "ArrangementVertical"),
             ),
@@ -921,6 +925,7 @@ object IrContract {
             props = mapOf(
                 "itemVerticalAlignment" to PropertyRule("enum", required = false, valueType = "AlignmentVertical"),
                 "maxItemsInEachRow" to PropertyRule("integer", required = false, animation = true, minimum = 1.0, maximum = 2147483647.0),
+                "maxLines" to PropertyRule("integer", required = false, since = "1.23.0", animation = true, minimum = -2147483648.0, maximum = 2147483647.0),
                 "modifier" to PropertyRule("modifier", required = false),
                 "verticalArrangement" to PropertyRule("enum", required = false, valueType = "ArrangementVertical"),
             ),
@@ -1029,6 +1034,7 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
+                "beyondViewportPageCount" to PropertyRule("integer", required = false, since = "1.23.0", animation = true, minimum = 0.0, maximum = 2147483647.0),
                 "currentPage" to PropertyRule("integer", required = false, since = "1.23.0", animation = true, minimum = 0.0, maximum = 2147483647.0),
                 "modifier" to PropertyRule("modifier", required = false),
                 "onCurrentPageSettled" to PropertyRule("actionId", required = false, since = "1.23.0"),
@@ -1105,6 +1111,7 @@ object IrContract {
             since = "1.1.0",
             props = mapOf(
                 "alignment" to PropertyRule("enum", required = false, since = "1.23.0", valueType = "Alignment"),
+                "alpha" to PropertyRule("number", required = false, since = "1.23.0", animation = true),
                 "contentDescription" to PropertyRule("string", required = false),
                 "contentScale" to PropertyRule("enum", required = false, valueType = "ContentScale"),
                 "modifier" to PropertyRule("modifier", required = false),
@@ -1118,6 +1125,7 @@ object IrContract {
             since = "1.23.0",
             props = mapOf(
                 "alignment" to PropertyRule("enum", required = false, valueType = "Alignment"),
+                "alpha" to PropertyRule("number", required = false, since = "1.23.0", animation = true),
                 "contentDescription" to PropertyRule("string", required = true, nullable = true),
                 "contentScale" to PropertyRule("enum", required = false, valueType = "ContentScale"),
                 "imageVector" to PropertyRule("value", required = true, valueType = "ImageVector"),
@@ -2458,6 +2466,7 @@ object IrContract {
                 "letterSpacing" to PropertyRule("value", required = false, since = "1.23.0", valueType = "TextUnit"),
                 "lineHeight" to PropertyRule("value", required = false, since = "1.23.0", valueType = "TextUnit"),
                 "locale" to PropertyRule("string", required = false, since = "1.1.0"),
+                "maxLines" to PropertyRule("integer", required = false, since = "1.23.0", animation = true, minimum = 1.0, maximum = 2147483647.0),
                 "minLines" to PropertyRule("integer", required = false, since = "1.23.0", animation = true, minimum = -2147483648.0, maximum = 2147483647.0),
                 "modifier" to PropertyRule("modifier", required = false),
                 "overflow" to PropertyRule("enum", required = false, since = "1.23.0", valueType = "TextOverflow"),
@@ -2645,6 +2654,7 @@ object IrContract {
             minimumChildren = 0,
             since = "1.23.0",
             props = mapOf(
+                "beyondViewportPageCount" to PropertyRule("integer", required = false, since = "1.23.0", animation = true, minimum = 0.0, maximum = 2147483647.0),
                 "currentPage" to PropertyRule("integer", required = false, since = "1.23.0", animation = true, minimum = 0.0, maximum = 2147483647.0),
                 "horizontalAlignment" to PropertyRule("enum", required = false, valueType = "AlignmentHorizontal"),
                 "modifier" to PropertyRule("modifier", required = false),
@@ -2711,6 +2721,8 @@ object IrContract {
                 "brush" to PropertyRule("value", required = true, since = "1.11.0", valueType = "Brush"),
         ),
         "basicMarquee" to mapOf(
+                "iterations" to PropertyRule("integer", required = false, animation = true, minimum = -2147483648.0, maximum = 2147483647.0),
+                "repeatDelayMillis" to PropertyRule("integer", required = false, animation = true, minimum = -2147483648.0, maximum = 2147483647.0),
                 "velocity" to PropertyRule("dp", required = false, animation = true),
         ),
         "boxAlign" to mapOf(
@@ -2788,6 +2800,7 @@ object IrContract {
         "graphicsLayer" to mapOf(
                 "alpha" to PropertyRule("number", required = false, animation = true),
                 "ambientShadowColor" to PropertyRule("color", required = false, valueType = "Color", animation = true),
+                "cameraDistance" to PropertyRule("number", required = false, animation = true),
                 "clip" to PropertyRule("boolean", required = false),
                 "rotationX" to PropertyRule("number", required = false, animation = true),
                 "rotationY" to PropertyRule("number", required = false, animation = true),

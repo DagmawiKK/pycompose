@@ -119,6 +119,7 @@ data class AppBarClickableItem(
 @Serializable
 data class AppBarColumnProps(
     val `isExpanded`: Boolean? = null,
+    val `maxItemCount`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `onIsExpandedChange`: String? = null,
 ) : UiProps
@@ -156,6 +157,7 @@ data class AppBarCustomItem(
 @Serializable
 data class AppBarRowProps(
     val `isExpanded`: Boolean? = null,
+    val `maxItemCount`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `onIsExpandedChange`: String? = null,
 ) : UiProps
@@ -301,6 +303,7 @@ data class BasicSecureTextField(
 @Serializable
 data class BasicTextProps(
     val `color`: JsonElement? = null,
+    val `maxLines`: JsonElement? = null,
     val `minLines`: JsonElement = JsonPrimitive(1L),
     override val `modifier`: JsonObject? = null,
     val `overflow`: JsonElement? = null,
@@ -1423,7 +1426,8 @@ data class FloatingActionButton(
 @Serializable
 data class FlowColumnProps(
     val `itemHorizontalAlignment`: JsonElement? = null,
-    val `maxItemsInEachColumn`: JsonElement = JsonPrimitive(2147483647L),
+    val `maxItemsInEachColumn`: JsonElement? = null,
+    val `maxLines`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `verticalArrangement`: JsonElement? = null,
 ) : UiProps
@@ -1443,7 +1447,8 @@ data class FlowColumn(
 @Serializable
 data class FlowRowProps(
     val `itemVerticalAlignment`: JsonElement? = null,
-    val `maxItemsInEachRow`: JsonElement = JsonPrimitive(2147483647L),
+    val `maxItemsInEachRow`: JsonElement? = null,
+    val `maxLines`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `verticalArrangement`: JsonElement? = null,
 ) : UiProps
@@ -1632,6 +1637,7 @@ data class HorizontalMultiBrowseCarousel(
 
 @Serializable
 data class HorizontalPagerProps(
+    val `beyondViewportPageCount`: JsonElement? = null,
     val `currentPage`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `onCurrentPageSettled`: String? = null,
@@ -1748,6 +1754,7 @@ data class IconToggleButton(
 @Serializable
 data class ImageProps(
     val `alignment`: JsonElement? = null,
+    val `alpha`: JsonElement? = null,
     val `contentDescription`: String? = null,
     val `contentScale`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
@@ -1769,6 +1776,7 @@ data class Image(
 @Serializable
 data class ImageImageVectorProps(
     val `alignment`: JsonElement? = null,
+    val `alpha`: JsonElement? = null,
     val `contentDescription`: String?,
     val `contentScale`: JsonElement? = null,
     val `imageVector`: JsonElement,
@@ -3829,6 +3837,7 @@ data class TextProps(
     val `letterSpacing`: JsonElement? = null,
     val `lineHeight`: JsonElement? = null,
     val `locale`: String? = null,
+    val `maxLines`: JsonElement? = null,
     val `minLines`: JsonElement = JsonPrimitive(1L),
     override val `modifier`: JsonObject? = null,
     val `overflow`: JsonElement? = null,
@@ -4112,6 +4121,7 @@ data class VerticalDragHandle(
 
 @Serializable
 data class VerticalPagerProps(
+    val `beyondViewportPageCount`: JsonElement? = null,
     val `currentPage`: JsonElement? = null,
     val `horizontalAlignment`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,

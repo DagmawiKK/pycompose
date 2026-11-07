@@ -1,14 +1,11 @@
 """Turn one planned native parameter into the wire shape the schema carries.
 
-The planner classifies every parameter of one selected overload: modifier,
-scalar, value family, action or composable slot. This module owns the second
-half of that contract -- which wire prop (or slot, or children channel) a
-policy becomes, and which default the pin supplies for it.
-
-Every decision here is a refusal or a derivation, never a guess: a scalar needs
-a literal default, an optional value prop needs a renderable one, a content
-slot needs a renderer scope, and a long has no exact wire type. Review notes
-record every place the wire shape differs from the native call.
+The planner classifies every parameter of one overload; this module decides
+which wire prop (or slot, or children channel) each policy becomes, and which
+default the pin supplies for it. Every decision is a refusal or a derivation,
+never a guess: a scalar needs a literal or named default, an optional value
+prop a renderable one, a content slot a renderer scope, and a long has no
+exact wire type. Review notes record where the wire differs from the call.
 """
 
 from __future__ import annotations
@@ -239,11 +236,13 @@ def _scalar_prop(
         )
         return None
     has_default, value = _literal_default(spec)
-    if not has_default or value is None:
-        review.append(f"{parameter}: omitted; the default is not a literal")
+    if has_default and value is not None:
+        prop["default"] = value
+        return prop
+    # A named constant (Int.MAX_VALUE): an absent prop is that constant, natively.
+    if (rendered := _render(parameter, spec, review)[1]) is None:
         return None
-    prop["default"] = value
-    return prop
+    return {**prop, "nativeDefault": rendered}
 
 
 def _provider_prop(

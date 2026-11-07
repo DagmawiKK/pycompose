@@ -71,6 +71,19 @@
       "holder": "state"
     }
   },
+  "BasicText": {
+    "decision": {
+      "category": "foundation",
+      "identity": "androidx.compose.foundation:foundation-android androidx.compose.foundation.text.BasicTextKt.BasicText-CL7eQgs(Landroidx/compose/ui/text/AnnotatedString;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function1;IZIILjava/util/Map;Landroidx/compose/ui/graphics/ColorProducer;Landroidx/compose/foundation/text/TextAutoSize;Landroidx/compose/runtime/Composer;III)V"
+    },
+    "patch": {
+      "props": {
+        "maxLines": {
+          "minimum": 1
+        }
+      }
+    }
+  },
   "BasicTextField": {
     "decision": {
       "category": "foundation",
@@ -336,11 +349,7 @@
           ]
         },
         "maxItemsInEachColumn": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 2147483647,
-          "default": 2147483647,
-          "nativeType": "Int"
+          "minimum": 1
         }
       },
       "children": {
@@ -362,11 +371,7 @@
           ]
         },
         "maxItemsInEachRow": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 2147483647,
-          "default": 2147483647,
-          "nativeType": "Int"
+          "minimum": 1
         }
       },
       "children": {
@@ -377,6 +382,18 @@
   "HorizontalDivider": {
     "decision": {
       "category": "layout"
+    }
+  },
+  "HorizontalPager": {
+    "decision": {
+      "category": "foundation"
+    },
+    "patch": {
+      "props": {
+        "beyondViewportPageCount": {
+          "minimum": 0
+        }
+      }
     }
   },
   "Icon": {
@@ -1031,6 +1048,9 @@
         "locale": {
           "type": "string",
           "since": "1.1.0"
+        },
+        "maxLines": {
+          "minimum": 1
         }
       },
       "reshaped": [
@@ -1103,6 +1123,18 @@
   "VerticalDragHandle": {
     "decision": {
       "category": "layout"
+    }
+  },
+  "VerticalPager": {
+    "decision": {
+      "category": "foundation"
+    },
+    "patch": {
+      "props": {
+        "beyondViewportPageCount": {
+          "minimum": 0
+        }
+      }
     }
   },
   "WideNavigationRail": {

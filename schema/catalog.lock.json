@@ -254,6 +254,16 @@
         "isExpanded": {
           "type": "boolean"
         },
+        "maxItemCount": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "nativeDefault": "kotlin.Int.Companion.MAX_VALUE",
+          "since": "1.23.0",
+          "animation": "kotlin.Int",
+          "phase": "composition"
+        },
         "onIsExpandedChange": {
           "type": "actionId",
           "payload": [
@@ -352,6 +362,16 @@
       "props": {
         "isExpanded": {
           "type": "boolean"
+        },
+        "maxItemCount": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "nativeDefault": "kotlin.Int.Companion.MAX_VALUE",
+          "since": "1.23.0",
+          "animation": "kotlin.Int",
+          "phase": "composition"
         },
         "onIsExpandedChange": {
           "type": "actionId",
@@ -779,6 +799,16 @@
           "since": "1.23.0",
           "animation": "androidx.compose.ui.graphics.Color",
           "phase": "draw"
+        },
+        "maxLines": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": 1,
+          "maximum": 2147483647,
+          "nativeDefault": "kotlin.Int.Companion.MAX_VALUE",
+          "since": "1.23.0",
+          "animation": "kotlin.Int",
+          "phase": "composition"
         },
         "minLines": {
           "type": "integer",
@@ -4324,6 +4354,25 @@
           "default": "start",
           "nativeDefault": "androidx.compose.ui.Alignment.Companion.Start"
         },
+        "maxItemsInEachColumn": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": 1,
+          "maximum": 2147483647,
+          "nativeDefault": "kotlin.Int.Companion.MAX_VALUE",
+          "animation": "kotlin.Int",
+          "phase": "composition"
+        },
+        "maxLines": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "nativeDefault": "kotlin.Int.Companion.MAX_VALUE",
+          "since": "1.23.0",
+          "animation": "kotlin.Int",
+          "phase": "composition"
+        },
         "verticalArrangement": {
           "type": "enum",
           "valueType": "ArrangementVertical",
@@ -4340,15 +4389,6 @@
         },
         "modifier": {
           "type": "modifier"
-        },
-        "maxItemsInEachColumn": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 2147483647,
-          "default": 2147483647,
-          "nativeType": "Int",
-          "animation": "kotlin.Int",
-          "phase": "composition"
         }
       },
       "children": {
@@ -4382,6 +4422,25 @@
           "default": "top",
           "nativeDefault": "androidx.compose.ui.Alignment.Companion.Top"
         },
+        "maxItemsInEachRow": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": 1,
+          "maximum": 2147483647,
+          "nativeDefault": "kotlin.Int.Companion.MAX_VALUE",
+          "animation": "kotlin.Int",
+          "phase": "composition"
+        },
+        "maxLines": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "nativeDefault": "kotlin.Int.Companion.MAX_VALUE",
+          "since": "1.23.0",
+          "animation": "kotlin.Int",
+          "phase": "composition"
+        },
         "verticalArrangement": {
           "type": "enum",
           "valueType": "ArrangementVertical",
@@ -4398,15 +4457,6 @@
         },
         "modifier": {
           "type": "modifier"
-        },
-        "maxItemsInEachRow": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 2147483647,
-          "default": 2147483647,
-          "nativeType": "Int",
-          "animation": "kotlin.Int",
-          "phase": "composition"
         }
       },
       "children": {
@@ -4819,6 +4869,16 @@
         "owner": "androidx.compose.foundation.pager.PagerKt"
       },
       "props": {
+        "beyondViewportPageCount": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": 0,
+          "maximum": 2147483647,
+          "nativeDefault": "androidx.compose.foundation.pager.PagerDefaults.BeyondViewportPageCount",
+          "since": "1.23.0",
+          "animation": "kotlin.Int",
+          "phase": "composition"
+        },
         "pageSpacing": {
           "type": "dp",
           "nativeDefault": "(0).dp",
@@ -5216,6 +5276,14 @@
           "nativeDefault": "androidx.compose.ui.Alignment.Companion.Center",
           "since": "1.23.0"
         },
+        "alpha": {
+          "type": "number",
+          "nativeType": "Float",
+          "nativeDefault": "androidx.compose.ui.graphics.DefaultAlpha",
+          "since": "1.23.0",
+          "animation": "kotlin.Float",
+          "phase": "composition"
+        },
         "contentDescription": {
           "type": "string",
           "nativeDefault": "null"
@@ -5292,6 +5360,14 @@
           ],
           "default": "center",
           "nativeDefault": "androidx.compose.ui.Alignment.Companion.Center"
+        },
+        "alpha": {
+          "type": "number",
+          "nativeType": "Float",
+          "nativeDefault": "androidx.compose.ui.graphics.DefaultAlpha",
+          "since": "1.23.0",
+          "animation": "kotlin.Float",
+          "phase": "composition"
         },
         "contentDescription": {
           "type": "string",
@@ -12059,6 +12135,16 @@
           "nativeDefault": "androidx.compose.ui.unit.TextUnit.Companion.Unspecified",
           "since": "1.23.0"
         },
+        "maxLines": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": 1,
+          "maximum": 2147483647,
+          "nativeDefault": "kotlin.Int.Companion.MAX_VALUE",
+          "since": "1.23.0",
+          "animation": "kotlin.Int",
+          "phase": "composition"
+        },
         "minLines": {
           "type": "integer",
           "nativeType": "Int",
@@ -13109,6 +13195,16 @@
         "owner": "androidx.compose.foundation.pager.PagerKt"
       },
       "props": {
+        "beyondViewportPageCount": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": 0,
+          "maximum": 2147483647,
+          "nativeDefault": "androidx.compose.foundation.pager.PagerDefaults.BeyondViewportPageCount",
+          "since": "1.23.0",
+          "animation": "kotlin.Int",
+          "phase": "composition"
+        },
         "horizontalAlignment": {
           "type": "enum",
           "valueType": "AlignmentHorizontal",
@@ -13885,6 +13981,24 @@
     "basicMarquee": {
       "since": "1.23.0",
       "props": {
+        "iterations": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "nativeDefault": "androidx.compose.foundation.MarqueeDefaults.Iterations",
+          "animation": "kotlin.Int",
+          "phase": "composition"
+        },
+        "repeatDelayMillis": {
+          "type": "integer",
+          "nativeType": "Int",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "nativeDefault": "androidx.compose.foundation.MarqueeDefaults.RepeatDelayMillis",
+          "animation": "kotlin.Int",
+          "phase": "composition"
+        },
         "velocity": {
           "type": "dp",
           "nativeDefault": "androidx.compose.foundation.MarqueeDefaults.Velocity",
@@ -13903,6 +14017,14 @@
           "descriptor": "(Landroidx/compose/ui/Modifier;IIIILandroidx/compose/foundation/MarqueeSpacing;F)Landroidx/compose/ui/Modifier;"
         },
         "arguments": {
+          "iterations": {
+            "parameter": "iterations",
+            "type": "kotlin.Int"
+          },
+          "repeatDelayMillis": {
+            "parameter": "repeatDelayMillis",
+            "type": "kotlin.Int"
+          },
           "velocity": {
             "parameter": "velocity",
             "type": "androidx.compose.ui.unit.Dp"
@@ -14195,6 +14317,13 @@
           "animation": "kotlin.Float",
           "phase": "draw"
         },
+        "cameraDistance": {
+          "type": "number",
+          "nativeType": "Float",
+          "nativeDefault": "androidx.compose.ui.graphics.DefaultCameraDistance",
+          "animation": "kotlin.Float",
+          "phase": "draw"
+        },
         "shape": {
           "type": "value",
           "valueType": "Shape",
@@ -14329,6 +14458,17 @@
               "owner": "androidx.compose.ui.graphics.GraphicsLayerScope",
               "name": "rotationZ",
               "jvmName": "getRotationZ",
+              "descriptor": "()F"
+            }
+          },
+          "cameraDistance": {
+            "member": "property",
+            "type": "kotlin.Float",
+            "source": {
+              "artifact": "androidx.compose.ui:ui-android:1.12.1",
+              "owner": "androidx.compose.ui.graphics.GraphicsLayerScope",
+              "name": "cameraDistance",
+              "jvmName": "getCameraDistance",
               "descriptor": "()F"
             }
           },

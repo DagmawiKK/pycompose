@@ -666,6 +666,7 @@ class AppBarColumn(Component):
         *contents: Node,
         id: str | None = None,
         is_expanded: bool | None = None,
+        max_item_count: int | Binding | None = None,
         modifier: Modifier | None = None,
         on_is_expanded_change: ActionTarget | None = None,
         children: Content = (),
@@ -677,6 +678,7 @@ class AppBarColumn(Component):
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             is_expanded: Native isExpanded; None uses its default.
+            max_item_count: Native maxItemCount; None uses its default.
             modifier: Native modifier; None uses its default.
             on_is_expanded_change: Native onIsExpandedChange; None uses its default.
             children: Ordered child nodes with stable keys.
@@ -688,6 +690,8 @@ class AppBarColumn(Component):
         props: dict[str, PropValue] = {}
         if is_expanded is not None:
             props["is_expanded"] = is_expanded
+        if max_item_count is not None:
+            props["max_item_count"] = lower_binding(max_item_count, "composition")
         if on_is_expanded_change is not None:
             props["on_is_expanded_change"] = on_is_expanded_change
         if contents and children:
@@ -759,6 +763,7 @@ class AppBarRow(Component):
         *contents: Node,
         id: str | None = None,
         is_expanded: bool | None = None,
+        max_item_count: int | Binding | None = None,
         modifier: Modifier | None = None,
         on_is_expanded_change: ActionTarget | None = None,
         children: Content = (),
@@ -770,6 +775,7 @@ class AppBarRow(Component):
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
             is_expanded: Native isExpanded; None uses its default.
+            max_item_count: Native maxItemCount; None uses its default.
             modifier: Native modifier; None uses its default.
             on_is_expanded_change: Native onIsExpandedChange; None uses its default.
             children: Ordered child nodes with stable keys.
@@ -781,6 +787,8 @@ class AppBarRow(Component):
         props: dict[str, PropValue] = {}
         if is_expanded is not None:
             props["is_expanded"] = is_expanded
+        if max_item_count is not None:
+            props["max_item_count"] = lower_binding(max_item_count, "composition")
         if on_is_expanded_change is not None:
             props["on_is_expanded_change"] = on_is_expanded_change
         if contents and children:
@@ -1111,6 +1119,7 @@ class BasicText(Component):
         *,
         id: str | None = None,
         color: JsonValue | Expression | Binding | None = None,
+        max_lines: int | Binding | None = None,
         min_lines: int | Binding | None = None,
         modifier: Modifier | None = None,
         overflow: _TextOverflow | None = None,
@@ -1123,6 +1132,7 @@ class BasicText(Component):
         Args:
             id: Stable instance key; None derives the node's path id.
             color: Native color; None uses its default.
+            max_lines: Native maxLines; None uses its default.
             min_lines: Native minLines; None uses its default.
             modifier: Native modifier; None uses its default.
             overflow: Native overflow; None uses its default.
@@ -1133,6 +1143,8 @@ class BasicText(Component):
         props: dict[str, PropValue] = {}
         if color is not None:
             props["color"] = lower_binding(color, "draw")
+        if max_lines is not None:
+            props["max_lines"] = lower_binding(max_lines, "composition")
         if min_lines is not None:
             props["min_lines"] = lower_binding(min_lines, "composition")
         if overflow is not None:
@@ -4064,6 +4076,7 @@ class FlowColumn(Component):
         id: str | None = None,
         item_horizontal_alignment: _FlowColumnItemHorizontalAlignment | None = None,
         max_items_in_each_column: int | Binding | None = None,
+        max_lines: int | Binding | None = None,
         modifier: Modifier | None = None,
         vertical_arrangement: _ArrangementVertical | None = None,
         children: Content = (),
@@ -4078,6 +4091,7 @@ class FlowColumn(Component):
                 default.
             max_items_in_each_column: Native maxItemsInEachColumn; None uses its
                 default.
+            max_lines: Native maxLines; None uses its default.
             modifier: Native modifier; None uses its default.
             vertical_arrangement: Native verticalArrangement; None uses its default.
             children: Ordered child nodes with stable keys.
@@ -4093,6 +4107,8 @@ class FlowColumn(Component):
             props["max_items_in_each_column"] = lower_binding(
                 max_items_in_each_column, "composition"
             )
+        if max_lines is not None:
+            props["max_lines"] = lower_binding(max_lines, "composition")
         if vertical_arrangement is not None:
             props["vertical_arrangement"] = vertical_arrangement
         if content is not None:
@@ -4121,6 +4137,7 @@ class FlowRow(Component):
         id: str | None = None,
         item_vertical_alignment: _FlowRowItemVerticalAlignment | None = None,
         max_items_in_each_row: int | Binding | None = None,
+        max_lines: int | Binding | None = None,
         modifier: Modifier | None = None,
         vertical_arrangement: _ArrangementVertical | None = None,
         children: Content = (),
@@ -4134,6 +4151,7 @@ class FlowRow(Component):
             item_vertical_alignment: Native itemVerticalAlignment; None uses its
                 default.
             max_items_in_each_row: Native maxItemsInEachRow; None uses its default.
+            max_lines: Native maxLines; None uses its default.
             modifier: Native modifier; None uses its default.
             vertical_arrangement: Native verticalArrangement; None uses its default.
             children: Ordered child nodes with stable keys.
@@ -4149,6 +4167,8 @@ class FlowRow(Component):
             props["max_items_in_each_row"] = lower_binding(
                 max_items_in_each_row, "composition"
             )
+        if max_lines is not None:
+            props["max_lines"] = lower_binding(max_lines, "composition")
         if vertical_arrangement is not None:
             props["vertical_arrangement"] = vertical_arrangement
         if content is not None:
@@ -4506,6 +4526,7 @@ class HorizontalPager(Component):
         self,
         *contents: Node,
         id: str | None = None,
+        beyond_viewport_page_count: int | Binding | None = None,
         current_page: int | Binding | None = None,
         modifier: Modifier | None = None,
         on_current_page_settled: ActionTarget | None = None,
@@ -4521,6 +4542,8 @@ class HorizontalPager(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            beyond_viewport_page_count: Native beyondViewportPageCount; None uses
+                its default.
             current_page: Native currentPage; None uses its default.
             modifier: Native modifier; None uses its default.
             on_current_page_settled: Native onCurrentPageSettled; None uses its
@@ -4536,6 +4559,10 @@ class HorizontalPager(Component):
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        if beyond_viewport_page_count is not None:
+            props["beyond_viewport_page_count"] = lower_binding(
+                beyond_viewport_page_count, "composition"
+            )
         if current_page is not None:
             props["current_page"] = lower_binding(current_page, "composition")
         if on_current_page_settled is not None:
@@ -4788,6 +4815,7 @@ class _Image(Component):
     accepted_keywords = frozenset(
         {
             "alignment",
+            "alpha",
             "content_description",
             "content_scale",
             "resource",
@@ -4799,6 +4827,7 @@ class _Image(Component):
         *,
         id: str | None = None,
         alignment: _Alignment | None = None,
+        alpha: int | float | Expression | Binding | None = None,
         content_description: str | None = None,
         content_scale: _ContentScale | None = None,
         modifier: Modifier | None = None,
@@ -4809,6 +4838,7 @@ class _Image(Component):
         Args:
             id: Stable instance key; None derives the node's path id.
             alignment: Native alignment; None uses its default.
+            alpha: Native alpha; None uses its default.
             content_description: Native contentDescription; None uses its default.
             content_scale: Native contentScale; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -4817,6 +4847,8 @@ class _Image(Component):
         props: dict[str, PropValue] = {}
         if alignment is not None:
             props["alignment"] = alignment
+        if alpha is not None:
+            props["alpha"] = lower_binding(alpha, "composition")
         if content_description is not None:
             props["content_description"] = content_description
         if content_scale is not None:
@@ -4836,6 +4868,7 @@ class Image(_Image):
         *,
         id: str | None = None,
         alignment: _Alignment | None = None,
+        alpha: int | float | Expression | Binding | None = None,
         content_description: str | None = None,
         content_scale: _ContentScale | None = None,
         modifier: Modifier | None = None,
@@ -4847,6 +4880,7 @@ class Image(_Image):
         *,
         id: str | None = None,
         alignment: _Alignment | None = None,
+        alpha: int | float | Expression | Binding | None = None,
         content_description: str | None,
         content_scale: _ContentScale | None = None,
         image_vector: JsonValue,
@@ -10203,6 +10237,7 @@ class Text(Component):
         letter_spacing: JsonValue | None = None,
         line_height: JsonValue | None = None,
         locale: str | None = None,
+        max_lines: int | Binding | None = None,
         min_lines: int | Binding | None = None,
         modifier: Modifier | None = None,
         overflow: _TextOverflow | None = None,
@@ -10226,6 +10261,7 @@ class Text(Component):
             letter_spacing: Native letterSpacing; None uses its default.
             line_height: Native lineHeight; None uses its default.
             locale: Native locale; None uses its default.
+            max_lines: Native maxLines; None uses its default.
             min_lines: Native minLines; None uses its default.
             modifier: Native modifier; None uses its default.
             overflow: Native overflow; None uses its default.
@@ -10255,6 +10291,8 @@ class Text(Component):
             props["line_height"] = line_height
         if locale is not None:
             props["locale"] = locale
+        if max_lines is not None:
+            props["max_lines"] = lower_binding(max_lines, "composition")
         if min_lines is not None:
             props["min_lines"] = lower_binding(min_lines, "composition")
         if overflow is not None:
@@ -10924,6 +10962,7 @@ class VerticalPager(Component):
         self,
         *contents: Node,
         id: str | None = None,
+        beyond_viewport_page_count: int | Binding | None = None,
         current_page: int | Binding | None = None,
         horizontal_alignment: _AlignmentHorizontal | None = None,
         modifier: Modifier | None = None,
@@ -10939,6 +10978,8 @@ class VerticalPager(Component):
         Args:
             *contents: Children given in order, as Compose's content lambda.
             id: Stable instance key; None derives the node's path id.
+            beyond_viewport_page_count: Native beyondViewportPageCount; None uses
+                its default.
             current_page: Native currentPage; None uses its default.
             horizontal_alignment: Native horizontalAlignment; None uses its default.
             modifier: Native modifier; None uses its default.
@@ -10954,6 +10995,10 @@ class VerticalPager(Component):
             IrValidationError: If children are given twice.
         """
         props: dict[str, PropValue] = {}
+        if beyond_viewport_page_count is not None:
+            props["beyond_viewport_page_count"] = lower_binding(
+                beyond_viewport_page_count, "composition"
+            )
         if current_page is not None:
             props["current_page"] = lower_binding(current_page, "composition")
         if horizontal_alignment is not None:
@@ -11399,6 +11444,7 @@ class ImageImageVector(Image):
     accepted_keywords = frozenset(
         {
             "alignment",
+            "alpha",
             "content_description",
             "content_scale",
             "image_vector",
@@ -11410,6 +11456,7 @@ class ImageImageVector(Image):
         *,
         id: str | None = None,
         alignment: _Alignment | None = None,
+        alpha: int | float | Expression | Binding | None = None,
         content_description: str | None,
         content_scale: _ContentScale | None = None,
         image_vector: JsonValue,
@@ -11420,6 +11467,7 @@ class ImageImageVector(Image):
         Args:
             id: Stable instance key; None derives the node's path id.
             alignment: Native alignment; None uses its default.
+            alpha: Native alpha; None uses its default.
             content_description: Required native contentDescription.
             content_scale: Native contentScale; None uses its default.
             image_vector: Required native imageVector.
@@ -11428,6 +11476,8 @@ class ImageImageVector(Image):
         props: dict[str, PropValue] = {}
         if alignment is not None:
             props["alignment"] = alignment
+        if alpha is not None:
+            props["alpha"] = lower_binding(alpha, "composition")
         props["content_description"] = content_description
         if content_scale is not None:
             props["content_scale"] = content_scale

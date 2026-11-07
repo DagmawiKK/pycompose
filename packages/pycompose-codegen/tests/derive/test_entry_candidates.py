@@ -254,7 +254,7 @@ def test_a_constant_family_derives_a_named_enum(tmp_path: Path) -> None:
     }
 
 
-def test_unrenderable_defaults_omit_the_parameter_with_reasons(
+def test_unrenderable_defaults_omit_and_named_ones_stay_native(
     tmp_path: Path,
 ) -> None:
     found = synthetic(tmp_path)
@@ -293,11 +293,15 @@ def test_unrenderable_defaults_omit_the_parameter_with_reasons(
         registry,
         {"category": "test"},
     )
-    assert set(item.entry["props"]) == {"modifier"}
+    assert set(item.entry["props"]) == {"enabled", "modifier"}
     assert any(
         "colors: omitted; default not renderable" in note for note in item.review
     )
-    assert "enabled: omitted; the default is not a literal" in item.review
+    # A named constant is the scalar's native default: absent passes it.
+    assert item.entry["props"]["enabled"] == {
+        "type": "boolean",
+        "nativeDefault": "androidx.compose.Foo.enabled",
+    }
     assert any("count: omitted" in note for note in item.review)
 
 
