@@ -12,11 +12,12 @@ There are two ways to write an app, and they share everything underneath:
   the outputs. The quickest way from an idea, an API or a model to an app.
 - **View models** — the full-control route, shaped like Android's architecture
   guidance: each screen's view model owns its state, controls send typed
-  intents, and screens are drawn from 134 native components.
+  intents, and screens are drawn from 169 native components.
 
-> Early development. The contract, the component compiler, the CLI and 134
-> Material 3 and foundation components work end to end, including hot reload, a
-> prebuilt dev client and signed release builds. The API will keep evolving.
+> Early development. The contract, the component compiler, the CLI and 169
+> Material 3, foundation and UI components work end to end, every adapter
+> generated, including hot reload, a prebuilt dev client and signed release
+> builds. The API will keep evolving.
 
 ## How it works
 
@@ -34,8 +35,10 @@ tap → intent + fields → view model → new state → screen(state) → host 
   and CPU work go to pools. Compose's main thread never runs Python.
 - **Derived from Compose itself.** A compiler reads the pinned Compose libraries
   and derives each component's props, slots and defaults, the value types they
-  take, the state holders behind controlled components, and the modifiers a
-  parent's scope offers its children. The result is a committed lock that must
+  take, the state holders behind controlled components (and how each is driven,
+  read from the holder's own source), the items a builder lambda takes, and the
+  modifiers a parent's scope offers its children. No component has a
+  hand-written adapter. The result is a committed lock that must
   reproduce from the pin; the Python components, values, modifiers and effects,
   the Kotlin models and adapters, and the wire validators are generated from it
   and never hand-edited.
@@ -476,8 +479,9 @@ one it supersedes. Blocking calls go to a pool with
 saved-state budget.
 
 **Controlled components** — a component whose native state lives in a holder
-(a picker, a slider, a drawer, a sheet, a tooltip) takes the value as a prop
-and reports changes through an `on_<value>_change` intent:
+(a picker, a slider, a drawer, a pager, a scrolling list, a sheet, a tooltip)
+takes the value as a prop and reports changes through an `on_<value>_change`
+or `on_<value>_settled` intent:
 
 ```python
 TimePicker(
@@ -488,7 +492,9 @@ TimePicker(
 )
 ```
 
-Omit a value to leave it to the user; set it to move the native control.
+Omit a value to leave it to the user; set it to move the native control. A
+gesture in progress is never overridden: the holder hears a value when it
+changes, and reports where the user leaves it, once.
 
 **Modifiers** — `Modifier()` chains every modifier the catalog declares,
 generated as the components are: `padding` (uniform or per side), `size`,
@@ -527,22 +533,24 @@ app's theme itself (colours, fonts, corner radii, dark mode) is set in
 ## Native components
 
 What view-model screens are drawn from, and what blocks components are built
-from: 134 Material 3 and foundation components, 145 counting the overloads a
-component reaches through its own name. `*` marks experimental entries.
+from: 169 Material 3, foundation and UI components, 184 counting the overloads
+a component reaches through its own name. `*` marks experimental entries.
 
 | Category | Components |
 | --- | --- |
-| Typography | `Text`, `TextAnnotatedString`, `BasicText`, `Label`\* |
-| Layout and surfaces | `Box`, `Column`, `Row`, `Scaffold`, `BottomSheetScaffold`\*, `Spacer`, `Surface`, `Card`, `ElevatedCard`, `OutlinedCard`, `FlowRow`\*, `FlowColumn`\*, `FlexBox`\*, `PullToRefreshBox`, `SwipeToDismissBox`, `VerticalDragHandle`, `HorizontalDivider`, `VerticalDivider`, `SelectionContainer`, `DisableSelection` |
-| App bars | `TopAppBar`\*, `CenterAlignedTopAppBar`\*, `MediumTopAppBar`\*, `LargeTopAppBar`\*, `BottomAppBar`, `BottomAppBarActions` |
+| Typography | `Text`, `BasicText`, `ProvideTextStyle`, `Label`\* |
+| Layout and surfaces | `Box`, `Column`, `Row`, `Scaffold`, `BottomSheetScaffold`\*, `Spacer`, `Surface`, `Card`, `ElevatedCard`, `OutlinedCard`, `FlowRow`, `FlowColumn`, `FlexBox`\*, `Grid`\* with `GridConfigurationColumn`\*, `GridConfigurationRow`\*, `GridConfigurationGap`\*, `GridConfigurationColumnGap`\*, `GridConfigurationRowGap`\*, `PullToRefreshBox`, `SwipeToDismissBox`, `VerticalDragHandle`, `HorizontalDivider`, `VerticalDivider`, `SelectionContainer`, `DisableSelection` |
+| App bars | `TopAppBar`\*, `CenterAlignedTopAppBar`\*, `MediumTopAppBar`\*, `LargeTopAppBar`\*, `BottomAppBar`, `BottomAppBarActions`, `AppBarRow`, `AppBarColumn` with `AppBarClickableItem`, `AppBarToggleableItem`, `AppBarCustomItem` |
 | Buttons | `Button`, `ElevatedButton`, `OutlinedButton`, `FilledTonalButton`, `TextButton`, `SegmentedButton`, `MultiChoiceSegmentedButton`, `SingleChoiceSegmentedButtonRow`, `MultiChoiceSegmentedButtonRow`, `IconButton`, `FilledIconButton`, `FilledIconToggleButton`, `FilledTonalIconButton`, `FilledTonalIconToggleButton`, `IconToggleButton`, `OutlinedIconButton`, `OutlinedIconToggleButton`, `FloatingActionButton`, `SmallFloatingActionButton`, `LargeFloatingActionButton`, `ExtendedFloatingActionButton`, `ExtendedFloatingActionButtonText` |
-| Selection and input | `Checkbox`, `TriStateCheckbox`, `RadioButton`, `Switch`, `Slider`\*, `TextField`, `OutlinedTextField`, `SecureTextField`, `OutlinedSecureTextField`, `BasicTextField`, `ExposedDropdownMenuBox`\*, `ExposedDropdownMenu`\*, `AssistChip`, `ElevatedAssistChip`, `FilterChip`, `ElevatedFilterChip`, `SuggestionChip`, `ElevatedSuggestionChip`, `InputChip` |
-| Search | `SearchBar`\*, `DockedSearchBar`\*, `SearchBarInputField`\*, `StatefulSearchBarInputField`\*, `StatefulSearchBar`\*, `SearchBarStateInputField`\*, `ExpandedDockedSearchBar`\*, `ExpandedFullScreenSearchBar`\* |
-| Pickers | `DatePicker`, `DatePickerDialog`, `TimePicker`\*, `TimeInput`\*, `TimePickerDialog` |
+| Selection and input | `Checkbox`, `TriStateCheckbox`, `RadioButton`, `Switch`, `Slider`\*, `RangeSlider`\*, `TextField`, `OutlinedTextField`, `StatefulTextField`, `StatefulOutlinedTextField`, `SecureTextField`, `OutlinedSecureTextField`, `BasicTextField`, `StatefulBasicTextField`, `BasicSecureTextField`, `ExposedDropdownMenuBox`\*, `ExposedDropdownMenu`\*, `AssistChip`, `ElevatedAssistChip`, `FilterChip`, `ElevatedFilterChip`, `SuggestionChip`, `ElevatedSuggestionChip`, `InputChip` |
+| Search | `SearchBar`\*, `DockedSearchBar`\*, `SearchBarInputField`\*, `StatefulSearchBarInputField`\*, `StatefulSearchBar`\*, `TopSearchBar`\*, `SearchBarStateInputField`\*, `ExpandedDockedSearchBar`\*, `ExpandedFullScreenSearchBar`\* |
+| Pickers | `DatePicker`, `DateRangePicker`, `DatePickerDialog`, `TimePicker`\*, `TimeInput`\*, `TimePickerDialog` |
 | Navigation and drawers | `NavigationBar`, `NavigationBarItem`, `NavigationRail`, `NavigationRailItem`, `ShortNavigationBar`, `ShortNavigationBarItem`, `WideNavigationRail`, `WideNavigationRailItem`, `ModalWideNavigationRail`, `NavigationSuiteScaffold`, `NavigationSuiteScaffoldLayout`, `NavigationSuite`, `NavigationSuiteItem`, `NavigationDrawerItem`, `ModalNavigationDrawer`, `ModalDrawerSheet`, `DismissibleNavigationDrawer`, `DismissibleDrawerSheet`, `PermanentNavigationDrawer`, `PermanentDrawerSheet`, `Tab`, `TabContent`, `LeadingIconTab`, `PrimaryTabRow`, `SecondaryTabRow`, `PrimaryScrollableTabRow`, `SecondaryScrollableTabRow` |
-| Overlays and status | `ModalBottomSheet`\*, `AlertDialog`, `BasicAlertDialog`\*, `DropdownMenu`, `DropdownMenuItem`, `TooltipBox`\*, `PlainTooltip`\*, `RichTooltip`\*, `Snackbar`, `SnackbarHost`, `Badge`, `BadgedBox`, `CircularProgressIndicator`, `LinearProgressIndicator`\* |
-| Lists | `LazyColumn`, `LazyRow`, `ListItem` |
-| Animation | `AnimatedVisibility`, `AnimatedContent`, `Crossfade`, `SharedTransitionLayout` |
+| Overlays and status | `ModalBottomSheet`\*, `AlertDialog`, `BasicAlertDialog`\*, `Dialog`, `Popup`, `DropdownMenu`, `DropdownMenuItem`, `TooltipBox`\*, `BasicTooltipBox`\*, `PlainTooltip`\*, `RichTooltip`\*, `Snackbar`, `SnackbarHost`, `Badge`, `BadgedBox`, `CircularProgressIndicator`, `LinearProgressIndicator`\* |
+| Lists, grids and pagers | `LazyColumn`, `LazyRow`, `LazyVerticalGrid`, `LazyHorizontalGrid`, `LazyVerticalStaggeredGrid`, `LazyHorizontalStaggeredGrid`, `ListItem`, `HorizontalPager`, `VerticalPager`, `HorizontalMultiBrowseCarousel`\*, `HorizontalUncontainedCarousel`\*, `HorizontalCenteredHeroCarousel`\* |
+| Animation | `AnimatedVisibility`, `AnimatedContent`, `Crossfade`, `SharedTransitionLayout`, `LookaheadScope` |
+| Theme | `MaterialTheme` (a colour scheme, shapes and typography for one subtree) |
+| Drawing and layout programs | `Canvas` (a draw program the host runs every frame), `Layout` (a measure program), `SoundEffectOnInteraction` |
 | Media | `Icon`, `Image` |
 
 `pycompose add group:artifact[:version]` wraps another Compose library from
@@ -559,44 +567,30 @@ field or a text: `Modifier.menu_anchor("primaryNotEditable")`,
 with the anchor type from `pycompose.ui`.
 
 `SearchBar` and `DockedSearchBar` take the editable field through the
-`inputField` slot; suggestions and results are ordinary children and compose in
-`ColumnScope`. `SearchBarInputField` is the same native field without a
-container, for layouts that place the field themselves.
+`input_field` slot and `expanded`/`on_expanded_change`; suggestions and results
+are ordinary children and compose in `ColumnScope`. `SearchBarInputField` is the
+same native field without a container (`query`, `on_query_change`,
+`on_search`), for layouts that place the field themselves.
+`StatefulSearchBarInputField` is the native `TextFieldState` overload: supply
+`text`, `selection_start`, `selection_end`, `on_edit` and `on_search`. The edit
+reports `text`, `selection_start` and `selection_end` together; store and echo
+all three. Selection counts **UTF-16 code units**, not Python string indices.
 
-`StatefulSearchBarInputField` selects the native `TextFieldState` overload with
-explicit `expanded`/`on_expanded_change`. Supply `text`, `selection_start`,
-`selection_end`, `revision`, `on_edit`, and `on_search`. The edit handler's
-`TypedDict` has `text: str`, `selection_start: int`, `selection_end: int`, and
-`revision: int`; store and echo all four together. Selection uses **UTF-16 code
-units**, not Python string indices, and preserves reversed ranges. Native edits
-advance the revision; old echoes cannot undo newer typing. A deliberate app edit
-uses a greater revision. Keep the node id stable while editing; a new id starts
-from the snapshot. Start revisions at zero; if the signed 64-bit maximum is
-reached, further native edits are rejected with a diagnostic until a new node id
-starts a fresh sequence. Acknowledgements do not generate another edit report or reset
-unchanged IME composition. `on_search` receives `query: str`.
+`StatefulSearchBar` and `TopSearchBar` own one search: supply `value`
+(`"collapsed"` or `"expanded"`) with `on_value_change` to drive and observe
+expansion, or omit `value` to leave it to focus and gestures. The field goes in
+the bar's `input_field` slot as a `SearchBarStateInputField`, whose
+`search_bar_state` names the bar's node id. `ExpandedDockedSearchBar` and
+`ExpandedFullScreenSearchBar` are separate nodes whose `state` names the bar the
+same way, each with its own `input_field`: every surface uses the one bar's
+native state, so text, selection and expansion survive expanding, collapsing
+and a snapshot pull. A surface naming no composed bar waits for one.
 
-This overload adds `read_only`, `text_style`, `prefix`, `suffix`, `shape`, and
-`colors`, retaining native defaults when absent. It is **partial coverage**:
-input/output transformations, explicit horizontal scroll control, and
-interaction observations remain gaps. Existing `SearchBarInputField`,
-`SearchBar`, and `DockedSearchBar` APIs are unchanged.
-
-`StatefulSearchBar` owns one search. Supply `text`, `selection_start`,
-`selection_end`, `revision`, and `on_edit`; supply `expanded` and
-`on_expanded_change` to drive and observe expansion, or omit `expanded` to leave
-it to native focus and gestures. Its `input_field` slot holds a
-`SearchBarStateInputField`; its `expanded_bar` slot holds
-`ExpandedDockedSearchBar` or `ExpandedFullScreenSearchBar`, each with its own
-`input_field` slot. Every surface reads the owner's native editing and expansion
-state, so text, selection, and revision survive expanding, collapsing, or a
-snapshot pull. A field or expanded surface outside a `StatefulSearchBar` is
-diagnosed by the host instead of creating a second state.
-
-`TooltipBox` anchors its `tooltip` slot to its ordinary children. Put
-`PlainTooltip` or `RichTooltip` directly in that slot: they require its native
-`TooltipScope`. Rich tooltips also accept `title` and `action` slots. Colors and
-dimensions use Material 3 defaults unless supplied.
+`TooltipBox` anchors its `tooltip` slot to its ordinary children, placed by
+`positioning` (`"above"`, `"below"`, …). Put `PlainTooltip` or `RichTooltip`
+directly in that slot: they require its native `TooltipScope`. Rich tooltips
+also accept `title` and `action` slots. Colors and dimensions use Material 3
+defaults unless supplied.
 
 Omit `visible` for native long-press, hover and keyboard behavior. Changing it
 requests a show or dismissal; `on_visibility_change` reports a boolean `visible`
@@ -604,6 +598,40 @@ payload, including native dismissal. Repeating a snapshot does not reopen a
 dismissed tooltip. Set `is_persistent=True` for actionable content and
 `has_action=True` for its native accessibility/keyboard behavior. Native tooltip
 arbitration permits one active tooltip at a time.
+
+`AppBarRow` and `AppBarColumn` take item components as children:
+`AppBarClickableItem`, `AppBarToggleableItem` and `AppBarCustomItem`. Items that
+do not fit, or beyond `max_item_count`, move into an overflow menu opened from
+the `overflow_indicator` slot. The app opens it by setting `is_expanded=True`
+(typically from the indicator's `on_click`); `on_is_expanded_change` reports
+when the menu closes itself, after an item is chosen or on an outside tap.
+
+```python
+AppBarRow(
+    is_expanded=state.menu,
+    on_is_expanded_change=SetMenu,
+    overflow_indicator=IconButton(Icon(...), on_click=SetMenu(is_expanded=True)),
+    children=[
+        AppBarClickableItem(label="Edit", on_click=Edit(), icon=Icon(...)),
+        AppBarToggleableItem(label="Star", checked=state.starred, on_checked_change=Star, icon=Icon(...)),
+    ],
+)
+```
+
+`Grid` takes its tracks the same way, as `GridConfigurationColumn`,
+`GridConfigurationRow` and gap items in its `config` slot, and its cells as
+children.
+
+Pagers and carousels take one child per page or item, in order, and are driven
+by `current_page` (`current_item` on a carousel), reporting where a swipe
+settles through `on_current_page_settled` (`on_current_item_settled`). A
+scrolling `Column` (`scrollable=True`) does the same with `value` and
+`on_value_settled`, and the lazy lists and grids with `first_visible_item_index`
+and `on_first_visible_item_index_settled`.
+
+The navigation drawers take `value` (`"open"` or `"closed"`) and report the
+anchor they settle on, by gesture or scrim tap, through `on_value_change`;
+`confirm_state_change`, a function of the target anchor, may refuse a change.
 
 `SwipeToDismissBox` takes ordinary children as the content row and a
 `background_content` slot behind it. Supply `value` (`"settled"`,
