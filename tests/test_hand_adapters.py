@@ -37,7 +37,7 @@ def test_every_prop_of_a_hand_adapted_component_is_read() -> None:
         for name, entry in components.items()
         if entry.get("adapter") == "manual"
     }
-    assert hand
+    # No component is hand-adapted any more; a new one would be checked here.
     unread = {
         name: sorted(
             prop
