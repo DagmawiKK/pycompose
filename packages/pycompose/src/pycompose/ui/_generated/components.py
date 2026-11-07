@@ -52,6 +52,7 @@ __all__ = [
     "Dialog",
     "DisableSelection",
     "DismissibleDrawerSheet",
+    "DismissibleDrawerSheetDrawerState",
     "DismissibleNavigationDrawer",
     "DockedSearchBar",
     "DropdownMenu",
@@ -108,6 +109,7 @@ __all__ = [
     "MediumTopAppBar",
     "ModalBottomSheet",
     "ModalDrawerSheet",
+    "ModalDrawerSheetDrawerState",
     "ModalNavigationDrawer",
     "ModalWideNavigationRail",
     "MultiChoiceSegmentedButton",
@@ -2107,12 +2109,22 @@ class DisableSelection(Component):
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
 
 
-class DismissibleDrawerSheet(Component):
+class _DismissibleDrawerSheet(Component):
     """Native DismissibleDrawerSheet;
     props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "DismissibleDrawerSheet"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "content",
+            "drawer_container_color",
+            "drawer_shape",
+            "drawer_tonal_elevation",
+            "window_insets",
+        }
+    )
 
     def __init__(
         self,
@@ -2169,6 +2181,51 @@ class DismissibleDrawerSheet(Component):
             )
         normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class DismissibleDrawerSheet(_DismissibleDrawerSheet):
+    """Native DismissibleDrawerSheet; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        drawer_container_color: JsonValue | Expression | Binding | None = None,
+        drawer_shape: JsonValue | None = None,
+        drawer_tonal_elevation: int | float | Expression | Binding | None = None,
+        modifier: Modifier | None = None,
+        window_insets: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> DismissibleDrawerSheet: ...
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        drawer_container_color: JsonValue | Expression | Binding | None = None,
+        drawer_shape: JsonValue | None = None,
+        drawer_state: str,
+        drawer_tonal_elevation: int | float | Expression | Binding | None = None,
+        modifier: Modifier | None = None,
+        window_insets: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> DismissibleDrawerSheetDrawerState: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class DismissibleNavigationDrawer(Component):
@@ -5589,11 +5646,21 @@ class ModalBottomSheet(Component):
         )
 
 
-class ModalDrawerSheet(Component):
+class _ModalDrawerSheet(Component):
     """Native ModalDrawerSheet; props and defaults follow the component manifest."""
 
     __slots__ = ()
     component_type = "ModalDrawerSheet"
+    required_keywords = frozenset()
+    accepted_keywords = frozenset(
+        {
+            "content",
+            "drawer_container_color",
+            "drawer_shape",
+            "drawer_tonal_elevation",
+            "window_insets",
+        }
+    )
 
     def __init__(
         self,
@@ -5650,6 +5717,51 @@ class ModalDrawerSheet(Component):
             )
         normalized = content_nodes(contents or children, key="children")
         super().__init__(id=id, children=normalized, modifier=modifier, **props)
+
+
+class ModalDrawerSheet(_ModalDrawerSheet):
+    """Native ModalDrawerSheet; keywords choose the overload."""
+
+    __slots__ = ()
+
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        drawer_container_color: JsonValue | Expression | Binding | None = None,
+        drawer_shape: JsonValue | None = None,
+        drawer_tonal_elevation: int | float | Expression | Binding | None = None,
+        modifier: Modifier | None = None,
+        window_insets: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> ModalDrawerSheet: ...
+    @overload
+    def __new__(
+        cls,
+        *contents: Node,
+        id: str | None = None,
+        drawer_container_color: JsonValue | Expression | Binding | None = None,
+        drawer_shape: JsonValue | None = None,
+        drawer_state: str,
+        drawer_tonal_elevation: int | float | Expression | Binding | None = None,
+        modifier: Modifier | None = None,
+        window_insets: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> ModalDrawerSheetDrawerState: ...
+    def __new__(cls, *contents: Any, **kwargs: Any) -> Any:
+        """Construct the overload the keywords select.
+
+        Args:
+            *contents: Children given in order.
+            **kwargs: The chosen overload's keyword arguments.
+
+        Returns:
+            An instance of that overload.
+        """
+        return super().__new__(cls, *contents, **kwargs)
 
 
 class ModalNavigationDrawer(Component):
@@ -10734,6 +10846,88 @@ class CircularProgressIndicatorProgress(CircularProgressIndicator):
         Component.__init__(self, id=id, children=(), modifier=modifier, **props)
 
 
+class DismissibleDrawerSheetDrawerState(DismissibleDrawerSheet):
+    """Native DismissibleDrawerSheet;
+    props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "DismissibleDrawerSheetDrawerState"
+    required_keywords = frozenset(
+        {
+            "drawer_state",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "content",
+            "drawer_container_color",
+            "drawer_shape",
+            "drawer_state",
+            "drawer_tonal_elevation",
+            "window_insets",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        drawer_container_color: JsonValue | Expression | Binding | None = None,
+        drawer_shape: JsonValue | None = None,
+        drawer_state: str,
+        drawer_tonal_elevation: int | float | Expression | Binding | None = None,
+        modifier: Modifier | None = None,
+        window_insets: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered DismissibleDrawerSheetDrawerState.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            drawer_container_color: Native drawerContainerColor; None uses its
+                default.
+            drawer_shape: Native drawerShape; None uses its default.
+            drawer_state: Required native drawerState.
+            drawer_tonal_elevation: Native drawerTonalElevation; None uses its
+                default.
+            modifier: Native modifier; None uses its default.
+            window_insets: Native windowInsets; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if drawer_container_color is not None:
+            props["drawer_container_color"] = lower_binding(
+                drawer_container_color, "composition"
+            )
+        if drawer_shape is not None:
+            props["drawer_shape"] = drawer_shape
+        props["drawer_state"] = drawer_state
+        if drawer_tonal_elevation is not None:
+            props["drawer_tonal_elevation"] = lower_binding(
+                drawer_tonal_elevation, "composition"
+            )
+        if window_insets is not None:
+            props["window_insets"] = window_insets
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
+
+
 class ElevatedCardWithoutOnClick(ElevatedCard):
     """Native ElevatedCard; props and defaults follow the component manifest."""
 
@@ -10892,6 +11086,87 @@ class LinearProgressIndicatorWithoutProgress(LinearProgressIndicator):
         if track_color is not None:
             props["track_color"] = lower_binding(track_color, "composition")
         Component.__init__(self, id=id, children=(), modifier=modifier, **props)
+
+
+class ModalDrawerSheetDrawerState(ModalDrawerSheet):
+    """Native ModalDrawerSheet; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "ModalDrawerSheetDrawerState"
+    required_keywords = frozenset(
+        {
+            "drawer_state",
+        }
+    )
+    accepted_keywords = frozenset(
+        {
+            "content",
+            "drawer_container_color",
+            "drawer_shape",
+            "drawer_state",
+            "drawer_tonal_elevation",
+            "window_insets",
+        }
+    )
+
+    def __init__(
+        self,
+        *contents: Node,
+        id: str | None = None,
+        drawer_container_color: JsonValue | Expression | Binding | None = None,
+        drawer_shape: JsonValue | None = None,
+        drawer_state: str,
+        drawer_tonal_elevation: int | float | Expression | Binding | None = None,
+        modifier: Modifier | None = None,
+        window_insets: JsonValue | None = None,
+        children: Content = (),
+        content: Content | None = None,
+    ) -> None:
+        """Construct a registered ModalDrawerSheetDrawerState.
+
+        Args:
+            *contents: Children given in order, as Compose's content lambda.
+            id: Stable instance key; None derives the node's path id.
+            drawer_container_color: Native drawerContainerColor; None uses its
+                default.
+            drawer_shape: Native drawerShape; None uses its default.
+            drawer_state: Required native drawerState.
+            drawer_tonal_elevation: Native drawerTonalElevation; None uses its
+                default.
+            modifier: Native modifier; None uses its default.
+            window_insets: Native windowInsets; None uses its default.
+            children: Ordered child nodes with stable keys.
+            content: Alternative spelling for content children.
+
+        Raises:
+            IrValidationError: If children are given twice.
+        """
+        props: dict[str, PropValue] = {}
+        if drawer_container_color is not None:
+            props["drawer_container_color"] = lower_binding(
+                drawer_container_color, "composition"
+            )
+        if drawer_shape is not None:
+            props["drawer_shape"] = drawer_shape
+        props["drawer_state"] = drawer_state
+        if drawer_tonal_elevation is not None:
+            props["drawer_tonal_elevation"] = lower_binding(
+                drawer_tonal_elevation, "composition"
+            )
+        if window_insets is not None:
+            props["window_insets"] = window_insets
+        if content is not None:
+            if children:
+                raise IrValidationError(
+                    "cannot supply both slot and children", node_id=id
+                )
+            children = content_nodes(content, key="content")
+        if contents and children:
+            raise IrValidationError(
+                "children given positionally and by name", node_id=id
+            )
+        normalized = content_nodes(contents or children, key="children")
+        Component.__init__(self, id=id, children=normalized, modifier=modifier, **props)
 
 
 class NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType(
@@ -11427,9 +11702,11 @@ class SurfaceSelected(Surface):
 Canvas.overloads = (CanvasWithoutContentDescription,)
 Card.overloads = (CardWithoutOnClick,)
 CircularProgressIndicator.overloads = (CircularProgressIndicatorProgress,)
+DismissibleDrawerSheet.overloads = (DismissibleDrawerSheetDrawerState,)
 ElevatedCard.overloads = (ElevatedCardWithoutOnClick,)
 Image.overloads = (ImageImageVector,)
 LinearProgressIndicator.overloads = (LinearProgressIndicatorWithoutProgress,)
+ModalDrawerSheet.overloads = (ModalDrawerSheetDrawerState,)
 NavigationSuiteScaffoldLayout.overloads = (
     NavigationSuiteScaffoldLayoutWithoutNavigationSuiteType,
 )

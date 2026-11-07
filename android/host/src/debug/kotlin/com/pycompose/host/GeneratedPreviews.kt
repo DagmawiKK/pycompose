@@ -211,6 +211,12 @@ private fun DismissibleDrawerSheetPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "DismissibleDrawerSheet"}, "type": "Text"}], "id": "preview", "props": {}, "type": "DismissibleDrawerSheet"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
+@Preview(name = "DismissibleDrawerSheetDrawerState", showBackground = true)
+@Composable
+private fun DismissibleDrawerSheetDrawerStatePreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"children": [{"id": "owner.drawerState.drawer", "props": {"text": "drawer"}, "slot": "drawer", "type": "Text"}, {"id": "owner.drawerState.child", "props": {"text": "DismissibleNavigationDrawer"}, "type": "Text"}], "id": "owner.drawerState", "props": {"value": "closed"}, "type": "DismissibleNavigationDrawer"}, {"children": [{"id": "preview.child", "props": {"text": "DismissibleDrawerSheetDrawerState"}, "type": "Text"}], "id": "preview", "props": {"drawerState": "owner.drawerState"}, "type": "DismissibleDrawerSheetDrawerState"}], "id": "page", "props": {}, "type": "Column"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
 @Preview(name = "DismissibleNavigationDrawer", showBackground = true)
 @Composable
 private fun DismissibleNavigationDrawerPreview() {
@@ -545,6 +551,12 @@ private fun ModalBottomSheetPreview() {
 @Composable
 private fun ModalDrawerSheetPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.child", "props": {"text": "ModalDrawerSheet"}, "type": "Text"}], "id": "preview", "props": {}, "type": "ModalDrawerSheet"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "ModalDrawerSheetDrawerState", showBackground = true)
+@Composable
+private fun ModalDrawerSheetDrawerStatePreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"children": [{"id": "owner.drawerState.drawer", "props": {"text": "drawer"}, "slot": "drawer", "type": "Text"}, {"id": "owner.drawerState.child", "props": {"text": "DismissibleNavigationDrawer"}, "type": "Text"}], "id": "owner.drawerState", "props": {"value": "closed"}, "type": "DismissibleNavigationDrawer"}, {"children": [{"id": "preview.child", "props": {"text": "ModalDrawerSheetDrawerState"}, "type": "Text"}], "id": "preview", "props": {"drawerState": "owner.drawerState"}, "type": "ModalDrawerSheetDrawerState"}], "id": "page", "props": {}, "type": "Column"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ModalNavigationDrawer", showBackground = true)

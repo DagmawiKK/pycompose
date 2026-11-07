@@ -732,6 +732,28 @@ data class DismissibleDrawerSheet(
 }
 
 @Serializable
+data class DismissibleDrawerSheetDrawerStateProps(
+    val `drawerContainerColor`: JsonElement? = null,
+    val `drawerShape`: JsonElement? = null,
+    val `drawerState`: String,
+    val `drawerTonalElevation`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `windowInsets`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("DismissibleDrawerSheetDrawerState")
+data class DismissibleDrawerSheetDrawerState(
+    override val id: String,
+    override val props: DismissibleDrawerSheetDrawerStateProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "DismissibleDrawerSheetDrawerState"
+}
+
+@Serializable
 data class DismissibleNavigationDrawerProps(
     val `confirmStateChange`: JsonObject? = null,
     val `gesturesEnabled`: Boolean = true,
@@ -2018,6 +2040,28 @@ data class ModalDrawerSheet(
 ) : UiNode {
     override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "ModalDrawerSheet"
+}
+
+@Serializable
+data class ModalDrawerSheetDrawerStateProps(
+    val `drawerContainerColor`: JsonElement? = null,
+    val `drawerShape`: JsonElement? = null,
+    val `drawerState`: String,
+    val `drawerTonalElevation`: JsonElement? = null,
+    override val `modifier`: JsonObject? = null,
+    val `windowInsets`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("ModalDrawerSheetDrawerState")
+data class ModalDrawerSheetDrawerState(
+    override val id: String,
+    override val props: ModalDrawerSheetDrawerStateProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "ModalDrawerSheetDrawerState"
 }
 
 @Serializable

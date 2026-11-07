@@ -2067,6 +2067,61 @@
         "provides": "androidx.compose.foundation.layout.ColumnScope"
       }
     },
+    "DismissibleDrawerSheetDrawerState": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/DrawerState;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "DismissibleDrawerSheet-Snr_uVM",
+        "name": "DismissibleDrawerSheet",
+        "owner": "androidx.compose.material3.NavigationDrawerKt"
+      },
+      "props": {
+        "drawerContainerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "fallback": "androidx.compose.material3.DrawerDefaults.standardContainerColor",
+          "animation": "androidx.compose.ui.graphics.Color",
+          "phase": "composition"
+        },
+        "drawerShape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.ui.graphics.RectangleShape"
+        },
+        "drawerTonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.DrawerDefaults.DismissibleDrawerElevation",
+          "nativeValue": 0.0,
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "windowInsets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "nativeDefault": "androidx.compose.material3.DrawerDefaults.windowInsets"
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "drawerState": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
+      },
+      "shared": {
+        "drawerState": "androidx.compose.material3.DrawerState"
+      },
+      "overloadOf": "DismissibleDrawerSheet"
+    },
     "DismissibleNavigationDrawer": {
       "package": "androidx.compose.material3",
       "category": "layout",
@@ -6159,6 +6214,61 @@
         "kind": "content",
         "provides": "androidx.compose.foundation.layout.ColumnScope"
       }
+    },
+    "ModalDrawerSheetDrawerState": {
+      "package": "androidx.compose.material3",
+      "category": "layout",
+      "stability": "stable",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/DrawerState;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JJFLandroidx/compose/foundation/layout/WindowInsets;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "ModalDrawerSheet-Snr_uVM",
+        "name": "ModalDrawerSheet",
+        "owner": "androidx.compose.material3.NavigationDrawerKt"
+      },
+      "props": {
+        "drawerContainerColor": {
+          "type": "color",
+          "valueType": "Color",
+          "fallback": "androidx.compose.material3.DrawerDefaults.modalContainerColor",
+          "animation": "androidx.compose.ui.graphics.Color",
+          "phase": "composition"
+        },
+        "drawerShape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.DrawerDefaults.shape"
+        },
+        "drawerTonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.DrawerDefaults.ModalDrawerElevation",
+          "nativeValue": 0.0,
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "windowInsets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "nativeDefault": "androidx.compose.material3.DrawerDefaults.windowInsets"
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "drawerState": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "children": {
+        "allowed": true,
+        "kind": "content",
+        "provides": "androidx.compose.foundation.layout.ColumnScope"
+      },
+      "shared": {
+        "drawerState": "androidx.compose.material3.DrawerState"
+      },
+      "overloadOf": "ModalDrawerSheet"
     },
     "ModalNavigationDrawer": {
       "package": "androidx.compose.material3",

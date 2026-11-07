@@ -452,6 +452,20 @@ object IrContract {
                 "windowInsets" to PropertyRule("value", required = false, valueType = "WindowInsets"),
             ),
         ),
+        "DismissibleDrawerSheetDrawerState" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "drawerContainerColor" to PropertyRule("color", required = false, valueType = "Color", animation = true),
+                "drawerShape" to PropertyRule("value", required = false, valueType = "Shape"),
+                "drawerState" to PropertyRule("string", required = true),
+                "drawerTonalElevation" to PropertyRule("dp", required = false, animation = true),
+                "modifier" to PropertyRule("modifier", required = false),
+                "windowInsets" to PropertyRule("value", required = false, valueType = "WindowInsets"),
+            ),
+        ),
         "DismissibleNavigationDrawer" to ComponentRule(
             slots = setOf("drawer"),
             childrenAllowed = true,
@@ -1288,6 +1302,20 @@ object IrContract {
             props = mapOf(
                 "drawerContainerColor" to PropertyRule("color", required = false, valueType = "Color", animation = true),
                 "drawerShape" to PropertyRule("value", required = false, valueType = "Shape"),
+                "drawerTonalElevation" to PropertyRule("dp", required = false, animation = true),
+                "modifier" to PropertyRule("modifier", required = false),
+                "windowInsets" to PropertyRule("value", required = false, valueType = "WindowInsets"),
+            ),
+        ),
+        "ModalDrawerSheetDrawerState" to ComponentRule(
+            slots = setOf(),
+            childrenAllowed = true,
+            minimumChildren = 0,
+            since = "1.23.0",
+            props = mapOf(
+                "drawerContainerColor" to PropertyRule("color", required = false, valueType = "Color", animation = true),
+                "drawerShape" to PropertyRule("value", required = false, valueType = "Shape"),
+                "drawerState" to PropertyRule("string", required = true),
                 "drawerTonalElevation" to PropertyRule("dp", required = false, animation = true),
                 "modifier" to PropertyRule("modifier", required = false),
                 "windowInsets" to PropertyRule("value", required = false, valueType = "WindowInsets"),

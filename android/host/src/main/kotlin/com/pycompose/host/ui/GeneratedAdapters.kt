@@ -204,6 +204,7 @@ import com.pycompose.ir.generated.DateRangePicker as DateRangePickerNode
 import com.pycompose.ir.generated.Dialog as DialogNode
 import com.pycompose.ir.generated.DisableSelection as DisableSelectionNode
 import com.pycompose.ir.generated.DismissibleDrawerSheet as DismissibleDrawerSheetNode
+import com.pycompose.ir.generated.DismissibleDrawerSheetDrawerState as DismissibleDrawerSheetDrawerStateNode
 import com.pycompose.ir.generated.DismissibleNavigationDrawer as DismissibleNavigationDrawerNode
 import com.pycompose.ir.generated.DockedSearchBar as DockedSearchBarNode
 import com.pycompose.ir.generated.DropdownMenu as DropdownMenuNode
@@ -260,6 +261,7 @@ import com.pycompose.ir.generated.MaterialTheme as MaterialThemeNode
 import com.pycompose.ir.generated.MediumTopAppBar as MediumTopAppBarNode
 import com.pycompose.ir.generated.ModalBottomSheet as ModalBottomSheetNode
 import com.pycompose.ir.generated.ModalDrawerSheet as ModalDrawerSheetNode
+import com.pycompose.ir.generated.ModalDrawerSheetDrawerState as ModalDrawerSheetDrawerStateNode
 import com.pycompose.ir.generated.ModalNavigationDrawer as ModalNavigationDrawerNode
 import com.pycompose.ir.generated.ModalWideNavigationRail as ModalWideNavigationRailNode
 import com.pycompose.ir.generated.MultiChoiceSegmentedButton as MultiChoiceSegmentedButtonNode
@@ -941,6 +943,25 @@ object GeneratedAdapters {
                 val windowInsetsValue = if (windowInsetsWire != null) com.pycompose.renderer.generated.ValueResolver.windowInsets(windowInsetsWire).getOrThrow() else androidx.compose.material3.DrawerDefaults.windowInsets
                 DismissibleDrawerSheet(
                     modifier = modifier,
+                    drawerContainerColor = drawerContainerColorValue,
+                    drawerShape = drawerShapeValue,
+                    drawerTonalElevation = drawerTonalElevationValue,
+                    windowInsets = windowInsetsValue,
+                    content = { context.childrenIn(this, model.children) },
+                )
+            }
+            .register("DismissibleDrawerSheetDrawerState") { node, modifier, context ->
+                val model = node as DismissibleDrawerSheetDrawerStateNode
+                val drawerStateShared = context.shared<androidx.compose.material3.DrawerState>(model.props.drawerState) ?: return@register
+                val drawerContainerColorValue = context.boundColor(model.props.drawerContainerColor, Color.colorVectorConverter(ColorSpaces.Srgb), androidx.compose.material3.DrawerDefaults.standardContainerColor)
+                val drawerShapeWire = model.props.drawerShape
+                val drawerShapeValue = if (drawerShapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(drawerShapeWire).getOrThrow() else androidx.compose.ui.graphics.RectangleShape
+                val drawerTonalElevationValue = context.boundDp(model.props.drawerTonalElevation, Dp.VectorConverter, androidx.compose.material3.DrawerDefaults.DismissibleDrawerElevation)
+                val windowInsetsWire = model.props.windowInsets
+                val windowInsetsValue = if (windowInsetsWire != null) com.pycompose.renderer.generated.ValueResolver.windowInsets(windowInsetsWire).getOrThrow() else androidx.compose.material3.DrawerDefaults.windowInsets
+                DismissibleDrawerSheet(
+                    modifier = modifier,
+                    drawerState = drawerStateShared,
                     drawerContainerColor = drawerContainerColorValue,
                     drawerShape = drawerShapeValue,
                     drawerTonalElevation = drawerTonalElevationValue,
@@ -2061,6 +2082,25 @@ object GeneratedAdapters {
                 val windowInsetsValue = if (windowInsetsWire != null) com.pycompose.renderer.generated.ValueResolver.windowInsets(windowInsetsWire).getOrThrow() else androidx.compose.material3.DrawerDefaults.windowInsets
                 ModalDrawerSheet(
                     modifier = modifier,
+                    drawerContainerColor = drawerContainerColorValue,
+                    drawerShape = drawerShapeValue,
+                    drawerTonalElevation = drawerTonalElevationValue,
+                    windowInsets = windowInsetsValue,
+                    content = { context.childrenIn(this, model.children) },
+                )
+            }
+            .register("ModalDrawerSheetDrawerState") { node, modifier, context ->
+                val model = node as ModalDrawerSheetDrawerStateNode
+                val drawerStateShared = context.shared<androidx.compose.material3.DrawerState>(model.props.drawerState) ?: return@register
+                val drawerContainerColorValue = context.boundColor(model.props.drawerContainerColor, Color.colorVectorConverter(ColorSpaces.Srgb), androidx.compose.material3.DrawerDefaults.modalContainerColor)
+                val drawerShapeWire = model.props.drawerShape
+                val drawerShapeValue = if (drawerShapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(drawerShapeWire).getOrThrow() else androidx.compose.material3.DrawerDefaults.shape
+                val drawerTonalElevationValue = context.boundDp(model.props.drawerTonalElevation, Dp.VectorConverter, androidx.compose.material3.DrawerDefaults.ModalDrawerElevation)
+                val windowInsetsWire = model.props.windowInsets
+                val windowInsetsValue = if (windowInsetsWire != null) com.pycompose.renderer.generated.ValueResolver.windowInsets(windowInsetsWire).getOrThrow() else androidx.compose.material3.DrawerDefaults.windowInsets
+                ModalDrawerSheet(
+                    modifier = modifier,
+                    drawerState = drawerStateShared,
                     drawerContainerColor = drawerContainerColorValue,
                     drawerShape = drawerShapeValue,
                     drawerTonalElevation = drawerTonalElevationValue,

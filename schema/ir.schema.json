@@ -2616,6 +2616,92 @@
       },
       "type": "object"
     },
+    "C_DismissibleDrawerSheetDrawerState": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "drawerContainerColor": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "drawerShape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "drawerState": {
+              "type": "string"
+            },
+            "drawerTonalElevation": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "required": [
+            "drawerState"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "DismissibleDrawerSheetDrawerState"
+        }
+      },
+      "type": "object"
+    },
     "C_DismissibleNavigationDrawer": {
       "properties": {
         "children": {
@@ -6988,6 +7074,92 @@
         },
         "type": {
           "const": "ModalDrawerSheet"
+        }
+      },
+      "type": "object"
+    },
+    "C_ModalDrawerSheetDrawerState": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "drawerContainerColor": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "drawerShape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "drawerState": {
+              "type": "string"
+            },
+            "drawerTonalElevation": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "required": [
+            "drawerState"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ModalDrawerSheetDrawerState"
         }
       },
       "type": "object"
@@ -16758,6 +16930,9 @@
               "$ref": "#/definitions/C_DismissibleDrawerSheet"
             },
             {
+              "$ref": "#/definitions/C_DismissibleDrawerSheetDrawerState"
+            },
+            {
               "$ref": "#/definitions/C_DismissibleNavigationDrawer"
             },
             {
@@ -16924,6 +17099,9 @@
             },
             {
               "$ref": "#/definitions/C_ModalDrawerSheet"
+            },
+            {
+              "$ref": "#/definitions/C_ModalDrawerSheetDrawerState"
             },
             {
               "$ref": "#/definitions/C_ModalNavigationDrawer"
@@ -35811,6 +35989,92 @@
       },
       "type": "object"
     },
+    "V_1_23_0_DismissibleDrawerSheetDrawerState": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "drawerContainerColor": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "drawerShape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "drawerState": {
+              "type": "string"
+            },
+            "drawerTonalElevation": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "required": [
+            "drawerState"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "DismissibleDrawerSheetDrawerState"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_DismissibleNavigationDrawer": {
       "properties": {
         "children": {
@@ -40187,6 +40451,92 @@
       },
       "type": "object"
     },
+    "V_1_23_0_ModalDrawerSheetDrawerState": {
+      "properties": {
+        "children": {
+          "items": {},
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "drawerContainerColor": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Family_Color"
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "drawerShape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "drawerState": {
+              "type": "string"
+            },
+            "drawerTonalElevation": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "required": [
+            "drawerState"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "const": "ModalDrawerSheetDrawerState"
+        }
+      },
+      "type": "object"
+    },
     "V_1_23_0_ModalNavigationDrawer": {
       "properties": {
         "children": {
@@ -44002,6 +44352,9 @@
               "$ref": "#/definitions/V_1_23_0_DismissibleDrawerSheet"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_DismissibleDrawerSheetDrawerState"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_DismissibleNavigationDrawer"
             },
             {
@@ -44168,6 +44521,9 @@
             },
             {
               "$ref": "#/definitions/V_1_23_0_ModalDrawerSheet"
+            },
+            {
+              "$ref": "#/definitions/V_1_23_0_ModalDrawerSheetDrawerState"
             },
             {
               "$ref": "#/definitions/V_1_23_0_ModalNavigationDrawer"
