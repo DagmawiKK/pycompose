@@ -251,10 +251,27 @@ def test_sheet_detents_are_gated_to_the_current_envelope() -> None:
         (Path(__file__).resolve().parents[4] / "schema" / "ir.schema.json").read_text()
     )
     for version in ("1.19.0", "1.20.0", "1.21.0", "1.22.0"):
-        name = f"V_{version.replace('.', '_')}_ModalBottomSheet"
-        props = schema["definitions"][name]["properties"]["props"]["properties"]
+        props = _sheet_props(schema, version)
         assert set(props) == {"open", "onOpenChange", "modifier"}
-    current = schema["definitions"]["V_1_23_0_ModalBottomSheet"]["properties"]["props"][
-        "properties"
-    ]
+    current = _sheet_props(schema, "1.23.0")
     assert {"value", "onValueChange", "skipPartiallyExpanded"} <= set(current)
+
+
+def _sheet_props(schema: dict, version: str) -> dict:
+    """The sheet's props as one envelope's root node reaches them.
+
+    Identical definitions are shared across versions, so the envelope's own
+    branch is the way in, never a definition's name.
+    """
+    definitions = schema["definitions"]
+    branch = next(
+        b["then"]["properties"]["root"]["$ref"]
+        for b in schema["allOf"]
+        if b["if"]["properties"]["schemaVersion"]["const"] == version
+    )
+    node = definitions[branch.removeprefix("#/definitions/")]
+    for ref in node["allOf"][0]["anyOf"]:
+        component = definitions[ref["$ref"].removeprefix("#/definitions/")]
+        if component["properties"]["type"].get("const") == "ModalBottomSheet":
+            return dict(component["properties"]["props"]["properties"])
+    raise AssertionError(f"{version}: no ModalBottomSheet")

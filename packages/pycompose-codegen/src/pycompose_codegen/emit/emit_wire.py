@@ -15,6 +15,7 @@ from pycompose_codegen.emit.rules import (
     supported,
     version_key,
 )
+from pycompose_codegen.emit.shared_definitions import share_definitions
 
 JSON_SCHEMA_DRAFT = "http://json-schema.org/draft-07/schema#"
 
@@ -176,7 +177,8 @@ def render_ir_schema(registry: dict[str, Any]) -> str:
             }
         )
     ir_schema["allOf"] = branches
-    return json.dumps(ir_schema, indent=2, sort_keys=True) + "\n"
+    shared = share_definitions(ir_schema)
+    return json.dumps(shared, indent=2, sort_keys=True) + "\n"
 
 
 def _modifier_schema(
