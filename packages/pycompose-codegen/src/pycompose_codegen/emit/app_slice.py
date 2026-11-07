@@ -66,27 +66,13 @@ _ADAPTERS_RELATIVE = (
     / "host/src/main/kotlin/com/pycompose/host/ui/GeneratedAdapters.kt"
 )
 
-FLOOR_COMPONENTS = frozenset(
-    {
-        "SearchBarInputField",
-        "StatefulSearchBarInputField",
-        "StatefulSearchBar",
-        "SearchBarStateInputField",
-        "ExpandedDockedSearchBar",
-        "ExpandedFullScreenSearchBar",
-    }
-)
+FLOOR_COMPONENTS: frozenset[str] = frozenset()
 """Components every generated host compiles against, referenced or not.
 
-``host/.../ui/BuiltinComponents.kt`` is hand-written and always compiled: it
-registers the components whose behavior is not mechanical and names their
-generated node classes by type, so a slice without them would emit a host that
-does not compile. Keeping them in every slice is what lets
-those adapters stay hand-written once instead of being re-derived per app; the
-generated adapters file skips them for the same reason. Every other component
-enters a slice only because the app references it, and
-``tests/test_app_codegen.py`` scans the hand-written Kotlin so a new reference
-without a floor entry fails there rather than in a user's build.
+``host/.../ui/BuiltinComponents.kt`` registers only the generated adapters, so
+no component needs a place in every slice: each enters one because the app
+references it. ``tests/test_app_codegen.py`` scans the hand-written Kotlin, so a
+reference to a generated node class there fails before a user's build.
 """
 
 

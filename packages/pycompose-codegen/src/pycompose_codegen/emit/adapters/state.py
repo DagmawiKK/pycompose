@@ -89,6 +89,8 @@ def host_locals(entry: dict[str, Any], out: Fragments) -> str | None:
         if holder_streams(state["kind"], state.get("holder")):
             # Expressions anywhere in the snapshot may read this holder's streams.
             out.locals.append(f"context.publish(model.id, {state['native']}Value)")
+        # Another node may use this holder by naming this one.
+        out.locals.append(f"context.share(model.id, {state['native']}Value)")
         if (
             state.get("holder") in LAZY_HOLDERS
             and entry.get("children", {}).get("kind") == "items"

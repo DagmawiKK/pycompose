@@ -65,6 +65,14 @@ def _state_imports(entry: dict[str, Any]) -> set[str]:
     return qualified
 
 
+def _sharing_imports(entry: dict[str, Any]) -> set[str]:
+    """A holder is shared with whoever names its node; a shared one is read so."""
+    return {
+        *(["com.pycompose.renderer.share"] if entry.get("state") else []),
+        *(["com.pycompose.renderer.shared"] if entry.get("shared") else []),
+    }
+
+
 def extra_imports(
     entry: dict[str, Any], converters: dict[str, dict[str, Any]] | None = None
 ) -> set[str]:
@@ -77,9 +85,11 @@ def extra_imports(
     Returns:
         Import statements' targets, sorted by the caller.
     """
-    qualified = _prop_imports(
-        entry.get("props", {}).values(), converters or {}
-    ) | _state_imports(entry)
+    qualified = (
+        _prop_imports(entry.get("props", {}).values(), converters or {})
+        | _state_imports(entry)
+        | _sharing_imports(entry)
+    )
     if follows_caret(entry.get("props", {})):
         qualified |= CARET_IMPORTS
     elif echoes(entry.get("props", {})):

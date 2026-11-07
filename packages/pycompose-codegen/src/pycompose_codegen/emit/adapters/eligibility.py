@@ -41,15 +41,26 @@ def is_mechanical(entry: dict[str, Any]) -> bool:
 
 
 def held_props(entry: dict[str, Any]) -> set[str]:
-    """Collect the props a state holder consumes instead of rendering.
+    """Collect the props the host consumes instead of passing them on.
 
     Args:
         entry: The component's schema entry.
 
     Returns:
-        Names the holder fills or observes, so they never reach a native
-        parameter and their wire type need not be renderable by an adapter.
+        Names a state holder fills or observes, a builder takes, or that name
+        the node whose holder is shared, so none reaches a native parameter as
+        itself.
     """
+    filled = set(entry.get("shared", {})) | {
+        argument
+        for spec in entry.get("built", {}).values()
+        for argument in spec["arguments"]
+    }
+    return filled | _state_props(entry)
+
+
+def _state_props(entry: dict[str, Any]) -> set[str]:
+    """The props a state holder fills or observes."""
     state = entry.get("state")
     if not isinstance(state, dict):
         return set()

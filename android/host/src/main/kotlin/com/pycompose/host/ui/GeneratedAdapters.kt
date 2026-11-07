@@ -64,6 +64,8 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ElevatedSuggestionChip
+import androidx.compose.material3.ExpandedDockedSearchBar
+import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuBoxScope
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -115,6 +117,7 @@ import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.SecureTextField
@@ -142,6 +145,7 @@ import androidx.compose.material3.TimePickerDialog
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipScope
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopSearchBar
 import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.VerticalDragHandle
@@ -210,6 +214,8 @@ import com.pycompose.ir.generated.ElevatedCard as ElevatedCardNode
 import com.pycompose.ir.generated.ElevatedCardWithoutOnClick as ElevatedCardWithoutOnClickNode
 import com.pycompose.ir.generated.ElevatedFilterChip as ElevatedFilterChipNode
 import com.pycompose.ir.generated.ElevatedSuggestionChip as ElevatedSuggestionChipNode
+import com.pycompose.ir.generated.ExpandedDockedSearchBar as ExpandedDockedSearchBarNode
+import com.pycompose.ir.generated.ExpandedFullScreenSearchBar as ExpandedFullScreenSearchBarNode
 import com.pycompose.ir.generated.ExposedDropdownMenu as ExposedDropdownMenuNode
 import com.pycompose.ir.generated.ExposedDropdownMenuBox as ExposedDropdownMenuBoxNode
 import com.pycompose.ir.generated.ExtendedFloatingActionButton as ExtendedFloatingActionButtonNode
@@ -290,6 +296,8 @@ import com.pycompose.ir.generated.RichTooltip as RichTooltipNode
 import com.pycompose.ir.generated.Row as RowNode
 import com.pycompose.ir.generated.Scaffold as ScaffoldNode
 import com.pycompose.ir.generated.SearchBar as SearchBarNode
+import com.pycompose.ir.generated.SearchBarInputField as SearchBarInputFieldNode
+import com.pycompose.ir.generated.SearchBarStateInputField as SearchBarStateInputFieldNode
 import com.pycompose.ir.generated.SecondaryScrollableTabRow as SecondaryScrollableTabRowNode
 import com.pycompose.ir.generated.SecondaryTabRow as SecondaryTabRowNode
 import com.pycompose.ir.generated.SecureTextField as SecureTextFieldNode
@@ -308,6 +316,8 @@ import com.pycompose.ir.generated.SoundEffectOnInteraction as SoundEffectOnInter
 import com.pycompose.ir.generated.Spacer as SpacerNode
 import com.pycompose.ir.generated.StatefulBasicTextField as StatefulBasicTextFieldNode
 import com.pycompose.ir.generated.StatefulOutlinedTextField as StatefulOutlinedTextFieldNode
+import com.pycompose.ir.generated.StatefulSearchBar as StatefulSearchBarNode
+import com.pycompose.ir.generated.StatefulSearchBarInputField as StatefulSearchBarInputFieldNode
 import com.pycompose.ir.generated.StatefulTextField as StatefulTextFieldNode
 import com.pycompose.ir.generated.SuggestionChip as SuggestionChipNode
 import com.pycompose.ir.generated.Surface as SurfaceNode
@@ -326,6 +336,7 @@ import com.pycompose.ir.generated.TimePicker as TimePickerNode
 import com.pycompose.ir.generated.TimePickerDialog as TimePickerDialogNode
 import com.pycompose.ir.generated.TooltipBox as TooltipBoxNode
 import com.pycompose.ir.generated.TopAppBar as TopAppBarNode
+import com.pycompose.ir.generated.TopSearchBar as TopSearchBarNode
 import com.pycompose.ir.generated.TriStateCheckbox as TriStateCheckboxNode
 import com.pycompose.ir.generated.VerticalDivider as VerticalDividerNode
 import com.pycompose.ir.generated.VerticalDragHandle as VerticalDragHandleNode
@@ -356,6 +367,8 @@ import com.pycompose.renderer.rememberDrawing
 import com.pycompose.renderer.rememberFunction
 import com.pycompose.renderer.rememberMeasurePolicy
 import com.pycompose.renderer.reportSettled
+import com.pycompose.renderer.share
+import com.pycompose.renderer.shared
 import com.pycompose.renderer.sheetState
 import com.pycompose.renderer.snackbar
 import com.pycompose.renderer.textInputState
@@ -481,6 +494,7 @@ object GeneratedAdapters {
                 val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else androidx.compose.ui.text.TextStyle.Companion.Default
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 val stateValue = context.textInputState(model.props.text, model.props.onEdit, model.props.selectionStart, model.props.selectionEnd)
+                context.share(model.id, stateValue)
                 BasicSecureTextField(
                     modifier = modifier,
                     enabled = model.props.enabled,
@@ -815,6 +829,7 @@ object GeneratedAdapters {
                     ) { holder, target, spec -> if (spec == null) holder.animateScrollTo(target) else holder.animateScrollTo(target, animationSpec = spec) },
                 )
                 context.publish(model.id, scrollStateValue)
+                context.share(model.id, scrollStateValue)
                 Column(
                     modifier = scrollStateValue.attachTo(modifier, model.props.scrollable),
                     horizontalAlignment = horizontalAlignmentValue,
@@ -846,6 +861,7 @@ object GeneratedAdapters {
                 }
                 context.reconcileProperty(stateValue, "displayedMonthMillis", stateDisplayedMonthMillisWanted, model.props.onDisplayedMonthMillisChange, { stateValue.displayedMonthMillis }, { stateValue.displayedMonthMillis = it }) { JsonPrimitive(it) }
                 context.reconcileProperty(stateValue, "selectedDateMillis", stateSelectedDateMillisWanted, model.props.onSelectedDateMillisChange, { stateValue.selectedDateMillis }, { stateValue.selectedDateMillis = it }) { JsonPrimitive(it) }
+                context.share(model.id, stateValue)
                 DatePicker(
                     modifier = modifier,
                     colors = colorsValue,
@@ -890,6 +906,7 @@ object GeneratedAdapters {
                 context.reconcileProperty(stateValue, "displayedMonthMillis", stateDisplayedMonthMillisWanted, model.props.onDisplayedMonthMillisChange, { stateValue.displayedMonthMillis }, { stateValue.displayedMonthMillis = it }) { JsonPrimitive(it) }
                 context.reconcileProperty(stateValue, "selectedEndDateMillis", stateSelectedEndDateMillisWanted, model.props.onSelectedEndDateMillisChange, { stateValue.selectedEndDateMillis }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
                 context.reconcileProperty(stateValue, "selectedStartDateMillis", stateSelectedStartDateMillisWanted, model.props.onSelectedStartDateMillisChange, { stateValue.selectedStartDateMillis }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
+                context.share(model.id, stateValue)
                 DateRangePicker(
                     modifier = modifier,
                     colors = colorsValue,
@@ -949,6 +966,7 @@ object GeneratedAdapters {
                     ) { holder, anchor -> holder.driveTo(anchor) },
                 )
                 context.publish(model.id, drawerStateValue)
+                context.share(model.id, drawerStateValue)
                 DismissibleNavigationDrawer(
                     modifier = modifier,
                     gesturesEnabled = model.props.gesturesEnabled,
@@ -1187,6 +1205,40 @@ object GeneratedAdapters {
                     label = { context.slot(model.children, "label")?.invoke() },
                 )
             }
+            .register("ExpandedDockedSearchBar") { node, modifier, context ->
+                val model = node as ExpandedDockedSearchBarNode
+                val stateShared = context.shared<androidx.compose.material3.SearchBarState>(model.props.state) ?: return@register
+                val shadowElevationValue = context.boundDp(model.props.shadowElevation, Dp.VectorConverter, androidx.compose.material3.SearchBarDefaults.ShadowElevation)
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.SearchBarDefaults.dockedShape
+                val tonalElevationValue = context.boundDp(model.props.tonalElevation, Dp.VectorConverter, androidx.compose.material3.SearchBarDefaults.TonalElevation)
+                ExpandedDockedSearchBar(
+                    modifier = modifier,
+                    state = stateShared,
+                    shadowElevation = shadowElevationValue,
+                    shape = shapeValue,
+                    tonalElevation = tonalElevationValue,
+                    inputField = { context.slot(model.children, "inputField")?.invoke() },
+                    content = { context.childrenIn(this, model.children) },
+                )
+            }
+            .register("ExpandedFullScreenSearchBar") { node, modifier, context ->
+                val model = node as ExpandedFullScreenSearchBarNode
+                val stateShared = context.shared<androidx.compose.material3.SearchBarState>(model.props.state) ?: return@register
+                val collapsedShapeWire = model.props.collapsedShape
+                val collapsedShapeValue = if (collapsedShapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(collapsedShapeWire).getOrThrow() else androidx.compose.material3.SearchBarDefaults.inputFieldShape
+                val shadowElevationValue = context.boundDp(model.props.shadowElevation, Dp.VectorConverter, androidx.compose.material3.SearchBarDefaults.ShadowElevation)
+                val tonalElevationValue = context.boundDp(model.props.tonalElevation, Dp.VectorConverter, androidx.compose.material3.SearchBarDefaults.TonalElevation)
+                ExpandedFullScreenSearchBar(
+                    modifier = modifier,
+                    state = stateShared,
+                    collapsedShape = collapsedShapeValue,
+                    shadowElevation = shadowElevationValue,
+                    tonalElevation = tonalElevationValue,
+                    inputField = { context.slot(model.children, "inputField")?.invoke() },
+                    content = { context.childrenIn(this, model.children) },
+                )
+            }
             .registerScoped<ExposedDropdownMenuBoxScope>("ExposedDropdownMenu") { node, modifier, context ->
                 val model = node as ExposedDropdownMenuNode
                 val borderWire = model.props.border
@@ -1210,6 +1262,7 @@ object GeneratedAdapters {
                     ) { holder, target, spec -> if (spec == null) holder.animateScrollTo(target) else holder.animateScrollTo(target, animationSpec = spec) },
                 )
                 context.publish(model.id, scrollStateValue)
+                context.share(model.id, scrollStateValue)
                 ExposedDropdownMenu(
                     modifier = modifier,
                     border = borderValue,
@@ -1472,6 +1525,7 @@ object GeneratedAdapters {
                         { holder, target -> holder.scrollToItem(target) },
                     ) { holder, target, spec -> if (spec == null) holder.animateScrollToItem(target) else holder.animateScrollToItem(target, animationSpec = spec) },
                 )
+                context.share(model.id, stateValue)
                 HorizontalCenteredHeroCarousel(
                     modifier = modifier,
                     itemSpacing = itemSpacingValue,
@@ -1508,6 +1562,7 @@ object GeneratedAdapters {
                         { holder, target -> holder.scrollToItem(target) },
                     ) { holder, target, spec -> if (spec == null) holder.animateScrollToItem(target) else holder.animateScrollToItem(target, animationSpec = spec) },
                 )
+                context.share(model.id, stateValue)
                 HorizontalMultiBrowseCarousel(
                     modifier = modifier,
                     itemSpacing = itemSpacingValue,
@@ -1535,6 +1590,7 @@ object GeneratedAdapters {
                         { holder, target -> holder.scrollToPage(target) },
                     ) { holder, target, spec -> if (spec == null) holder.animateScrollToPage(target) else holder.animateScrollToPage(target, animationSpec = spec) },
                 )
+                context.share(model.id, stateValue)
                 HorizontalPager(
                     modifier = modifier,
                     pageSpacing = pageSpacingValue,
@@ -1559,6 +1615,7 @@ object GeneratedAdapters {
                         { holder, target -> holder.scrollToItem(target) },
                     ) { holder, target, spec -> if (spec == null) holder.animateScrollToItem(target) else holder.animateScrollToItem(target, animationSpec = spec) },
                 )
+                context.share(model.id, stateValue)
                 HorizontalUncontainedCarousel(
                     modifier = modifier,
                     itemSpacing = itemSpacingValue,
@@ -1745,6 +1802,7 @@ object GeneratedAdapters {
                         null,
                     ) { holder, target, _ -> holder.animateScrollToItem(target) },
                 )
+                context.share(model.id, stateValue)
                 context.RequestWindows(stateValue, model.props.window, model.props.itemOffset, model.children.unslotted().size)
                 LazyColumn(
                     modifier = modifier,
@@ -1770,6 +1828,7 @@ object GeneratedAdapters {
                         null,
                     ) { holder, target, _ -> holder.animateScrollToItem(target) },
                 )
+                context.share(model.id, stateValue)
                 context.RequestWindows(stateValue, model.props.window, model.props.itemOffset, model.children.unslotted().size)
                 LazyHorizontalGrid(
                     modifier = modifier,
@@ -1807,6 +1866,7 @@ object GeneratedAdapters {
                         null,
                     ) { holder, target, _ -> holder.animateScrollToItem(target) },
                 )
+                context.share(model.id, stateValue)
                 context.RequestWindows(stateValue, model.props.window, model.props.itemOffset, model.children.unslotted().size)
                 LazyRow(
                     modifier = modifier,
@@ -1829,6 +1889,7 @@ object GeneratedAdapters {
                         null,
                     ) { holder, target, _ -> holder.animateScrollToItem(target) },
                 )
+                context.share(model.id, stateValue)
                 context.RequestWindows(stateValue, model.props.window, model.props.itemOffset, model.children.unslotted().size)
                 LazyVerticalGrid(
                     modifier = modifier,
@@ -1973,6 +2034,7 @@ object GeneratedAdapters {
                 val sheetMaxWidthValue = context.boundDp(model.props.sheetMaxWidth, Dp.VectorConverter, androidx.compose.material3.BottomSheetDefaults.SheetMaxWidth)
                 val tonalElevationValue = context.boundDp(model.props.tonalElevation, Dp.VectorConverter, (0).dp)
                 val sheetStateValue = context.sheetState(model.props.open, model.props.onOpenChange, model.props.value, model.props.onValueChange, model.props.skipPartiallyExpanded)
+                context.share(model.id, sheetStateValue)
                 if (sheetStateValue.visible) {
                     ModalBottomSheet(
                         modifier = modifier,
@@ -2025,6 +2087,7 @@ object GeneratedAdapters {
                     ) { holder, anchor -> holder.driveTo(anchor) },
                 )
                 context.publish(model.id, drawerStateValue)
+                context.share(model.id, drawerStateValue)
                 ModalNavigationDrawer(
                     modifier = modifier,
                     gesturesEnabled = model.props.gesturesEnabled,
@@ -2341,6 +2404,7 @@ object GeneratedAdapters {
                 val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else (androidx.compose.material3.LocalTextStyle).current
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 val stateValue = context.textInputState(model.props.text, model.props.onEdit, model.props.selectionStart, model.props.selectionEnd)
+                context.share(model.id, stateValue)
                 OutlinedSecureTextField(
                     modifier = modifier,
                     colors = colorsValue,
@@ -2563,6 +2627,7 @@ object GeneratedAdapters {
                 val stateSettled = context.reportSettled(stateValue, model.props.onValueChangeFinished, { stateValue.onValueChangeFinished = it }) { JsonObject(mapOf("activeRangeEnd" to JsonPrimitive(stateValue.activeRangeEnd), "activeRangeStart" to JsonPrimitive(stateValue.activeRangeStart))) }
                 context.reconcileProperty(stateValue, "activeRangeEnd", stateActiveRangeEndWanted, null, { stateValue.activeRangeEnd }, { stateValue.activeRangeEnd = it; stateSettled() }, answering = model.props.onValueChangeFinished) { JsonPrimitive(it) }
                 context.reconcileProperty(stateValue, "activeRangeStart", stateActiveRangeStartWanted, null, { stateValue.activeRangeStart }, { stateValue.activeRangeStart = it; stateSettled() }, answering = model.props.onValueChangeFinished) { JsonPrimitive(it) }
+                context.share(model.id, stateValue)
                 RangeSlider(
                     modifier = modifier,
                     colors = colorsValue,
@@ -2647,6 +2712,53 @@ object GeneratedAdapters {
                     content = { context.childrenIn(this, model.children) },
                 )
             }
+            .register("SearchBarInputField") { node, modifier, context ->
+                val model = node as SearchBarInputFieldNode
+                val field = context.edited(model.id, model.props.query, model.props.onQueryChange)
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.textFieldColors(colorsWire).getOrThrow() else androidx.compose.material3.SearchBarDefaults.inputFieldColors()
+                SearchBarDefaults.InputField(
+                    modifier = modifier,
+                    query = field.value,
+                    onQueryChange = { value -> context.edit(field, value, model.props.onQueryChange, JsonPrimitive(value)) },
+                    colors = colorsValue,
+                    enabled = model.props.enabled,
+                    expanded = model.props.expanded,
+                    onExpandedChange = { expanded -> context.event(model.props.onExpandedChange, JsonPrimitive(expanded)) },
+                    onSearch = { query -> context.event(model.props.onSearch, JsonPrimitive(query)) },
+                    leadingIcon = context.slot(model.children, "leadingIcon"),
+                    placeholder = context.slot(model.children, "placeholder"),
+                    trailingIcon = context.slot(model.children, "trailingIcon"),
+                )
+            }
+            .register("SearchBarStateInputField") { node, modifier, context ->
+                val model = node as SearchBarStateInputFieldNode
+                val searchBarStateShared = context.shared<androidx.compose.material3.SearchBarState>(model.props.searchBarState) ?: return@register
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.textFieldColors(colorsWire).getOrThrow() else androidx.compose.material3.SearchBarDefaults.inputFieldColors()
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.SearchBarDefaults.inputFieldShape
+                val textStyleWire = model.props.textStyle
+                val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else androidx.compose.material3.LocalTextStyle.current
+                val textFieldStateValue = context.textInputState(model.props.text, model.props.onEdit, model.props.selectionStart, model.props.selectionEnd)
+                context.share(model.id, textFieldStateValue)
+                SearchBarDefaults.InputField(
+                    modifier = modifier,
+                    searchBarState = searchBarStateShared,
+                    colors = colorsValue,
+                    enabled = model.props.enabled,
+                    onSearch = { query -> context.event(model.props.onSearch, JsonPrimitive(query)) },
+                    readOnly = model.props.readOnly,
+                    shape = shapeValue,
+                    textStyle = textStyleValue,
+                    textFieldState = textFieldStateValue,
+                    leadingIcon = context.slot(model.children, "leadingIcon"),
+                    placeholder = context.slot(model.children, "placeholder"),
+                    prefix = context.slot(model.children, "prefix"),
+                    suffix = context.slot(model.children, "suffix"),
+                    trailingIcon = context.slot(model.children, "trailingIcon"),
+                )
+            }
             .register("SecondaryScrollableTabRow") { node, modifier, context ->
                 val model = node as SecondaryScrollableTabRowNode
                 val containerColorValue = context.boundColor(model.props.containerColor, Color.colorVectorConverter(ColorSpaces.Srgb), androidx.compose.material3.TabRowDefaults.secondaryContainerColor)
@@ -2707,6 +2819,7 @@ object GeneratedAdapters {
                 val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else (androidx.compose.material3.LocalTextStyle).current
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 val stateValue = context.textInputState(model.props.text, model.props.onEdit, model.props.selectionStart, model.props.selectionEnd)
+                context.share(model.id, stateValue)
                 SecureTextField(
                     modifier = modifier,
                     colors = colorsValue,
@@ -2818,6 +2931,7 @@ object GeneratedAdapters {
                 val stateSettled = context.reportSettled(stateValue, model.props.onValueChangeFinished, { stateValue.onValueChangeFinished = it }) { JsonObject(mapOf("shouldAutoSnap" to JsonPrimitive(stateValue.shouldAutoSnap), "value" to JsonPrimitive(stateValue.value))) }
                 context.reconcileProperty(stateValue, "shouldAutoSnap", stateShouldAutoSnapWanted, null, { stateValue.shouldAutoSnap }, { stateValue.shouldAutoSnap = it; stateSettled() }, answering = model.props.onValueChangeFinished) { JsonPrimitive(it) }
                 context.reconcileProperty(stateValue, "value", stateValueWanted, null, { stateValue.value }, { stateValue.value = it; stateSettled() }, answering = model.props.onValueChangeFinished) { JsonPrimitive(it) }
+                context.share(model.id, stateValue)
                 Slider(
                     modifier = modifier,
                     colors = colorsValue,
@@ -2912,6 +3026,7 @@ object GeneratedAdapters {
                 val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else androidx.compose.ui.text.TextStyle.Companion.Default
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 val stateValue = context.textInputState(model.props.text, model.props.onEdit, model.props.selectionStart, model.props.selectionEnd)
+                context.share(model.id, stateValue)
                 BasicTextField(
                     modifier = modifier,
                     enabled = model.props.enabled,
@@ -2933,6 +3048,7 @@ object GeneratedAdapters {
                 val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else (androidx.compose.material3.LocalTextStyle).current
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 val stateValue = context.textInputState(model.props.text, model.props.onEdit, model.props.selectionStart, model.props.selectionEnd)
+                context.share(model.id, stateValue)
                 OutlinedTextField(
                     modifier = modifier,
                     colors = colorsValue,
@@ -2953,6 +3069,58 @@ object GeneratedAdapters {
                     trailingIcon = context.slot(model.children, "trailingIcon"),
                 )
             }
+            .register("StatefulSearchBar") { node, modifier, context ->
+                val model = node as StatefulSearchBarNode
+                val shadowElevationValue = context.boundDp(model.props.shadowElevation, Dp.VectorConverter, androidx.compose.material3.SearchBarDefaults.ShadowElevation)
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.SearchBarDefaults.inputFieldShape
+                val tonalElevationValue = context.boundDp(model.props.tonalElevation, Dp.VectorConverter, androidx.compose.material3.SearchBarDefaults.TonalElevation)
+                val stateValue = context.anchoredState(
+                    model.props.value, model.props.onValueChange,
+                    com.pycompose.renderer.Anchors(
+                        mapOf("collapsed" to androidx.compose.material3.SearchBarValue.Collapsed, "expanded" to androidx.compose.material3.SearchBarValue.Expanded),
+                        { initial -> initial?.let { androidx.compose.material3.rememberSearchBarState(initialValue = it) } ?: androidx.compose.material3.rememberSearchBarState() },
+                        { it.currentValue },
+                    ) { holder, anchor -> holder.driveTo(anchor) },
+                )
+                context.share(model.id, stateValue)
+                SearchBar(
+                    modifier = modifier,
+                    shadowElevation = shadowElevationValue,
+                    shape = shapeValue,
+                    tonalElevation = tonalElevationValue,
+                    state = stateValue,
+                    inputField = { context.slot(model.children, "inputField")?.invoke() },
+                )
+            }
+            .register("StatefulSearchBarInputField") { node, modifier, context ->
+                val model = node as StatefulSearchBarInputFieldNode
+                val colorsWire = model.props.colors
+                val colorsValue = if (colorsWire != null) com.pycompose.renderer.generated.ValueResolver.textFieldColors(colorsWire).getOrThrow() else androidx.compose.material3.SearchBarDefaults.inputFieldColors()
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.SearchBarDefaults.inputFieldShape
+                val textStyleWire = model.props.textStyle
+                val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else androidx.compose.material3.LocalTextStyle.current
+                val stateValue = context.textInputState(model.props.text, model.props.onEdit, model.props.selectionStart, model.props.selectionEnd)
+                context.share(model.id, stateValue)
+                SearchBarDefaults.InputField(
+                    modifier = modifier,
+                    colors = colorsValue,
+                    enabled = model.props.enabled,
+                    expanded = model.props.expanded,
+                    onExpandedChange = { expanded -> context.event(model.props.onExpandedChange, JsonPrimitive(expanded)) },
+                    onSearch = { query -> context.event(model.props.onSearch, JsonPrimitive(query)) },
+                    readOnly = model.props.readOnly,
+                    shape = shapeValue,
+                    textStyle = textStyleValue,
+                    state = stateValue,
+                    leadingIcon = context.slot(model.children, "leadingIcon"),
+                    placeholder = context.slot(model.children, "placeholder"),
+                    prefix = context.slot(model.children, "prefix"),
+                    suffix = context.slot(model.children, "suffix"),
+                    trailingIcon = context.slot(model.children, "trailingIcon"),
+                )
+            }
             .register("StatefulTextField") { node, modifier, context ->
                 val model = node as StatefulTextFieldNode
                 val colorsWire = model.props.colors
@@ -2963,6 +3131,7 @@ object GeneratedAdapters {
                 val textStyleValue = if (textStyleWire != null) com.pycompose.renderer.generated.ValueResolver.textStyle(textStyleWire).getOrThrow() else (androidx.compose.material3.LocalTextStyle).current
                 val interactionSourceValue = context.interactionSource(model.id, mapOf("focus" to model.props.onFocus, "hover" to model.props.onHover, "press" to model.props.onPress)) ?: androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 val stateValue = context.textInputState(model.props.text, model.props.onEdit, model.props.selectionStart, model.props.selectionEnd)
+                context.share(model.id, stateValue)
                 TextField(
                     modifier = modifier,
                     colors = colorsValue,
@@ -3130,6 +3299,7 @@ object GeneratedAdapters {
                         { it.settledValue },
                     ) { holder, anchor -> holder.driveTo(anchor) },
                 )
+                context.share(model.id, stateValue)
                 SwipeToDismissBox(
                     modifier = modifier,
                     enableDismissFromEndToStart = model.props.enableDismissFromEndToStart,
@@ -3315,6 +3485,7 @@ object GeneratedAdapters {
                 context.reconcileProperty(stateValue, "hour", stateHourWanted, model.props.onHourChange, { stateValue.hour }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
                 context.reconcileProperty(stateValue, "is24hour", stateIs24hourWanted, model.props.onIs24hourChange, { stateValue.is24hour }, { stateValue.is24hour = it }) { JsonPrimitive(it) }
                 context.reconcileProperty(stateValue, "minute", stateMinuteWanted, model.props.onMinuteChange, { stateValue.minute }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
+                context.share(model.id, stateValue)
                 TimeInput(
                     modifier = modifier,
                     colors = colorsValue,
@@ -3340,6 +3511,7 @@ object GeneratedAdapters {
                 context.reconcileProperty(stateValue, "hour", stateHourWanted, model.props.onHourChange, { stateValue.hour }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
                 context.reconcileProperty(stateValue, "is24hour", stateIs24hourWanted, model.props.onIs24hourChange, { stateValue.is24hour }, { stateValue.is24hour = it }) { JsonPrimitive(it) }
                 context.reconcileProperty(stateValue, "minute", stateMinuteWanted, model.props.onMinuteChange, { stateValue.minute }, { stateSeeds.from(stateValue) }, seeded = true) { JsonPrimitive(it) }
+                context.share(model.id, stateValue)
                 TimePicker(
                     modifier = modifier,
                     colors = colorsValue,
@@ -3368,6 +3540,7 @@ object GeneratedAdapters {
                 val model = node as TooltipBoxNode
                 val positioningValue = com.pycompose.renderer.generated.ValueResolver.tooltipAnchorPosition(model.props.positioning).getOrThrow()
                 val stateValue = context.tooltipState(model.props.visible, model.props.onVisibilityChange, model.props.isPersistent)
+                context.share(model.id, stateValue)
                 TooltipBox(
                     modifier = modifier,
                     positionProvider = androidx.compose.material3.TooltipDefaults.rememberTooltipPositionProvider(positioning = positioningValue),
@@ -3395,6 +3568,33 @@ object GeneratedAdapters {
                     actions = context.slotIn<RowScope>(model.children, "actions") ?: {},
                     navigationIcon = { context.slot(model.children, "navigationIcon")?.invoke() },
                     title = { context.slot(model.children, "title")?.invoke() },
+                )
+            }
+            .register("TopSearchBar") { node, modifier, context ->
+                val model = node as TopSearchBarNode
+                val shadowElevationValue = context.boundDp(model.props.shadowElevation, Dp.VectorConverter, androidx.compose.material3.SearchBarDefaults.ShadowElevation)
+                val shapeWire = model.props.shape
+                val shapeValue = if (shapeWire != null) com.pycompose.renderer.generated.ValueResolver.shape(shapeWire).getOrThrow() else androidx.compose.material3.SearchBarDefaults.inputFieldShape
+                val tonalElevationValue = context.boundDp(model.props.tonalElevation, Dp.VectorConverter, androidx.compose.material3.SearchBarDefaults.TonalElevation)
+                val windowInsetsWire = model.props.windowInsets
+                val windowInsetsValue = if (windowInsetsWire != null) com.pycompose.renderer.generated.ValueResolver.windowInsets(windowInsetsWire).getOrThrow() else androidx.compose.material3.SearchBarDefaults.windowInsets
+                val stateValue = context.anchoredState(
+                    model.props.value, model.props.onValueChange,
+                    com.pycompose.renderer.Anchors(
+                        mapOf("collapsed" to androidx.compose.material3.SearchBarValue.Collapsed, "expanded" to androidx.compose.material3.SearchBarValue.Expanded),
+                        { initial -> initial?.let { androidx.compose.material3.rememberSearchBarState(initialValue = it) } ?: androidx.compose.material3.rememberSearchBarState() },
+                        { it.currentValue },
+                    ) { holder, anchor -> holder.driveTo(anchor) },
+                )
+                context.share(model.id, stateValue)
+                TopSearchBar(
+                    modifier = modifier,
+                    shadowElevation = shadowElevationValue,
+                    shape = shapeValue,
+                    tonalElevation = tonalElevationValue,
+                    windowInsets = windowInsetsValue,
+                    state = stateValue,
+                    inputField = { context.slot(model.children, "inputField")?.invoke() },
                 )
             }
             .register("TriStateCheckbox") { node, modifier, context ->
@@ -3446,6 +3646,7 @@ object GeneratedAdapters {
                         { holder, target -> holder.scrollToPage(target) },
                     ) { holder, target, spec -> if (spec == null) holder.animateScrollToPage(target) else holder.animateScrollToPage(target, animationSpec = spec) },
                 )
+                context.share(model.id, stateValue)
                 VerticalPager(
                     modifier = modifier,
                     horizontalAlignment = horizontalAlignmentValue,

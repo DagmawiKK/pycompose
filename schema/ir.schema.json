@@ -3481,6 +3481,9 @@
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             },
+            "state": {
+              "type": "string"
+            },
             "tonalElevation": {
               "anyOf": [
                 {
@@ -3514,6 +3517,9 @@
               ]
             }
           },
+          "required": [
+            "state"
+          ],
           "type": "object"
         },
         "type": {
@@ -3585,6 +3591,9 @@
                 }
               ]
             },
+            "state": {
+              "type": "string"
+            },
             "tonalElevation": {
               "anyOf": [
                 {
@@ -3618,6 +3627,9 @@
               ]
             }
           },
+          "required": [
+            "state"
+          ],
           "type": "object"
         },
         "type": {
@@ -9487,6 +9499,9 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
             "enabled": {
               "default": true,
               "type": "boolean"
@@ -9575,6 +9590,9 @@
               },
               "type": "object"
             },
+            "onEdit": {
+              "$ref": "#/definitions/Action"
+            },
             "onSearch": {
               "$ref": "#/definitions/Action"
             },
@@ -9582,15 +9600,36 @@
               "default": false,
               "type": "boolean"
             },
+            "searchBarState": {
+              "type": "string"
+            },
+            "selectionEnd": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionStart": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
+            },
+            "text": {
+              "type": "string"
             },
             "textStyle": {
               "$ref": "#/definitions/Family_TextStyle"
             }
           },
           "required": [
-            "onSearch"
+            "onEdit",
+            "onSearch",
+            "searchBarState",
+            "selectionEnd",
+            "selectionStart",
+            "text"
           ],
           "type": "object"
         },
@@ -10830,7 +10869,6 @@
             "properties": {
               "slot": {
                 "enum": [
-                  "expandedBar",
                   "inputField"
                 ]
               }
@@ -10844,9 +10882,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "expanded": {
-              "type": "boolean"
-            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -10858,21 +10893,8 @@
               },
               "type": "object"
             },
-            "onEdit": {
+            "onValueChange": {
               "$ref": "#/definitions/Action"
-            },
-            "onExpandedChange": {
-              "$ref": "#/definitions/Action"
-            },
-            "selectionEnd": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
-            "selectionStart": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
             },
             "shadowElevation": {
               "anyOf": [
@@ -10909,9 +10931,6 @@
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             },
-            "text": {
-              "type": "string"
-            },
             "tonalElevation": {
               "anyOf": [
                 {
@@ -10943,14 +10962,14 @@
                   "$ref": "#/definitions/Binding"
                 }
               ]
+            },
+            "value": {
+              "enum": [
+                "collapsed",
+                "expanded"
+              ]
             }
           },
-          "required": [
-            "onEdit",
-            "selectionEnd",
-            "selectionStart",
-            "text"
-          ],
           "type": "object"
         },
         "type": {
@@ -12632,6 +12651,125 @@
         },
         "type": {
           "const": "TopAppBar"
+        }
+      },
+      "type": "object"
+    },
+    "C_TopSearchBar": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "inputField"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onValueChange": {
+              "$ref": "#/definitions/Action"
+            },
+            "shadowElevation": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "value": {
+              "enum": [
+                "collapsed",
+                "expanded"
+              ]
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "TopSearchBar"
         }
       },
       "type": "object"
@@ -17014,6 +17152,9 @@
             },
             {
               "$ref": "#/definitions/C_TopAppBar"
+            },
+            {
+              "$ref": "#/definitions/C_TopSearchBar"
             },
             {
               "$ref": "#/definitions/C_TriStateCheckbox"
@@ -36535,6 +36676,9 @@
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             },
+            "state": {
+              "type": "string"
+            },
             "tonalElevation": {
               "anyOf": [
                 {
@@ -36568,6 +36712,9 @@
               ]
             }
           },
+          "required": [
+            "state"
+          ],
           "type": "object"
         },
         "type": {
@@ -36639,6 +36786,9 @@
                 }
               ]
             },
+            "state": {
+              "type": "string"
+            },
             "tonalElevation": {
               "anyOf": [
                 {
@@ -36672,6 +36822,9 @@
               ]
             }
           },
+          "required": [
+            "state"
+          ],
           "type": "object"
         },
         "type": {
@@ -44245,6 +44398,9 @@
               "$ref": "#/definitions/V_1_23_0_TopAppBar"
             },
             {
+              "$ref": "#/definitions/V_1_23_0_TopSearchBar"
+            },
+            {
               "$ref": "#/definitions/V_1_23_0_TriStateCheckbox"
             },
             {
@@ -45926,6 +46082,9 @@
         "props": {
           "additionalProperties": false,
           "properties": {
+            "colors": {
+              "$ref": "#/definitions/Family_TextFieldColors"
+            },
             "enabled": {
               "default": true,
               "type": "boolean"
@@ -46014,6 +46173,9 @@
               },
               "type": "object"
             },
+            "onEdit": {
+              "$ref": "#/definitions/Action"
+            },
             "onSearch": {
               "$ref": "#/definitions/Action"
             },
@@ -46021,15 +46183,36 @@
               "default": false,
               "type": "boolean"
             },
+            "searchBarState": {
+              "type": "string"
+            },
+            "selectionEnd": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "selectionStart": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
             "shape": {
               "$ref": "#/definitions/Family_Shape"
+            },
+            "text": {
+              "type": "string"
             },
             "textStyle": {
               "$ref": "#/definitions/Family_TextStyle"
             }
           },
           "required": [
-            "onSearch"
+            "onEdit",
+            "onSearch",
+            "searchBarState",
+            "selectionEnd",
+            "selectionStart",
+            "text"
           ],
           "type": "object"
         },
@@ -47269,7 +47452,6 @@
             "properties": {
               "slot": {
                 "enum": [
-                  "expandedBar",
                   "inputField"
                 ]
               }
@@ -47283,9 +47465,6 @@
         "props": {
           "additionalProperties": false,
           "properties": {
-            "expanded": {
-              "type": "boolean"
-            },
             "modifier": {
               "properties": {
                 "operations": {
@@ -47297,21 +47476,8 @@
               },
               "type": "object"
             },
-            "onEdit": {
+            "onValueChange": {
               "$ref": "#/definitions/Action"
-            },
-            "onExpandedChange": {
-              "$ref": "#/definitions/Action"
-            },
-            "selectionEnd": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
-            },
-            "selectionStart": {
-              "maximum": 2147483647,
-              "minimum": 0,
-              "type": "integer"
             },
             "shadowElevation": {
               "anyOf": [
@@ -47348,9 +47514,6 @@
             "shape": {
               "$ref": "#/definitions/Family_Shape"
             },
-            "text": {
-              "type": "string"
-            },
             "tonalElevation": {
               "anyOf": [
                 {
@@ -47382,14 +47545,14 @@
                   "$ref": "#/definitions/Binding"
                 }
               ]
+            },
+            "value": {
+              "enum": [
+                "collapsed",
+                "expanded"
+              ]
             }
           },
-          "required": [
-            "onEdit",
-            "selectionEnd",
-            "selectionStart",
-            "text"
-          ],
           "type": "object"
         },
         "type": {
@@ -49071,6 +49234,125 @@
         },
         "type": {
           "const": "TopAppBar"
+        }
+      },
+      "type": "object"
+    },
+    "V_1_23_0_TopSearchBar": {
+      "properties": {
+        "children": {
+          "items": {
+            "properties": {
+              "slot": {
+                "enum": [
+                  "inputField"
+                ]
+              }
+            },
+            "required": [
+              "slot"
+            ]
+          },
+          "type": "array"
+        },
+        "props": {
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/definitions/V_1_23_0_ModifierOperation"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "onValueChange": {
+              "$ref": "#/definitions/Action"
+            },
+            "shadowElevation": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "shape": {
+              "$ref": "#/definitions/Family_Shape"
+            },
+            "tonalElevation": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "maximum": 3.4028234663852886e+38,
+                      "minimum": -3.4028234663852886e+38,
+                      "type": "number"
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "const": 0
+                        },
+                        {
+                          "minimum": 1.401298464324817e-45
+                        },
+                        {
+                          "maximum": -1.401298464324817e-45
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "$ref": "#/definitions/Expression"
+                },
+                {
+                  "$ref": "#/definitions/Binding"
+                }
+              ]
+            },
+            "value": {
+              "enum": [
+                "collapsed",
+                "expanded"
+              ]
+            },
+            "windowInsets": {
+              "$ref": "#/definitions/Family_WindowInsets"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "TopSearchBar"
         }
       },
       "type": "object"

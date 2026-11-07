@@ -137,7 +137,8 @@ def test_a_hand_written_adapter_reads_its_bindable_props_through_a_state() -> No
         for name, prop, _spec in animatable()
         if not render(name, lock()["components"][name])
     ]
-    assert pairs, "every bindable prop is generated: nothing to pin here"
+    # Every adapter is generated, so every bindable prop reads through one.
+    assert not pairs, f"bindable props with no generated reader: {pairs}"
     for name, prop in pairs:
         wanted = f"props.{camel(prop)}"
         window = [

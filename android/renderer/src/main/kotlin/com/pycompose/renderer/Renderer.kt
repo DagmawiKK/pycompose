@@ -242,6 +242,9 @@ class Renderer(
     /** Streams each composed holder publishes, by node id, for expressions to read. */
     internal val streams = mutableStateMapOf<String, Map<String, Stream>>()
 
+    /** Holders each composed node shares, by node id, for another node to use. */
+    internal val holders = SharedHolders()
+
     @Composable fun Render(ir: ValidatedIr) {
         // One context for the session: a new one per snapshot would be a changed
         // argument to every node, and recompose all of them, changed or not. The

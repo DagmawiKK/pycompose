@@ -17,7 +17,7 @@ from pycompose.host.wire.data import lower_data
 from pycompose.host.wire.echoes import lower_echoes
 from pycompose.host.wire.effects import lower_effects
 from pycompose.host.wire.model import IRRoot
-from pycompose.host.wire.streams import has_stream, resolve_streams
+from pycompose.host.wire.streams import has_stream, resolve_streams, shares_holder
 from pycompose.model.canonical import FrozenJsonValue
 from pycompose.model.catalog.lock import (
     MIN_SCHEMA_VERSION,
@@ -264,7 +264,8 @@ class _Emission:
             tuple(frame.contracts),
             keyed=own + tuple(frame.keyed),
             streams=frame.streams
-            or any(has_stream(value) for value in props.values.values()),
+            or any(has_stream(value) for value in props.values.values())
+            or shares_holder(source.type),
             programs=tuple(frame.programs),
         )
 

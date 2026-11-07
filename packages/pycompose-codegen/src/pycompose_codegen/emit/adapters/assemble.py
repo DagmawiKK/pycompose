@@ -25,7 +25,7 @@ from __future__ import annotations
 from typing import Any
 
 from pycompose.model.catalog.lock import REGISTRY
-from pycompose_codegen.emit.adapters.built import built_arguments, built_props
+from pycompose_codegen.emit.adapters.built import built_arguments, shared_arguments
 from pycompose_codegen.emit.adapters.eligibility import held_props, is_mechanical
 from pycompose_codegen.emit.adapters.fragments import Fragments
 from pycompose_codegen.emit.adapters.imports import extra_imports
@@ -39,7 +39,7 @@ from pycompose_codegen.emit.adapters.slots import (
 )
 from pycompose_codegen.emit.adapters.state import host_locals, resolve_constructor
 from pycompose_codegen.emit.adapters.text_echo import echoed_text
-from pycompose_codegen.emit.overloads import native_name
+from pycompose_codegen.emit.overloads import native_name, object_owner
 
 CATALOG_CONVERTERS: dict[str, dict[str, Any]] = {
     name: dict(spec) for name, spec in REGISTRY.sections.get("converters", {}).items()
@@ -107,7 +107,8 @@ def render(
         state, entry.get("props", {}), out
     ) or not built_arguments(entry, out, animations):
         return ""
-    held |= echoed_text(entry.get("props", {}), out) | built_props(entry)
+    shared_arguments(entry, out)
+    held |= echoed_text(entry.get("props", {}), out)
     fills = loaded_resources(entry.get("props", {}), out)
     held |= {
         name for prop, spec in fills.values() for name in (prop, *spec.get("reads", ()))
@@ -134,7 +135,10 @@ def render(
         indent += "    "
     node = f"{name}Node"
     prelude = "\n".join(f"                {line}" for line in out.locals)
-    call = _call(native_name(name, entry), out, indent, boxed=bool(entry.get("boxed")))
+    owner = object_owner(entry)
+    native = native_name(name, entry)
+    callee = f"{owner.rsplit('.', 1)[-1]}.{native}" if owner else native
+    call = _call(callee, out, indent, boxed=bool(entry.get("boxed")))
     if gate is not None:
         # The holder stays outside the gate: the state must outlive the
         # composition of the component it projects.
@@ -200,7 +204,10 @@ def render_file(registry: dict[str, Any]) -> str:
             package = entry["package"]
             native = native_name(name, entry)
             scopes = _scopes(entry)
-            if (entry.get("source") or {}).get("owner") != entry.get("scope"):
+            if (owner := object_owner(entry)) is not None:
+                # An object's member is called through its object.
+                imports.add(f"import {owner}")
+            elif (entry.get("source") or {}).get("owner") != entry.get("scope"):
                 # A member of its scope is called on the receiver, never imported.
                 imports.add(f"import {package}.{native}")
             imports.update(f"import {scope}" for scope in scopes)

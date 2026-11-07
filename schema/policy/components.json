@@ -240,18 +240,12 @@
     "decision": {
       "category": "input",
       "holder": false
-    },
-    "patch": {
-      "adapter": "manual"
     }
   },
   "ExpandedFullScreenSearchBar": {
     "decision": {
       "category": "input",
       "holder": false
-    },
-    "patch": {
-      "adapter": "manual"
     }
   },
   "ExtendedFloatingActionButton": {
@@ -768,12 +762,8 @@
               "type": "string"
             }
           ]
-        },
-        "colors": {
-          "refuse": "its hand-written adapter does not read it yet"
         }
-      },
-      "adapter": "manual"
+      }
     }
   },
   "SearchBarStateInputField": {
@@ -781,7 +771,7 @@
       "category": "input",
       "nativeName": "InputField",
       "hook": true,
-      "holder": false,
+      "holder": "textFieldState",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SearchBarDefaults.InputField(Landroidx/compose/foundation/text/input/TextFieldState;Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/foundation/text/input/InputTransformation;Landroidx/compose/foundation/text/input/OutputTransformation;Landroidx/compose/foundation/ScrollState;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/TextFieldColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;III)V",
       "observe": false
     },
@@ -798,8 +788,7 @@
         "textStyle": {
           "nativeDefault": "androidx.compose.material3.LocalTextStyle.current"
         }
-      },
-      "adapter": "manual"
+      }
     }
   },
   "SecondaryScrollableTabRow": {
@@ -905,13 +894,6 @@
       "category": "input",
       "nativeName": "SearchBar",
       "identity": "androidx.compose.material3:material3-android androidx.compose.material3.SearchBarKt.SearchBar-nbWgWpA(Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/runtime/Composer;II)V"
-    },
-    "patch": {
-      "slots": {
-        "expandedBar": {
-          "host": true
-        }
-      }
     }
   },
   "StatefulSearchBarInputField": {
@@ -936,14 +918,7 @@
         "textStyle": {
           "nativeDefault": "androidx.compose.material3.LocalTextStyle.current"
         }
-      },
-      "reshaped": [
-        "text",
-        "selectionStart",
-        "selectionEnd",
-        "onEdit"
-      ],
-      "adapter": "manual"
+      }
     }
   },
   "StatefulTextField": {

@@ -51,7 +51,7 @@ def derive(
             and key in members
             and drive["kind"] != "unknown"
             and "kotlin/Deprecated" not in members[key].annotations
-        ]
+        ] or _named_drives(found, holder)
         if not evidence:
             continue
         value, table, missing = _table(found, evidence)
@@ -105,7 +105,7 @@ def anchored_holders(
             and key in members
             and drive["kind"] != "unknown"
             and "kotlin/Deprecated" not in members[key].annotations
-        ]
+        ] or _named_drives(found, holder)
         value, table, missing = (
             _table(found, evidence) if evidence else ("", {}, ["drives"])
         )
@@ -131,6 +131,48 @@ def anchored_holders(
             **({"functions": functions} if functions else {}),
         }
     return holders
+
+
+def _named_drives(
+    found: Inventory, holder: str
+) -> list[tuple[Declaration, dict[str, Any]]]:
+    """Drives named after the anchor they reach, where the body shows none.
+
+    ``SearchBarState.animateToExpanded()`` animates a progress fraction, not an
+    anchor, so its body names no entry; its name does, as Compose spells an
+    animated change to a state (``animateTo`` and the entry). Each public
+    suspend member taking nothing and named so drives to that entry of the
+    enum the holder settles on.
+    """
+    settled = [
+        d
+        for d in found.declarations
+        if d.owner == holder
+        and d.name in ("settledValue", "currentValue")
+        and d.document.get("declarationKind") == "property"
+        and d.document.get("visibility") == "PUBLIC"
+    ]
+    if not settled:
+        return []
+    value = settled[0].return_type.classifier.replace("/", ".")
+    entries = next(
+        (
+            c.document.get("enumEntries") or []
+            for c in found.classes
+            if c.classifier == value
+        ),
+        [],
+    )
+    return [
+        (d, {"kind": "constant", "anchor": f"{value}.{d.name[len('animateTo'):]}"})
+        for d in found.declarations
+        if d.owner == holder
+        and d.document.get("suspend")
+        and d.document.get("visibility") == "PUBLIC"
+        and not d.parameters
+        and d.name.startswith("animateTo")
+        and d.name[len("animateTo") :] in entries
+    ]
 
 
 def _anchored(found: Inventory, holder: str, value: str) -> dict[str, str] | None:

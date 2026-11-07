@@ -978,6 +978,7 @@ data class ExpandedDockedSearchBarProps(
     override val `modifier`: JsonObject? = null,
     val `shadowElevation`: JsonElement? = null,
     val `shape`: JsonElement? = null,
+    val `state`: String,
     val `tonalElevation`: JsonElement? = null,
 ) : UiProps
 
@@ -998,6 +999,7 @@ data class ExpandedFullScreenSearchBarProps(
     val `collapsedShape`: JsonElement? = null,
     override val `modifier`: JsonObject? = null,
     val `shadowElevation`: JsonElement? = null,
+    val `state`: String,
     val `tonalElevation`: JsonElement? = null,
 ) : UiProps
 
@@ -2809,6 +2811,7 @@ data class SearchBar(
 
 @Serializable
 data class SearchBarInputFieldProps(
+    val `colors`: JsonElement? = null,
     val `enabled`: Boolean = true,
     val `expanded`: Boolean,
     override val `modifier`: JsonObject? = null,
@@ -2835,9 +2838,14 @@ data class SearchBarStateInputFieldProps(
     val `colors`: JsonElement? = null,
     val `enabled`: Boolean = true,
     override val `modifier`: JsonObject? = null,
+    val `onEdit`: String,
     val `onSearch`: String,
     val `readOnly`: Boolean = false,
+    val `searchBarState`: String,
+    val `selectionEnd`: Long,
+    val `selectionStart`: Long,
     val `shape`: JsonElement? = null,
+    val `text`: String,
     val `textStyle`: JsonElement? = null,
 ) : UiProps
 
@@ -3264,16 +3272,12 @@ data class StatefulOutlinedTextField(
 
 @Serializable
 data class StatefulSearchBarProps(
-    val `expanded`: Boolean? = null,
     override val `modifier`: JsonObject? = null,
-    val `onEdit`: String,
-    val `onExpandedChange`: String? = null,
-    val `selectionEnd`: Long,
-    val `selectionStart`: Long,
+    val `onValueChange`: String? = null,
     val `shadowElevation`: JsonElement? = null,
     val `shape`: JsonElement? = null,
-    val `text`: String,
     val `tonalElevation`: JsonElement? = null,
+    val `value`: String? = null,
 ) : UiProps
 
 @Serializable
@@ -3776,6 +3780,29 @@ data class TopAppBar(
 ) : UiNode {
     override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
     override val componentType: String get() = "TopAppBar"
+}
+
+@Serializable
+data class TopSearchBarProps(
+    override val `modifier`: JsonObject? = null,
+    val `onValueChange`: String? = null,
+    val `shadowElevation`: JsonElement? = null,
+    val `shape`: JsonElement? = null,
+    val `tonalElevation`: JsonElement? = null,
+    val `value`: String? = null,
+    val `windowInsets`: JsonElement? = null,
+) : UiProps
+
+@Serializable
+@SerialName("TopSearchBar")
+data class TopSearchBar(
+    override val id: String,
+    override val props: TopSearchBarProps,
+    override val children: List<UiNode> = emptyList(),
+    override val slot: String? = null,
+) : UiNode {
+    override fun withChildren(children: List<UiNode>): UiNode = copy(children = children)
+    override val componentType: String get() = "TopSearchBar"
 }
 
 @Serializable

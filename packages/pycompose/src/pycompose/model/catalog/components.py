@@ -289,6 +289,8 @@ class ComponentSpec:
             legitimately spans a family of overloads.
         built: Codegen-only: native parameters the host fills by calling the
             pin's one builder for their type, with the props it names.
+        shared: Native holder parameters the component does not own, by the
+            holder class; each prop names the node whose holder it uses.
     """
 
     name: str
@@ -310,6 +312,7 @@ class ComponentSpec:
     boxed: bool = False
     source: Mapping[str, str] | None = None
     built: Mapping[str, Mapping[str, object]] | None = None
+    shared: Mapping[str, str] | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "props", MappingProxyType(dict(self.props)))
@@ -374,6 +377,7 @@ class ComponentSpec:
             boxed=data.get("boxed") is True,
             source=_source(name, data.get("source")),
             built=cast("Mapping[str, Mapping[str, object]] | None", data.get("built")),
+            shared=cast("Mapping[str, str] | None", data.get("shared")),
         )
 
     def to_mapping(self) -> dict[str, object]:
@@ -413,6 +417,7 @@ class ComponentSpec:
             "overloadOf": self.overload_of,
             "boxed": self.boxed,
             "built": None if self.built is None else dict(self.built),
+            "shared": None if self.shared is None else dict(self.shared),
         }
         result.update({key: value for key, value in optional.items() if value})
         if self.source is not None:

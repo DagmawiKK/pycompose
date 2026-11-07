@@ -125,3 +125,21 @@ def native_name(name: str, entry: dict[str, Any]) -> str:
         native = source.get("name")
         return native if isinstance(native, str) else name
     return name
+
+
+def object_owner(entry: dict[str, Any]) -> str | None:
+    """The object a component is a member of, when it is one: ``SearchBarDefaults``.
+
+    A top-level composable lives in a file facade (``SearchBarKt``) and is
+    imported by name; an object's member is called through its object.
+
+    Args:
+        entry: The component's schema entry.
+
+    Returns:
+        The object's dotted name, or None for a top-level or scoped composable.
+    """
+    owner = (entry.get("source") or {}).get("owner")
+    if not isinstance(owner, str) or owner == entry.get("scope"):
+        return None
+    return None if owner.rsplit(".", 1)[-1].endswith("Kt") else owner

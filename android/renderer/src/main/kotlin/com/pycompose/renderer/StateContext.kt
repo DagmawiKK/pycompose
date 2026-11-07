@@ -4,7 +4,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 
 /**
  * The node's sheet projection, including whether its native sheet is composed.
@@ -43,40 +42,6 @@ fun RenderContext.tooltipState(
     report: String?,
     isPersistent: Boolean,
 ): TooltipState = rememberHostTooltipState(visible, isPersistent, report, observations::observe)
-
-/**
- * The node's shared search projection: reconciled editing and native expansion.
- *
- * One owner creates both native states and provides them to the surfaces it
- * composes; the collapsed bar, the expanded bar and every input field in their
- * slots then read the same pair. Text and expansion therefore survive a
- * collapsed-to-expanded transition instead of being recreated by each surface.
- *
- * The parameter order follows the generated state call: the declared value and
- * its report first, then the props the holder is constructed from.
- *
- * @param expanded Desired expansion; null leaves it to native gestures.
- * @param onExpandedChange Action id expansion changes report to; null reports none.
- * @param text Desired editing text.
- * @param selectionStart Anchor of the desired selection, clamped to the text.
- * @param selectionEnd Active end of the desired selection, clamped to the text.
- * @param onEdit Action receiving the complete editing value.
- */
-@Suppress("LongParameterList")
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun RenderContext.searchState(
-    expanded: Boolean?,
-    onExpandedChange: String?,
-    text: String,
-    selectionStart: Long,
-    selectionEnd: Long,
-    onEdit: String,
-): HostSearchState {
-    val editing = textInputState(text, onEdit, selectionStart, selectionEnd)
-    val bar = rememberHostSearchBarState(expanded, onExpandedChange, observations::observe)
-    return remember(editing, bar) { HostSearchState(editing, bar) }
-}
 
 /**
  * The node's snackbar host, showing a request only for a greater serial.

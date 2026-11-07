@@ -1,143 +1,94 @@
-"""Shared search owns editing and expansion; nested declarations are data only."""
+"""A search composes from generated parts: the bar owns its state, others share it."""
 
 import pytest
 
 from pycompose.errors import ComponentRegistryError, IrValidationError
-from pycompose.host.wire import emit_ir, to_dict, validate_ir
+from pycompose.host.wire import emit_ir, validate_ir
 from pycompose.model.catalog.elements import SlotRule
 from pycompose.model.catalog.lock import REGISTRY
 from pycompose.model.nodes.node import Node
 from pycompose.model.snapshot import Snapshot
-from pycompose.ui import Dp, RoundedCornerShape
+
+SEARCH_BAR_STATE = "androidx.compose.material3.SearchBarState"
 
 
-def owner(**overrides: object) -> Node:
-    """A minimal owner with one collapsed and one expanded input declaration."""
+def search(**overrides: object) -> Node:
+    """A bar, its input field, and a full-screen surface sharing the bar's state."""
     from pycompose.ui import (
-        ExpandedDockedSearchBar,
+        Column,
+        ExpandedFullScreenSearchBar,
         SearchBarStateInputField,
         StatefulSearchBar,
-    )
-
-    props: dict[str, object] = {
-        "id": "search",
-        "text": "compose",
-        "selection_start": 7,
-        "selection_end": 7,
-        "on_edit": "submit",
-        "expanded": False,
-        "on_expanded_change": "submit",
-        "input_field": SearchBarStateInputField(id="collapsed", on_search="submit"),
-        "expanded_bar": ExpandedDockedSearchBar(
-            id="expanded",
-            input_field=SearchBarStateInputField(
-                id="expanded.input", on_search="submit"
-            ),
-        ),
-    }
-    props.update(overrides)
-    return StatefulSearchBar(**props)  # type: ignore[arg-type]
-
-
-def test_owner_emits_distinct_collapsed_and_expanded_input_slots() -> None:
-    """One node states the shared editing value; each surface declares only its slot."""
-    from pycompose.ui import (
-        ExpandedDockedSearchBar,
-        SearchBarStateInputField,
         Text,
     )
 
-    candidate = emit_ir(
-        Snapshot(
-            root=owner(
-                expanded_bar=ExpandedDockedSearchBar(
-                    id="expanded",
-                    input_field=SearchBarStateInputField(
-                        id="expanded.input", on_search="submit"
-                    ),
-                    content=Text(id="result", text="A result"),
-                )
-            )
-        ),
-        "1.23.0",
-    )
-    assert validate_ir(candidate).snapshot is candidate
-    wire = to_dict(candidate)["root"]
-    assert wire["type"] == "StatefulSearchBar"
-    assert wire["props"] == {
-        "text": "compose",
-        "selectionStart": 7,
-        "selectionEnd": 7,
-        "onEdit": "submit",
-        "expanded": False,
-        "onExpandedChange": "submit",
+    def field(id: str) -> Node:
+        return SearchBarStateInputField(
+            id=id,
+            search_bar_state="bar",
+            text="compose",
+            selection_start=7,
+            selection_end=7,
+            on_edit="submit",
+            on_search="submit",
+        )
+
+    bar: dict[str, object] = {
+        "id": "bar",
+        "value": "collapsed",
+        "on_value_change": "submit",
+        "input_field": field("collapsed"),
     }
-    assert [child["slot"] for child in wire["children"]] == [
-        "expandedBar",
-        "inputField",
-    ]
-    collapsed = next(
-        child for child in wire["children"] if child["slot"] == "inputField"
-    )
-    expanded = next(
-        child for child in wire["children"] if child["slot"] == "expandedBar"
-    )
-    assert collapsed["type"] == "SearchBarStateInputField"
-    assert collapsed["props"] == {"onSearch": "submit"}
-    assert expanded["type"] == "ExpandedDockedSearchBar"
-    assert [child.get("slot") for child in expanded["children"]] == [None, "inputField"]
-    assert expanded["children"][0]["props"] == {"text": "A result"}
-    assert expanded["children"][1]["type"] == "SearchBarStateInputField"
-    assert expanded["children"][1]["props"] == {"onSearch": "submit"}
-
-
-def test_full_screen_surface_is_the_same_owner_contract() -> None:
-    """The dialog variant shares the owner's state exactly like the docked one."""
-    from pycompose.ui import (
-        ExpandedFullScreenSearchBar,
-        SearchBarStateInputField,
+    bar.update(overrides)
+    return Column(
+        children=[
+            StatefulSearchBar(**bar),  # type: ignore[arg-type]
+            ExpandedFullScreenSearchBar(
+                id="expanded",
+                state="bar",
+                input_field=field("expanded.input"),
+                children=[Text(id="result", text="A result")],
+            ),
+        ]
     )
 
-    candidate = emit_ir(
-        Snapshot(
-            root=owner(
-                expanded_bar=ExpandedFullScreenSearchBar(
-                    id="expanded",
-                    collapsed_shape=RoundedCornerShape(Dp(28)),
-                    input_field=SearchBarStateInputField(
-                        id="expanded.input", on_search="submit"
-                    ),
-                )
-            )
-        ),
-        "1.23.0",
-    )
-    assert validate_ir(candidate).snapshot is candidate
-    wire = to_dict(candidate)["root"]
-    expanded = next(
-        child for child in wire["children"] if child["slot"] == "expandedBar"
-    )
-    assert expanded["type"] == "ExpandedFullScreenSearchBar"
-    assert expanded["props"] == {
-        "collapsedShape": {
-            "type": "RoundedCornerShape",
-            "size": {"type": "Dp", "value": 28},
-        }
+
+def test_a_search_composes_from_its_generated_parts() -> None:
+    """The bar, its field and its surface each validate as ordinary nodes."""
+    snapshot = emit_ir(Snapshot(root=search()), "1.23.0")
+    assert validate_ir(snapshot).snapshot is snapshot
+
+
+def test_the_bar_owns_its_state_and_the_others_name_it() -> None:
+    """The bar's state is anchored; the field and the surface share it by node id."""
+    bar = REGISTRY.components["StatefulSearchBar"]
+    assert bar.state is not None and bar.state.kind == "anchored"
+    assert REGISTRY.components["ExpandedFullScreenSearchBar"].shared == {
+        "state": SEARCH_BAR_STATE
     }
-    assert [child["slot"] for child in expanded["children"]] == ["inputField"]
+    assert REGISTRY.components["ExpandedDockedSearchBar"].shared == {
+        "state": SEARCH_BAR_STATE
+    }
+    field = REGISTRY.components["SearchBarStateInputField"]
+    assert field.state is not None and field.state.kind == "textInput"
+    assert field.shared == {"searchBarState": SEARCH_BAR_STATE}
 
 
-def test_the_owner_declares_the_search_family_and_a_host_slot() -> None:
-    """The schema names the shared state family and the slot the host composes."""
-    spec = REGISTRY.components["StatefulSearchBar"]
-    assert spec.state is not None
-    assert spec.state.kind == "search"
-    assert spec.state.value == "expanded"
-    assert spec.state.report == "onExpandedChange"
-    assert spec.slots["expandedBar"].host
-    assert spec.slots["expandedBar"].native is None
-    assert not spec.slots["inputField"].host
-    assert spec.slots["inputField"].native == "inputField"
+def test_a_shared_holder_must_name_its_owner() -> None:
+    """A surface with no bar to share has no state to compose with."""
+    with pytest.raises(IrValidationError):
+        validate_ir(
+            emit_ir(
+                Snapshot(root=Node(id="expanded", type="ExpandedDockedSearchBar")),
+                "1.23.0",
+            )
+        )
+
+
+def test_expansion_is_optional_so_native_gestures_can_own_it() -> None:
+    """A bar that states no value leaves expansion to its own gestures."""
+    snapshot = emit_ir(Snapshot(root=search(value=None)), "1.23.0")
+    assert validate_ir(snapshot).snapshot is snapshot
 
 
 def test_a_host_slot_round_trips_without_a_native_parameter() -> None:
@@ -161,90 +112,3 @@ def test_a_host_slot_rejects_a_native_policy(raw: dict[str, object]) -> None:
     """Mixing host composition with a native parameter is not a slot shape."""
     with pytest.raises(ComponentRegistryError):
         SlotRule.from_mapping(raw, where="search.expandedBar")
-
-
-@pytest.mark.parametrize(
-    ("prop", "value"),
-    [
-        ("selectionStart", -1),
-        ("selectionEnd", -1),
-        ("selectionStart", 2147483648),
-        ("selectionEnd", 2147483648),
-    ],
-)
-def test_out_of_range_owner_coordinates_are_rejected(prop: str, value: int) -> None:
-    """The owner carries the same native bounds as the standalone stateful field."""
-    props: dict[str, object] = {
-        "text": "compose",
-        "selectionStart": 7,
-        "selectionEnd": 7,
-        "onEdit": "submit",
-        "expanded": False,
-        "onExpandedChange": "submit",
-    }
-    props[prop] = value
-    with pytest.raises(IrValidationError):
-        validate_ir(
-            emit_ir(
-                Snapshot(root=Node(id="search", type="StatefulSearchBar", props=props)),
-                "1.23.0",
-            )
-        )
-
-
-def test_the_owner_requires_the_whole_editing_projection() -> None:
-    """A shared owner without its text cannot construct the native editing state."""
-    with pytest.raises(IrValidationError):
-        validate_ir(
-            emit_ir(
-                Snapshot(
-                    root=Node(
-                        id="search",
-                        type="StatefulSearchBar",
-                        props={
-                            "expanded": False,
-                            "onExpandedChange": "submit",
-                        },
-                    )
-                ),
-                "1.23.0",
-            )
-        )
-
-
-def test_expansion_is_optional_so_native_gestures_can_own_it() -> None:
-    """An owner that states no expansion still shares editing and reports gestures."""
-    from pycompose.ui import SearchBarStateInputField, StatefulSearchBar
-
-    candidate = emit_ir(
-        Snapshot(
-            root=StatefulSearchBar(
-                id="search",
-                text="compose",
-                selection_start=7,
-                selection_end=7,
-                on_edit="submit",
-                on_expanded_change="submit",
-                input_field=SearchBarStateInputField(
-                    id="collapsed", on_search="submit"
-                ),
-            )
-        ),
-        "1.23.0",
-    )
-    assert validate_ir(candidate).snapshot is candidate
-    wire = to_dict(candidate)["root"]
-    assert "expanded" not in wire["props"]
-    assert wire["props"]["onExpandedChange"] == "submit"
-
-
-def test_a_state_field_without_an_owner_still_emits_for_host_diagnosis() -> None:
-    """The wire is structural; the host reports a missing owner instead of guessing."""
-    from pycompose.ui import SearchBarStateInputField
-
-    candidate = emit_ir(
-        Snapshot(root=SearchBarStateInputField(id="orphan", on_search="submit")),
-        "1.23.0",
-    )
-    assert validate_ir(candidate).snapshot is candidate
-    assert to_dict(candidate)["root"]["type"] == "SearchBarStateInputField"

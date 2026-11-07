@@ -104,8 +104,8 @@ def test_the_signature_file_is_what_the_pin_says() -> None:
             {"policy": "provider", "wireType": "float"},
         ),
         (
-            _type("androidx/compose/material3/SearchBarState"),
-            {"policy": "holder", "kind": "search"},
+            _type("androidx/compose/material3/TooltipState"),
+            {"policy": "holder", "kind": "tooltip"},
         ),
         (
             _type("androidx/compose/ui/graphics/painter/Painter"),
@@ -520,8 +520,22 @@ def test_a_component_no_policy_names_is_promoted_with_derived_decisions() -> Non
     assert decisions["Two"]["identity"].endswith("Two(AB)")
 
 
-def test_a_family_sharing_its_owner_needs_a_hand_written_adapter() -> None:
+def test_a_required_holder_it_does_not_bind_is_shared_by_node() -> None:
     from pycompose_codegen.derive.rules import reshape
 
-    entry = {"props": {}, "state": {"native": "state", "kind": "search"}}
-    assert reshape("Bar", entry, {}, _plan())["adapter"] == "manual"
+    bar = "androidx.compose.material3.SearchBarState"
+    entry = {
+        "props": {},
+        "holders": [{"native": "state", "kind": "anchored", "holder": bar}],
+    }
+    plan = _plan(
+        state={
+            "policy": "holder",
+            "required": True,
+            "type": {"classifier": bar.replace(".", "/")},
+        }
+    )
+    shaped = reshape("ExpandedDockedSearchBar", entry, {"holder": False}, plan)
+    assert "state" not in shaped
+    assert shaped["shared"] == {"state": bar}
+    assert shaped["props"]["state"] == {"type": "string", "required": True}

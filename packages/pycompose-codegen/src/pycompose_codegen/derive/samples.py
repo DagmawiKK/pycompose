@@ -16,18 +16,6 @@ from pycompose.model.programs.drawing import CANVAS, DRAW, draws
 from pycompose.model.programs.layout import LAYOUT, MEASURED
 from pycompose.model.programs.refs import lift
 
-SEARCH_OWNERS: dict[str, tuple[str, str | None]] = {
-    "ExpandedDockedSearchBar": ("StatefulSearchBar", "expandedBar"),
-    "ExpandedFullScreenSearchBar": ("StatefulSearchBar", "expandedBar"),
-    "SearchBarStateInputField": ("StatefulSearchBar", "inputField"),
-}
-"""Components whose adapter shares state with an owner, and the owner's slot.
-
-The search surfaces render one editing projection their StatefulSearchBar
-owns (ADR-0016's search family); the lock has no field for that, so the
-samples name it here, mirroring StatefulSearchAdapters.kt.
-"""
-
 SCALARS: dict[str, Any] = {
     "string": "Preview",
     "boolean": True,
@@ -224,11 +212,12 @@ class _Sample:
         return {"fields": {}, "intent": handler}
 
     def scoped(self, name: str) -> dict[str, Any]:
-        """The component, inside the parent its scope or its owner requires."""
+        """The component, inside the parent its scope requires, or beside the
+        node whose holder it shares."""
         scope = self.components[name].get("scope")
-        if name in SEARCH_OWNERS:
-            parent, slot = SEARCH_OWNERS[name]
-        elif scope is not None:
+        if self.components[name].get("shared"):
+            return self._sharing(name)
+        if scope is not None:
             parent, slot = self._provider(scope)
         else:
             return self.node(name, "preview")
@@ -239,6 +228,23 @@ class _Sample:
             # The scope is the slot's receiver: the component fills that slot.
             child["slot"] = slot
         root["children"] = [*children, child]
+        return root
+
+    def _sharing(self, name: str) -> dict[str, Any]:
+        """The component in a column beside an owner of the holders it shares."""
+        child = self.node(name, "preview")
+        owners = []
+        for native, holder in sorted(self.components[name]["shared"].items()):
+            owner = next(
+                other
+                for other, entry in sorted(self.components.items())
+                if (entry.get("state") or {}).get("holder") == holder
+                and not entry.get("shared")
+            )
+            owners.append(self.node(owner, f"owner.{native}"))
+            child["props"][native] = f"owner.{native}"
+        root = self.node("Column", "page")
+        root["children"] = [*owners, child]
         return root
 
     def _provider(self, scope: str) -> tuple[str, str | None]:

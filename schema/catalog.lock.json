@@ -2957,6 +2957,11 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "state": {
+          "type": "string",
+          "required": true,
+          "since": "1.23.0"
         }
       },
       "children": {
@@ -2969,7 +2974,9 @@
           "native": "inputField"
         }
       },
-      "adapter": "manual"
+      "shared": {
+        "state": "androidx.compose.material3.SearchBarState"
+      }
     },
     "ExpandedFullScreenSearchBar": {
       "package": "androidx.compose.material3",
@@ -3008,6 +3015,11 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "state": {
+          "type": "string",
+          "required": true,
+          "since": "1.23.0"
         }
       },
       "children": {
@@ -3020,7 +3032,9 @@
           "native": "inputField"
         }
       },
-      "adapter": "manual"
+      "shared": {
+        "state": "androidx.compose.material3.SearchBarState"
+      }
     },
     "ExposedDropdownMenu": {
       "package": "androidx.compose.material3",
@@ -8653,6 +8667,12 @@
         "androidx.compose.material3.ExperimentalMaterial3Api"
       ],
       "props": {
+        "colors": {
+          "type": "value",
+          "valueType": "TextFieldColors",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.inputFieldColors()",
+          "since": "1.23.0"
+        },
         "enabled": {
           "type": "boolean",
           "default": true
@@ -8715,8 +8735,7 @@
           "native": "trailingIcon",
           "nullable": true
         }
-      },
-      "adapter": "manual"
+      }
     },
     "SearchBarStateInputField": {
       "package": "androidx.compose.material3",
@@ -8769,6 +8788,51 @@
         },
         "modifier": {
           "type": "modifier"
+        },
+        "searchBarState": {
+          "type": "string",
+          "required": true,
+          "since": "1.23.0"
+        },
+        "text": {
+          "type": "string",
+          "required": true,
+          "since": "1.23.0"
+        },
+        "onEdit": {
+          "type": "actionId",
+          "required": true,
+          "payload": [
+            {
+              "name": "text",
+              "type": "string"
+            },
+            {
+              "name": "selectionStart",
+              "type": "integer"
+            },
+            {
+              "name": "selectionEnd",
+              "type": "integer"
+            }
+          ],
+          "since": "1.23.0"
+        },
+        "selectionStart": {
+          "type": "integer",
+          "required": true,
+          "minimum": 0,
+          "maximum": 2147483647,
+          "nativeType": "Int",
+          "since": "1.23.0"
+        },
+        "selectionEnd": {
+          "type": "integer",
+          "required": true,
+          "minimum": 0,
+          "maximum": 2147483647,
+          "nativeType": "Int",
+          "since": "1.23.0"
         }
       },
       "children": {
@@ -8796,7 +8860,21 @@
           "nullable": true
         }
       },
-      "adapter": "manual"
+      "state": {
+        "native": "textFieldState",
+        "kind": "textInput",
+        "value": "text",
+        "report": "onEdit"
+      },
+      "shared": {
+        "searchBarState": "androidx.compose.material3.SearchBarState"
+      },
+      "reshaped": [
+        "text",
+        "onEdit",
+        "selectionStart",
+        "selectionEnd"
+      ]
     },
     "SecondaryScrollableTabRow": {
       "package": "androidx.compose.material3",
@@ -10211,53 +10289,23 @@
         "modifier": {
           "type": "modifier"
         },
-        "expanded": {
-          "type": "boolean"
+        "value": {
+          "type": "enum",
+          "values": [
+            "collapsed",
+            "expanded"
+          ],
+          "since": "1.23.0"
         },
-        "onExpandedChange": {
+        "onValueChange": {
           "type": "actionId",
           "payload": [
             {
-              "name": "expanded",
-              "type": "boolean"
-            }
-          ]
-        },
-        "text": {
-          "type": "string",
-          "required": true
-        },
-        "selectionStart": {
-          "type": "integer",
-          "required": true,
-          "minimum": 0,
-          "maximum": 2147483647,
-          "nativeType": "Int"
-        },
-        "selectionEnd": {
-          "type": "integer",
-          "required": true,
-          "minimum": 0,
-          "maximum": 2147483647,
-          "nativeType": "Int"
-        },
-        "onEdit": {
-          "type": "actionId",
-          "required": true,
-          "payload": [
-            {
-              "name": "text",
+              "name": "value",
               "type": "string"
-            },
-            {
-              "name": "selectionStart",
-              "type": "integer"
-            },
-            {
-              "name": "selectionEnd",
-              "type": "integer"
             }
-          ]
+          ],
+          "since": "1.23.0"
         }
       },
       "children": {
@@ -10266,25 +10314,24 @@
       "slots": {
         "inputField": {
           "native": "inputField"
-        },
-        "expandedBar": {
-          "host": true
         }
       },
       "state": {
         "native": "state",
-        "kind": "search",
-        "value": "expanded",
-        "report": "onExpandedChange"
+        "kind": "anchored",
+        "holder": "androidx.compose.material3.SearchBarState",
+        "factory": "androidx.compose.material3.rememberSearchBarState",
+        "valueClass": "androidx.compose.material3.SearchBarValue",
+        "anchors": {
+          "collapsed": "Collapsed",
+          "expanded": "Expanded"
+        },
+        "settled": "currentValue",
+        "started": true
       },
-      "adapter": "manual",
       "reshaped": [
-        "expanded",
-        "onExpandedChange",
-        "text",
-        "selectionStart",
-        "selectionEnd",
-        "onEdit"
+        "value",
+        "onValueChange"
       ]
     },
     "StatefulSearchBarInputField": {
@@ -10423,11 +10470,10 @@
       },
       "reshaped": [
         "text",
+        "onEdit",
         "selectionStart",
-        "selectionEnd",
-        "onEdit"
-      ],
-      "adapter": "manual"
+        "selectionEnd"
+      ]
     },
     "StatefulTextField": {
       "package": "androidx.compose.material3",
@@ -12264,6 +12310,92 @@
           "native": "title"
         }
       }
+    },
+    "TopSearchBar": {
+      "package": "androidx.compose.material3",
+      "category": "material3",
+      "stability": "experimental",
+      "since": "1.23.0",
+      "source": {
+        "artifact": "androidx.compose.material3:material3-android:1.4.0",
+        "descriptor": "(Landroidx/compose/material3/SearchBarState;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/material3/SearchBarColors;FFLandroidx/compose/foundation/layout/WindowInsets;Landroidx/compose/material3/SearchBarScrollBehavior;Landroidx/compose/runtime/Composer;II)V",
+        "jvmName": "TopSearchBar-qKj4JfE",
+        "name": "TopSearchBar",
+        "owner": "androidx.compose.material3.SearchBarKt"
+      },
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "props": {
+        "shadowElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.ShadowElevation",
+          "nativeValue": 0.0,
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "shape": {
+          "type": "value",
+          "valueType": "Shape",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.inputFieldShape"
+        },
+        "tonalElevation": {
+          "type": "dp",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.TonalElevation",
+          "nativeValue": 0.0,
+          "animation": "androidx.compose.ui.unit.Dp",
+          "phase": "composition"
+        },
+        "windowInsets": {
+          "type": "value",
+          "valueType": "WindowInsets",
+          "nativeDefault": "androidx.compose.material3.SearchBarDefaults.windowInsets"
+        },
+        "modifier": {
+          "type": "modifier"
+        },
+        "value": {
+          "type": "enum",
+          "values": [
+            "collapsed",
+            "expanded"
+          ]
+        },
+        "onValueChange": {
+          "type": "actionId",
+          "payload": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "children": {
+        "allowed": false
+      },
+      "slots": {
+        "inputField": {
+          "native": "inputField"
+        }
+      },
+      "state": {
+        "native": "state",
+        "kind": "anchored",
+        "holder": "androidx.compose.material3.SearchBarState",
+        "factory": "androidx.compose.material3.rememberSearchBarState",
+        "valueClass": "androidx.compose.material3.SearchBarValue",
+        "anchors": {
+          "collapsed": "Collapsed",
+          "expanded": "Expanded"
+        },
+        "settled": "currentValue",
+        "started": true
+      },
+      "reshaped": [
+        "value",
+        "onValueChange"
+      ]
     },
     "TriStateCheckbox": {
       "package": "androidx.compose.material3",
@@ -24095,6 +24227,20 @@
         },
         "Open": {
           "method": "open"
+        }
+      }
+    },
+    "androidx.compose.material3.SearchBarState": {
+      "value": "androidx.compose.material3.SearchBarValue",
+      "optIn": [
+        "androidx.compose.material3.ExperimentalMaterial3Api"
+      ],
+      "drives": {
+        "Collapsed": {
+          "method": "animateToCollapsed"
+        },
+        "Expanded": {
+          "method": "animateToExpanded"
         }
       }
     },

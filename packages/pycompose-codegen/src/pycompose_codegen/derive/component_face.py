@@ -209,9 +209,10 @@ def _wiring_face(
     if interaction:
         name = interaction["native"]
         add("interaction", name, Argument(name, "value", INTERACTION_SOURCE))
-    for native in entry.get("built", {}):
-        # The host builds it with the pin's builder; its props are the builder's.
-        add("built", native, Argument(native, "value"))
+    for native in (*entry.get("built", {}), *entry.get("shared", {})):
+        # The host builds it with the pin's builder, or reads the holder of the
+        # node the app names: the parameter's value is never the prop itself.
+        add("filled", native, Argument(native, "value"))
     state = entry.get("state")
     if state and attach_gate(state, entry.get("props", {})) is None:
         add("state", state["native"], Argument(state["native"], "value"))

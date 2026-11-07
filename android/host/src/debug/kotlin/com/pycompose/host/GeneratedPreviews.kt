@@ -274,13 +274,13 @@ private fun ElevatedSuggestionChipPreview() {
 @Preview(name = "ExpandedDockedSearchBar", showBackground = true)
 @Composable
 private fun ExpandedDockedSearchBarPreview() {
-    Sample("""{"metadata": {"intents": {"preview.onEdit": {"payload": {"selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"children": [{"id": "provider.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"id": "preview.child", "props": {"text": "ExpandedDockedSearchBar"}, "type": "Text"}], "id": "preview", "props": {}, "slot": "expandedBar", "type": "ExpandedDockedSearchBar"}], "id": "provider", "props": {"onEdit": {"fields": {}, "intent": "preview.onEdit"}, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"children": [{"id": "owner.state.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}], "id": "owner.state", "props": {}, "type": "StatefulSearchBar"}, {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"id": "preview.child", "props": {"text": "ExpandedDockedSearchBar"}, "type": "Text"}], "id": "preview", "props": {"state": "owner.state"}, "type": "ExpandedDockedSearchBar"}], "id": "page", "props": {}, "type": "Column"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ExpandedFullScreenSearchBar", showBackground = true)
 @Composable
 private fun ExpandedFullScreenSearchBarPreview() {
-    Sample("""{"metadata": {"intents": {"preview.onEdit": {"payload": {"selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"children": [{"id": "provider.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"id": "preview.child", "props": {"text": "ExpandedFullScreenSearchBar"}, "type": "Text"}], "id": "preview", "props": {}, "slot": "expandedBar", "type": "ExpandedFullScreenSearchBar"}], "id": "provider", "props": {"onEdit": {"fields": {}, "intent": "preview.onEdit"}, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"children": [{"id": "owner.state.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}], "id": "owner.state", "props": {}, "type": "StatefulSearchBar"}, {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}, {"id": "preview.child", "props": {"text": "ExpandedFullScreenSearchBar"}, "type": "Text"}], "id": "preview", "props": {"state": "owner.state"}, "type": "ExpandedFullScreenSearchBar"}], "id": "page", "props": {}, "type": "Column"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "ExposedDropdownMenu", showBackground = true)
@@ -772,7 +772,7 @@ private fun SearchBarInputFieldPreview() {
 @Preview(name = "SearchBarStateInputField", showBackground = true)
 @Composable
 private fun SearchBarStateInputFieldPreview() {
-    Sample("""{"metadata": {"intents": {"preview.onEdit": {"payload": {"selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}, "preview.onSearch": {"payload": {"query": {"required": true, "type": "string"}}}}}, "root": {"children": [{"id": "preview", "props": {"modifier": {"operations": [{"contentDescription": "SearchBarStateInputField", "type": "semantics"}]}, "onSearch": {"fields": {}, "intent": "preview.onSearch"}}, "slot": "inputField", "type": "SearchBarStateInputField"}], "id": "provider", "props": {"onEdit": {"fields": {}, "intent": "preview.onEdit"}, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {"preview.onEdit": {"payload": {"selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}, "preview.onSearch": {"payload": {"query": {"required": true, "type": "string"}}}}}, "root": {"children": [{"children": [{"id": "owner.searchBarState.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}], "id": "owner.searchBarState", "props": {}, "type": "StatefulSearchBar"}, {"id": "preview", "props": {"onEdit": {"fields": {}, "intent": "preview.onEdit"}, "onSearch": {"fields": {}, "intent": "preview.onSearch"}, "searchBarState": "owner.searchBarState", "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "SearchBarStateInputField"}], "id": "page", "props": {}, "type": "Column"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "SecondaryScrollableTabRow", showBackground = true)
@@ -886,7 +886,7 @@ private fun StatefulOutlinedTextFieldPreview() {
 @Preview(name = "StatefulSearchBar", showBackground = true)
 @Composable
 private fun StatefulSearchBarPreview() {
-    Sample("""{"metadata": {"intents": {"preview.onEdit": {"payload": {"selectionEnd": {"required": true, "type": "integer"}, "selectionStart": {"required": true, "type": "integer"}, "text": {"required": true, "type": "string"}}}}}, "root": {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}], "id": "preview", "props": {"onEdit": {"fields": {}, "intent": "preview.onEdit"}, "selectionEnd": 0, "selectionStart": 0, "text": "Preview"}, "type": "StatefulSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}], "id": "preview", "props": {}, "type": "StatefulSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "StatefulSearchBarInputField", showBackground = true)
@@ -1001,6 +1001,12 @@ private fun TooltipBoxPreview() {
 @Composable
 private fun TopAppBarPreview() {
     Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.actions", "props": {"text": "actions"}, "slot": "actions", "type": "Text"}, {"id": "preview.navigationIcon", "props": {"text": "navigationIcon"}, "slot": "navigationIcon", "type": "Text"}, {"id": "preview.title", "props": {"text": "title"}, "slot": "title", "type": "Text"}], "id": "preview", "props": {}, "type": "TopAppBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
+}
+
+@Preview(name = "TopSearchBar", showBackground = true)
+@Composable
+private fun TopSearchBarPreview() {
+    Sample("""{"metadata": {"intents": {}}, "root": {"children": [{"id": "preview.inputField", "props": {"text": "inputField"}, "slot": "inputField", "type": "Text"}], "id": "preview", "props": {}, "type": "TopSearchBar"}, "schemaVersion": "1.23.0", "version": "0.1.0"}""")
 }
 
 @Preview(name = "TriStateCheckbox", showBackground = true)

@@ -42,7 +42,6 @@ STATE_KINDS = (
     "sheet",
     "tooltip",
     "textInput",
-    "search",
 )
 """State families the host creates, drives and reports for a component.
 
@@ -62,14 +61,13 @@ what a derived family needs; each names that member or protocol:
   change only inside ``edit { }``, a ``TextFieldBuffer`` block no type rule
   drives; its reports are numbered, atomic text-and-selection edits, so an
   input method's composition survives the app's answers (ADR-0023).
-* ``search`` -- ``SearchBarState`` expands and collapses through members that
-  animate a progress fraction, not an anchor, and one owner shares the editing
-  and expansion holders across the collapsed bar and every expanded surface.
 
 A holder with one scrollable position (a pager's page, a list's first visible
 item, a scroll's offset), one anchor of an enum (a drawer open or closed, a
 swipe settled or dismissed) or properties (a slider's value, a time picker's
-hour, a date range picker's selection, re-created to change) is derived from the pin
+hour, a date range picker's selection, re-created to change) is derived, and
+one node may use a holder another owns by naming it (a search bar's state,
+shared with its input field and its expanded surface) from the pin
 instead (``positional``, ``anchored``,
 ``properties``). The vocabulary is closed for the same reason the interaction
 kinds are: the host must not be asked to drive a state object whose
@@ -80,7 +78,6 @@ STATE_HOLDERS = {
     "sheet": "androidx.compose.material3.SheetState",
     "tooltip": "androidx.compose.material3.TooltipState",
     "textInput": "androidx.compose.foundation.text.input.TextFieldState",
-    "search": "androidx.compose.material3.SearchBarState",
 }
 """The native holder each state family creates and drives.
 

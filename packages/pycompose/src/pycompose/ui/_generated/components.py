@@ -184,6 +184,7 @@ __all__ = [
     "TimePickerDialog",
     "TooltipBox",
     "TopAppBar",
+    "TopSearchBar",
     "TriStateCheckbox",
     "VerticalDivider",
     "VerticalDragHandle",
@@ -363,6 +364,11 @@ _NavigationItemIconPosition = Literal[
     "top",
 ]
 
+_StatefulSearchBarValue = Literal[
+    "collapsed",
+    "expanded",
+]
+
 _SwipeToDismissBoxValue = Literal[
     "startToEnd",
     "endToStart",
@@ -411,6 +417,11 @@ _TextDecoration = Literal[
 _TimePickerLayoutType = Literal[
     "horizontal",
     "vertical",
+]
+
+_TopSearchBarValue = Literal[
+    "collapsed",
+    "expanded",
 ]
 
 _ToggleableState = Literal[
@@ -2872,6 +2883,7 @@ class ExpandedDockedSearchBar(Component):
         modifier: Modifier | None = None,
         shadow_elevation: int | float | Expression | Binding | None = None,
         shape: JsonValue | None = None,
+        state: str,
         tonal_elevation: int | float | Expression | Binding | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -2885,6 +2897,7 @@ class ExpandedDockedSearchBar(Component):
             modifier: Native modifier; None uses its default.
             shadow_elevation: Native shadowElevation; None uses its default.
             shape: Native shape; None uses its default.
+            state: Required native state.
             tonal_elevation: Native tonalElevation; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
@@ -2898,6 +2911,7 @@ class ExpandedDockedSearchBar(Component):
             props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
         if shape is not None:
             props["shape"] = shape
+        props["state"] = state
         if tonal_elevation is not None:
             props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if content is not None:
@@ -2933,6 +2947,7 @@ class ExpandedFullScreenSearchBar(Component):
         collapsed_shape: JsonValue | None = None,
         modifier: Modifier | None = None,
         shadow_elevation: int | float | Expression | Binding | None = None,
+        state: str,
         tonal_elevation: int | float | Expression | Binding | None = None,
         children: Content = (),
         content: Content | None = None,
@@ -2946,6 +2961,7 @@ class ExpandedFullScreenSearchBar(Component):
             collapsed_shape: Native collapsedShape; None uses its default.
             modifier: Native modifier; None uses its default.
             shadow_elevation: Native shadowElevation; None uses its default.
+            state: Required native state.
             tonal_elevation: Native tonalElevation; None uses its default.
             children: Ordered child nodes with stable keys.
             content: Alternative spelling for content children.
@@ -2959,6 +2975,7 @@ class ExpandedFullScreenSearchBar(Component):
             props["collapsed_shape"] = collapsed_shape
         if shadow_elevation is not None:
             props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
+        props["state"] = state
         if tonal_elevation is not None:
             props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
         if content is not None:
@@ -7788,6 +7805,7 @@ class SearchBarInputField(Component):
         self,
         *,
         id: str | None = None,
+        colors: JsonValue | None = None,
         enabled: bool | None = None,
         expanded: bool,
         modifier: Modifier | None = None,
@@ -7803,6 +7821,7 @@ class SearchBarInputField(Component):
 
         Args:
             id: Stable instance key; None derives the node's path id.
+            colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
             expanded: Required native expanded.
             modifier: Native modifier; None uses its default.
@@ -7815,6 +7834,8 @@ class SearchBarInputField(Component):
             trailing_icon: Nodes for the native trailingIcon slot.
         """
         props: dict[str, PropValue] = {}
+        if colors is not None:
+            props["colors"] = colors
         if enabled is not None:
             props["enabled"] = enabled
         props["expanded"] = expanded
@@ -7849,9 +7870,14 @@ class SearchBarStateInputField(Component):
         colors: JsonValue | None = None,
         enabled: bool | None = None,
         modifier: Modifier | None = None,
+        on_edit: ActionTarget,
         on_search: ActionTarget,
         read_only: bool | None = None,
+        search_bar_state: str,
+        selection_end: int,
+        selection_start: int,
         shape: JsonValue | None = None,
+        text: str,
         text_style: JsonValue | None = None,
         leading_icon: Content | None = None,
         placeholder: Content | None = None,
@@ -7866,9 +7892,14 @@ class SearchBarStateInputField(Component):
             colors: Native colors; None uses its default.
             enabled: Native enabled; None uses its default.
             modifier: Native modifier; None uses its default.
+            on_edit: Required native onEdit.
             on_search: Required native onSearch.
             read_only: Native readOnly; None uses its default.
+            search_bar_state: Required native searchBarState.
+            selection_end: Required native selectionEnd.
+            selection_start: Required native selectionStart.
             shape: Native shape; None uses its default.
+            text: Required native text.
             text_style: Native textStyle; None uses its default.
             leading_icon: Nodes for the native leadingIcon slot.
             placeholder: Nodes for the native placeholder slot.
@@ -7881,11 +7912,16 @@ class SearchBarStateInputField(Component):
             props["colors"] = colors
         if enabled is not None:
             props["enabled"] = enabled
+        props["on_edit"] = on_edit
         props["on_search"] = on_search
         if read_only is not None:
             props["read_only"] = read_only
+        props["search_bar_state"] = search_bar_state
+        props["selection_end"] = selection_end
+        props["selection_start"] = selection_start
         if shape is not None:
             props["shape"] = shape
+        props["text"] = text
         if text_style is not None:
             props["text_style"] = text_style
         slotted: tuple[Node, ...] = ()
@@ -8931,54 +8967,38 @@ class StatefulSearchBar(Component):
         self,
         *,
         id: str | None = None,
-        expanded: bool | None = None,
         modifier: Modifier | None = None,
-        on_edit: ActionTarget,
-        on_expanded_change: ActionTarget | None = None,
-        selection_end: int,
-        selection_start: int,
+        on_value_change: ActionTarget | None = None,
         shadow_elevation: int | float | Expression | Binding | None = None,
         shape: JsonValue | None = None,
-        text: str,
         tonal_elevation: int | float | Expression | Binding | None = None,
-        expanded_bar: Content | None = None,
+        value: _StatefulSearchBarValue | None = None,
         input_field: Content | None = None,
     ) -> None:
         """Construct a registered StatefulSearchBar.
 
         Args:
             id: Stable instance key; None derives the node's path id.
-            expanded: Native expanded; None uses its default.
             modifier: Native modifier; None uses its default.
-            on_edit: Required native onEdit.
-            on_expanded_change: Native onExpandedChange; None uses its default.
-            selection_end: Required native selectionEnd.
-            selection_start: Required native selectionStart.
+            on_value_change: Native onValueChange; None uses its default.
             shadow_elevation: Native shadowElevation; None uses its default.
             shape: Native shape; None uses its default.
-            text: Required native text.
             tonal_elevation: Native tonalElevation; None uses its default.
-            expanded_bar: Nodes the host composes for the expandedBar slot.
+            value: Native value; None uses its default.
             input_field: Nodes for the native inputField slot.
         """
         props: dict[str, PropValue] = {}
-        if expanded is not None:
-            props["expanded"] = expanded
-        props["on_edit"] = on_edit
-        if on_expanded_change is not None:
-            props["on_expanded_change"] = on_expanded_change
-        props["selection_end"] = selection_end
-        props["selection_start"] = selection_start
+        if on_value_change is not None:
+            props["on_value_change"] = on_value_change
         if shadow_elevation is not None:
             props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
         if shape is not None:
             props["shape"] = shape
-        props["text"] = text
         if tonal_elevation is not None:
             props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
+        if value is not None:
+            props["value"] = value
         slotted: tuple[Node, ...] = ()
-        if expanded_bar is not None:
-            slotted += slot_nodes(expanded_bar, key="expandedBar", slot="expandedBar")
         if input_field is not None:
             slotted += slot_nodes(input_field, key="inputField", slot="inputField")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
@@ -10221,6 +10241,57 @@ class TopAppBar(Component):
             )
         if title is not None:
             slotted += slot_nodes(title, key="title", slot="title")
+        super().__init__(id=id, children=slotted, modifier=modifier, **props)
+
+
+class TopSearchBar(Component):
+    """Native TopSearchBar; props and defaults follow the component manifest."""
+
+    __slots__ = ()
+    component_type = "TopSearchBar"
+
+    def __init__(
+        self,
+        *,
+        id: str | None = None,
+        modifier: Modifier | None = None,
+        on_value_change: ActionTarget | None = None,
+        shadow_elevation: int | float | Expression | Binding | None = None,
+        shape: JsonValue | None = None,
+        tonal_elevation: int | float | Expression | Binding | None = None,
+        value: _TopSearchBarValue | None = None,
+        window_insets: JsonValue | None = None,
+        input_field: Content | None = None,
+    ) -> None:
+        """Construct a registered TopSearchBar.
+
+        Args:
+            id: Stable instance key; None derives the node's path id.
+            modifier: Native modifier; None uses its default.
+            on_value_change: Native onValueChange; None uses its default.
+            shadow_elevation: Native shadowElevation; None uses its default.
+            shape: Native shape; None uses its default.
+            tonal_elevation: Native tonalElevation; None uses its default.
+            value: Native value; None uses its default.
+            window_insets: Native windowInsets; None uses its default.
+            input_field: Nodes for the native inputField slot.
+        """
+        props: dict[str, PropValue] = {}
+        if on_value_change is not None:
+            props["on_value_change"] = on_value_change
+        if shadow_elevation is not None:
+            props["shadow_elevation"] = lower_binding(shadow_elevation, "composition")
+        if shape is not None:
+            props["shape"] = shape
+        if tonal_elevation is not None:
+            props["tonal_elevation"] = lower_binding(tonal_elevation, "composition")
+        if value is not None:
+            props["value"] = value
+        if window_insets is not None:
+            props["window_insets"] = window_insets
+        slotted: tuple[Node, ...] = ()
+        if input_field is not None:
+            slotted += slot_nodes(input_field, key="inputField", slot="inputField")
         super().__init__(id=id, children=slotted, modifier=modifier, **props)
 
 

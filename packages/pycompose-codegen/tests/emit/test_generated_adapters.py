@@ -63,12 +63,11 @@ def test_flow_column_uses_the_native_item_alignment_parameter() -> None:
 
 def test_a_component_marked_manual_generates_nothing() -> None:
     """``adapter: manual`` must be load-bearing, not decoration."""
-    registry = components()
-    marked = [n for n, e in registry.items() if e.get("adapter") == "manual"]
-    assert marked, "expected some components to be manual"
-    for name in marked:
-        assert not is_mechanical(registry[name]), f"{name} is marked manual"
-        assert render(name, registry[name]) == "", f"{name} generated an adapter"
+    entry = {**components()["Button"], "adapter": "manual"}
+    assert not is_mechanical(entry)
+    assert render("Button", entry) == ""
+    # And the catalog marks none: every component's adapter is generated.
+    assert not [n for n, e in components().items() if e.get("adapter") == "manual"]
 
 
 def test_every_component_is_either_generated_or_has_a_stated_reason() -> None:

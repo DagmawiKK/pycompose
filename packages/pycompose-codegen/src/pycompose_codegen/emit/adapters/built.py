@@ -1,4 +1,4 @@
-"""Native parameters the host builds with the pin's one builder for their type.
+"""Native parameters the host fills: built by the pin's one builder, or shared.
 
 ``TooltipBox(positionProvider = ...)`` takes a ``PopupPositionProvider``, which
 the app cannot state; the pin's one builder makes it from a value the app can,
@@ -12,22 +12,6 @@ from typing import Any
 
 from pycompose_codegen.emit.adapters.fragments import Fragments
 from pycompose_codegen.emit.adapters.props import render_prop
-
-
-def built_props(entry: dict[str, Any]) -> set[str]:
-    """The props a builder consumes, which name no parameter of the component.
-
-    Args:
-        entry: The component's schema entry.
-
-    Returns:
-        Their names.
-    """
-    return {
-        argument
-        for spec in entry.get("built", {}).values()
-        for argument in spec["arguments"]
-    }
 
 
 def built_arguments(
@@ -55,3 +39,22 @@ def built_arguments(
             f"{native} = {spec['factory']}({', '.join(read.arguments)})"
         )
     return True
+
+
+def shared_arguments(entry: dict[str, Any], out: Fragments) -> None:
+    """Pass each shared parameter the holder of the node the app names.
+
+    An expanded search bar uses its bar's ``SearchBarState``: the app names the
+    bar's node, and until that node has composed, this one waits.
+
+    Args:
+        entry: The component's schema entry.
+        out: Collects the rendered pieces.
+    """
+    label = "registerScoped" if entry.get("scope") else "register"
+    for native, holder in sorted(entry.get("shared", {}).items()):
+        out.locals.append(
+            f"val {native}Shared = context.shared<{holder}>(model.props.{native}) "
+            f"?: return@{label}"
+        )
+        out.arguments.append(f"{native} = {native}Shared")

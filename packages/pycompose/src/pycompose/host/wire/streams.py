@@ -8,7 +8,8 @@ snapshot is emitted, since a holder may follow the prop that reads it.
 
 An expression may stand as a prop's value, as a binding's target, or as a
 modifier's argument; all three are the same wire shape, so all three are read
-here.
+here. A prop naming the node whose holder a component shares (an expanded
+search bar's ``state``) is a key too, and is rewritten the same way.
 """
 
 from __future__ import annotations
@@ -49,6 +50,19 @@ def has_stream(value: object) -> bool:
     return False
 
 
+def shares_holder(component: str) -> bool:
+    """Whether a component names another node whose holder it shares.
+
+    Args:
+        component: The component's schema name.
+
+    Returns:
+        True when one of its props is such a key, resolved with the streams.
+    """
+    entry = REGISTRY.components.get(component)
+    return bool(entry is not None and entry.shared)
+
+
 def resolve_streams(root: Node, keyed: Mapping[str, Sequence[str]]) -> Node:
     """Rewrite every expression's stream keys to its holder's wire id.
 
@@ -82,8 +96,12 @@ def resolve_streams(root: Node, keyed: Mapping[str, Sequence[str]]) -> Node:
 
     def walk(node: Node) -> Node:
         children = tuple(walk(child) for child in node.children)
+        entry = REGISTRY.components.get(node.type)
+        shared = (entry.shared if entry is not None else None) or {}
         props = {
-            name: freeze_json(resolve(thaw_json(value), node, name))
+            name: wire_id(value, node, name)
+            if name in shared and isinstance(value, str)
+            else freeze_json(resolve(thaw_json(value), node, name))
             if has_stream(value)
             else value
             for name, value in node.props.values.items()

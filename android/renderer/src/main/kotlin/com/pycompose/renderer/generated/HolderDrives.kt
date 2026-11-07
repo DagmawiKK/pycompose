@@ -11,6 +11,14 @@ suspend fun androidx.compose.material3.DrawerState.driveTo(anchor: androidx.comp
     }
 }
 
+/** Drive [androidx.compose.material3.SearchBarState] to [anchor] through its pinned member. */
+suspend fun androidx.compose.material3.SearchBarState.driveTo(anchor: androidx.compose.material3.SearchBarValue) {
+    when (anchor) {
+        androidx.compose.material3.SearchBarValue.Collapsed -> animateToCollapsed()
+        androidx.compose.material3.SearchBarValue.Expanded -> animateToExpanded()
+    }
+}
+
 /** Drive [androidx.compose.material3.SheetState] to [anchor] through its pinned member. */
 suspend fun androidx.compose.material3.SheetState.driveTo(anchor: androidx.compose.material3.SheetValue) {
     when (anchor) {

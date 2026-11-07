@@ -408,6 +408,11 @@
             }
           }
         },
+        "shared": {
+          "type": "object",
+          "description": "Native holder parameters the component does not own: each prop names the node whose holder of this class it uses.",
+          "additionalProperties": { "$ref": "#/$defs/dottedName" }
+        },
         "adapter": { "type": "string" },
         "reshaped": {
           "type": "array",

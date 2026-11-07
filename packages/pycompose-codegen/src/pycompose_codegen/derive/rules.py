@@ -20,6 +20,7 @@ from typing import Any
 from pycompose.model.catalog.vocabulary import (
     INTERACTION_KINDS,
     INTERACTION_REPORTS,
+    STATE_HOLDERS,
 )
 from pycompose_codegen.derive.candidate_props import CandidateError
 from pycompose_codegen.derive.classpath_dump import Inventory
@@ -60,7 +61,7 @@ def reshape(
     # A component with an interaction source reports it unless policy declines.
     if decision.get("observe", len(_sources(plan)) == 1):
         invented.extend(_observe(name, entry, plan))
-    _choose_holder(name, entry, decision.get("holder"))
+    _choose_holder(name, entry, decision.get("holder"), plan)
     if "state" in entry:
         invented.extend(_project(entry))
     if "attach" in decision:
@@ -163,27 +164,41 @@ def _flatten(
     return [prop] if prop != native else []
 
 
-def _choose_holder(name: str, entry: dict[str, Any], choice: object) -> None:
+def _choose_holder(
+    name: str, entry: dict[str, Any], choice: object, plan: dict[str, Any]
+) -> None:
     """Bind the holder a decision names; ``False`` binds none.
 
-    A holder the component does not bind is one it keeps to itself (a
-    defaulted scroll state) or one its owner fills (a search field's shared
-    SearchBarState); either way it is not this component's state.
+    A holder the component does not bind is one it keeps to itself, when the
+    parameter has a default (a scroll state), or one another node owns, when
+    it has none (an expanded search bar's ``SearchBarState``): the app names
+    that node, and the host shares its holder.
     """
     holders = entry.pop("holders", None) or (
         [entry["state"]] if "state" in entry else []
     )
     entry.pop("state", None)
-    if choice is False or not holders:
-        return
     if choice is None and len(holders) == 1:
         entry["state"] = holders[0]
-        return
-    chosen = [holder for holder in holders if holder["native"] == choice]
-    if len(chosen) != 1:
-        natives = ", ".join(holder["native"] for holder in holders)
-        raise CandidateError(f"{name}: name the holder it binds ({natives}) or false")
-    entry["state"] = chosen[0]
+    elif choice is not False and holders:
+        chosen = [holder for holder in holders if holder["native"] == choice]
+        if len(chosen) != 1:
+            natives = ", ".join(holder["native"] for holder in holders)
+            raise CandidateError(
+                f"{name}: name the holder it binds ({natives}) or false"
+            )
+        entry["state"] = chosen[0]
+    bound = entry.get("state", {}).get("native")
+    shared = {
+        holder["native"]: holder.get("holder") or STATE_HOLDERS[holder["kind"]]
+        for holder in holders
+        if holder["native"] != bound
+        and plan["parameters"].get(holder["native"], {}).get("required")
+    }
+    if shared:
+        entry["shared"] = shared
+        for native in shared:
+            entry["props"][native] = {"type": "string", "required": True}
 
 
 DERIVED_PROPS = {"positional": positional_props, "anchored": anchored_props}
@@ -204,8 +219,6 @@ def _project(entry: dict[str, Any]) -> list[str]:
     projected = family.props()
     entry["props"].update(copy.deepcopy(projected))
     entry["state"].update({"value": family.value[0], "report": family.report})
-    if family.shared:
-        entry["adapter"] = "manual"
     return list(projected)
 
 
