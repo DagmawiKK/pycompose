@@ -264,7 +264,8 @@ def unpack(archive: Path, target: Path) -> None:
     staging = target.with_name(target.name + ".staging")
     shutil.rmtree(staging, ignore_errors=True)
     staging.mkdir(parents=True)
-    if archive.name.endswith(".zip"):
+    # Downloads use a neutral ``.download`` suffix, so inspect their content.
+    if zipfile.is_zipfile(archive):
         with zipfile.ZipFile(archive) as zipped:
             # ZipFile also drops absolute and ".." parts of each member.
             zipped.extractall(staging, members=_confined(staging, zipped.namelist()))
